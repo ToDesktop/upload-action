@@ -1,0 +1,27 @@
+ToDesktop Upload Action License
+
+Copyright (c) 2026 ToDesktop. All rights reserved.
+
+This software (the ToDesktop upload action, ToDesktop/upload-action) is
+proprietary to ToDesktop and is licensed, not sold.
+
+1. You may use and copy this software only to upload applications to
+   ToDesktop so that they are built, released or updated with
+   ToDesktop's services, under your agreement with ToDesktop.
+
+2. You may reference this software from your CI workflows and keep a
+   copy of it in your own repositories for that purpose, but not
+   redistribute it on its own.
+
+3. You may not modify this software, or use it, or any part of it, to
+   upload to or connect to any service other than ToDesktop's.
+
+4. You may not remove or alter this notice.
+
+THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+NO EVENT SHALL TODESKTOP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
