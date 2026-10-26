@@ -15437,6 +15437,86 @@ async function copyInto(source, target) {
   await mkdir2(path2.dirname(target), { recursive: true });
   await copyFile(source, target);
 }
+function isSet(value) {
+  if (Array.isArray(value)) return value.length > 0;
+  if (isObject2(value)) return Object.keys(value).length > 0;
+  return Boolean(value);
+}
+function ignoredTauriSettings(config2, platform) {
+  const bundle = bundleOf(config2);
+  const at = (value, key) => isObject2(value) ? value[key] : void 0;
+  const ignored = [];
+  const check2 = (name, value, why) => {
+    if (isSet(value)) ignored.push(`${name}: ${why}`);
+  };
+  check2(
+    "bundle.fileAssociations",
+    bundle.fileAssociations,
+    "not registered when the app is installed, so its file types don\u2019t open it"
+  );
+  check2(
+    "plugins.deep-link.desktop",
+    at(at(config2.plugins, "deep-link"), "desktop"),
+    "its URL schemes aren\u2019t registered when the app is installed; register them when the app starts, with the deep-link plugin\u2019s register_all()"
+  );
+  if (platform === "windows") {
+    const webview = at(at(bundle.windows, "webviewInstallMode"), "type");
+    if (webview === "downloadBootstrapper" || webview === "embedBootstrapper" || webview === "offlineInstaller") {
+      ignored.push(
+        `bundle.windows.webviewInstallMode: ToDesktop\u2019s installer doesn\u2019t install WebView2 (${webview}), so the app won\u2019t start where the runtime is missing (Windows 10 without it)`
+      );
+    }
+    for (const installer of ["nsis", "wix"]) {
+      check2(
+        `bundle.windows.${installer}`,
+        at(bundle.windows, installer),
+        "ToDesktop\u2019s own installer replaces it, so these settings don\u2019t apply"
+      );
+    }
+    return ignored;
+  }
+  for (const format of ["deb", "rpm", "appimage"]) {
+    const settings = at(bundle.linux, format);
+    const name = (key) => `bundle.linux.${format}.${key}`;
+    check2(
+      name("files"),
+      at(settings, "files"),
+      "not installed: ship them as bundle.resources instead"
+    );
+    check2(
+      name("desktopTemplate"),
+      at(settings, "desktopTemplate"),
+      "ToDesktop writes the menu entry itself"
+    );
+    for (const script of [
+      "preInstallScript",
+      "postInstallScript",
+      "preRemoveScript",
+      "postRemoveScript"
+    ]) {
+      check2(
+        name(script),
+        at(settings, script),
+        "not run: ToDesktop\u2019s packages have their own scripts"
+      );
+    }
+    for (const relation of [
+      ...format === "rpm" ? ["depends"] : [],
+      "recommends",
+      "provides",
+      "conflicts",
+      "replaces",
+      "obsoletes"
+    ]) {
+      check2(
+        name(relation),
+        at(settings, relation),
+        "not set on the packages: only bundle.linux.deb.depends is, as linux.depends, for every format"
+      );
+    }
+  }
+  return ignored;
+}
 async function assembleTauri(given, context) {
   const { appDir, arch, configDir, platform, source } = context;
   if (platform === "mac") return false;
@@ -15445,6 +15525,9 @@ async function assembleTauri(given, context) {
   const ext = platform === "windows" ? ".exe" : "";
   const binary = path2.join(source, `${binaryOf(project, platform)}${ext}`);
   if (!await isBinaryFor(binary, platform)) return false;
+  for (const ignored of ignoredTauriSettings(config2, platform)) {
+    console.warn(`tauriConfig(): ${platform}: ${ignored}`);
+  }
   const executable = context.config[platform]?.executable ?? `${binaryOf(project, platform)}${ext}`;
   await copyInto(binary, path2.join(appDir, executable));
   if (platform === "linux") await chmod(path2.join(appDir, executable), 493);
@@ -15522,7 +15605,11 @@ var linuxPlatform = external_exports.strictObject({
   /** The binary inside the app's directory; also linked into /usr/bin. */
   executable: fileName,
   formats: external_exports.array(external_exports.enum(linuxFormats)).min(1),
-  /** A PNG for the AppImage (and desktop entries), relative to the config. */
+  /**
+   * A PNG, relative to the config: the AppImage's icon, and for deb, rpm
+   * and pacman packages the app's menu entry and its icon. An app without
+   * one (a daemon) gets no menu entry.
+   */
   icon: external_exports.string().optional(),
   /**
    * Directories in the app's own usr/lib that deb, rpm and pacman packages
@@ -15935,8 +16022,8 @@ var LIVE_SOCKET_GRACE_MS = 10 * 6e4;
 // src/upload.ts
 import { execFile as execFile3 } from "node:child_process";
 import { createHash } from "node:crypto";
-import { createReadStream, existsSync as existsSync3, openAsBlob } from "node:fs";
-import { cp, mkdtemp as mkdtemp2, readFile as readFile5, rm as rm2, stat as stat2 } from "node:fs/promises";
+import { createReadStream, existsSync as existsSync3, openAsBlob, statSync } from "node:fs";
+import { copyFile as copyFile2, cp, mkdtemp as mkdtemp2, readFile as readFile5, rm as rm2, stat as stat2 } from "node:fs/promises";
 import { tmpdir as tmpdir2 } from "node:os";
 import path4 from "node:path";
 import process3 from "node:process";
@@ -16043,11 +16130,25 @@ function checkAppIdentifiers(appId, pinned, apps) {
     });
   }
 }
-async function preparedTar(loaded, app, version2, work) {
+var iconNames = { linux: "icon.png", windows: "icon.ico" };
+function iconFor(loaded, platform) {
+  const icon = platform === "mac" ? void 0 : loaded.config[platform]?.icon;
+  if (!icon) return void 0;
+  const file2 = path4.resolve(loaded.configDir, icon);
+  if (!statSync(file2, { throwIfNoEntry: false })?.isFile()) {
+    throw new Error(
+      `${platform}.icon is ${icon}, but there's no such file (${file2}): ToDesktop's builders need it to brand the app`
+    );
+  }
+  return file2;
+}
+async function preparedTar(loaded, app, version2, work, icon) {
   const name = app.platform === "mac" ? path4.basename(app.path) : "app";
   const staging = path4.join(work, `${app.platform}-${app.arch}`);
   const copy = path4.join(staging, name);
   await cp(app.path, copy, { recursive: true, verbatimSymlinks: true });
+  const iconName = icon && app.platform !== "mac" ? iconNames[app.platform] : void 0;
+  if (icon && iconName) await copyFile2(icon, path4.join(staging, iconName));
   const hook = loaded.hooks.prepareApp;
   if (hook) {
     await hook({
@@ -16064,12 +16165,25 @@ async function preparedTar(loaded, app, version2, work) {
   const stagingName = path4.basename(staging);
   await run3(
     "tar",
-    [...macTar, "-cf", `${stagingName}.tar`, "-C", stagingName, name],
+    [
+      ...macTar,
+      "-cf",
+      `${stagingName}.tar`,
+      "-C",
+      stagingName,
+      name,
+      ...iconName ? [iconName] : []
+    ],
     { cwd: work, env: { ...process3.env, COPYFILE_DISABLE: "1" } }
   );
   const hash2 = createHash("sha256");
   for await (const chunk of createReadStream(tar)) hash2.update(chunk);
-  return { sha256: hash2.digest("hex"), size: (await stat2(tar)).size, tar };
+  return {
+    ...iconName ? { iconName } : {},
+    sha256: hash2.digest("hex"),
+    size: (await stat2(tar)).size,
+    tar
+  };
 }
 var partBytes = Math.max(5, Number(process3.env.TODESKTOP_UPLOAD_PART_MB ?? 64)) * 1024 * 1024;
 async function uploadPiece(base, headers, tar, size) {
@@ -16171,6 +16285,11 @@ async function upload(options) {
         `None of ${file2}'s apps are on this machine (it lists ${expected.join(", ")})`
       );
     }
+    const icons = /* @__PURE__ */ new Map();
+    for (const platform of new Set(found.map((app) => app.platform))) {
+      const icon = iconFor(loadedByPlatform[platform], platform);
+      if (icon) icons.set(platform, icon);
+    }
     const version2 = options.version ?? config2.version ?? found.find((app) => app.ownVersion)?.ownVersion;
     if (!version2) {
       throw new Error(
@@ -16200,7 +16319,8 @@ async function upload(options) {
         loadedByPlatform[app.platform],
         app,
         version2,
-        work
+        work,
+        icons.get(app.platform)
       );
       const manifest = {
         arch: app.arch,
@@ -16209,6 +16329,7 @@ async function upload(options) {
         configSha256: createHash("sha256").update(json2).digest("hex"),
         ...app.platform === "mac" && entitlements ? { entitlements } : {},
         expected,
+        ...tar.iconName ? { icon: tar.iconName } : {},
         platform: app.platform,
         sha256: tar.sha256,
         size: tar.size,
@@ -16216,7 +16337,7 @@ async function upload(options) {
       };
       if (!auth) {
         console.info(
-          `  ${app.platform}/${app.arch}: ready (${Math.round(tar.size / 1024)} KiB), not uploaded (--dry-run)`
+          `  ${app.platform}/${app.arch}: ready (${Math.round(tar.size / 1024)} KiB${tar.iconName ? `, with ${app.platform}.icon` : ""}), not uploaded (--dry-run)`
         );
         continue;
       }
