@@ -1,14 +1,1154 @@
 #!/usr/bin/env node
 import { createRequire as __tdRequire } from 'node:module'; const require = __tdRequire(import.meta.url);
+var __create = Object.create;
 var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __commonJS = (cb, mod) => function __require() {
+  try {
+    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  } catch (e) {
+    throw mod = 0, e;
+  }
+};
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
 };
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+
+// ../../node_modules/.pnpm/json5@2.2.3/node_modules/json5/lib/unicode.js
+var require_unicode = __commonJS({
+  "../../node_modules/.pnpm/json5@2.2.3/node_modules/json5/lib/unicode.js"(exports, module) {
+    module.exports.Space_Separator = /[\u1680\u2000-\u200A\u202F\u205F\u3000]/;
+    module.exports.ID_Start = /[\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u08A0-\u08B4\u08B6-\u08BD\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16EE-\u16F8\u1700-\u170C\u170E-\u1711\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1877\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C88\u1CE9-\u1CEC\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2160-\u2188\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005-\u3007\u3021-\u3029\u3031-\u3035\u3038-\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312E\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FEA\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6EF\uA717-\uA71F\uA722-\uA788\uA78B-\uA7AE\uA7B0-\uA7B7\uA7F7-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB65\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDD40-\uDD74\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF4A\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF\uDFD1-\uDFD5]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE33\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2]|\uD804[\uDC03-\uDC37\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDF00-\uDF19]|\uD806[\uDCA0-\uDCDF\uDCFF\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE83\uDE86-\uDE89\uDEC0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46]|\uD808[\uDC00-\uDF99]|\uD809[\uDC00-\uDC6E\uDC80-\uDD43]|[\uD80C\uD81C-\uD820\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2E]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDF00-\uDF44\uDF50\uDF93-\uDF9F\uDFE0\uDFE1]|\uD821[\uDC00-\uDFEC]|\uD822[\uDC00-\uDEF2]|\uD82C[\uDC00-\uDD1E\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDED6\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF34\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]/;
+    module.exports.ID_Continue = /[\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0300-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u0483-\u0487\u048A-\u052F\u0531-\u0556\u0559\u0561-\u0587\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u05D0-\u05EA\u05F0-\u05F2\u0610-\u061A\u0620-\u0669\u066E-\u06D3\u06D5-\u06DC\u06DF-\u06E8\u06EA-\u06FC\u06FF\u0710-\u074A\u074D-\u07B1\u07C0-\u07F5\u07FA\u0800-\u082D\u0840-\u085B\u0860-\u086A\u08A0-\u08B4\u08B6-\u08BD\u08D4-\u08E1\u08E3-\u0963\u0966-\u096F\u0971-\u0983\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BC-\u09C4\u09C7\u09C8\u09CB-\u09CE\u09D7\u09DC\u09DD\u09DF-\u09E3\u09E6-\u09F1\u09FC\u0A01-\u0A03\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A3C\u0A3E-\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A59-\u0A5C\u0A5E\u0A66-\u0A75\u0A81-\u0A83\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABC-\u0AC5\u0AC7-\u0AC9\u0ACB-\u0ACD\u0AD0\u0AE0-\u0AE3\u0AE6-\u0AEF\u0AF9-\u0AFF\u0B01-\u0B03\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3C-\u0B44\u0B47\u0B48\u0B4B-\u0B4D\u0B56\u0B57\u0B5C\u0B5D\u0B5F-\u0B63\u0B66-\u0B6F\u0B71\u0B82\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BBE-\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCD\u0BD0\u0BD7\u0BE6-\u0BEF\u0C00-\u0C03\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D-\u0C44\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C58-\u0C5A\u0C60-\u0C63\u0C66-\u0C6F\u0C80-\u0C83\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBC-\u0CC4\u0CC6-\u0CC8\u0CCA-\u0CCD\u0CD5\u0CD6\u0CDE\u0CE0-\u0CE3\u0CE6-\u0CEF\u0CF1\u0CF2\u0D00-\u0D03\u0D05-\u0D0C\u0D0E-\u0D10\u0D12-\u0D44\u0D46-\u0D48\u0D4A-\u0D4E\u0D54-\u0D57\u0D5F-\u0D63\u0D66-\u0D6F\u0D7A-\u0D7F\u0D82\u0D83\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0DCA\u0DCF-\u0DD4\u0DD6\u0DD8-\u0DDF\u0DE6-\u0DEF\u0DF2\u0DF3\u0E01-\u0E3A\u0E40-\u0E4E\u0E50-\u0E59\u0E81\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB9\u0EBB-\u0EBD\u0EC0-\u0EC4\u0EC6\u0EC8-\u0ECD\u0ED0-\u0ED9\u0EDC-\u0EDF\u0F00\u0F18\u0F19\u0F20-\u0F29\u0F35\u0F37\u0F39\u0F3E-\u0F47\u0F49-\u0F6C\u0F71-\u0F84\u0F86-\u0F97\u0F99-\u0FBC\u0FC6\u1000-\u1049\u1050-\u109D\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u135D-\u135F\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16EE-\u16F8\u1700-\u170C\u170E-\u1714\u1720-\u1734\u1740-\u1753\u1760-\u176C\u176E-\u1770\u1772\u1773\u1780-\u17D3\u17D7\u17DC\u17DD\u17E0-\u17E9\u180B-\u180D\u1810-\u1819\u1820-\u1877\u1880-\u18AA\u18B0-\u18F5\u1900-\u191E\u1920-\u192B\u1930-\u193B\u1946-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u19D0-\u19D9\u1A00-\u1A1B\u1A20-\u1A5E\u1A60-\u1A7C\u1A7F-\u1A89\u1A90-\u1A99\u1AA7\u1AB0-\u1ABD\u1B00-\u1B4B\u1B50-\u1B59\u1B6B-\u1B73\u1B80-\u1BF3\u1C00-\u1C37\u1C40-\u1C49\u1C4D-\u1C7D\u1C80-\u1C88\u1CD0-\u1CD2\u1CD4-\u1CF9\u1D00-\u1DF9\u1DFB-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u203F\u2040\u2054\u2071\u207F\u2090-\u209C\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2160-\u2188\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D7F-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2DE0-\u2DFF\u2E2F\u3005-\u3007\u3021-\u302F\u3031-\u3035\u3038-\u303C\u3041-\u3096\u3099\u309A\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312E\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FEA\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA62B\uA640-\uA66F\uA674-\uA67D\uA67F-\uA6F1\uA717-\uA71F\uA722-\uA788\uA78B-\uA7AE\uA7B0-\uA7B7\uA7F7-\uA827\uA840-\uA873\uA880-\uA8C5\uA8D0-\uA8D9\uA8E0-\uA8F7\uA8FB\uA8FD\uA900-\uA92D\uA930-\uA953\uA960-\uA97C\uA980-\uA9C0\uA9CF-\uA9D9\uA9E0-\uA9FE\uAA00-\uAA36\uAA40-\uAA4D\uAA50-\uAA59\uAA60-\uAA76\uAA7A-\uAAC2\uAADB-\uAADD\uAAE0-\uAAEF\uAAF2-\uAAF6\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB65\uAB70-\uABEA\uABEC\uABED\uABF0-\uABF9\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE00-\uFE0F\uFE20-\uFE2F\uFE33\uFE34\uFE4D-\uFE4F\uFE70-\uFE74\uFE76-\uFEFC\uFF10-\uFF19\uFF21-\uFF3A\uFF3F\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDD40-\uDD74\uDDFD\uDE80-\uDE9C\uDEA0-\uDED0\uDEE0\uDF00-\uDF1F\uDF2D-\uDF4A\uDF50-\uDF7A\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF\uDFD1-\uDFD5]|\uD801[\uDC00-\uDC9D\uDCA0-\uDCA9\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00-\uDE03\uDE05\uDE06\uDE0C-\uDE13\uDE15-\uDE17\uDE19-\uDE33\uDE38-\uDE3A\uDE3F\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE6\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2]|\uD804[\uDC00-\uDC46\uDC66-\uDC6F\uDC7F-\uDCBA\uDCD0-\uDCE8\uDCF0-\uDCF9\uDD00-\uDD34\uDD36-\uDD3F\uDD50-\uDD73\uDD76\uDD80-\uDDC4\uDDCA-\uDDCC\uDDD0-\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE37\uDE3E\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEEA\uDEF0-\uDEF9\uDF00-\uDF03\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3C-\uDF44\uDF47\uDF48\uDF4B-\uDF4D\uDF50\uDF57\uDF5D-\uDF63\uDF66-\uDF6C\uDF70-\uDF74]|\uD805[\uDC00-\uDC4A\uDC50-\uDC59\uDC80-\uDCC5\uDCC7\uDCD0-\uDCD9\uDD80-\uDDB5\uDDB8-\uDDC0\uDDD8-\uDDDD\uDE00-\uDE40\uDE44\uDE50-\uDE59\uDE80-\uDEB7\uDEC0-\uDEC9\uDF00-\uDF19\uDF1D-\uDF2B\uDF30-\uDF39]|\uD806[\uDCA0-\uDCE9\uDCFF\uDE00-\uDE3E\uDE47\uDE50-\uDE83\uDE86-\uDE99\uDEC0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC36\uDC38-\uDC40\uDC50-\uDC59\uDC72-\uDC8F\uDC92-\uDCA7\uDCA9-\uDCB6\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD36\uDD3A\uDD3C\uDD3D\uDD3F-\uDD47\uDD50-\uDD59]|\uD808[\uDC00-\uDF99]|\uD809[\uDC00-\uDC6E\uDC80-\uDD43]|[\uD80C\uD81C-\uD820\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2E]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE60-\uDE69\uDED0-\uDEED\uDEF0-\uDEF4\uDF00-\uDF36\uDF40-\uDF43\uDF50-\uDF59\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDF00-\uDF44\uDF50-\uDF7E\uDF8F-\uDF9F\uDFE0\uDFE1]|\uD821[\uDC00-\uDFEC]|\uD822[\uDC00-\uDEF2]|\uD82C[\uDC00-\uDD1E\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99\uDC9D\uDC9E]|\uD834[\uDD65-\uDD69\uDD6D-\uDD72\uDD7B-\uDD82\uDD85-\uDD8B\uDDAA-\uDDAD\uDE42-\uDE44]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB\uDFCE-\uDFFF]|\uD836[\uDE00-\uDE36\uDE3B-\uDE6C\uDE75\uDE84\uDE9B-\uDE9F\uDEA1-\uDEAF]|\uD838[\uDC00-\uDC06\uDC08-\uDC18\uDC1B-\uDC21\uDC23\uDC24\uDC26-\uDC2A]|\uD83A[\uDC00-\uDCC4\uDCD0-\uDCD6\uDD00-\uDD4A\uDD50-\uDD59]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDED6\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF34\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uDB40[\uDD00-\uDDEF]/;
+  }
+});
+
+// ../../node_modules/.pnpm/json5@2.2.3/node_modules/json5/lib/util.js
+var require_util = __commonJS({
+  "../../node_modules/.pnpm/json5@2.2.3/node_modules/json5/lib/util.js"(exports, module) {
+    var unicode = require_unicode();
+    module.exports = {
+      isSpaceSeparator(c) {
+        return typeof c === "string" && unicode.Space_Separator.test(c);
+      },
+      isIdStartChar(c) {
+        return typeof c === "string" && (c >= "a" && c <= "z" || c >= "A" && c <= "Z" || c === "$" || c === "_" || unicode.ID_Start.test(c));
+      },
+      isIdContinueChar(c) {
+        return typeof c === "string" && (c >= "a" && c <= "z" || c >= "A" && c <= "Z" || c >= "0" && c <= "9" || c === "$" || c === "_" || c === "\u200C" || c === "\u200D" || unicode.ID_Continue.test(c));
+      },
+      isDigit(c) {
+        return typeof c === "string" && /[0-9]/.test(c);
+      },
+      isHexDigit(c) {
+        return typeof c === "string" && /[0-9A-Fa-f]/.test(c);
+      }
+    };
+  }
+});
+
+// ../../node_modules/.pnpm/json5@2.2.3/node_modules/json5/lib/parse.js
+var require_parse = __commonJS({
+  "../../node_modules/.pnpm/json5@2.2.3/node_modules/json5/lib/parse.js"(exports, module) {
+    var util = require_util();
+    var source;
+    var parseState;
+    var stack;
+    var pos;
+    var line;
+    var column;
+    var token;
+    var key;
+    var root;
+    module.exports = function parse4(text, reviver) {
+      source = String(text);
+      parseState = "start";
+      stack = [];
+      pos = 0;
+      line = 1;
+      column = 0;
+      token = void 0;
+      key = void 0;
+      root = void 0;
+      do {
+        token = lex();
+        parseStates[parseState]();
+      } while (token.type !== "eof");
+      if (typeof reviver === "function") {
+        return internalize({ "": root }, "", reviver);
+      }
+      return root;
+    };
+    function internalize(holder, name, reviver) {
+      const value = holder[name];
+      if (value != null && typeof value === "object") {
+        if (Array.isArray(value)) {
+          for (let i = 0; i < value.length; i++) {
+            const key2 = String(i);
+            const replacement = internalize(value, key2, reviver);
+            if (replacement === void 0) {
+              delete value[key2];
+            } else {
+              Object.defineProperty(value, key2, {
+                value: replacement,
+                writable: true,
+                enumerable: true,
+                configurable: true
+              });
+            }
+          }
+        } else {
+          for (const key2 in value) {
+            const replacement = internalize(value, key2, reviver);
+            if (replacement === void 0) {
+              delete value[key2];
+            } else {
+              Object.defineProperty(value, key2, {
+                value: replacement,
+                writable: true,
+                enumerable: true,
+                configurable: true
+              });
+            }
+          }
+        }
+      }
+      return reviver.call(holder, name, value);
+    }
+    var lexState;
+    var buffer;
+    var doubleQuote;
+    var sign;
+    var c;
+    function lex() {
+      lexState = "default";
+      buffer = "";
+      doubleQuote = false;
+      sign = 1;
+      for (; ; ) {
+        c = peek();
+        const token2 = lexStates[lexState]();
+        if (token2) {
+          return token2;
+        }
+      }
+    }
+    function peek() {
+      if (source[pos]) {
+        return String.fromCodePoint(source.codePointAt(pos));
+      }
+    }
+    function read() {
+      const c2 = peek();
+      if (c2 === "\n") {
+        line++;
+        column = 0;
+      } else if (c2) {
+        column += c2.length;
+      } else {
+        column++;
+      }
+      if (c2) {
+        pos += c2.length;
+      }
+      return c2;
+    }
+    var lexStates = {
+      default() {
+        switch (c) {
+          case "	":
+          case "\v":
+          case "\f":
+          case " ":
+          case "\xA0":
+          case "\uFEFF":
+          case "\n":
+          case "\r":
+          case "\u2028":
+          case "\u2029":
+            read();
+            return;
+          case "/":
+            read();
+            lexState = "comment";
+            return;
+          case void 0:
+            read();
+            return newToken("eof");
+        }
+        if (util.isSpaceSeparator(c)) {
+          read();
+          return;
+        }
+        return lexStates[parseState]();
+      },
+      comment() {
+        switch (c) {
+          case "*":
+            read();
+            lexState = "multiLineComment";
+            return;
+          case "/":
+            read();
+            lexState = "singleLineComment";
+            return;
+        }
+        throw invalidChar(read());
+      },
+      multiLineComment() {
+        switch (c) {
+          case "*":
+            read();
+            lexState = "multiLineCommentAsterisk";
+            return;
+          case void 0:
+            throw invalidChar(read());
+        }
+        read();
+      },
+      multiLineCommentAsterisk() {
+        switch (c) {
+          case "*":
+            read();
+            return;
+          case "/":
+            read();
+            lexState = "default";
+            return;
+          case void 0:
+            throw invalidChar(read());
+        }
+        read();
+        lexState = "multiLineComment";
+      },
+      singleLineComment() {
+        switch (c) {
+          case "\n":
+          case "\r":
+          case "\u2028":
+          case "\u2029":
+            read();
+            lexState = "default";
+            return;
+          case void 0:
+            read();
+            return newToken("eof");
+        }
+        read();
+      },
+      value() {
+        switch (c) {
+          case "{":
+          case "[":
+            return newToken("punctuator", read());
+          case "n":
+            read();
+            literal2("ull");
+            return newToken("null", null);
+          case "t":
+            read();
+            literal2("rue");
+            return newToken("boolean", true);
+          case "f":
+            read();
+            literal2("alse");
+            return newToken("boolean", false);
+          case "-":
+          case "+":
+            if (read() === "-") {
+              sign = -1;
+            }
+            lexState = "sign";
+            return;
+          case ".":
+            buffer = read();
+            lexState = "decimalPointLeading";
+            return;
+          case "0":
+            buffer = read();
+            lexState = "zero";
+            return;
+          case "1":
+          case "2":
+          case "3":
+          case "4":
+          case "5":
+          case "6":
+          case "7":
+          case "8":
+          case "9":
+            buffer = read();
+            lexState = "decimalInteger";
+            return;
+          case "I":
+            read();
+            literal2("nfinity");
+            return newToken("numeric", Infinity);
+          case "N":
+            read();
+            literal2("aN");
+            return newToken("numeric", NaN);
+          case '"':
+          case "'":
+            doubleQuote = read() === '"';
+            buffer = "";
+            lexState = "string";
+            return;
+        }
+        throw invalidChar(read());
+      },
+      identifierNameStartEscape() {
+        if (c !== "u") {
+          throw invalidChar(read());
+        }
+        read();
+        const u = unicodeEscape();
+        switch (u) {
+          case "$":
+          case "_":
+            break;
+          default:
+            if (!util.isIdStartChar(u)) {
+              throw invalidIdentifier();
+            }
+            break;
+        }
+        buffer += u;
+        lexState = "identifierName";
+      },
+      identifierName() {
+        switch (c) {
+          case "$":
+          case "_":
+          case "\u200C":
+          case "\u200D":
+            buffer += read();
+            return;
+          case "\\":
+            read();
+            lexState = "identifierNameEscape";
+            return;
+        }
+        if (util.isIdContinueChar(c)) {
+          buffer += read();
+          return;
+        }
+        return newToken("identifier", buffer);
+      },
+      identifierNameEscape() {
+        if (c !== "u") {
+          throw invalidChar(read());
+        }
+        read();
+        const u = unicodeEscape();
+        switch (u) {
+          case "$":
+          case "_":
+          case "\u200C":
+          case "\u200D":
+            break;
+          default:
+            if (!util.isIdContinueChar(u)) {
+              throw invalidIdentifier();
+            }
+            break;
+        }
+        buffer += u;
+        lexState = "identifierName";
+      },
+      sign() {
+        switch (c) {
+          case ".":
+            buffer = read();
+            lexState = "decimalPointLeading";
+            return;
+          case "0":
+            buffer = read();
+            lexState = "zero";
+            return;
+          case "1":
+          case "2":
+          case "3":
+          case "4":
+          case "5":
+          case "6":
+          case "7":
+          case "8":
+          case "9":
+            buffer = read();
+            lexState = "decimalInteger";
+            return;
+          case "I":
+            read();
+            literal2("nfinity");
+            return newToken("numeric", sign * Infinity);
+          case "N":
+            read();
+            literal2("aN");
+            return newToken("numeric", NaN);
+        }
+        throw invalidChar(read());
+      },
+      zero() {
+        switch (c) {
+          case ".":
+            buffer += read();
+            lexState = "decimalPoint";
+            return;
+          case "e":
+          case "E":
+            buffer += read();
+            lexState = "decimalExponent";
+            return;
+          case "x":
+          case "X":
+            buffer += read();
+            lexState = "hexadecimal";
+            return;
+        }
+        return newToken("numeric", sign * 0);
+      },
+      decimalInteger() {
+        switch (c) {
+          case ".":
+            buffer += read();
+            lexState = "decimalPoint";
+            return;
+          case "e":
+          case "E":
+            buffer += read();
+            lexState = "decimalExponent";
+            return;
+        }
+        if (util.isDigit(c)) {
+          buffer += read();
+          return;
+        }
+        return newToken("numeric", sign * Number(buffer));
+      },
+      decimalPointLeading() {
+        if (util.isDigit(c)) {
+          buffer += read();
+          lexState = "decimalFraction";
+          return;
+        }
+        throw invalidChar(read());
+      },
+      decimalPoint() {
+        switch (c) {
+          case "e":
+          case "E":
+            buffer += read();
+            lexState = "decimalExponent";
+            return;
+        }
+        if (util.isDigit(c)) {
+          buffer += read();
+          lexState = "decimalFraction";
+          return;
+        }
+        return newToken("numeric", sign * Number(buffer));
+      },
+      decimalFraction() {
+        switch (c) {
+          case "e":
+          case "E":
+            buffer += read();
+            lexState = "decimalExponent";
+            return;
+        }
+        if (util.isDigit(c)) {
+          buffer += read();
+          return;
+        }
+        return newToken("numeric", sign * Number(buffer));
+      },
+      decimalExponent() {
+        switch (c) {
+          case "+":
+          case "-":
+            buffer += read();
+            lexState = "decimalExponentSign";
+            return;
+        }
+        if (util.isDigit(c)) {
+          buffer += read();
+          lexState = "decimalExponentInteger";
+          return;
+        }
+        throw invalidChar(read());
+      },
+      decimalExponentSign() {
+        if (util.isDigit(c)) {
+          buffer += read();
+          lexState = "decimalExponentInteger";
+          return;
+        }
+        throw invalidChar(read());
+      },
+      decimalExponentInteger() {
+        if (util.isDigit(c)) {
+          buffer += read();
+          return;
+        }
+        return newToken("numeric", sign * Number(buffer));
+      },
+      hexadecimal() {
+        if (util.isHexDigit(c)) {
+          buffer += read();
+          lexState = "hexadecimalInteger";
+          return;
+        }
+        throw invalidChar(read());
+      },
+      hexadecimalInteger() {
+        if (util.isHexDigit(c)) {
+          buffer += read();
+          return;
+        }
+        return newToken("numeric", sign * Number(buffer));
+      },
+      string() {
+        switch (c) {
+          case "\\":
+            read();
+            buffer += escape();
+            return;
+          case '"':
+            if (doubleQuote) {
+              read();
+              return newToken("string", buffer);
+            }
+            buffer += read();
+            return;
+          case "'":
+            if (!doubleQuote) {
+              read();
+              return newToken("string", buffer);
+            }
+            buffer += read();
+            return;
+          case "\n":
+          case "\r":
+            throw invalidChar(read());
+          case "\u2028":
+          case "\u2029":
+            separatorChar(c);
+            break;
+          case void 0:
+            throw invalidChar(read());
+        }
+        buffer += read();
+      },
+      start() {
+        switch (c) {
+          case "{":
+          case "[":
+            return newToken("punctuator", read());
+        }
+        lexState = "value";
+      },
+      beforePropertyName() {
+        switch (c) {
+          case "$":
+          case "_":
+            buffer = read();
+            lexState = "identifierName";
+            return;
+          case "\\":
+            read();
+            lexState = "identifierNameStartEscape";
+            return;
+          case "}":
+            return newToken("punctuator", read());
+          case '"':
+          case "'":
+            doubleQuote = read() === '"';
+            lexState = "string";
+            return;
+        }
+        if (util.isIdStartChar(c)) {
+          buffer += read();
+          lexState = "identifierName";
+          return;
+        }
+        throw invalidChar(read());
+      },
+      afterPropertyName() {
+        if (c === ":") {
+          return newToken("punctuator", read());
+        }
+        throw invalidChar(read());
+      },
+      beforePropertyValue() {
+        lexState = "value";
+      },
+      afterPropertyValue() {
+        switch (c) {
+          case ",":
+          case "}":
+            return newToken("punctuator", read());
+        }
+        throw invalidChar(read());
+      },
+      beforeArrayValue() {
+        if (c === "]") {
+          return newToken("punctuator", read());
+        }
+        lexState = "value";
+      },
+      afterArrayValue() {
+        switch (c) {
+          case ",":
+          case "]":
+            return newToken("punctuator", read());
+        }
+        throw invalidChar(read());
+      },
+      end() {
+        throw invalidChar(read());
+      }
+    };
+    function newToken(type, value) {
+      return {
+        type,
+        value,
+        line,
+        column
+      };
+    }
+    function literal2(s) {
+      for (const c2 of s) {
+        const p = peek();
+        if (p !== c2) {
+          throw invalidChar(read());
+        }
+        read();
+      }
+    }
+    function escape() {
+      const c2 = peek();
+      switch (c2) {
+        case "b":
+          read();
+          return "\b";
+        case "f":
+          read();
+          return "\f";
+        case "n":
+          read();
+          return "\n";
+        case "r":
+          read();
+          return "\r";
+        case "t":
+          read();
+          return "	";
+        case "v":
+          read();
+          return "\v";
+        case "0":
+          read();
+          if (util.isDigit(peek())) {
+            throw invalidChar(read());
+          }
+          return "\0";
+        case "x":
+          read();
+          return hexEscape();
+        case "u":
+          read();
+          return unicodeEscape();
+        case "\n":
+        case "\u2028":
+        case "\u2029":
+          read();
+          return "";
+        case "\r":
+          read();
+          if (peek() === "\n") {
+            read();
+          }
+          return "";
+        case "1":
+        case "2":
+        case "3":
+        case "4":
+        case "5":
+        case "6":
+        case "7":
+        case "8":
+        case "9":
+          throw invalidChar(read());
+        case void 0:
+          throw invalidChar(read());
+      }
+      return read();
+    }
+    function hexEscape() {
+      let buffer2 = "";
+      let c2 = peek();
+      if (!util.isHexDigit(c2)) {
+        throw invalidChar(read());
+      }
+      buffer2 += read();
+      c2 = peek();
+      if (!util.isHexDigit(c2)) {
+        throw invalidChar(read());
+      }
+      buffer2 += read();
+      return String.fromCodePoint(parseInt(buffer2, 16));
+    }
+    function unicodeEscape() {
+      let buffer2 = "";
+      let count = 4;
+      while (count-- > 0) {
+        const c2 = peek();
+        if (!util.isHexDigit(c2)) {
+          throw invalidChar(read());
+        }
+        buffer2 += read();
+      }
+      return String.fromCodePoint(parseInt(buffer2, 16));
+    }
+    var parseStates = {
+      start() {
+        if (token.type === "eof") {
+          throw invalidEOF();
+        }
+        push();
+      },
+      beforePropertyName() {
+        switch (token.type) {
+          case "identifier":
+          case "string":
+            key = token.value;
+            parseState = "afterPropertyName";
+            return;
+          case "punctuator":
+            pop();
+            return;
+          case "eof":
+            throw invalidEOF();
+        }
+      },
+      afterPropertyName() {
+        if (token.type === "eof") {
+          throw invalidEOF();
+        }
+        parseState = "beforePropertyValue";
+      },
+      beforePropertyValue() {
+        if (token.type === "eof") {
+          throw invalidEOF();
+        }
+        push();
+      },
+      beforeArrayValue() {
+        if (token.type === "eof") {
+          throw invalidEOF();
+        }
+        if (token.type === "punctuator" && token.value === "]") {
+          pop();
+          return;
+        }
+        push();
+      },
+      afterPropertyValue() {
+        if (token.type === "eof") {
+          throw invalidEOF();
+        }
+        switch (token.value) {
+          case ",":
+            parseState = "beforePropertyName";
+            return;
+          case "}":
+            pop();
+        }
+      },
+      afterArrayValue() {
+        if (token.type === "eof") {
+          throw invalidEOF();
+        }
+        switch (token.value) {
+          case ",":
+            parseState = "beforeArrayValue";
+            return;
+          case "]":
+            pop();
+        }
+      },
+      end() {
+      }
+    };
+    function push() {
+      let value;
+      switch (token.type) {
+        case "punctuator":
+          switch (token.value) {
+            case "{":
+              value = {};
+              break;
+            case "[":
+              value = [];
+              break;
+          }
+          break;
+        case "null":
+        case "boolean":
+        case "numeric":
+        case "string":
+          value = token.value;
+          break;
+      }
+      if (root === void 0) {
+        root = value;
+      } else {
+        const parent = stack[stack.length - 1];
+        if (Array.isArray(parent)) {
+          parent.push(value);
+        } else {
+          Object.defineProperty(parent, key, {
+            value,
+            writable: true,
+            enumerable: true,
+            configurable: true
+          });
+        }
+      }
+      if (value !== null && typeof value === "object") {
+        stack.push(value);
+        if (Array.isArray(value)) {
+          parseState = "beforeArrayValue";
+        } else {
+          parseState = "beforePropertyName";
+        }
+      } else {
+        const current = stack[stack.length - 1];
+        if (current == null) {
+          parseState = "end";
+        } else if (Array.isArray(current)) {
+          parseState = "afterArrayValue";
+        } else {
+          parseState = "afterPropertyValue";
+        }
+      }
+    }
+    function pop() {
+      stack.pop();
+      const current = stack[stack.length - 1];
+      if (current == null) {
+        parseState = "end";
+      } else if (Array.isArray(current)) {
+        parseState = "afterArrayValue";
+      } else {
+        parseState = "afterPropertyValue";
+      }
+    }
+    function invalidChar(c2) {
+      if (c2 === void 0) {
+        return syntaxError(`JSON5: invalid end of input at ${line}:${column}`);
+      }
+      return syntaxError(`JSON5: invalid character '${formatChar(c2)}' at ${line}:${column}`);
+    }
+    function invalidEOF() {
+      return syntaxError(`JSON5: invalid end of input at ${line}:${column}`);
+    }
+    function invalidIdentifier() {
+      column -= 5;
+      return syntaxError(`JSON5: invalid identifier character at ${line}:${column}`);
+    }
+    function separatorChar(c2) {
+      console.warn(`JSON5: '${formatChar(c2)}' in strings is not valid ECMAScript; consider escaping`);
+    }
+    function formatChar(c2) {
+      const replacements = {
+        "'": "\\'",
+        '"': '\\"',
+        "\\": "\\\\",
+        "\b": "\\b",
+        "\f": "\\f",
+        "\n": "\\n",
+        "\r": "\\r",
+        "	": "\\t",
+        "\v": "\\v",
+        "\0": "\\0",
+        "\u2028": "\\u2028",
+        "\u2029": "\\u2029"
+      };
+      if (replacements[c2]) {
+        return replacements[c2];
+      }
+      if (c2 < " ") {
+        const hexString = c2.charCodeAt(0).toString(16);
+        return "\\x" + ("00" + hexString).substring(hexString.length);
+      }
+      return c2;
+    }
+    function syntaxError(message) {
+      const err = new SyntaxError(message);
+      err.lineNumber = line;
+      err.columnNumber = column;
+      return err;
+    }
+  }
+});
+
+// ../../node_modules/.pnpm/json5@2.2.3/node_modules/json5/lib/stringify.js
+var require_stringify = __commonJS({
+  "../../node_modules/.pnpm/json5@2.2.3/node_modules/json5/lib/stringify.js"(exports, module) {
+    var util = require_util();
+    module.exports = function stringify2(value, replacer, space) {
+      const stack = [];
+      let indent = "";
+      let propertyList;
+      let replacerFunc;
+      let gap = "";
+      let quote;
+      if (replacer != null && typeof replacer === "object" && !Array.isArray(replacer)) {
+        space = replacer.space;
+        quote = replacer.quote;
+        replacer = replacer.replacer;
+      }
+      if (typeof replacer === "function") {
+        replacerFunc = replacer;
+      } else if (Array.isArray(replacer)) {
+        propertyList = [];
+        for (const v of replacer) {
+          let item;
+          if (typeof v === "string") {
+            item = v;
+          } else if (typeof v === "number" || v instanceof String || v instanceof Number) {
+            item = String(v);
+          }
+          if (item !== void 0 && propertyList.indexOf(item) < 0) {
+            propertyList.push(item);
+          }
+        }
+      }
+      if (space instanceof Number) {
+        space = Number(space);
+      } else if (space instanceof String) {
+        space = String(space);
+      }
+      if (typeof space === "number") {
+        if (space > 0) {
+          space = Math.min(10, Math.floor(space));
+          gap = "          ".substr(0, space);
+        }
+      } else if (typeof space === "string") {
+        gap = space.substr(0, 10);
+      }
+      return serializeProperty("", { "": value });
+      function serializeProperty(key, holder) {
+        let value2 = holder[key];
+        if (value2 != null) {
+          if (typeof value2.toJSON5 === "function") {
+            value2 = value2.toJSON5(key);
+          } else if (typeof value2.toJSON === "function") {
+            value2 = value2.toJSON(key);
+          }
+        }
+        if (replacerFunc) {
+          value2 = replacerFunc.call(holder, key, value2);
+        }
+        if (value2 instanceof Number) {
+          value2 = Number(value2);
+        } else if (value2 instanceof String) {
+          value2 = String(value2);
+        } else if (value2 instanceof Boolean) {
+          value2 = value2.valueOf();
+        }
+        switch (value2) {
+          case null:
+            return "null";
+          case true:
+            return "true";
+          case false:
+            return "false";
+        }
+        if (typeof value2 === "string") {
+          return quoteString(value2, false);
+        }
+        if (typeof value2 === "number") {
+          return String(value2);
+        }
+        if (typeof value2 === "object") {
+          return Array.isArray(value2) ? serializeArray(value2) : serializeObject(value2);
+        }
+        return void 0;
+      }
+      function quoteString(value2) {
+        const quotes = {
+          "'": 0.1,
+          '"': 0.2
+        };
+        const replacements = {
+          "'": "\\'",
+          '"': '\\"',
+          "\\": "\\\\",
+          "\b": "\\b",
+          "\f": "\\f",
+          "\n": "\\n",
+          "\r": "\\r",
+          "	": "\\t",
+          "\v": "\\v",
+          "\0": "\\0",
+          "\u2028": "\\u2028",
+          "\u2029": "\\u2029"
+        };
+        let product = "";
+        for (let i = 0; i < value2.length; i++) {
+          const c = value2[i];
+          switch (c) {
+            case "'":
+            case '"':
+              quotes[c]++;
+              product += c;
+              continue;
+            case "\0":
+              if (util.isDigit(value2[i + 1])) {
+                product += "\\x00";
+                continue;
+              }
+          }
+          if (replacements[c]) {
+            product += replacements[c];
+            continue;
+          }
+          if (c < " ") {
+            let hexString = c.charCodeAt(0).toString(16);
+            product += "\\x" + ("00" + hexString).substring(hexString.length);
+            continue;
+          }
+          product += c;
+        }
+        const quoteChar = quote || Object.keys(quotes).reduce((a, b) => quotes[a] < quotes[b] ? a : b);
+        product = product.replace(new RegExp(quoteChar, "g"), replacements[quoteChar]);
+        return quoteChar + product + quoteChar;
+      }
+      function serializeObject(value2) {
+        if (stack.indexOf(value2) >= 0) {
+          throw TypeError("Converting circular structure to JSON5");
+        }
+        stack.push(value2);
+        let stepback = indent;
+        indent = indent + gap;
+        let keys = propertyList || Object.keys(value2);
+        let partial2 = [];
+        for (const key of keys) {
+          const propertyString = serializeProperty(key, value2);
+          if (propertyString !== void 0) {
+            let member = serializeKey(key) + ":";
+            if (gap !== "") {
+              member += " ";
+            }
+            member += propertyString;
+            partial2.push(member);
+          }
+        }
+        let final;
+        if (partial2.length === 0) {
+          final = "{}";
+        } else {
+          let properties;
+          if (gap === "") {
+            properties = partial2.join(",");
+            final = "{" + properties + "}";
+          } else {
+            let separator = ",\n" + indent;
+            properties = partial2.join(separator);
+            final = "{\n" + indent + properties + ",\n" + stepback + "}";
+          }
+        }
+        stack.pop();
+        indent = stepback;
+        return final;
+      }
+      function serializeKey(key) {
+        if (key.length === 0) {
+          return quoteString(key, true);
+        }
+        const firstChar = String.fromCodePoint(key.codePointAt(0));
+        if (!util.isIdStartChar(firstChar)) {
+          return quoteString(key, true);
+        }
+        for (let i = firstChar.length; i < key.length; i++) {
+          if (!util.isIdContinueChar(String.fromCodePoint(key.codePointAt(i)))) {
+            return quoteString(key, true);
+          }
+        }
+        return key;
+      }
+      function serializeArray(value2) {
+        if (stack.indexOf(value2) >= 0) {
+          throw TypeError("Converting circular structure to JSON5");
+        }
+        stack.push(value2);
+        let stepback = indent;
+        indent = indent + gap;
+        let partial2 = [];
+        for (let i = 0; i < value2.length; i++) {
+          const propertyString = serializeProperty(String(i), value2);
+          partial2.push(propertyString !== void 0 ? propertyString : "null");
+        }
+        let final;
+        if (partial2.length === 0) {
+          final = "[]";
+        } else {
+          if (gap === "") {
+            let properties = partial2.join(",");
+            final = "[" + properties + "]";
+          } else {
+            let separator = ",\n" + indent;
+            let properties = partial2.join(separator);
+            final = "[\n" + indent + properties + ",\n" + stepback + "]";
+          }
+        }
+        stack.pop();
+        indent = stepback;
+        return final;
+      }
+    };
+  }
+});
+
+// ../../node_modules/.pnpm/json5@2.2.3/node_modules/json5/lib/index.js
+var require_lib = __commonJS({
+  "../../node_modules/.pnpm/json5@2.2.3/node_modules/json5/lib/index.js"(exports, module) {
+    var parse4 = require_parse();
+    var stringify2 = require_stringify();
+    var JSON52 = {
+      parse: parse4,
+      stringify: stringify2
+    };
+    module.exports = JSON52;
+  }
+});
 
 // src/cli.ts
-import { existsSync as existsSync3 } from "node:fs";
-import process3 from "node:process";
+import { existsSync as existsSync4 } from "node:fs";
+import process4 from "node:process";
 import { parseArgs } from "node:util";
 
 // src/tauriBridge.ts
@@ -16,7 +1156,7 @@ import { execFile } from "node:child_process";
 import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile as readFile2, writeFile } from "node:fs/promises";
 import path from "node:path";
-import process from "node:process";
+import process2 from "node:process";
 import { promisify } from "node:util";
 
 // src/inspect.ts
@@ -131,11 +1271,11 @@ var tauriPlatform = {
   x64: ["darwin-x86_64"]
 };
 async function tauriSign(file2, keyFile) {
-  const cli = (process.env.TAURI_CLI ?? "npx --yes @tauri-apps/cli@2.12.1").split(" ");
+  const cli = (process2.env.TAURI_CLI ?? "npx --yes @tauri-apps/cli@2.12.1").split(" ");
   const [command, ...prefix] = cli;
   if (!command) throw new Error("TAURI_CLI is empty");
-  const key = keyFile ? ["--private-key-path", keyFile] : ["--private-key", process.env.TAURI_SIGNING_PRIVATE_KEY ?? ""];
-  if (!keyFile && !process.env.TAURI_SIGNING_PRIVATE_KEY) {
+  const key = keyFile ? ["--private-key-path", keyFile] : ["--private-key", process2.env.TAURI_SIGNING_PRIVATE_KEY ?? ""];
+  if (!keyFile && !process2.env.TAURI_SIGNING_PRIVATE_KEY) {
     throw new Error("Pass --key-file, or set TAURI_SIGNING_PRIVATE_KEY");
   }
   await run(command, [
@@ -144,7 +1284,7 @@ async function tauriSign(file2, keyFile) {
     "sign",
     ...key,
     "--password",
-    process.env.TAURI_SIGNING_PRIVATE_KEY_PASSWORD ?? "",
+    process2.env.TAURI_SIGNING_PRIVATE_KEY_PASSWORD ?? "",
     file2
   ]);
   return (await readFile2(`${file2}.sig`, "utf8")).trim();
@@ -183,7 +1323,7 @@ async function tauriBridge(options) {
     "tar",
     ["--no-mac-metadata", "-czf", tarball, "-C", unpacked, appName],
     {
-      env: { ...process.env, COPYFILE_DISABLE: "1" }
+      env: { ...process2.env, COPYFILE_DISABLE: "1" }
     }
   );
   const signature = await tauriSign(tarball, options.keyFile);
@@ -202,7 +1342,7 @@ async function tauriBridge(options) {
   const latest = path.join(options.out, "latest.json");
   await writeFile(latest, `${JSON.stringify(manifest, null, 2)}
 `);
-  process.stdout.write(
+  process2.stdout.write(
     `Bridge to ${version2} (${arch}):
   ${tarball}
   ${tarball}.sig
@@ -217,12 +1357,13 @@ function configJson(config2) {
   return `${JSON.stringify(config2, null, 2)}
 `;
 }
+var presetsKey = /* @__PURE__ */ Symbol.for("@todesktop/config/presets");
 
 // ../config/src/load.ts
 import { build } from "esbuild";
-import { mkdtemp, readFile as readFile3, rm, writeFile as writeFile2 } from "node:fs/promises";
+import { mkdir as mkdir3, mkdtemp, readFile as readFile4, rm, writeFile as writeFile2 } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import path2 from "node:path";
+import path3 from "node:path";
 import { pathToFileURL } from "node:url";
 
 // ../../node_modules/.pnpm/zod@4.1.12/node_modules/zod/v4/classic/external.js
@@ -956,10 +2097,10 @@ function mergeDefs(...defs) {
 function cloneDef(schema) {
   return mergeDefs(schema._zod.def);
 }
-function getElementAtPath(obj, path4) {
-  if (!path4)
+function getElementAtPath(obj, path5) {
+  if (!path5)
     return obj;
-  return path4.reduce((acc, key) => acc?.[key], obj);
+  return path5.reduce((acc, key) => acc?.[key], obj);
 }
 function promiseAllObject(promisesObj) {
   const keys = Object.keys(promisesObj);
@@ -1320,11 +2461,11 @@ function aborted(x, startIndex = 0) {
   }
   return false;
 }
-function prefixIssues(path4, issues) {
+function prefixIssues(path5, issues) {
   return issues.map((iss) => {
     var _a;
     (_a = iss).path ?? (_a.path = []);
-    iss.path.unshift(path4);
+    iss.path.unshift(path5);
     return iss;
   });
 }
@@ -1486,7 +2627,7 @@ function formatError(error46, mapper = (issue2) => issue2.message) {
 }
 function treeifyError(error46, mapper = (issue2) => issue2.message) {
   const result = { errors: [] };
-  const processError = (error47, path4 = []) => {
+  const processError = (error47, path5 = []) => {
     var _a, _b;
     for (const issue2 of error47.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
@@ -1496,7 +2637,7 @@ function treeifyError(error46, mapper = (issue2) => issue2.message) {
       } else if (issue2.code === "invalid_element") {
         processError({ issues: issue2.issues }, issue2.path);
       } else {
-        const fullpath = [...path4, ...issue2.path];
+        const fullpath = [...path5, ...issue2.path];
         if (fullpath.length === 0) {
           result.errors.push(mapper(issue2));
           continue;
@@ -1528,8 +2669,8 @@ function treeifyError(error46, mapper = (issue2) => issue2.message) {
 }
 function toDotPath(_path) {
   const segs = [];
-  const path4 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
-  for (const seg of path4) {
+  const path5 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
+  for (const seg of path5) {
     if (typeof seg === "number")
       segs.push(`[${seg}]`);
     else if (typeof seg === "symbol")
@@ -3117,13 +4258,13 @@ var $ZodObject = /* @__PURE__ */ $constructor("$ZodObject", (inst, def) => {
     }
     return propValues;
   });
-  const isObject2 = isObject;
+  const isObject3 = isObject;
   const catchall = def.catchall;
   let value;
   inst._zod.parse = (payload, ctx) => {
     value ?? (value = _normalized.value);
     const input = payload.value;
-    if (!isObject2(input)) {
+    if (!isObject3(input)) {
       payload.issues.push({
         expected: "object",
         code: "invalid_type",
@@ -3197,7 +4338,7 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
     return (payload, ctx) => fn(shape, payload, ctx);
   };
   let fastpass;
-  const isObject2 = isObject;
+  const isObject3 = isObject;
   const jit = !globalConfig.jitless;
   const allowsEval2 = allowsEval;
   const fastEnabled = jit && allowsEval2.value;
@@ -3206,7 +4347,7 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
   inst._zod.parse = (payload, ctx) => {
     value ?? (value = _normalized.value);
     const input = payload.value;
-    if (!isObject2(input)) {
+    if (!isObject3(input)) {
       payload.issues.push({
         expected: "object",
         code: "invalid_type",
@@ -12767,6 +13908,1597 @@ function date4(params) {
 // ../../node_modules/.pnpm/zod@4.1.12/node_modules/zod/v4/classic/external.js
 config(en_default());
 
+// ../config/src/extends.ts
+var replacedWhole = /* @__PURE__ */ new Set(["apps"]);
+function isPlainObject2(value) {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+function asPresets(value, where) {
+  const presets2 = Array.isArray(value) ? value : [value];
+  for (const preset of presets2) {
+    if (!isPlainObject2(preset) || typeof preset.name !== "string") {
+      throw new Error(
+        `${where}: extends takes presets (like tauriConfig()), or a list of them`
+      );
+    }
+  }
+  return presets2;
+}
+async function layersOf(config2, name, context, preset, depth = 0) {
+  if (depth > 8) throw new Error(`${name}: presets extend too deeply`);
+  const layers = [];
+  if (config2.extends !== void 0) {
+    for (const extended of asPresets(config2.extends, name)) {
+      const value = typeof extended.config === "function" ? (
+        // oxlint-disable-next-line no-await-in-loop
+        await extended.config(context)
+      ) : extended.config ?? {};
+      if (!isPlainObject2(value)) {
+        throw new Error(`${extended.name}: its config isn't an object`);
+      }
+      layers.push(
+        ...await layersOf(value, extended.name, context, extended, depth + 1)
+      );
+    }
+  }
+  layers.push({ config: config2, name, ...preset ? { preset } : {} });
+  return layers;
+}
+function leaves(value, at, out) {
+  const last = at.slice(at.lastIndexOf(".") + 1);
+  if (isPlainObject2(value) && !replacedWhole.has(last)) {
+    for (const [key, child] of Object.entries(value)) {
+      leaves(child, `${at}.${key}`, out);
+    }
+  } else {
+    out(at);
+  }
+}
+function mergeLayers(layers) {
+  const sources = {};
+  const forget = (at) => {
+    for (const key of Object.keys(sources)) {
+      if (key === at || key.startsWith(`${at}.`)) delete sources[key];
+    }
+  };
+  const merge2 = (target, layer, name, prefix) => {
+    const out = { ...target };
+    for (const [key, value] of Object.entries(layer)) {
+      const at = prefix ? `${prefix}.${key}` : key;
+      const current = out[key];
+      if (value === void 0) {
+        delete out[key];
+        forget(at);
+      } else if (isPlainObject2(value) && isPlainObject2(current) && !replacedWhole.has(key)) {
+        out[key] = merge2(current, value, name, at);
+      } else {
+        out[key] = structuredClone(value);
+        forget(at);
+        leaves(value, at, (leaf) => {
+          sources[leaf] = name;
+        });
+      }
+    }
+    return out;
+  };
+  let data = {};
+  for (const layer of layers) data = merge2(data, layer.config, layer.name, "");
+  return { data, sources };
+}
+async function resolveExtends(config2, name, context) {
+  const layers = await layersOf(config2, name, context);
+  const values = [];
+  const prepareApps = [];
+  for (const layer of layers) {
+    const { extends: _extends, hooks: hooks2 = {}, ...rest } = layer.config;
+    if (!isPlainObject2(hooks2)) {
+      throw new Error(`${layer.name}: hooks must be an object`);
+    }
+    for (const [hookName, hook] of Object.entries(hooks2)) {
+      if (hookName !== "prepareApp") {
+        throw new Error(
+          `${layer.name}: unknown hook "${hookName}"; the hook is prepareApp`
+        );
+      }
+      if (typeof hook !== "function") {
+        throw new Error(`${layer.name}: hooks.${hookName} must be a function`);
+      }
+      prepareApps.push(hook);
+    }
+    values.push({ config: rest, name: layer.name });
+  }
+  const { data, sources } = mergeLayers(values);
+  const assemble = {};
+  const assembledBy = {};
+  for (const { name: presetName, preset } of layers) {
+    for (const [platform, assembler] of Object.entries(
+      preset?.assemble ?? {}
+    )) {
+      if (!assembler) continue;
+      if (assembledBy[platform]) {
+        throw new Error(
+          `${assembledBy[platform]} and ${presetName} both make the ${platform} app: extend one of them`
+        );
+      }
+      assembledBy[platform] = presetName;
+      assemble[platform] = assembler;
+    }
+  }
+  const hooks = {};
+  if (prepareApps.length === 1) [hooks.prepareApp] = prepareApps;
+  else if (prepareApps.length > 1) {
+    hooks.prepareApp = async (hookContext) => {
+      for (const hook of prepareApps) {
+        await hook(hookContext);
+      }
+    };
+  }
+  return { assemble, data, hooks, sources };
+}
+function sourcesOf(resolved, sources) {
+  const out = {};
+  const lookup = (at) => {
+    for (let path5 = at; path5; ) {
+      const source = sources[path5];
+      if (source) return source;
+      const dot = path5.lastIndexOf(".");
+      path5 = dot < 0 ? "" : path5.slice(0, dot);
+    }
+    return "default";
+  };
+  for (const [key, value] of Object.entries(resolved)) {
+    if (value === void 0) continue;
+    leaves(value, key, (leaf) => {
+      out[leaf] = lookup(leaf);
+    });
+  }
+  return out;
+}
+
+// ../config/src/presets/tauri.ts
+var import_json5 = __toESM(require_lib(), 1);
+import { execFile as execFile2 } from "node:child_process";
+import { existsSync as existsSync2 } from "node:fs";
+import {
+  chmod,
+  copyFile,
+  mkdir as mkdir2,
+  open as open2,
+  readdir as readdir2,
+  readFile as readFile3,
+  realpath,
+  stat
+} from "node:fs/promises";
+import path2 from "node:path";
+import { promisify as promisify2 } from "node:util";
+
+// ../../node_modules/.pnpm/smol-toml@1.9.1/node_modules/smol-toml/dist/error.js
+function getLineColFromPtr(string4, ptr) {
+  let lines = string4.slice(0, ptr).split(/\r?\n/);
+  return [lines.length, lines.pop().length + 1];
+}
+function makeCodeBlock(string4, line, column) {
+  let lines = string4.split(/\r?\n/);
+  let codeblock = "";
+  let numberLen = (Math.log10(line + 1) | 0) + 1;
+  for (let i = line - 1; i <= line + 1; i++) {
+    let l = lines[i - 1];
+    if (!l)
+      continue;
+    codeblock += i.toString().padEnd(numberLen, " ");
+    codeblock += ":  ";
+    codeblock += l;
+    codeblock += "\n";
+    if (i === line) {
+      codeblock += " ".repeat(numberLen + column + 2);
+      codeblock += "^\n";
+    }
+  }
+  return codeblock;
+}
+var TomlError = class _TomlError extends Error {
+  line;
+  column;
+  codeblock;
+  constructor(message, options) {
+    const [line, column] = getLineColFromPtr(options.toml, options.ptr);
+    const codeblock = makeCodeBlock(options.toml, line, column);
+    super(`Invalid TOML document: ${message}
+
+${codeblock}`, options);
+    this.line = line;
+    this.column = column;
+    this.codeblock = codeblock;
+  }
+  /** @internal */
+  static x(message, ctx, ptr) {
+    throw new _TomlError(message, { toml: ctx.s, ptr: ptr ?? ctx.p });
+  }
+};
+
+// ../../node_modules/.pnpm/smol-toml@1.9.1/node_modules/smol-toml/dist/primitive.js
+function parseString(ctx) {
+  let startPtr = ctx.p;
+  let c = ctx.s.charCodeAt(ctx.p++);
+  let first = c;
+  let isLiteral = c === 39;
+  let isMultiline = c === ctx.s.charCodeAt(ctx.p) && c === ctx.s.charCodeAt(ctx.p + 1);
+  if (isMultiline) {
+    if ((c = ctx.s.charCodeAt(ctx.p += 2)) === 10)
+      ctx.p++;
+    else if (c === 13 && ctx.s.charCodeAt(ctx.p + 1) === 10)
+      ctx.p += 2;
+  }
+  let parsed = "";
+  let sliceStart = ctx.p;
+  let state = 0;
+  for (; ctx.p < ctx.s.length; ctx.p++) {
+    c = ctx.s.charCodeAt(ctx.p);
+    if (isMultiline && (c === 10 || c === 13 && ctx.s.charCodeAt(ctx.p + 1) === 10)) {
+      state = state && 3;
+    } else if (c < 32 && c !== 9 || c === 127) {
+      TomlError.x("control characters are not allowed in strings", ctx);
+    } else if ((!state || state === 3) && c === first && (!isMultiline || ctx.s.charCodeAt(ctx.p + 1) === first && ctx.s.charCodeAt(ctx.p + 2) === first)) {
+      if (isMultiline) {
+        if (ctx.s.charCodeAt(ctx.p + 3) === first)
+          ctx.p++;
+        if (ctx.s.charCodeAt(ctx.p + 3) === first)
+          ctx.p++;
+      }
+      if (!state) {
+        let s = ctx.s.slice(sliceStart, ctx.p);
+        parsed = parsed ? parsed + s : s;
+      }
+      ctx.p += isMultiline ? 3 : 1;
+      return parsed;
+    } else if (!state) {
+      if (!isLiteral && c === 92) {
+        parsed += ctx.s.slice(sliceStart, sliceStart = ctx.p);
+        state = 1;
+      }
+    } else if (state === 1) {
+      if (c === 120 || c === 117 || c === 85) {
+        let errPtr = ctx.p++ - 1;
+        let value = 0;
+        let len = c === 120 ? 2 : c === 117 ? 4 : 8;
+        for (let j = 0; j < len; j++, ctx.p++) {
+          let hex3 = ctx.s.charCodeAt(ctx.p);
+          let digit = (
+            /* 0-9 */
+            hex3 >= 48 && hex3 <= 57 ? hex3 - 48 : (
+              /* A-F */
+              hex3 >= 65 && hex3 <= 70 ? hex3 - 65 + 10 : (
+                /* a-f */
+                hex3 >= 97 && hex3 <= 102 ? hex3 - 97 + 10 : -1
+              )
+            )
+          );
+          if (digit < 0)
+            TomlError.x("invalid non-hex character in unicode escape", ctx);
+          value = value << 4 | digit;
+        }
+        if (value < 0 || value > 1114111 || value >= 55296 && value <= 57343) {
+          TomlError.x("invalid unicode escape", ctx, errPtr);
+        }
+        parsed += String.fromCodePoint(value);
+        sliceStart = ctx.p--;
+        state = 0;
+      } else if (isMultiline && (c === 32 || c === 9)) {
+        state = 2;
+      } else {
+        if (c === 98)
+          parsed += "\b";
+        else if (c === 116)
+          parsed += "	";
+        else if (c === 110)
+          parsed += "\n";
+        else if (c === 102)
+          parsed += "\f";
+        else if (c === 114)
+          parsed += "\r";
+        else if (c === 101)
+          parsed += "\x1B";
+        else if (c === 34)
+          parsed += '"';
+        else if (c === 92)
+          parsed += "\\";
+        else
+          TomlError.x("unrecognised escape sequence", ctx);
+        sliceStart = ctx.p + 1;
+        state = 0;
+      }
+    } else if (c !== 32 && c !== 9) {
+      if (state === 2)
+        TomlError.x("invalid escape: only line-ending whitespace may be escaped", ctx, sliceStart);
+      state = !isLiteral && c === 92 ? 1 : 0;
+      sliceStart = ctx.p;
+    }
+  }
+  TomlError.x("unfinished string", ctx, startPtr);
+}
+
+// ../../node_modules/.pnpm/smol-toml@1.9.1/node_modules/smol-toml/dist/date.js
+var DATE_TIME_RE = /^(\d{4}-\d{2}-\d{2})?[Tt ]?(?:(\d{2}):\d{2}(?::\d{2}(?:\.\d+)?)?)?(Z|z|[-+]\d{2}:\d{2})?$/i;
+var TomlDate = class _TomlDate extends Date {
+  #hasDate = false;
+  #hasTime = false;
+  #offset = null;
+  constructor(date5, fasttype, unsafeDelim) {
+    let hasDate = true;
+    let hasTime = true;
+    let offset = "Z";
+    let c;
+    if (typeof date5 === "string") {
+      if (fasttype)
+        prep: {
+          if (fasttype < 3) {
+            if (+date5.slice(11, 13) > 23) {
+              date5 = "";
+              break prep;
+            }
+            if (fasttype === 2) {
+              offset = null;
+              date5 += "Z";
+            } else if ((c = date5.charCodeAt(date5.length - 1)) !== 90 && c !== 122) {
+              offset = date5.slice(date5.length - 6);
+            }
+            if (unsafeDelim)
+              date5 = date5.slice(0, 10) + "T" + date5.slice(11);
+          } else if (fasttype === 4) {
+            date5 = +date5.slice(0, 2) > 23 ? "" : `0000-01-01T${date5}Z`;
+          }
+          hasDate = fasttype !== 4;
+          hasTime = fasttype !== 3;
+        }
+      else {
+        let match = date5.match(DATE_TIME_RE);
+        if (match) {
+          if (!match[1]) {
+            hasDate = false;
+            date5 = `0000-01-01T${date5}`;
+          }
+          hasTime = !!match[2];
+          hasTime && date5[10] === " " && (date5 = date5.replace(" ", "T"));
+          if (match[2] && +match[2] > 23) {
+            date5 = "";
+          } else {
+            offset = match[3] || null;
+            if (!offset && hasTime)
+              date5 += "Z";
+          }
+        } else {
+          date5 = "";
+        }
+      }
+    }
+    super(date5);
+    if (!isNaN(this.getTime())) {
+      this.#hasDate = hasDate;
+      this.#hasTime = hasTime;
+      this.#offset = offset;
+    }
+  }
+  isDateTime() {
+    return this.#hasDate && this.#hasTime;
+  }
+  isLocal() {
+    return !this.#hasDate || !this.#hasTime || !this.#offset;
+  }
+  isDate() {
+    return this.#hasDate && !this.#hasTime;
+  }
+  isTime() {
+    return this.#hasTime && !this.#hasDate;
+  }
+  isValid() {
+    return this.#hasDate || this.#hasTime;
+  }
+  toISOString() {
+    let iso = super.toISOString();
+    if (this.isDate())
+      return iso.slice(0, 10);
+    if (this.isTime())
+      return iso.slice(11, 23);
+    if (this.#offset === null)
+      return iso.slice(0, -1);
+    if (this.#offset === "Z" || this.#offset === "z")
+      return iso;
+    let offset = +this.#offset.slice(1, 3) * 60 + +this.#offset.slice(4, 6);
+    offset = this.#offset[0] === "-" ? offset : -offset;
+    let offsetDate = new Date(this.getTime() - offset * 6e4);
+    return offsetDate.toISOString().slice(0, -1) + this.#offset;
+  }
+  static wrapAsOffsetDateTime(jsDate, offset = "Z") {
+    let date5 = new _TomlDate(jsDate);
+    date5.#offset = offset;
+    return date5;
+  }
+  static wrapAsLocalDateTime(jsDate) {
+    let date5 = new _TomlDate(jsDate);
+    date5.#offset = null;
+    return date5;
+  }
+  static wrapAsLocalDate(jsDate) {
+    let date5 = new _TomlDate(jsDate);
+    date5.#hasTime = false;
+    date5.#offset = null;
+    return date5;
+  }
+  static wrapAsLocalTime(jsDate) {
+    let date5 = new _TomlDate(jsDate);
+    date5.#hasDate = false;
+    date5.#offset = null;
+    return date5;
+  }
+};
+
+// ../../node_modules/.pnpm/smol-toml@1.9.1/node_modules/smol-toml/dist/extract.js
+function isDigit(char, base = 10) {
+  return base === 16 ? char > 47 && char < 58 || char > 64 && char < 71 || char > 96 && char < 103 : char > 47 && char < 48 + base;
+}
+function isEndOfValue(char, delim) {
+  return char === 32 || char === 9 || char === 10 || char === 13 || // Structure end or next value delimiter
+  delim && (char === delim || char === 44) || // Comment
+  char === 35;
+}
+function extractValue(ctx, end) {
+  let errPtr = ctx.p;
+  let c = ctx.s.charCodeAt(ctx.p);
+  if (c === 91 || c === 123) {
+    ctx.d-- || TomlError.x("document contains excessively nested structures. aborting.", ctx);
+    let value = c === 91 ? parseArray(ctx) : parseInlineTable(ctx);
+    ctx.d++;
+    return value;
+  }
+  if (c === 34 || c === 39) {
+    return parseString(ctx);
+  }
+  if (c === 116) {
+    if (ctx.s.charCodeAt(++ctx.p) !== 114 || ctx.s.charCodeAt(++ctx.p) !== 117 || ctx.s.charCodeAt(++ctx.p) !== 101)
+      TomlError.x("invalid value", ctx, errPtr);
+    return ctx.p++, true;
+  }
+  if (c === 102) {
+    if (ctx.s.charCodeAt(++ctx.p) !== 97 || ctx.s.charCodeAt(++ctx.p) !== 108 || ctx.s.charCodeAt(++ctx.p) !== 115 || ctx.s.charCodeAt(++ctx.p) !== 101)
+      TomlError.x("invalid value", ctx, errPtr);
+    return ctx.p++, false;
+  }
+  if (c === 43 || c === 45) {
+    return parseNumber(ctx, ctx.p, ctx.s.charCodeAt(++ctx.p), 44 - c, end);
+  }
+  if (ctx.s.charCodeAt(ctx.p + 4) === 45 && ctx.s.charCodeAt(ctx.p + 7) === 45) {
+    return parseDate(ctx, c, end);
+  }
+  if (ctx.s.charCodeAt(ctx.p + 2) === 58) {
+    return parseTime(ctx, c, end);
+  }
+  return parseNumber(ctx, ctx.p, c, 0, end);
+}
+function parseNumber(ctx, startPtr, startChr, sign, endChr) {
+  let c = startChr;
+  let state = 0;
+  let hasUnderscores = false;
+  if (c === 105) {
+    if (ctx.s.charCodeAt(++ctx.p) !== 110 || ctx.s.charCodeAt(++ctx.p) !== 102)
+      TomlError.x("invalid value", ctx, startPtr);
+    return ctx.p++, (sign || 1) / 0;
+  }
+  if (c === 110) {
+    if (ctx.s.charCodeAt(++ctx.p) !== 97 || ctx.s.charCodeAt(++ctx.p) !== 110)
+      TomlError.x("invalid value", ctx, startPtr);
+    return ctx.p++, NaN;
+  }
+  if (c === 48) {
+    if (++ctx.p >= ctx.s.length || isEndOfValue(c = ctx.s.charCodeAt(ctx.p), endChr))
+      return ctx.bi === true ? 0n : 0;
+    if (!sign) {
+      if (c === 120)
+        return parseIntegerBaseN(ctx, startPtr, 16, endChr);
+      else if (c === 98)
+        return parseIntegerBaseN(ctx, startPtr, 2, endChr);
+      else if (c === 111)
+        return parseIntegerBaseN(ctx, startPtr, 8, endChr);
+    }
+    if (c === 46)
+      state = 2;
+    else if (c === 101 || c === 69)
+      state = 4;
+    else
+      TomlError.x("illegal leading zero", ctx, startPtr);
+  } else if (!isDigit(c))
+    TomlError.x("invalid value", ctx, startPtr);
+  while (++ctx.p < ctx.s.length && (c = ctx.s.charCodeAt(ctx.p), !isEndOfValue(c, endChr))) {
+    if (!state)
+      state = 1;
+    if (c === 95) {
+      if (!(state & 1))
+        TomlError.x("illegal underscore", ctx);
+      state += 11;
+      hasUnderscores = true;
+    } else if (state === 1 && c === 46)
+      state = 2;
+    else if ((state === 1 || state === 3) && (c === 101 || c === 69))
+      state = 4;
+    else if (state === 4 && (c === 43 || c === 45)) {
+      state = 6;
+    } else if (!isDigit(c))
+      TomlError.x(`illegal character in numeric literal`, ctx);
+    else if (state > 9)
+      state -= 11;
+    else if (!(state & 1))
+      state++;
+  }
+  if (!state) {
+    let val = (startChr - 48) * (sign || 1);
+    return ctx.bi === true ? BigInt(val) : val;
+  }
+  if (!(state & 1))
+    TomlError.x("unfinished numeric value", ctx, startPtr);
+  let str = ctx.s.slice(startPtr, ctx.p);
+  if (hasUnderscores)
+    str = str.replaceAll("_", "");
+  return state > 1 ? parseFloat(str) : parseInteger(ctx, str, 10, startPtr);
+}
+function parseIntegerBaseN(ctx, startPtr, base, endChr) {
+  let c, underscore = 1;
+  while (++ctx.p < ctx.s.length && (c = ctx.s.charCodeAt(ctx.p), !isEndOfValue(c, endChr))) {
+    if (c === 95) {
+      if (underscore & 1)
+        TomlError.x("illegal underscore", ctx);
+      underscore = 3;
+    } else if (!isDigit(c, base))
+      TomlError.x(`illegal character in numeric literal`, ctx);
+    else if (underscore & 1)
+      underscore--;
+  }
+  if (underscore & 1)
+    TomlError.x("unfinished numeric value", ctx);
+  let str = ctx.s.slice(startPtr + 2, ctx.p);
+  if (underscore)
+    str = str.replaceAll("_", "");
+  return parseInteger(ctx, str, base, startPtr);
+}
+function parseInteger(ctx, str, base, startPtr) {
+  if (ctx.bi !== true)
+    int: {
+      let val = parseInt(str, base);
+      if (!Number.isSafeInteger(val)) {
+        if (ctx.bi)
+          break int;
+        TomlError.x("integer value cannot be represented losslessly", ctx, startPtr);
+      }
+      return val;
+    }
+  return base === 10 ? BigInt(str) : BigInt((base === 2 ? "0b" : base === 8 ? "0o" : "0x") + str);
+}
+function parseDate(ctx, c, endChr) {
+  let startPtr = ctx.p++, unsafeSeparator;
+  if (!isDigit(c) || !isDigit(ctx.s.charCodeAt(ctx.p++)) || !isDigit(ctx.s.charCodeAt(ctx.p++)) || !isDigit(ctx.s.charCodeAt(ctx.p++))) {
+    return parseNumber(ctx, ctx.p = startPtr, c, 0, endChr);
+  }
+  ctx.p += 5;
+  if (!isDigit(ctx.s.charCodeAt(ctx.p++)))
+    TomlError.x("invalid date-time: date part is malformed", ctx, startPtr);
+  if (ctx.p >= ctx.s.length || ((c = ctx.s.charCodeAt(ctx.p)) !== 32 || (unsafeSeparator = true, !isDigit(ctx.s.charCodeAt(ctx.p + 1)))) && c !== 84 && c !== 116) {
+    let t2 = ctx.s.slice(startPtr, ctx.p);
+    return readDate(ctx, t2, 3, false, startPtr);
+  }
+  if (ctx.s.charCodeAt(ctx.p += 3) !== 58)
+    TomlError.x("invalid date-time: time part is malformed", ctx, startPtr);
+  if (ctx.s.charCodeAt(ctx.p += 3) === 58)
+    ctx.p += 3;
+  if (ctx.s.charCodeAt(ctx.p) === 46)
+    while (isDigit(ctx.s.charCodeAt(++ctx.p)))
+      ;
+  if (c = ctx.s.charCodeAt(ctx.p)) {
+    if (c === 90 || c === 122) {
+      let t2 = ctx.s.slice(startPtr, ++ctx.p);
+      return readDate(ctx, t2, 1, unsafeSeparator, startPtr, "[+00:00]");
+    }
+    if (c === 43 || c === 45) {
+      let t2 = ctx.s.slice(startPtr, ctx.p += 6);
+      return readDate(ctx, t2, 1, unsafeSeparator, startPtr, !ctx.ld && "[" + ctx.s.slice(ctx.p - 6, ctx.p) + "]");
+    }
+  }
+  let t = ctx.s.slice(startPtr, ctx.p);
+  return readDate(ctx, t, 2, unsafeSeparator, startPtr);
+}
+function parseTime(ctx, c, endChr) {
+  let start = ctx.p;
+  if (!isDigit(c) || !isDigit(ctx.s.charCodeAt(++ctx.p))) {
+    return parseNumber(ctx, --ctx.p, c, 0, endChr);
+  }
+  if (ctx.s.charCodeAt(ctx.p += 4) === 58)
+    ctx.p += 3;
+  if (ctx.s.charCodeAt(ctx.p) === 46)
+    while (isDigit(ctx.s.charCodeAt(++ctx.p)))
+      ;
+  let t = ctx.s.slice(start, ctx.p);
+  return readDate(ctx, t, 4, false, start);
+}
+function readDate(ctx, str, type, unsafeDelim, errPtr, temporalSuffix) {
+  if (ctx.ld) {
+    let date5 = new TomlDate(str, type, unsafeDelim);
+    if (!date5.isValid())
+      TomlError.x("invalid date", ctx, errPtr);
+    return date5;
+  }
+  try {
+    if (temporalSuffix)
+      str += temporalSuffix;
+    switch (type) {
+      case 1:
+        return Temporal.ZonedDateTime.from(str);
+      case 2:
+        return Temporal.PlainDateTime.from(str);
+      case 3:
+        return Temporal.PlainDate.from(str);
+      case 4:
+        return Temporal.PlainTime.from(str);
+    }
+  } catch (e) {
+    TomlError.x(e instanceof Error ? e.message : "" + e, ctx, errPtr);
+  }
+}
+
+// ../../node_modules/.pnpm/smol-toml@1.9.1/node_modules/smol-toml/dist/util.js
+function skipComment(ctx) {
+  for (; ctx.p < ctx.s.length; ctx.p++) {
+    let c = ctx.s.charCodeAt(ctx.p);
+    if (c === 10)
+      break;
+    if (c === 13 && ctx.s.charCodeAt(ctx.p + 1) === 10) {
+      ctx.p++;
+      break;
+    }
+    if (c < 32 && c !== 9 || c === 127) {
+      TomlError.x("control characters are not allowed in comments", ctx);
+    }
+  }
+}
+function skipVoid(ctx, banNewLines, banComments) {
+  let c;
+  while (ctx.p < ctx.s.length) {
+    while (ctx.p < ctx.s.length && ((c = ctx.s.charCodeAt(ctx.p)) === 32 || c === 9 || !banNewLines && (c === 10 || c === 13 && ctx.s.charCodeAt(ctx.p + 1) === 10)))
+      ctx.p++;
+    if (banComments || c !== 35)
+      break;
+    skipComment(ctx);
+  }
+}
+
+// ../../node_modules/.pnpm/smol-toml@1.9.1/node_modules/smol-toml/dist/struct.js
+function parseKey(ctx, end = 61) {
+  let startPtr;
+  let state = 0;
+  let parsed = [];
+  let sliceStart;
+  let c = ctx.s.charCodeAt(startPtr = ctx.p);
+  do {
+    if (c === end) {
+      if (!state)
+        TomlError.x("unexpected end of key", ctx);
+      if (state === 1)
+        parsed.push(ctx.s.slice(sliceStart, ctx.p));
+      return ctx.p++, parsed;
+    } else if (c === 46) {
+      if (!state)
+        TomlError.x("illegal empty bare key", ctx);
+      if (state === 1)
+        parsed.push(ctx.s.slice(sliceStart, ctx.p));
+      state = 0;
+    } else if (!state && (c === 34 || c === 39)) {
+      if (c === ctx.s.charCodeAt(ctx.p + 1) && c === ctx.s.charCodeAt(ctx.p + 2))
+        TomlError.x("illegal quoted key: multiline strings are not allowed", ctx);
+      parsed.push(parseString(ctx));
+      state = 2;
+      ctx.p--;
+    } else if (c === 32 || c === 9) {
+      if (state === 1) {
+        parsed.push(ctx.s.slice(sliceStart, ctx.p));
+        state = 2;
+      }
+    } else if (state === 2 || c < 48 && c !== 45 || c > 57 && c < 65 || c > 90 && c < 97 && c !== 95 || c > 122) {
+      TomlError.x("illegal character in key", ctx);
+    } else if (!state) {
+      state = 1;
+      sliceStart = ctx.p;
+    }
+  } while (c = ctx.s.charCodeAt(++ctx.p));
+  TomlError.x("incomplete key-value: cannot find end of key", ctx, startPtr);
+}
+function parseInlineTable(ctx) {
+  let startPtr = ctx.p++;
+  let res = /* @__PURE__ */ Object.create(null);
+  let seen = /* @__PURE__ */ new Set();
+  let c;
+  while (ctx.p < ctx.s.length) {
+    skipVoid(ctx);
+    if ((c = ctx.s.charCodeAt(ctx.p)) === 125) {
+      ctx.p++;
+      return res;
+    }
+    let k;
+    let t = res;
+    let hasOwn = false;
+    let errPtr = ctx.p;
+    let key = parseKey(ctx);
+    for (let i = 0; i < key.length; i++) {
+      if (i)
+        t = hasOwn ? t[k] : t[k] = /* @__PURE__ */ Object.create(null);
+      k = key[i];
+      if ((hasOwn = Object.hasOwn(t, k)) && (typeof t[k] !== "object" || seen.has(t[k]))) {
+        TomlError.x("trying to redefine an already defined value", ctx, errPtr);
+      }
+      let unsafe = k === "__proto__";
+      if (ctx.uk && (unsafe || k === "constructor")) {
+        t = ctx.uk !== 1 && TomlError.x("document contains an unsafe property", ctx, errPtr);
+        break;
+      }
+      if (!hasOwn && unsafe) {
+        Object.defineProperty(t, k, { enumerable: true, configurable: true, writable: true });
+      }
+    }
+    if (hasOwn) {
+      TomlError.x("trying to redefine an already defined value", ctx, errPtr);
+    }
+    skipVoid(ctx, true, true);
+    let value = extractValue(
+      ctx,
+      125
+      /* } */
+    );
+    if (t && typeof (t[k] = value) === "object")
+      seen.add(value);
+    skipVoid(ctx);
+    if ((c = ctx.s.charCodeAt(ctx.p++)) === 125) {
+      return res;
+    }
+    if (c !== 44)
+      TomlError.x("expected comma or end of structure", ctx, ctx.p - 1);
+  }
+  TomlError.x("unfinished table", ctx, startPtr);
+}
+function parseArray(ctx) {
+  let startPtr = ctx.p++;
+  let res = [];
+  let c;
+  while (ctx.p < ctx.s.length) {
+    skipVoid(ctx);
+    if ((c = ctx.s.charCodeAt(ctx.p)) === 93) {
+      ctx.p++;
+      return res;
+    }
+    res.push(extractValue(
+      ctx,
+      93
+      /* ] */
+    ));
+    skipVoid(ctx);
+    if ((c = ctx.s.charCodeAt(ctx.p++)) === 93) {
+      return res;
+    }
+    if (c !== 44)
+      TomlError.x("expected comma or end of structure", ctx, ctx.p - 1);
+  }
+  TomlError.x("unfinished array", ctx, startPtr);
+}
+
+// ../../node_modules/.pnpm/smol-toml@1.9.1/node_modules/smol-toml/dist/parse.js
+function peekTable(ctx, key, table, meta, type) {
+  let t = table;
+  let m = meta;
+  let k;
+  let hasOwn = false;
+  let state;
+  for (let i = 0; i < key.length; i++) {
+    if (i) {
+      t = hasOwn ? t[k] : t[k] = /* @__PURE__ */ Object.create(null);
+      m = (state = m[k]).c;
+      if (type === 0 && (state.t === 1 || state.t === 2)) {
+        return null;
+      }
+      if (state.t === 2) {
+        let l = t.length - 1;
+        t = t[l];
+        m = m[l].c;
+      }
+    }
+    k = key[i];
+    if ((hasOwn = Object.hasOwn(t, k)) && m[k]?.t === 0 && m[k]?.d) {
+      return null;
+    }
+    if (!hasOwn) {
+      let unsafe = k === "__proto__";
+      if (ctx.uk && (unsafe || k === "constructor"))
+        return false;
+      if (unsafe) {
+        Object.defineProperty(t, k, { enumerable: true, configurable: true, writable: true });
+        Object.defineProperty(m, k, { enumerable: true, configurable: true, writable: true });
+      }
+      m[k] = {
+        t: i < key.length - 1 && type === 2 ? 3 : type,
+        d: false,
+        i: 0,
+        c: /* @__PURE__ */ Object.create(null)
+      };
+    }
+  }
+  state = m[k];
+  if (state.t !== type && !(type === 1 && state.t === 3)) {
+    return null;
+  }
+  if (type === 2) {
+    if (!state.d) {
+      state.d = true;
+      t[k] = [];
+    }
+    t[k].push(t = /* @__PURE__ */ Object.create(null));
+    state.c[state.i++] = state = { t: 1, d: false, i: 0, c: /* @__PURE__ */ Object.create(null) };
+  }
+  if (state.d) {
+    return null;
+  }
+  state.d = true;
+  if (type === 1) {
+    t = hasOwn ? t[k] : t[k] = /* @__PURE__ */ Object.create(null);
+  } else if (type === 0 && hasOwn) {
+    return null;
+  }
+  return [k, t, state.c];
+}
+function validateTablePeek(ctx, peek, ptr) {
+  if (peek === null || ctx.uk === 2)
+    TomlError.x(peek === null ? "trying to redefine an already defined table or value" : "document contains an unsafe property", ctx, ptr);
+}
+function parse3(toml, options = {}) {
+  let ctx = {
+    s: toml,
+    p: 0,
+    d: options.maxDepth ?? 1e3,
+    bi: options.integersAsBigInt ?? false,
+    ld: options.useLegacyDate ?? true,
+    uk: options.unsafeKeyBehaviour === "throw" ? 2 : options.unsafeKeyBehaviour === "drop" ? 1 : 0
+  };
+  let res = /* @__PURE__ */ Object.create(null);
+  let meta = /* @__PURE__ */ Object.create(null);
+  let tmp;
+  let skipping = false;
+  let tbl = res;
+  let m = meta;
+  if (toml.charCodeAt(0) === 65279)
+    ctx.p++;
+  skipVoid(ctx);
+  while (ctx.p < toml.length) {
+    if (toml.charCodeAt(ctx.p) === 91) {
+      let isTableArray = toml.charCodeAt(++ctx.p) === 91;
+      tmp = ctx.p += +isTableArray;
+      skipping = false;
+      let k = parseKey(
+        ctx,
+        93
+        /* ] */
+      );
+      if (isTableArray) {
+        if (toml.charCodeAt(ctx.p) !== 93) {
+          TomlError.x("expected end of table array declaration", ctx);
+        }
+        ctx.p++;
+      }
+      let p = peekTable(
+        ctx,
+        k,
+        res,
+        meta,
+        isTableArray ? 2 : 1
+        /* Type.EXPLICIT */
+      );
+      if (!p) {
+        validateTablePeek(ctx, p, tmp);
+        skipping = true;
+      } else {
+        m = p[2];
+        tbl = p[1];
+      }
+    } else {
+      tmp = ctx.p;
+      let k = parseKey(ctx);
+      let p = peekTable(
+        ctx,
+        k,
+        tbl,
+        m,
+        0
+        /* Type.DOTTED */
+      );
+      if (!p && !skipping)
+        validateTablePeek(ctx, p, tmp);
+      skipVoid(ctx, true, true);
+      let v = extractValue(ctx, void 0);
+      if (p && !skipping)
+        p[1][p[0]] = v;
+    }
+    skipVoid(ctx, true);
+    if (ctx.p < toml.length && (tmp = toml.charCodeAt(ctx.p)) !== 10 && (tmp !== 13 || toml.charCodeAt(ctx.p + 1) !== 10)) {
+      TomlError.x("each key-value declaration must be followed by an end-of-line", ctx);
+    }
+    skipVoid(ctx);
+  }
+  return res;
+}
+
+// ../../node_modules/.pnpm/smol-toml@1.9.1/node_modules/smol-toml/dist/stringify.js
+var HAS_WELLFORMED = !!"".isWellFormed;
+
+// ../config/src/presets/tauri.ts
+var run2 = promisify2(execFile2);
+var configNames = ["tauri.conf.json", "tauri.conf.json5", "Tauri.toml"];
+var tauriPlatforms = {
+  linux: "linux",
+  mac: "macos",
+  windows: "windows"
+};
+var platformsInOrder = ["linux", "mac", "windows"];
+function isObject2(value) {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+var asString = (value) => typeof value === "string" && value !== "" ? value : void 0;
+var asStrings = (value) => Array.isArray(value) ? value.filter((item) => typeof item === "string") : [];
+var relativeTo = (configDir, file2) => path2.relative(configDir, file2).split(path2.sep).join("/") || ".";
+async function parseFile(file2) {
+  const text = await readFile3(file2, "utf8");
+  let value;
+  try {
+    if (file2.endsWith(".toml")) value = parse3(text);
+    else if (file2.endsWith(".json5")) value = import_json5.default.parse(text);
+    else {
+      try {
+        value = JSON.parse(text);
+      } catch {
+        value = import_json5.default.parse(text);
+      }
+    }
+  } catch (error46) {
+    throw new Error(`tauriConfig(): ${file2}: ${error46.message}`);
+  }
+  if (!isObject2(value)) throw new Error(`tauriConfig(): ${file2} isn't a table`);
+  return value;
+}
+var keyShape = {
+  bundle: {
+    linux: { appimage: {}, deb: {}, rpm: {} },
+    macOS: {},
+    windows: { webviewInstallMode: {} }
+  }
+};
+function camelKeys(value, shape = keyShape) {
+  const out = {};
+  for (const [key, child] of Object.entries(value)) {
+    let name = key.replace(
+      /-([a-z])/g,
+      (_, letter) => letter.toUpperCase()
+    );
+    if (name === "macos") name = "macOS";
+    const childShape = shape[name];
+    out[name] = isObject2(childShape) && isObject2(child) ? camelKeys(child, childShape) : child;
+  }
+  return out;
+}
+function mergePatch(target, patch) {
+  if (!isObject2(patch)) return patch;
+  const out = isObject2(target) ? { ...target } : {};
+  for (const [key, value] of Object.entries(patch)) {
+    if (value === null) delete out[key];
+    else out[key] = mergePatch(out[key], value);
+  }
+  return out;
+}
+async function findConfig(configDir, given) {
+  const inDir = (dir) => configNames.map((name) => path2.join(dir, name)).find(existsSync2);
+  if (given) {
+    const resolved = path2.resolve(configDir, given);
+    if (!existsSync2(resolved)) {
+      throw new Error(`tauriConfig(${JSON.stringify(given)}): no such file`);
+    }
+    if (!(await stat(resolved)).isDirectory()) return resolved;
+    const found2 = inDir(resolved);
+    if (!found2) {
+      throw new Error(
+        `tauriConfig(${JSON.stringify(given)}): no ${configNames.join(", ")} in it`
+      );
+    }
+    return found2;
+  }
+  const found = inDir(path2.join(configDir, "src-tauri")) ?? inDir(configDir);
+  if (!found) {
+    throw new Error(
+      `tauriConfig(): no ${configNames.join(", ")} in src-tauri or beside todesktop.ts; pass its path`
+    );
+  }
+  return found;
+}
+async function platformOverride(dir, platform) {
+  const os = tauriPlatforms[platform];
+  const file2 = [
+    `tauri.${os}.conf.json`,
+    `tauri.${os}.conf.json5`,
+    `Tauri.${os}.toml`
+  ].map((name) => path2.join(dir, name)).find(existsSync2);
+  return file2 ? camelKeys(await parseFile(file2)) : void 0;
+}
+async function workspaceOf(dir) {
+  for (let at = dir; ; at = path2.dirname(at)) {
+    const file2 = path2.join(at, "Cargo.toml");
+    if (existsSync2(file2)) {
+      const manifest = await parseFile(file2);
+      if (isObject2(manifest.workspace)) return { dir: at, manifest };
+    }
+    if (path2.dirname(at) === at) return void 0;
+  }
+}
+async function cargoBuildConfig(dir) {
+  let target;
+  let targetDir;
+  for (let at = dir; ; at = path2.dirname(at)) {
+    for (const name of ["config.toml", "config"]) {
+      const file2 = path2.join(at, ".cargo", name);
+      if (!existsSync2(file2)) continue;
+      const { build: build2 } = await parseFile(file2);
+      if (!isObject2(build2)) continue;
+      const configuredDir = asString(build2["target-dir"]);
+      targetDir ??= configuredDir ? path2.resolve(at, configuredDir) : void 0;
+      const targets = Array.isArray(build2.target) ? asStrings(build2.target) : asStrings([build2.target]);
+      if (targets.length === 1) target ??= targets[0];
+    }
+    if (path2.dirname(at) === at) {
+      return {
+        ...target ? { target } : {},
+        ...targetDir ? { targetDir } : {}
+      };
+    }
+  }
+}
+async function cargoMetadata(dir) {
+  try {
+    const { stdout } = await run2(
+      "cargo",
+      ["metadata", "--no-deps", "--format-version", "1"],
+      { cwd: dir, maxBuffer: 64 * 1024 * 1024 }
+    );
+    const metadata = JSON.parse(stdout);
+    return isObject2(metadata) ? metadata : void 0;
+  } catch (error46) {
+    if (error46.code !== "ENOENT") {
+      console.warn(
+        `tauriConfig(): cargo metadata failed in ${dir}, so Cargo.toml is read directly: ${error46.message.split("\n")[0]}`
+      );
+    }
+    return void 0;
+  }
+}
+function endsWithPath(file2, suffix) {
+  const parts = (value) => value.split(/[\\/]+/).filter((part) => part !== "" && part !== ".");
+  const tail = parts(suffix);
+  const whole = parts(file2);
+  return tail.length > 0 && tail.length <= whole.length && tail.every(
+    (part, index) => whole[whole.length - tail.length + index] === part
+  );
+}
+async function mainBinaryOf(manifest, name, defaultRun, dir) {
+  const binaries = [];
+  for (const bin of (Array.isArray(manifest.bin) ? manifest.bin : []).filter(
+    isObject2
+  )) {
+    const binName = asString(bin.name);
+    if (!binName) continue;
+    const binPath = asString(bin.path);
+    binaries.push({
+      main: binName === name || binName === defaultRun,
+      name: binName,
+      ...binPath ? { path: binPath } : {}
+    });
+  }
+  const found = (await entriesOf(path2.join(dir, "src", "bin"))).map(
+    (entry) => [
+      path2.parse(entry.name).name,
+      path2.join(dir, "src", "bin", entry.name)
+    ]
+  );
+  if (existsSync2(path2.join(dir, "src", "main.rs"))) {
+    found.push([name, path2.join(dir, "src", "main.rs")]);
+  }
+  for (const [binName, file2] of found) {
+    const covered = binaries.some(
+      (bin) => bin.name === binName || bin.path !== void 0 && endsWithPath(file2, bin.path)
+    );
+    if (!covered) binaries.push({ main: false, name: binName });
+  }
+  if (defaultRun) {
+    const named = binaries.find((bin) => bin.name === defaultRun);
+    if (named) named.main = true;
+    else binaries.push({ main: true, name: defaultRun });
+  }
+  const [only] = binaries;
+  if (!only) return name;
+  if (binaries.length === 1) return only.name;
+  const main2 = binaries.find((bin) => bin.main);
+  if (!main2) {
+    throw new Error(
+      `tauriConfig(): ${path2.join(dir, "Cargo.toml")} builds ${binaries.map((bin) => bin.name).join(", ")}; set package.default-run to the app's, as tauri build asks`
+    );
+  }
+  return main2.name;
+}
+async function readCargo(dir) {
+  const file2 = path2.join(dir, "Cargo.toml");
+  if (!existsSync2(file2)) {
+    throw new Error(`tauriConfig(): no Cargo.toml in ${dir}`);
+  }
+  const manifest = await parseFile(file2);
+  const pkg = isObject2(manifest.package) ? manifest.package : {};
+  const name = asString(pkg.name);
+  if (!name) throw new Error(`tauriConfig(): ${file2} has no package.name`);
+  const build2 = await cargoBuildConfig(dir);
+  const buildTarget = process.env.CARGO_BUILD_TARGET ?? build2.target;
+  const metadata = await cargoMetadata(dir);
+  const real = await realpath(file2).catch(() => file2);
+  const packages = Array.isArray(metadata?.packages) ? metadata.packages.filter(isObject2) : [];
+  let resolved;
+  for (const candidate of packages) {
+    const manifestPath = asString(candidate.manifest_path);
+    if (manifestPath && // oxlint-disable-next-line no-await-in-loop
+    await realpath(manifestPath).catch(() => manifestPath) === real) {
+      resolved = candidate;
+    }
+  }
+  const metadataTargetDir = asString(metadata?.target_directory);
+  if (resolved && metadataTargetDir) {
+    const tauri2 = (Array.isArray(resolved.dependencies) ? resolved.dependencies.filter(isObject2) : []).find((dependency) => dependency.name === "tauri");
+    const description2 = asString(resolved.description);
+    const homepage2 = asString(resolved.homepage);
+    const version3 = asString(resolved.version);
+    return {
+      authors: asStrings(resolved.authors),
+      ...buildTarget ? { buildTarget } : {},
+      ...description2 ? { description: description2 } : {},
+      ...homepage2 ? { homepage: homepage2 } : {},
+      mainBinary: await mainBinaryOf(
+        manifest,
+        name,
+        asString(resolved.default_run),
+        dir
+      ),
+      name,
+      targetDir: metadataTargetDir,
+      trayIcon: asStrings(tauri2?.features).includes("tray-icon"),
+      ...version3 ? { version: version3 } : {}
+    };
+  }
+  const workspace = await workspaceOf(dir);
+  const workspaceTable = workspace?.manifest.workspace;
+  const shared = isObject2(workspaceTable) && isObject2(workspaceTable.package) ? workspaceTable.package : {};
+  const field = (key) => isObject2(pkg[key]) && pkg[key].workspace === true ? shared[key] : pkg[key];
+  const tauriOf = (table) => {
+    const tauri2 = isObject2(table) ? table.tauri : void 0;
+    return isObject2(tauri2) ? tauri2 : {};
+  };
+  const tauri = tauriOf(manifest.dependencies);
+  const features = [
+    ...asStrings(tauri.features),
+    ...tauri.workspace === true && isObject2(workspaceTable) ? asStrings(tauriOf(workspaceTable.dependencies).features) : []
+  ];
+  const fromEnv = process.env.CARGO_TARGET_DIR ?? process.env.CARGO_BUILD_TARGET_DIR;
+  const targetDir = fromEnv ? path2.resolve(dir, fromEnv) : build2.targetDir ?? path2.join(workspace?.dir ?? dir, "target");
+  const description = asString(field("description"));
+  const homepage = asString(field("homepage"));
+  const version2 = asString(field("version"));
+  return {
+    authors: asStrings(field("authors")),
+    ...buildTarget ? { buildTarget } : {},
+    ...description ? { description } : {},
+    ...homepage ? { homepage } : {},
+    mainBinary: await mainBinaryOf(
+      manifest,
+      name,
+      asString(pkg["default-run"]),
+      dir
+    ),
+    name,
+    targetDir,
+    trayIcon: features.includes("tray-icon"),
+    ...version2 ? { version: version2 } : {}
+  };
+}
+async function readTauriProject(configDir, given) {
+  const file2 = await findConfig(configDir, given);
+  const dir = path2.dirname(file2);
+  const shared = camelKeys(await parseFile(file2));
+  const platforms2 = {};
+  for (const platform of platformsInOrder) {
+    const patch = await platformOverride(dir, platform);
+    platforms2[platform] = patch ? mergePatch(shared, patch) : shared;
+  }
+  return { cargo: await readCargo(dir), dir, file: file2, platforms: platforms2, shared };
+}
+var bundleOf = (config2) => isObject2(config2.bundle) ? config2.bundle : {};
+var productNameOf = (project, config2) => asString(config2.productName) ?? project.cargo.name;
+var binaryOf = (project, platform) => asString(project.platforms[platform].mainBinaryName) ?? project.cargo.mainBinary;
+async function versionOf(project) {
+  const version2 = asString(project.shared.version);
+  if (version2?.endsWith(".json")) {
+    const file2 = path2.resolve(project.dir, version2);
+    const json2 = JSON.parse(await readFile3(file2, "utf8"));
+    return asString(json2.version);
+  }
+  return version2 ?? project.cargo.version;
+}
+async function pngWidth(file2) {
+  try {
+    const handle = await open2(file2, "r");
+    try {
+      const { buffer } = await handle.read(Buffer.alloc(24), 0, 24, 0);
+      return buffer.toString("latin1", 12, 16) === "IHDR" ? buffer.readUInt32BE(16) : 0;
+    } finally {
+      await handle.close();
+    }
+  } catch {
+    return 0;
+  }
+}
+async function iconsOf(project, platform) {
+  const icons = asStrings(bundleOf(project.platforms[platform]).icon).map(
+    (icon) => path2.resolve(project.dir, icon)
+  );
+  const ico = icons.find(
+    (icon) => icon.toLowerCase().endsWith(".ico") && existsSync2(icon)
+  );
+  let png;
+  let widest = 0;
+  for (const icon of icons.filter(
+    (file2) => file2.toLowerCase().endsWith(".png")
+  )) {
+    const width = await pngWidth(icon);
+    if (width > widest) [png, widest] = [icon, width];
+  }
+  return { ...ico ? { ico } : {}, ...png ? { png } : {} };
+}
+var hasResources = (resources) => Array.isArray(resources) ? resources.length > 0 : isObject2(resources) && Object.keys(resources).length > 0;
+var withoutUndefined = (value) => Object.fromEntries(
+  Object.entries(value).filter(([, child]) => child !== void 0)
+);
+async function tauriPresetConfig(project, configDir) {
+  const relative = (file2) => relativeTo(configDir, file2);
+  const { cargo } = project;
+  const sharedBundle = bundleOf(project.shared);
+  const release = path2.join(
+    cargo.targetDir,
+    ...cargo.buildTarget ? [cargo.buildTarget] : [],
+    "release"
+  );
+  const homepage = asString(sharedBundle.homepage) ?? cargo.homepage;
+  const authors = cargo.authors.join(", ");
+  const { mac } = project.platforms;
+  const macOS = isObject2(bundleOf(mac).macOS) ? bundleOf(mac).macOS : {};
+  const entitlements = asString(macOS.entitlements);
+  const windowsIcons = await iconsOf(project, "windows");
+  const windowsPublisher = asString(
+    bundleOf(project.platforms.windows).publisher
+  );
+  const linuxBundle = bundleOf(project.platforms.linux);
+  const linuxSection = isObject2(linuxBundle.linux) ? linuxBundle.linux : {};
+  const deb = isObject2(linuxSection.deb) ? linuxSection.deb : {};
+  const linuxIcons = await iconsOf(project, "linux");
+  return withoutUndefined({
+    // Required: without one in Tauri's config or Cargo.toml, the name.
+    description: asString(sharedBundle.shortDescription) ?? cargo.description ?? productNameOf(project, project.shared),
+    homepage: homepage && URL.canParse(homepage) ? homepage : void 0,
+    linux: withoutUndefined({
+      apps: { x64: relative(release) },
+      // Tauri's own deb: the webview and GTK, an app indicator for a tray.
+      depends: [
+        ...asStrings(deb.depends),
+        ...cargo.trayIcon ? ["libayatana-appindicator3-1"] : [],
+        "libwebkit2gtk-4.1-0",
+        "libgtk-3-0"
+      ],
+      executable: binaryOf(project, "linux"),
+      // Its dependencies are Debian's names.
+      formats: ["deb"],
+      icon: linuxIcons.png ? relative(linuxIcons.png) : void 0,
+      // Where assembling puts bundle.resources, for packages to link.
+      usrLib: hasResources(linuxBundle.resources) ? [productNameOf(project, project.platforms.linux)] : void 0
+    }),
+    mac: withoutUndefined({
+      // tauri build --bundles app --target aarch64-apple-darwin
+      apps: {
+        arm64: relative(
+          path2.join(
+            cargo.targetDir,
+            "aarch64-apple-darwin",
+            "release",
+            "bundle",
+            "macos",
+            `${productNameOf(project, mac)}.app`
+          )
+        )
+      },
+      entitlements: entitlements ? relative(path2.resolve(project.dir, entitlements)) : void 0,
+      formats: ["dmg"]
+    }),
+    maintainer: authors || asString(sharedBundle.publisher),
+    productName: productNameOf(project, project.shared),
+    version: await versionOf(project),
+    windows: withoutUndefined({
+      apps: { x64: relative(release) },
+      executable: `${binaryOf(project, "windows")}.exe`,
+      icon: windowsIcons.ico ? relative(windowsIcons.ico) : void 0,
+      publisher: windowsPublisher
+    })
+  });
+}
+function splitWritten(written) {
+  const root = path2.isAbsolute(written) ? path2.parse(written).root.replaceAll("\\", "/") : "";
+  const parts = written.slice(root.length).split(/[\\/]+/).filter((part) => part !== "" && part !== ".");
+  return { parts, root };
+}
+function resourceRelpath(written) {
+  const { parts, root } = splitWritten(written);
+  return [
+    ...root ? ["_root_"] : [],
+    ...parts.map((part) => part === ".." ? "_up_" : part)
+  ].join("/");
+}
+function normalizeWritten(written) {
+  const { parts, root } = splitWritten(written);
+  return root + parts.join("/");
+}
+var hasMagic = (part) => /[*?[]/.test(part);
+function componentRegExp(part) {
+  let source = "";
+  for (let index = 0; index < part.length; index++) {
+    const char = part[index] ?? "";
+    if (char === "*") source += ".*";
+    else if (char === "?") source += ".";
+    else if (char === "[") {
+      const end = part.indexOf("]", index + 2);
+      if (end < 0) {
+        source += "\\[";
+        continue;
+      }
+      let body = part.slice(index + 1, end);
+      const negated = body.startsWith("!");
+      if (negated) body = body.slice(1);
+      source += `[${negated ? "^" : ""}${body.replace(/[\\\]^]/g, "\\$&")}]`;
+      index = end;
+    } else source += char.replace(/[$()*+.?[\\\]^{|}]/g, "\\$&");
+  }
+  return new RegExp(`^${source}$`, "u");
+}
+var byName = (a, b) => a.name < b.name ? -1 : Number(a.name > b.name);
+async function entriesOf(dir) {
+  try {
+    return (await readdir2(dir, { withFileTypes: true })).sort(byName);
+  } catch {
+    return [];
+  }
+}
+async function globWritten(pattern, cwd) {
+  const { parts, root } = splitWritten(pattern);
+  const found = /* @__PURE__ */ new Set();
+  const join = (shown, part) => shown === "" || shown.endsWith("/") ? `${shown}${part}` : `${shown}/${part}`;
+  const walk = async (dir, shown, rest) => {
+    const [part, ...after] = rest;
+    if (part === void 0) {
+      found.add(shown);
+      return;
+    }
+    if (part === "**") {
+      await walk(dir, shown, after);
+      for (const entry of await entriesOf(dir)) {
+        if (entry.isDirectory()) {
+          await walk(path2.join(dir, entry.name), join(shown, entry.name), rest);
+        }
+      }
+    } else if (hasMagic(part)) {
+      const matcher = componentRegExp(part);
+      for (const entry of await entriesOf(dir)) {
+        if (matcher.test(entry.name)) {
+          await walk(
+            path2.join(dir, entry.name),
+            join(shown, entry.name),
+            after
+          );
+        }
+      }
+    } else if (existsSync2(path2.join(dir, part))) {
+      await walk(path2.join(dir, part), join(shown, part), after);
+    }
+  };
+  await walk(root ? path2.resolve(root) : cwd, root, parts);
+  if (/[\\/]$/.test(pattern)) {
+    const dirs = [];
+    for (const match of found) {
+      if (await isDirectory(path2.resolve(cwd, match))) dirs.push(match);
+    }
+    return dirs;
+  }
+  return [...found];
+}
+async function filesUnder(dir, shown) {
+  const files = [];
+  for (const entry of await entriesOf(dir)) {
+    const child = `${shown}/${entry.name}`;
+    const full = path2.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...await filesUnder(full, child));
+    } else if (entry.isSymbolicLink()) {
+      const target = await stat(full).catch(() => void 0);
+      if (!target) {
+        throw new Error(`bundle.resources: ${child} is a broken link`);
+      }
+      if (!target.isDirectory()) files.push(child);
+    } else files.push(child);
+  }
+  return files;
+}
+var isDirectory = async (file2) => (await stat(file2).catch(() => void 0))?.isDirectory() ?? false;
+async function tauriResources(resources, dir) {
+  const out = [];
+  let entries = [];
+  if (Array.isArray(resources)) {
+    entries = asStrings(resources).map((pattern) => [pattern, void 0]);
+  } else if (isObject2(resources)) {
+    entries = Object.entries(resources).map(([pattern, target]) => [
+      pattern,
+      typeof target === "string" ? target : ""
+    ]);
+  }
+  for (const [pattern, dest] of entries) {
+    const target = dest === void 0 ? void 0 : resourceRelpath(dest);
+    const under = (base, rest) => base ? `${base}/${rest}` : rest;
+    if (hasMagic(pattern)) {
+      const files = [];
+      for (const written2 of await globWritten(pattern, dir)) {
+        if (!await isDirectory(path2.resolve(dir, written2))) {
+          files.push(written2);
+        }
+      }
+      if (files.length === 0) {
+        throw new Error(`bundle.resources: ${pattern} matches no files`);
+      }
+      for (const written2 of files) {
+        out.push({
+          source: path2.resolve(dir, written2),
+          target: target === void 0 ? resourceRelpath(written2) : under(target, path2.posix.basename(written2))
+        });
+      }
+      continue;
+    }
+    const written = normalizeWritten(pattern);
+    const source = path2.resolve(dir, written);
+    if (!existsSync2(source)) {
+      throw new Error(`bundle.resources: ${pattern} doesn't exist`);
+    }
+    if (await isDirectory(source)) {
+      for (const file2 of await filesUnder(source, written)) {
+        out.push({
+          source: path2.resolve(dir, file2),
+          target: target === void 0 ? resourceRelpath(file2) : under(target, file2.slice(written.length + 1))
+        });
+      }
+    } else {
+      out.push({
+        source,
+        target: target === void 0 ? resourceRelpath(written) : target || path2.posix.basename(written)
+      });
+    }
+  }
+  return out;
+}
+var defaultTriples = {
+  linux: {
+    arm64: "aarch64-unknown-linux-gnu",
+    x64: "x86_64-unknown-linux-gnu"
+  },
+  windows: { arm64: "aarch64-pc-windows-msvc", x64: "x86_64-pc-windows-msvc" }
+};
+async function sidecarFile(dir, bin, platform, arch, buildTarget) {
+  const ext = platform === "windows" ? ".exe" : "";
+  const cpu = arch === "arm64" ? "aarch64" : "x86_64";
+  const base = path2.resolve(dir, bin);
+  const preferred = `${base}-${buildTarget ?? defaultTriples[platform][arch === "arm64" ? "arm64" : "x64"]}${ext}`;
+  if (existsSync2(preferred)) return preferred;
+  const prefix = `${path2.basename(base)}-${cpu}-`;
+  const other = (await entriesOf(path2.dirname(base))).find(
+    ({ name }) => name.startsWith(prefix) && name.includes(platform) && (ext ? name.endsWith(ext) : !name.endsWith(".exe"))
+  );
+  if (!other) {
+    throw new Error(
+      `bundle.externalBin: no ${path2.relative(dir, preferred)} (${bin} for ${platform} ${arch})`
+    );
+  }
+  return path2.join(path2.dirname(base), other.name);
+}
+async function isBinaryFor(file2, platform) {
+  try {
+    const handle = await open2(file2, "r");
+    try {
+      const { buffer, bytesRead } = await handle.read(Buffer.alloc(4), 0, 4, 0);
+      const magic = buffer.toString("latin1", 0, bytesRead);
+      return platform === "windows" ? magic.startsWith("MZ") : magic === "\x7FELF";
+    } finally {
+      await handle.close();
+    }
+  } catch {
+    return false;
+  }
+}
+async function copyInto(source, target) {
+  await mkdir2(path2.dirname(target), { recursive: true });
+  await copyFile(source, target);
+}
+async function assembleTauri(given, context) {
+  const { appDir, arch, configDir, platform, source } = context;
+  if (platform === "mac") return false;
+  const project = await readTauriProject(configDir, given);
+  const config2 = project.platforms[platform];
+  const ext = platform === "windows" ? ".exe" : "";
+  const binary = path2.join(source, `${binaryOf(project, platform)}${ext}`);
+  if (!await isBinaryFor(binary, platform)) return false;
+  const executable = context.config[platform]?.executable ?? `${binaryOf(project, platform)}${ext}`;
+  await copyInto(binary, path2.join(appDir, executable));
+  if (platform === "linux") await chmod(path2.join(appDir, executable), 493);
+  const bundle = bundleOf(config2);
+  for (const bin of asStrings(bundle.externalBin)) {
+    const file2 = await sidecarFile(
+      project.dir,
+      bin,
+      platform,
+      arch,
+      project.cargo.buildTarget
+    );
+    const target = path2.join(appDir, `${path2.basename(bin)}${ext}`);
+    await copyInto(file2, target);
+    if (platform === "linux") await chmod(target, 493);
+  }
+  let { resources } = bundle;
+  const windowsBundle = isObject2(bundle.windows) ? bundle.windows : {};
+  const webview = isObject2(windowsBundle.webviewInstallMode) ? windowsBundle.webviewInstallMode : {};
+  const fixedRuntime = platform === "windows" && webview.type === "fixedRuntime" ? asString(webview.path) : void 0;
+  if (fixedRuntime && isObject2(resources)) {
+    resources = { ...resources, [fixedRuntime]: fixedRuntime };
+  } else if (fixedRuntime) {
+    resources = [...asStrings(resources), fixedRuntime];
+  }
+  const files = await tauriResources(resources, project.dir);
+  const resourceDir = platform === "windows" ? appDir : path2.join(appDir, "usr", "lib", productNameOf(project, config2));
+  for (const file2 of files) {
+    await copyInto(
+      file2.source,
+      path2.join(resourceDir, ...file2.target.split("/"))
+    );
+  }
+  if (platform === "linux" && files.length > 0 && context.config.linux?.formats.includes("tar.gz")) {
+    console.warn(
+      `tauriConfig(): a tar.gz install can't find bundle.resources (Tauri looks in /usr/lib/${productNameOf(project, config2)}); deb, rpm, pacman and AppImage installs can`
+    );
+  }
+  return true;
+}
+function tauriConfig(given) {
+  const assemble = (context) => assembleTauri(given, context);
+  return {
+    assemble: { linux: assemble, windows: assemble },
+    config: async ({ configDir }) => tauriPresetConfig(await readTauriProject(configDir, given), configDir),
+    name: given ? `tauriConfig(${JSON.stringify(given)})` : "tauriConfig()"
+  };
+}
+
+// ../config/src/presets/index.ts
+var presets = {
+  tauriConfig
+};
+
 // ../config/src/schema.ts
 var fileName = external_exports.string().regex(/^[\w.-]+$/, "Must be a file name, not a path");
 var appPath = external_exports.string().min(1);
@@ -12792,6 +15524,15 @@ var linuxPlatform = external_exports.strictObject({
   formats: external_exports.array(external_exports.enum(linuxFormats)).min(1),
   /** A PNG for the AppImage (and desktop entries), relative to the config. */
   icon: external_exports.string().optional(),
+  /**
+   * Directories in the app's own usr/lib that deb, rpm and pacman packages
+   * link from /usr/lib, as an AppImage's app finds them through APPDIR.
+   * tauriConfig() sets it for Tauri's resources, which an installed Tauri
+   * app reads from /usr/lib/<productName>.
+   */
+  usrLib: external_exports.array(
+    external_exports.string().regex(/^(?!\.{1,2}$)[^/\\]+$/, "Must be a directory name, not a path")
+  ).optional(),
   /** Installs a systemd unit that runs the executable. */
   service: external_exports.strictObject({
     args: external_exports.array(external_exports.string()).default([]),
@@ -12853,7 +15594,12 @@ var windowsPlatform = external_exports.strictObject({
   ]),
   /** An .ico for the installer and shortcuts, relative to the config. */
   icon: external_exports.string().optional(),
-  /** Shown as the publisher in Apps & features; defaults to productName. */
+  /**
+   * Shown as the publisher in Apps & features, and the programs' CompanyName
+   * and LegalCopyright. CompanyName and Apps & features default to the
+   * signing certificate's name (its CN), or productName when unsigned;
+   * LegalCopyright defaults to productName.
+   */
   publisher: external_exports.string().min(1).optional()
 });
 var duration3 = external_exports.string().regex(/^\d+[smhd]$/, "Must be a duration like 30s, 15m, 1h or 1d");
@@ -12943,7 +15689,13 @@ var moduleExtensions = /* @__PURE__ */ new Set([
   ".mts",
   ".ts"
 ]);
-var runtimeModule = "export const defineConfig = (config) => config;";
+var runtimeModule = [
+  "export const defineConfig = (config) => config;",
+  `const presets = globalThis[Symbol.for(${JSON.stringify(presetsKey.description)})];`,
+  ...Object.keys(presets).map(
+    (name) => `export const ${name} = (...args) => presets.${name}(...args);`
+  )
+].join("\n");
 async function bundleModule(file2) {
   const result = await build({
     // CommonJS dependencies may require() Node's built-ins.
@@ -12978,9 +15730,9 @@ async function bundleModule(file2) {
   return output.text;
 }
 async function importBundle(bundle) {
-  const dir = await mkdtemp(path2.join(tmpdir(), "todesktop-config-"));
+  const dir = await mkdtemp(path3.join(tmpdir(), "todesktop-config-"));
   try {
-    const file2 = path2.join(dir, "todesktop.config.mjs");
+    const file2 = path3.join(dir, "todesktop.config.mjs");
     await writeFile2(file2, bundle);
     const module = await import(pathToFileURL(file2).href);
     return module.default;
@@ -12988,46 +15740,44 @@ async function importBundle(bundle) {
     await rm(dir, { force: true, recursive: true });
   }
 }
-function isPlainObject2(value) {
+function isPlainObject3(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 async function loadConfig(file2, context) {
-  const extension = path2.extname(file2);
+  const extension = path3.extname(file2);
   let exported;
   let bundle;
   if (extension === ".json") {
-    exported = JSON.parse(await readFile3(file2, "utf8"));
+    exported = JSON.parse(await readFile4(file2, "utf8"));
   } else if (moduleExtensions.has(extension)) {
     try {
       bundle = await bundleModule(file2);
     } catch (error46) {
       throw new Error(`Couldn't bundle ${file2}: ${error46.message}`);
     }
+    globalThis[presetsKey] = presets;
     exported = await importBundle(bundle);
   } else {
     throw new Error(`${file2}: use todesktop.ts, .js, .mjs or .json`);
   }
   const value = typeof exported === "function" ? await exported(context) : exported;
-  if (!isPlainObject2(value)) {
+  if (!isPlainObject3(value)) {
     throw new Error(
       `${file2} must export a config object, or a function returning one, as its default export`
     );
   }
-  const { hooks = {}, ...data } = value;
-  if (!isPlainObject2(hooks)) {
-    throw new Error(`${file2}: hooks must be an object`);
+  if (extension === ".json" && "extends" in value) {
+    throw new Error(
+      `${file2}: extends takes presets, which are code: use todesktop.ts`
+    );
   }
-  for (const [name, hook] of Object.entries(hooks)) {
-    if (name !== "prepareApp") {
-      throw new Error(
-        `${file2}: unknown hook "${name}"; the hook is prepareApp`
-      );
-    }
-    if (typeof hook !== "function") {
-      throw new Error(`${file2}: hooks.${name} must be a function`);
-    }
-  }
-  const windowsFormats2 = isPlainObject2(data.windows) ? data.windows.formats : void 0;
+  const configDir = path3.dirname(file2);
+  const { assemble, data, hooks, sources } = await resolveExtends(
+    value,
+    path3.basename(file2),
+    { ...context, configDir }
+  );
+  const windowsFormats2 = isPlainObject3(data.windows) ? data.windows.formats : void 0;
   if (Array.isArray(windowsFormats2) && windowsFormats2.includes("nsis")) {
     console.warn(
       `${file2}: windows.formats "nsis" is deprecated; it's now "exe" (ToDesktop's own installer), which it builds`
@@ -13035,15 +15785,31 @@ async function loadConfig(file2, context) {
   }
   const parsed = configSchema.safeParse(data);
   if (!parsed.success) {
-    throw new Error(`${file2} is invalid:
-${external_exports.prettifyError(parsed.error)}`);
+    const fromPresets = [
+      ...new Set(
+        parsed.error.issues.flatMap(({ path: at }) => {
+          const key = at.join(".");
+          const source = Object.entries(sources).find(
+            ([leaf]) => leaf === key || leaf.startsWith(`${key}.`)
+          )?.[1];
+          return source && source !== path3.basename(file2) ? [`${key} is ${source}'s`] : [];
+        })
+      )
+    ];
+    throw new Error(
+      `${file2} is invalid:
+${external_exports.prettifyError(parsed.error)}${fromPresets.map((line) => `
+  (${line})`).join("")}`
+    );
   }
   return {
+    assemble,
     ...bundle ? { bundle } : {},
     config: parsed.data,
-    configDir: path2.dirname(file2),
+    configDir,
     file: file2,
-    hooks
+    hooks,
+    sources: sourcesOf(parsed.data, sources)
   };
 }
 function appsFor(loaded, platform, overrides = []) {
@@ -13054,7 +15820,7 @@ function appsFor(loaded, platform, overrides = []) {
   const apps = {};
   for (const [arch, relative] of Object.entries(configured)) {
     if (relative) {
-      apps[arch] = path2.resolve(loaded.configDir, relative);
+      apps[arch] = path3.resolve(loaded.configDir, relative);
     }
   }
   for (const override of overrides) {
@@ -13068,9 +15834,23 @@ function appsFor(loaded, platform, overrides = []) {
         `--input ${arch}: ${loaded.file} has no ${platform}.apps.${arch} (it lists ${Object.keys(apps).join(", ")})`
       );
     }
-    apps[arch] = path2.resolve(file2);
+    apps[arch] = path3.resolve(file2);
   }
   return apps;
+}
+async function assembleApp(loaded, platform, arch, source, appDir) {
+  const assemble = loaded.assemble[platform];
+  if (!assemble) throw new Error(`Nothing assembles ${platform} apps`);
+  await rm(appDir, { force: true, recursive: true });
+  await mkdir3(appDir, { recursive: true });
+  return assemble({
+    appDir,
+    arch,
+    config: loaded.config,
+    configDir: loaded.configDir,
+    platform,
+    source
+  });
 }
 
 // ../contracts/src/ci.ts
@@ -13153,15 +15933,15 @@ var encoder = new TextEncoder();
 var LIVE_SOCKET_GRACE_MS = 10 * 6e4;
 
 // src/upload.ts
-import { execFile as execFile2 } from "node:child_process";
+import { execFile as execFile3 } from "node:child_process";
 import { createHash } from "node:crypto";
-import { createReadStream, existsSync as existsSync2, openAsBlob } from "node:fs";
-import { cp, mkdtemp as mkdtemp2, readFile as readFile4, rm as rm2, stat } from "node:fs/promises";
+import { createReadStream, existsSync as existsSync3, openAsBlob } from "node:fs";
+import { cp, mkdtemp as mkdtemp2, readFile as readFile5, rm as rm2, stat as stat2 } from "node:fs/promises";
 import { tmpdir as tmpdir2 } from "node:os";
-import path3 from "node:path";
-import process2 from "node:process";
-import { promisify as promisify2 } from "node:util";
-var run2 = promisify2(execFile2);
+import path4 from "node:path";
+import process3 from "node:process";
+import { promisify as promisify3 } from "node:util";
+var run3 = promisify3(execFile3);
 var platforms = ["linux", "mac", "windows"];
 function overridesFor(platform, inputs) {
   return inputs.filter((input) => input.startsWith(`${platform}/`)).map((input) => input.slice(platform.length + 1));
@@ -13169,12 +15949,12 @@ function overridesFor(platform, inputs) {
 async function inspect(config2, platform, arch, appPath2) {
   if (platform === "mac") {
     const plist = await plistStrings(
-      path3.join(appPath2, "Contents", "Info.plist")
+      path4.join(appPath2, "Contents", "Info.plist")
     );
     const executable2 = plist.CFBundleExecutable;
     if (!executable2) throw new Error(`${appPath2} has no CFBundleExecutable`);
     const actual2 = await machOArch(
-      path3.join(appPath2, "Contents", "MacOS", executable2)
+      path4.join(appPath2, "Contents", "MacOS", executable2)
     );
     if (actual2 !== arch) {
       throw new Error(`mac.apps.${arch} is ${appPath2}, but it's ${actual2}`);
@@ -13189,7 +15969,7 @@ async function inspect(config2, platform, arch, appPath2) {
   }
   const executable = config2[platform]?.executable ?? "";
   const actual = await (platform === "windows" ? peArch : elfArch)(
-    path3.join(appPath2, executable)
+    path4.join(appPath2, executable)
   );
   if (actual !== arch) {
     throw new Error(
@@ -13199,8 +15979,8 @@ async function inspect(config2, platform, arch, appPath2) {
   return { arch, path: appPath2, platform };
 }
 async function githubOidcToken(audience) {
-  const requestUrl = process2.env.ACTIONS_ID_TOKEN_REQUEST_URL;
-  const requestToken = process2.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+  const requestUrl = process3.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  const requestToken = process3.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
   if (!requestUrl || !requestToken) {
     throw new Error(
       "No CI identity: run in GitHub Actions with `permissions: id-token: write` (other CI and laptops come later)"
@@ -13215,6 +15995,25 @@ async function githubOidcToken(audience) {
     throw new Error(`GitHub OIDC token: ${response.status}`);
   }
   return (await response.json()).value;
+}
+function printSources(loaded) {
+  console.info("  config (from todesktop.ts, its presets or defaults):");
+  const values = /* @__PURE__ */ new Map();
+  const walk = (value, at) => {
+    if (at in loaded.sources) values.set(at, value);
+    else if (typeof value === "object" && value !== null) {
+      for (const [key, child] of Object.entries(value)) {
+        walk(child, at ? `${at}.${key}` : key);
+      }
+    }
+  };
+  walk(loaded.config, "");
+  const width = Math.max(...[...values.keys()].map((key) => key.length));
+  for (const [key, value] of values) {
+    console.info(
+      `    ${key.padEnd(width)}  ${JSON.stringify(value)}  \u2190 ${loaded.sources[key]}`
+    );
+  }
 }
 async function uploadToken(url2, appId) {
   const response = await fetch(`${url2}/v2/ci/${appId}/token`, {
@@ -13245,9 +16044,9 @@ function checkAppIdentifiers(appId, pinned, apps) {
   }
 }
 async function preparedTar(loaded, app, version2, work) {
-  const name = app.platform === "mac" ? path3.basename(app.path) : "app";
-  const staging = path3.join(work, `${app.platform}-${app.arch}`);
-  const copy = path3.join(staging, name);
+  const name = app.platform === "mac" ? path4.basename(app.path) : "app";
+  const staging = path4.join(work, `${app.platform}-${app.arch}`);
+  const copy = path4.join(staging, name);
   await cp(app.path, copy, { recursive: true, verbatimSymlinks: true });
   const hook = loaded.hooks.prepareApp;
   if (hook) {
@@ -13261,18 +16060,18 @@ async function preparedTar(loaded, app, version2, work) {
     console.info(`  ${app.platform}/${app.arch}: prepareApp hook ran`);
   }
   const tar = `${staging}.tar`;
-  const macTar = process2.platform === "darwin" ? ["--no-mac-metadata"] : [];
-  const stagingName = path3.basename(staging);
-  await run2(
+  const macTar = process3.platform === "darwin" ? ["--no-mac-metadata"] : [];
+  const stagingName = path4.basename(staging);
+  await run3(
     "tar",
     [...macTar, "-cf", `${stagingName}.tar`, "-C", stagingName, name],
-    { cwd: work, env: { ...process2.env, COPYFILE_DISABLE: "1" } }
+    { cwd: work, env: { ...process3.env, COPYFILE_DISABLE: "1" } }
   );
   const hash2 = createHash("sha256");
   for await (const chunk of createReadStream(tar)) hash2.update(chunk);
-  return { sha256: hash2.digest("hex"), size: (await stat(tar)).size, tar };
+  return { sha256: hash2.digest("hex"), size: (await stat2(tar)).size, tar };
 }
-var partBytes = Math.max(5, Number(process2.env.TODESKTOP_UPLOAD_PART_MB ?? 64)) * 1024 * 1024;
+var partBytes = Math.max(5, Number(process3.env.TODESKTOP_UPLOAD_PART_MB ?? 64)) * 1024 * 1024;
 async function uploadPiece(base, headers, tar, size) {
   const call = async (method, pathname, body) => {
     const response = await fetch(`${base}/uploads${pathname}`, {
@@ -13305,13 +16104,16 @@ async function uploadPiece(base, headers, tar, size) {
   );
 }
 function describe(status) {
-  if (status.build) {
-    return `all ${status.received.length} apps are in: build ${status.build.buildNumber} (${status.build.buildId}) is being made`;
+  const { build: build2 } = status;
+  if (build2 && status.missing.length === 0) {
+    return `all ${status.received.length} apps are in: build ${build2.buildNumber} (${build2.buildId}) is being made`;
   }
-  return `${status.received.length} of ${status.received.length + status.missing.length} apps are in; waiting for ${status.missing.join(", ")}`;
+  const waiting = `${status.received.length} of ${status.received.length + status.missing.length} apps are in; waiting for ${status.missing.join(", ")}`;
+  const started = Object.entries(build2?.platforms ?? {}).filter(([, state]) => state !== "uploading").map(([platform]) => platform);
+  return build2 && started.length > 0 ? `${waiting}. Build ${build2.buildNumber} (${build2.buildId}) has started ${started.join(" and ")}` : waiting;
 }
 async function upload(options) {
-  const file2 = path3.resolve(options.configFile);
+  const file2 = path4.resolve(options.configFile);
   const loadedByPlatform = Object.fromEntries(
     await Promise.all(
       platforms.map(
@@ -13337,39 +16139,48 @@ async function upload(options) {
   const { config: config2 } = loaded;
   const unbuildable = ciConfigProblem(config2);
   if (unbuildable) throw new Error(unbuildable);
-  const expected = [];
-  const found = [];
-  for (const platform of platforms) {
-    if (!config2[platform]) continue;
-    const apps = appsFor(
-      loadedByPlatform[platform],
-      platform,
-      overridesFor(platform, options.inputs)
-    );
-    for (const [arch, appPath2] of Object.entries(apps)) {
-      expected.push(pieceKey(platform, arch));
-      if (existsSync2(appPath2)) {
-        found.push(await inspect(config2, platform, arch, appPath2));
+  const work = await mkdtemp2(path4.join(tmpdir2(), "todesktop-upload-"));
+  try {
+    const expected = [];
+    const found = [];
+    for (const platform of platforms) {
+      if (!config2[platform]) continue;
+      const loadedHere = loadedByPlatform[platform];
+      const apps = appsFor(
+        loadedHere,
+        platform,
+        overridesFor(platform, options.inputs)
+      );
+      for (const [arch, appPath2] of Object.entries(apps)) {
+        expected.push(pieceKey(platform, arch));
+        if (!existsSync3(appPath2)) continue;
+        if (loadedHere.assemble[platform]) {
+          const appDir = path4.join(work, "assembled", `${platform}-${arch}`);
+          if (await assembleApp(loadedHere, platform, arch, appPath2, appDir)) {
+            console.info(`  ${platform}/${arch}: made from ${appPath2}`);
+            found.push(await inspect(config2, platform, arch, appDir));
+          }
+        } else {
+          found.push(await inspect(config2, platform, arch, appPath2));
+        }
       }
     }
-  }
-  expected.sort();
-  if (found.length === 0) {
-    throw new Error(
-      `None of ${file2}'s apps are on this machine (it lists ${expected.join(", ")})`
+    expected.sort();
+    if (found.length === 0) {
+      throw new Error(
+        `None of ${file2}'s apps are on this machine (it lists ${expected.join(", ")})`
+      );
+    }
+    const version2 = options.version ?? config2.version ?? found.find((app) => app.ownVersion)?.ownVersion;
+    if (!version2) {
+      throw new Error(
+        "No version: pass --version or set version in the config (Linux apps don\u2019t state one)"
+      );
+    }
+    console.info(
+      `${config2.appId} ${version2}: ${found.map((app) => `${app.platform}/${app.arch}`).join(", ")} here, of ${expected.join(", ")}`
     );
-  }
-  const version2 = options.version ?? config2.version ?? found.find((app) => app.ownVersion)?.ownVersion;
-  if (!version2) {
-    throw new Error(
-      "No version: pass --version or set version in the config (Linux apps don\u2019t state one)"
-    );
-  }
-  console.info(
-    `${config2.appId} ${version2}: ${found.map((app) => `${app.platform}/${app.arch}`).join(", ")} here, of ${expected.join(", ")}`
-  );
-  const work = await mkdtemp2(path3.join(tmpdir2(), "todesktop-upload-"));
-  try {
+    if (options.dryRun) printSources(loaded);
     const auth = options.dryRun ? void 0 : await uploadToken(options.url, config2.appId);
     if (auth) {
       console.info(`  CI run ${auth.group}`);
@@ -13380,8 +16191,8 @@ async function upload(options) {
       );
     }
     let status;
-    const entitlements = config2.mac?.entitlements ? await readFile4(
-      path3.resolve(path3.dirname(file2), config2.mac.entitlements),
+    const entitlements = config2.mac?.entitlements ? await readFile5(
+      path4.resolve(path4.dirname(file2), config2.mac.entitlements),
       "utf8"
     ) : void 0;
     for (const app of found) {
@@ -13432,7 +16243,9 @@ async function upload(options) {
       );
     }
     if (status) console.info(describe(status));
-    if (status?.build) console.info(`BUILD_ID=${status.build.buildId}`);
+    if (status?.build && status.missing.length === 0) {
+      console.info(`BUILD_ID=${status.build.buildId}`);
+    }
   } finally {
     await rm2(work, { force: true, recursive: true });
   }
@@ -13461,7 +16274,7 @@ var usage = `todesktop: ToDesktop v2 CLI
       password from TAURI_SIGNING_PRIVATE_KEY_PASSWORD. Mac only for now.
 
 Environment: TODESKTOP_URL (default http://127.0.0.1:8787)`;
-var configNames = [
+var configNames2 = [
   "todesktop.ts",
   "todesktop.mts",
   "todesktop.js",
@@ -13501,20 +16314,20 @@ ${usage}`);
     return;
   }
   if (values.help || command !== "upload") {
-    process3.stdout.write(`${usage}
+    process4.stdout.write(`${usage}
 `);
-    if (!values.help) process3.exitCode = 1;
+    if (!values.help) process4.exitCode = 1;
     return;
   }
-  const configFile = values.config ?? configNames.find((name) => existsSync3(name));
+  const configFile = values.config ?? configNames2.find((name) => existsSync4(name));
   if (!configFile) {
-    throw new Error(`No ${configNames.join(", ")} here; pass --config`);
+    throw new Error(`No ${configNames2.join(", ")} here; pass --config`);
   }
   await upload({
     configFile,
     dryRun: values["dry-run"] ?? false,
     inputs: values.input ?? [],
-    url: (process3.env.TODESKTOP_URL ?? "http://127.0.0.1:8787").replace(
+    url: (process4.env.TODESKTOP_URL ?? "http://127.0.0.1:8787").replace(
       /\/$/,
       ""
     ),
@@ -13522,7 +16335,46 @@ ${usage}`);
   });
 }
 main().catch((error46) => {
-  process3.stderr.write(`${error46.message}
+  process4.stderr.write(`${error46.message}
 `);
-  process3.exitCode = 1;
+  process4.exitCode = 1;
 });
+/*! Bundled license information:
+
+smol-toml/dist/error.js:
+smol-toml/dist/primitive.js:
+smol-toml/dist/date.js:
+smol-toml/dist/extract.js:
+smol-toml/dist/util.js:
+smol-toml/dist/struct.js:
+smol-toml/dist/parse.js:
+smol-toml/dist/stringify.js:
+smol-toml/dist/index.js:
+  (*!
+   * Copyright (c) Squirrel Chat et al., All rights reserved.
+   * SPDX-License-Identifier: BSD-3-Clause
+   *
+   * Redistribution and use in source and binary forms, with or without
+   * modification, are permitted provided that the following conditions are met:
+   *
+   * 1. Redistributions of source code must retain the above copyright notice, this
+   *    list of conditions and the following disclaimer.
+   * 2. Redistributions in binary form must reproduce the above copyright notice,
+   *    this list of conditions and the following disclaimer in the
+   *    documentation and/or other materials provided with the distribution.
+   * 3. Neither the name of the copyright holder nor the names of its contributors
+   *    may be used to endorse or promote products derived from this software without
+   *    specific prior written permission.
+   *
+   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+   * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+   * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+   * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+   * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+   * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+   * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+   *)
+*/
