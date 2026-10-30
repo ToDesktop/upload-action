@@ -1154,13 +1154,542 @@ import { parseArgs } from "node:util";
 // src/tauriBridge.ts
 import { execFile } from "node:child_process";
 import { existsSync } from "node:fs";
-import { mkdir, readdir, readFile as readFile2, writeFile } from "node:fs/promises";
-import path from "node:path";
+import { mkdir, readdir as readdir2, readFile as readFile3, writeFile } from "node:fs/promises";
+import path2 from "node:path";
 import process2 from "node:process";
 import { promisify } from "node:util";
 
+// ../config/src/mac.ts
+import { copyFile, readdir, readFile, stat } from "node:fs/promises";
+import path from "node:path";
+var isDict = (value) => typeof value === "object" && value !== null && !Array.isArray(value) && !(value instanceof Date) && !(value instanceof Uint8Array);
+function parsePlist(bytes) {
+  const buffer = Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  if (buffer.toString("latin1", 0, 8) === "bplist00") {
+    return parseBinaryPlist(buffer);
+  }
+  return parseXmlPlist(buffer.toString("utf8"));
+}
+function plistStringsOf(bytes) {
+  const value = parsePlist(bytes);
+  const strings = {};
+  if (isDict(value)) {
+    for (const [key, item] of Object.entries(value)) {
+      if (typeof item === "string") strings[key] = item;
+    }
+  }
+  return strings;
+}
+var maxPlistDepth = 512;
+function parseBinaryPlist(buffer) {
+  if (buffer.length < 40) throw new Error("Truncated binary plist");
+  const trailer = buffer.length - 32;
+  const offsetSize = buffer.readUInt8(trailer + 6);
+  const refSize = buffer.readUInt8(trailer + 7);
+  const count = Number(buffer.readBigUInt64BE(trailer + 8));
+  const top = Number(buffer.readBigUInt64BE(trailer + 16));
+  const table = Number(buffer.readBigUInt64BE(trailer + 24));
+  if (!offsetSize || offsetSize > 8 || !refSize || refSize > 8 || top >= count || table < 8 || table + count * offsetSize > trailer) {
+    throw new Error("Malformed binary plist trailer");
+  }
+  const within = (at, length) => {
+    if (!Number.isSafeInteger(at) || !Number.isSafeInteger(length) || at < 8 || length < 0 || at + length > table) {
+      throw new Error("Malformed binary plist: an object runs past its data");
+    }
+  };
+  const uint = (at, size) => {
+    if (at + size > buffer.length) throw new Error("Truncated binary plist");
+    let value = 0;
+    for (let index = 0; index < size; index++) {
+      value = value * 256 + buffer.readUInt8(at + index);
+    }
+    return value;
+  };
+  const offsetOf = (ref) => uint(table + ref * offsetSize, offsetSize);
+  const reading = /* @__PURE__ */ new Set();
+  const object2 = (ref) => {
+    if (ref >= count) throw new Error("Binary plist reference out of range");
+    if (reading.has(ref)) throw new Error("Binary plist reference cycle");
+    if (reading.size >= maxPlistDepth) {
+      throw new Error("Binary plist nested too deeply");
+    }
+    reading.add(ref);
+    try {
+      return objectAt(offsetOf(ref));
+    } finally {
+      reading.delete(ref);
+    }
+  };
+  const lengthAt = (at, low) => {
+    if (low !== 15) return [low, at + 1];
+    within(at + 1, 1);
+    const marker = buffer.readUInt8(at + 1);
+    if (marker >> 4 !== 1 || (marker & 15) > 3) {
+      throw new Error("Malformed binary plist length");
+    }
+    const size = 1 << (marker & 15);
+    within(at + 2, size);
+    return [uint(at + 2, size), at + 2 + size];
+  };
+  const refsAt = (at, low, per) => {
+    const [length, start] = lengthAt(at, low);
+    within(start, length * per * refSize);
+    return [length, start];
+  };
+  const objectAt = (at) => {
+    within(at, 1);
+    const marker = buffer.readUInt8(at);
+    const high = marker >> 4;
+    const low = marker & 15;
+    switch (high) {
+      case 0:
+        if (marker === 8) return false;
+        if (marker === 9) return true;
+        throw new Error(
+          `Unsupported binary plist marker 0x${marker.toString(16)}`
+        );
+      case 1: {
+        if (low > 4) throw new Error("Malformed binary plist integer");
+        const size = 1 << low;
+        within(at + 1, size);
+        if (size === 8) return Number(buffer.readBigInt64BE(at + 1));
+        if (size === 16) return Number(buffer.readBigInt64BE(at + 9));
+        return uint(at + 1, size);
+      }
+      case 10: {
+        const [length, start] = refsAt(at, low, 1);
+        return Array.from(
+          { length },
+          (_, index) => object2(uint(start + index * refSize, refSize))
+        );
+      }
+      case 13: {
+        const [length, start] = refsAt(at, low, 2);
+        const dict = {};
+        for (let index = 0; index < length; index++) {
+          const key = object2(uint(start + index * refSize, refSize));
+          if (typeof key !== "string") {
+            throw new Error("Binary plist dictionary key is not a string");
+          }
+          dict[key] = object2(uint(start + (length + index) * refSize, refSize));
+        }
+        return dict;
+      }
+      case 2: {
+        if (low !== 2 && low !== 3) {
+          throw new Error("Malformed binary plist real");
+        }
+        within(at + 1, 1 << low);
+        return low === 2 ? buffer.readFloatBE(at + 1) : buffer.readDoubleBE(at + 1);
+      }
+      case 3:
+        within(at + 1, 8);
+        return new Date((buffer.readDoubleBE(at + 1) + 978307200) * 1e3);
+      case 4: {
+        const [length, start] = lengthAt(at, low);
+        within(start, length);
+        return new Uint8Array(buffer.subarray(start, start + length));
+      }
+      case 5: {
+        const [length, start] = lengthAt(at, low);
+        within(start, length);
+        return buffer.toString("latin1", start, start + length);
+      }
+      case 6: {
+        const [length, start] = lengthAt(at, low);
+        within(start, length * 2);
+        const utf16 = Buffer.from(buffer.subarray(start, start + length * 2));
+        return utf16.swap16().toString("utf16le");
+      }
+      case 7: {
+        const [length, start] = lengthAt(at, low);
+        within(start, length);
+        return buffer.toString("utf8", start, start + length);
+      }
+      case 8:
+        within(at + 1, low + 1);
+        return uint(at + 1, low + 1);
+      default:
+        throw new Error(
+          `Unsupported binary plist marker 0x${marker.toString(16)}`
+        );
+    }
+  };
+  return object2(top);
+}
+var xmlEntities = {
+  amp: "&",
+  apos: "'",
+  gt: ">",
+  lt: "<",
+  quot: '"'
+};
+function decodeXml(text) {
+  return text.replaceAll(
+    /&(#x[\da-f]+|#\d+|\w+);/gi,
+    (entity, name) => {
+      if (name.startsWith("#x") || name.startsWith("#X")) {
+        return String.fromCodePoint(Number.parseInt(name.slice(2), 16));
+      }
+      if (name.startsWith("#")) {
+        return String.fromCodePoint(Number.parseInt(name.slice(1), 10));
+      }
+      return xmlEntities[name] ?? entity;
+    }
+  );
+}
+function parseXmlPlist(text) {
+  const tokens = text.replaceAll(/<!--[\s\S]*?-->/g, "").replaceAll(/<\?[\s\S]*?\?>/g, "").replaceAll(/<!DOCTYPE[^>]*>/gi, "").split(/(<[^>]+>)/);
+  let at = 0;
+  const next = () => {
+    while (tokens[at] !== void 0 && tokens[at].trim() === "") at += 1;
+    const token = tokens[at];
+    at += 1;
+    if (token === void 0) throw new Error("Truncated XML plist");
+    return token.trim();
+  };
+  const textUntil = (name) => {
+    let value2 = "";
+    while (tokens[at] !== void 0 && tokens[at].trim() !== `</${name}>`) {
+      value2 += tokens[at];
+      at += 1;
+    }
+    next();
+    return decodeXml(value2);
+  };
+  const value = (tag) => {
+    const selfClosing = tag.endsWith("/>");
+    const name = /^<\s*([\w-]+)/.exec(tag)?.[1];
+    switch (name) {
+      case "array": {
+        const items = [];
+        if (selfClosing) return items;
+        for (let token = next(); token !== "</array>"; token = next()) {
+          items.push(value(token));
+        }
+        return items;
+      }
+      case "data":
+        return selfClosing ? new Uint8Array() : new Uint8Array(
+          Buffer.from(textUntil("data").replaceAll(/\s/g, ""), "base64")
+        );
+      case "date":
+        return new Date(textUntil("date").trim());
+      case "dict": {
+        const dict = {};
+        if (selfClosing) return dict;
+        for (let token = next(); token !== "</dict>"; token = next()) {
+          if (token !== "<key>") {
+            throw new Error(
+              `Expected <key> in an XML plist dict, got ${token}`
+            );
+          }
+          const key = textUntil("key");
+          dict[key] = value(next());
+        }
+        return dict;
+      }
+      case "false":
+      case "true":
+        if (!selfClosing) textUntil(name);
+        return name === "true";
+      case "integer":
+        return Number(textUntil("integer").trim());
+      case "real":
+        return Number(textUntil("real").trim());
+      case "string":
+        return selfClosing ? "" : textUntil("string");
+      default:
+        throw new Error(`Unexpected ${tag} in an XML plist`);
+    }
+  };
+  let first = next();
+  if (/^<plist\b/.test(first)) {
+    if (first.endsWith("/>")) return {};
+    first = next();
+  }
+  return value(first);
+}
+function readProvisioningProfile(bytes) {
+  const text = Buffer.from(
+    bytes.buffer,
+    bytes.byteOffset,
+    bytes.byteLength
+  ).toString("latin1");
+  const start = text.indexOf("<?xml");
+  const end = text.indexOf("</plist>", start);
+  if (start === -1 || end === -1) {
+    throw new Error("isn't a provisioning profile (no property list inside)");
+  }
+  const plist = parsePlist(
+    Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength).subarray(
+      start,
+      end + "</plist>".length
+    )
+  );
+  if (!isDict(plist)) throw new Error("isn't a provisioning profile");
+  const entitlements = isDict(plist.Entitlements) ? plist.Entitlements : {};
+  const strings = (value) => Array.isArray(value) ? value.filter((item) => typeof item === "string") : [];
+  const applicationIdentifier = entitlements["com.apple.application-identifier"] ?? entitlements["application-identifier"];
+  return {
+    applicationIdentifier: typeof applicationIdentifier === "string" ? applicationIdentifier : "",
+    entitlements,
+    expires: plist.ExpirationDate instanceof Date ? plist.ExpirationDate : void 0,
+    kind: profileKind(plist),
+    name: typeof plist.Name === "string" ? plist.Name : "",
+    platforms: strings(plist.Platform),
+    teamIds: strings(plist.TeamIdentifier),
+    uuid: typeof plist.UUID === "string" ? plist.UUID : ""
+  };
+}
+function profileKind(plist) {
+  if (plist.ProvisionsAllDevices === true) return "developer-id";
+  if (Array.isArray(plist.ProvisionedDevices)) return "development";
+  return "app-store";
+}
+function identifierMatches(pattern, identifier) {
+  return pattern.endsWith("*") ? identifier.startsWith(pattern.slice(0, -1)) : pattern === identifier;
+}
+function needsProfile(entitlement) {
+  return entitlement.startsWith("com.apple.developer.") || entitlement === "aps-environment" || entitlement === "com.apple.application-identifier";
+}
+var signingVariables = ["TeamIdentifierPrefix", "AppIdentifierPrefix"];
+function expandEntitlements(text, { bundleId, file: file2 }) {
+  return text.replaceAll(/\$\((\w+)\)|\$\{(\w+)\}/g, (variable, ...names) => {
+    const name = names[0] ?? names[1];
+    if (signingVariables.includes(name)) return `$(${name})`;
+    if (name === "PRODUCT_BUNDLE_IDENTIFIER") {
+      if (!bundleId) {
+        throw new Error(
+          `${file2} uses ${variable}, but the code it signs isn't a bundle with a CFBundleIdentifier: write the identifier out`
+        );
+      }
+      return bundleId;
+    }
+    throw new Error(
+      `${file2} uses ${variable}, an Xcode build setting ToDesktop can't know: write its value out (only $(PRODUCT_BUNDLE_IDENTIFIER), $(TeamIdentifierPrefix) and $(AppIdentifierPrefix) are filled in)`
+    );
+  });
+}
+function fillTeam(text, teamId) {
+  const prefix = teamId ? `${teamId}.` : "";
+  return text.replaceAll("$(TeamIdentifierPrefix)", prefix).replaceAll("$(AppIdentifierPrefix)", prefix);
+}
+var bundleExtension = /\.(app|appex|xpc|bundle|plugin|framework)$/;
+async function readIfFile(file2) {
+  return (await stat(file2).catch(() => null))?.isFile() ? readFile(file2) : void 0;
+}
+async function bundleIdOf(bundle) {
+  const plist = await readIfFile(path.join(bundle, "Contents", "Info.plist"));
+  return plist ? plistStringsOf(plist).CFBundleIdentifier : void 0;
+}
+async function embedProvisioningProfiles(loaded, app) {
+  const { mac } = loaded.config;
+  if (!mac) return;
+  const profiles = [];
+  if (mac.provisioningProfile) profiles.push(["", mac.provisioningProfile]);
+  for (const [at, nested] of Object.entries(mac.nested ?? {})) {
+    if (nested.provisioningProfile) {
+      if (!bundleExtension.test(at)) {
+        throw new Error(
+          `mac.nested["${at}"].provisioningProfile: only bundles (.app, .appex, .xpc) hold a provisioning profile`
+        );
+      }
+      profiles.push([at, nested.provisioningProfile]);
+    }
+  }
+  for (const [at, profile] of profiles) {
+    const source = path.resolve(loaded.configDir, profile);
+    if (!await readIfFile(source)) {
+      throw new Error(
+        `The provisioning profile ${profile} isn't a file (${source})`
+      );
+    }
+    const bundle = path.join(app, at);
+    if (!(await stat(path.join(bundle, "Contents")).catch(() => null))?.isDirectory()) {
+      throw new Error(
+        `${at ? `mac.nested["${at}"]` : "mac"}.provisioningProfile: ${path.basename(app)} has no bundle at ${at || "."}`
+      );
+    }
+    await copyFile(
+      source,
+      path.join(bundle, "Contents", "embedded.provisionprofile")
+    );
+  }
+}
+async function macEntitlements(loaded, app, now = /* @__PURE__ */ new Date()) {
+  const { mac } = loaded.config;
+  const entitlements = { nested: {} };
+  if (!mac) return { entitlements, warnings: [] };
+  const read = async (file2, bundleId) => {
+    const source = path.resolve(loaded.configDir, file2);
+    const bytes = await readIfFile(source);
+    if (!bytes) {
+      throw new Error(`The entitlements file ${file2} isn't a file (${source})`);
+    }
+    const text = expandEntitlements(bytes.toString("utf8"), { bundleId, file: file2 });
+    try {
+      if (!isDict(parsePlist(Buffer.from(fillTeam(text, "TEAMID"))))) {
+        throw new Error("not a dictionary");
+      }
+    } catch (error46) {
+      throw new Error(
+        `${file2} isn't an entitlements plist: ${error46.message}`
+      );
+    }
+    return text;
+  };
+  const appBundleId = await bundleIdOf(app);
+  if (mac.entitlements) {
+    entitlements.app = await read(mac.entitlements, appBundleId);
+  }
+  for (const [at, nested] of Object.entries(mac.nested ?? {})) {
+    const target = path.join(app, at);
+    const found = await stat(target).catch(() => null);
+    if (!found) {
+      throw new Error(
+        `mac.nested lists ${at}, but ${path.basename(app)} has nothing there`
+      );
+    }
+    if (nested.entitlements) {
+      const bundleId = found.isDirectory() ? await bundleIdOf(target) : void 0;
+      entitlements.nested[at] = await read(nested.entitlements, bundleId);
+    }
+  }
+  const warnings = await checkSigning(app, entitlements, now);
+  return { entitlements, warnings };
+}
+function granted(want, have) {
+  if (have === void 0) return false;
+  if (typeof have === "string") {
+    if (have === "*") return true;
+    if (Array.isArray(want)) return want.every((item) => granted(item, have));
+    return typeof want === "string" && identifierMatches(have, want);
+  }
+  if (Array.isArray(have)) {
+    return Array.isArray(want) ? want.every((item) => have.some((allowed) => granted(item, allowed))) : have.some((allowed) => granted(want, allowed));
+  }
+  if (typeof have === "boolean") {
+    return typeof want === "boolean" && (have || !want);
+  }
+  return JSON.stringify(want) === JSON.stringify(have);
+}
+async function checkSigning(app, entitlements, now = /* @__PURE__ */ new Date()) {
+  const warnings = [];
+  const name = path.basename(app);
+  const targets = /* @__PURE__ */ new Set(["."]);
+  for (const bundle of await nestedBundles(app)) {
+    if (bundle.endsWith(".app") || bundle in entitlements.nested) {
+      targets.add(bundle);
+    }
+  }
+  for (const at of await bundlesWithProfiles(app)) targets.add(at);
+  for (const at of Object.keys(entitlements.nested)) targets.add(at);
+  for (const at of [...targets].sort()) {
+    const target = at === "." ? app : path.join(app, at);
+    const found = await stat(target).catch(() => null);
+    if (!found) {
+      throw new Error(`mac.nested lists ${at}, but ${name} has nothing there`);
+    }
+    const where = at === "." ? name : `${at} in ${name}`;
+    const text = entitlements.nested[at] ?? (at === "." || at.endsWith(".app") ? entitlements.app : void 0);
+    const profileBytes = found.isDirectory() ? await readIfFile(
+      path.join(target, "Contents", "embedded.provisionprofile")
+    ) : void 0;
+    if (!profileBytes) {
+      const requested2 = text ? parsePlist(Buffer.from(fillTeam(text, "TEAMID"))) : {};
+      const restricted = Object.keys(isDict(requested2) ? requested2 : {}).filter(
+        needsProfile
+      );
+      if (restricted.length === 0) continue;
+      let fix = `set ${at === "." ? "mac.provisioningProfile" : `mac.nested["${at}"].provisioningProfile`} to a Developer ID profile from your Apple Developer account`;
+      if (!found.isDirectory()) {
+        fix = "only bundles can hold a profile: drop them from its entitlements, or move the code into a bundle (an XPC service or app)";
+      } else if (at !== "." && !(at in entitlements.nested)) {
+        fix = `it takes mac.entitlements as a nested app: give it its own in mac.nested["${at}"], or ${fix}`;
+      }
+      throw new Error(
+        `${where} asks for ${restricted.join(", ")}, which macOS allows only with a provisioning profile: ${fix}`
+      );
+    }
+    let profile;
+    try {
+      profile = readProvisioningProfile(profileBytes);
+    } catch (error46) {
+      throw new Error(
+        `${where}'s embedded.provisionprofile ${error46.message}`
+      );
+    }
+    const label = `${where}'s provisioning profile${profile.name ? ` "${profile.name}"` : ""}`;
+    if (profile.platforms.length > 0 && !profile.platforms.includes("OSX")) {
+      throw new Error(
+        `${label} is for ${profile.platforms.join(", ")}, not macOS`
+      );
+    }
+    if (profile.kind !== "developer-id") {
+      throw new Error(
+        `${label} is a ${profile.kind === "development" ? "development" : "Mac App Store"} profile: ToDesktop signs with your Developer ID certificate, so make a Developer ID profile`
+      );
+    }
+    if (profile.expires && profile.expires <= now) {
+      throw new Error(
+        `${label} expired on ${profile.expires.toISOString().slice(0, 10)}`
+      );
+    }
+    if (profile.expires && profile.expires.getTime() - now.getTime() < 30 * 864e5) {
+      warnings.push(
+        `${label} expires on ${profile.expires.toISOString().slice(0, 10)}: builds made with it stop launching then`
+      );
+    }
+    const [team] = profile.teamIds;
+    const bundleId = await bundleIdOf(target);
+    if (bundleId && team) {
+      if (!identifierMatches(profile.applicationIdentifier, `${team}.${bundleId}`)) {
+        throw new Error(
+          `${label} is for ${profile.applicationIdentifier || "no app ID"}, not ${team}.${bundleId}`
+        );
+      }
+    }
+    const requested = text ? parsePlist(Buffer.from(fillTeam(text, team ?? "TEAMID"))) : {};
+    const notGranted = Object.entries(isDict(requested) ? requested : {}).filter(
+      ([key, value]) => needsProfile(key) && !granted(value, profile.entitlements[key])
+    ).map(([key]) => key);
+    if (notGranted.length > 0) {
+      throw new Error(
+        `${where} asks for ${notGranted.join(", ")}, which ${label} doesn't allow as asked: add the capability (and its values: containers, domains, environment) to its app ID in your Apple Developer account and download the profile again`
+      );
+    }
+  }
+  return warnings;
+}
+var isBundleDir = (name) => bundleExtension.test(name);
+async function nestedBundles(app) {
+  const found = [];
+  for (const entry of await readdir(app, {
+    recursive: true,
+    withFileTypes: true
+  })) {
+    if (entry.isDirectory() && isBundleDir(entry.name)) {
+      const bundle = path.join(entry.parentPath, entry.name);
+      found.push(path.relative(app, bundle).split(path.sep).join("/"));
+    }
+  }
+  return found.sort();
+}
+async function bundlesWithProfiles(app) {
+  const found = [];
+  for (const at of [".", ...await nestedBundles(app)]) {
+    if (await readIfFile(
+      path.join(app, at, "Contents", "embedded.provisionprofile")
+    )) {
+      found.push(at);
+    }
+  }
+  return found;
+}
+
 // src/inspect.ts
-import { open, readFile } from "node:fs/promises";
+import { open, readFile as readFile2 } from "node:fs/promises";
 async function head(file2, length) {
   const handle = await open(file2, "r");
   try {
@@ -1175,7 +1704,7 @@ async function head(file2, length) {
     await handle.close();
   }
 }
-var xmlEntities = {
+var xmlEntities2 = {
   amp: "&",
   apos: "'",
   gt: ">",
@@ -1183,12 +1712,11 @@ var xmlEntities = {
   quot: '"'
 };
 async function plistStrings(file2) {
-  const text = await readFile(file2, "utf8");
-  if (text.startsWith("bplist")) {
-    throw new Error(
-      `${file2} is a binary plist, which isn't supported yet: convert it to XML (plutil -convert xml1)`
-    );
+  const bytes = await readFile2(file2);
+  if (bytes.toString("latin1", 0, 6) === "bplist") {
+    return plistStringsOf(bytes);
   }
+  const text = bytes.toString("utf8");
   const values = {};
   for (const [, key, value] of text.matchAll(
     /<key>([^<]+)<\/key>\s*<string>([^<]*)<\/string>/g
@@ -1196,7 +1724,7 @@ async function plistStrings(file2) {
     if (key) {
       values[key] = (value ?? "").replaceAll(
         /&(\w+);/g,
-        (entity, name) => xmlEntities[name] ?? entity
+        (entity, name) => xmlEntities2[name] ?? entity
       );
     }
   }
@@ -1287,7 +1815,7 @@ async function tauriSign(file2, keyFile) {
     process2.env.TAURI_SIGNING_PRIVATE_KEY_PASSWORD ?? "",
     file2
   ]);
-  return (await readFile2(`${file2}.sig`, "utf8")).trim();
+  return (await readFile3(`${file2}.sig`, "utf8")).trim();
 }
 async function tauriBridge(options) {
   await mkdir(options.out, { recursive: true });
@@ -1295,30 +1823,30 @@ async function tauriBridge(options) {
   if (!response.ok) {
     throw new Error(`${options.from}: ${response.status}`);
   }
-  const zip = path.join(options.out, "build.zip");
+  const zip = path2.join(options.out, "build.zip");
   await writeFile(zip, new Uint8Array(await response.arrayBuffer()));
-  const unpacked = path.join(options.out, "unpacked");
+  const unpacked = path2.join(options.out, "unpacked");
   await run("ditto", ["-x", "-k", zip, unpacked]);
-  const appName = (await readdir(unpacked)).find(
+  const appName = (await readdir2(unpacked)).find(
     (name2) => name2.endsWith(".app")
   );
   if (!appName) throw new Error(`${options.from} holds no .app`);
-  const app = path.join(unpacked, appName);
-  const plist = await plistStrings(path.join(app, "Contents", "Info.plist"));
+  const app = path2.join(unpacked, appName);
+  const plist = await plistStrings(path2.join(app, "Contents", "Info.plist"));
   const version2 = plist.CFBundleShortVersionString;
   const executable = plist.CFBundleExecutable;
   if (!version2 || !executable) {
     throw new Error(`${appName}'s Info.plist lacks a version or executable`);
   }
-  if (!existsSync(path.join(app, "Contents", "Resources", "todesktop-build.json"))) {
+  if (!existsSync(path2.join(app, "Contents", "Resources", "todesktop-build.json"))) {
     throw new Error(
       `${appName} isn't a ToDesktop build (no todesktop-build.json)`
     );
   }
-  const arch = await machOArch(path.join(app, "Contents", "MacOS", executable));
+  const arch = await machOArch(path2.join(app, "Contents", "MacOS", executable));
   const base = appName.replace(/\.app$/, "").replaceAll(/[^\w.-]+/g, "-");
   const name = `${base}-${version2}-mac-${arch}.app.tar.gz`;
-  const tarball = path.join(options.out, name);
+  const tarball = path2.join(options.out, name);
   await run(
     "tar",
     ["--no-mac-metadata", "-czf", tarball, "-C", unpacked, appName],
@@ -1339,7 +1867,7 @@ async function tauriBridge(options) {
     pub_date: (/* @__PURE__ */ new Date()).toISOString(),
     version: version2
   };
-  const latest = path.join(options.out, "latest.json");
+  const latest = path2.join(options.out, "latest.json");
   await writeFile(latest, `${JSON.stringify(manifest, null, 2)}
 `);
   process2.stdout.write(
@@ -1361,9 +1889,9 @@ var presetsKey = /* @__PURE__ */ Symbol.for("@todesktop/config/presets");
 
 // ../config/src/load.ts
 import { build } from "esbuild";
-import { mkdir as mkdir3, mkdtemp, readFile as readFile4, rm, writeFile as writeFile2 } from "node:fs/promises";
+import { mkdir as mkdir3, mkdtemp, readFile as readFile5, rm, writeFile as writeFile2 } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import path3 from "node:path";
+import path4 from "node:path";
 import { pathToFileURL } from "node:url";
 
 // ../../node_modules/.pnpm/zod@4.1.12/node_modules/zod/v4/classic/external.js
@@ -2097,10 +2625,10 @@ function mergeDefs(...defs) {
 function cloneDef(schema) {
   return mergeDefs(schema._zod.def);
 }
-function getElementAtPath(obj, path5) {
-  if (!path5)
+function getElementAtPath(obj, path6) {
+  if (!path6)
     return obj;
-  return path5.reduce((acc, key) => acc?.[key], obj);
+  return path6.reduce((acc, key) => acc?.[key], obj);
 }
 function promiseAllObject(promisesObj) {
   const keys = Object.keys(promisesObj);
@@ -2461,11 +2989,11 @@ function aborted(x, startIndex = 0) {
   }
   return false;
 }
-function prefixIssues(path5, issues) {
+function prefixIssues(path6, issues) {
   return issues.map((iss) => {
     var _a;
     (_a = iss).path ?? (_a.path = []);
-    iss.path.unshift(path5);
+    iss.path.unshift(path6);
     return iss;
   });
 }
@@ -2627,7 +3155,7 @@ function formatError(error46, mapper = (issue2) => issue2.message) {
 }
 function treeifyError(error46, mapper = (issue2) => issue2.message) {
   const result = { errors: [] };
-  const processError = (error47, path5 = []) => {
+  const processError = (error47, path6 = []) => {
     var _a, _b;
     for (const issue2 of error47.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
@@ -2637,7 +3165,7 @@ function treeifyError(error46, mapper = (issue2) => issue2.message) {
       } else if (issue2.code === "invalid_element") {
         processError({ issues: issue2.issues }, issue2.path);
       } else {
-        const fullpath = [...path5, ...issue2.path];
+        const fullpath = [...path6, ...issue2.path];
         if (fullpath.length === 0) {
           result.errors.push(mapper(issue2));
           continue;
@@ -2669,8 +3197,8 @@ function treeifyError(error46, mapper = (issue2) => issue2.message) {
 }
 function toDotPath(_path) {
   const segs = [];
-  const path5 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
-  for (const seg of path5) {
+  const path6 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
+  for (const seg of path6) {
     if (typeof seg === "number")
       segs.push(`[${seg}]`);
     else if (typeof seg === "symbol")
@@ -14038,11 +14566,11 @@ async function resolveExtends(config2, name, context) {
 function sourcesOf(resolved, sources) {
   const out = {};
   const lookup = (at) => {
-    for (let path5 = at; path5; ) {
-      const source = sources[path5];
+    for (let path6 = at; path6; ) {
+      const source = sources[path6];
       if (source) return source;
-      const dot = path5.lastIndexOf(".");
-      path5 = dot < 0 ? "" : path5.slice(0, dot);
+      const dot = path6.lastIndexOf(".");
+      path6 = dot < 0 ? "" : path6.slice(0, dot);
     }
     return "default";
   };
@@ -14061,15 +14589,15 @@ import { execFile as execFile2 } from "node:child_process";
 import { existsSync as existsSync2 } from "node:fs";
 import {
   chmod,
-  copyFile,
+  copyFile as copyFile2,
   mkdir as mkdir2,
   open as open2,
-  readdir as readdir2,
-  readFile as readFile3,
+  readdir as readdir3,
+  readFile as readFile4,
   realpath,
-  stat
+  stat as stat2
 } from "node:fs/promises";
-import path2 from "node:path";
+import path3 from "node:path";
 import { promisify as promisify2 } from "node:util";
 
 // ../../node_modules/.pnpm/smol-toml@1.9.1/node_modules/smol-toml/dist/error.js
@@ -14844,9 +15372,9 @@ function isObject2(value) {
 }
 var asString = (value) => typeof value === "string" && value !== "" ? value : void 0;
 var asStrings = (value) => Array.isArray(value) ? value.filter((item) => typeof item === "string") : [];
-var relativeTo = (configDir, file2) => path2.relative(configDir, file2).split(path2.sep).join("/") || ".";
+var relativeTo = (configDir, file2) => path3.relative(configDir, file2).split(path3.sep).join("/") || ".";
 async function parseFile(file2) {
-  const text = await readFile3(file2, "utf8");
+  const text = await readFile4(file2, "utf8");
   let value;
   try {
     if (file2.endsWith(".toml")) value = parse3(text);
@@ -14894,13 +15422,13 @@ function mergePatch(target, patch) {
   return out;
 }
 async function findConfig(configDir, given) {
-  const inDir = (dir) => configNames.map((name) => path2.join(dir, name)).find(existsSync2);
+  const inDir = (dir) => configNames.map((name) => path3.join(dir, name)).find(existsSync2);
   if (given) {
-    const resolved = path2.resolve(configDir, given);
+    const resolved = path3.resolve(configDir, given);
     if (!existsSync2(resolved)) {
       throw new Error(`tauriConfig(${JSON.stringify(given)}): no such file`);
     }
-    if (!(await stat(resolved)).isDirectory()) return resolved;
+    if (!(await stat2(resolved)).isDirectory()) return resolved;
     const found2 = inDir(resolved);
     if (!found2) {
       throw new Error(
@@ -14909,7 +15437,7 @@ async function findConfig(configDir, given) {
     }
     return found2;
   }
-  const found = inDir(path2.join(configDir, "src-tauri")) ?? inDir(configDir);
+  const found = inDir(path3.join(configDir, "src-tauri")) ?? inDir(configDir);
   if (!found) {
     throw new Error(
       `tauriConfig(): no ${configNames.join(", ")} in src-tauri or beside todesktop.ts; pass its path`
@@ -14923,34 +15451,34 @@ async function platformOverride(dir, platform) {
     `tauri.${os}.conf.json`,
     `tauri.${os}.conf.json5`,
     `Tauri.${os}.toml`
-  ].map((name) => path2.join(dir, name)).find(existsSync2);
+  ].map((name) => path3.join(dir, name)).find(existsSync2);
   return file2 ? camelKeys(await parseFile(file2)) : void 0;
 }
 async function workspaceOf(dir) {
-  for (let at = dir; ; at = path2.dirname(at)) {
-    const file2 = path2.join(at, "Cargo.toml");
+  for (let at = dir; ; at = path3.dirname(at)) {
+    const file2 = path3.join(at, "Cargo.toml");
     if (existsSync2(file2)) {
       const manifest = await parseFile(file2);
       if (isObject2(manifest.workspace)) return { dir: at, manifest };
     }
-    if (path2.dirname(at) === at) return void 0;
+    if (path3.dirname(at) === at) return void 0;
   }
 }
 async function cargoBuildConfig(dir) {
   let target;
   let targetDir;
-  for (let at = dir; ; at = path2.dirname(at)) {
+  for (let at = dir; ; at = path3.dirname(at)) {
     for (const name of ["config.toml", "config"]) {
-      const file2 = path2.join(at, ".cargo", name);
+      const file2 = path3.join(at, ".cargo", name);
       if (!existsSync2(file2)) continue;
       const { build: build2 } = await parseFile(file2);
       if (!isObject2(build2)) continue;
       const configuredDir = asString(build2["target-dir"]);
-      targetDir ??= configuredDir ? path2.resolve(at, configuredDir) : void 0;
+      targetDir ??= configuredDir ? path3.resolve(at, configuredDir) : void 0;
       const targets = Array.isArray(build2.target) ? asStrings(build2.target) : asStrings([build2.target]);
       if (targets.length === 1) target ??= targets[0];
     }
-    if (path2.dirname(at) === at) {
+    if (path3.dirname(at) === at) {
       return {
         ...target ? { target } : {},
         ...targetDir ? { targetDir } : {}
@@ -14998,14 +15526,14 @@ async function mainBinaryOf(manifest, name, defaultRun, dir) {
       ...binPath ? { path: binPath } : {}
     });
   }
-  const found = (await entriesOf(path2.join(dir, "src", "bin"))).map(
+  const found = (await entriesOf(path3.join(dir, "src", "bin"))).map(
     (entry) => [
-      path2.parse(entry.name).name,
-      path2.join(dir, "src", "bin", entry.name)
+      path3.parse(entry.name).name,
+      path3.join(dir, "src", "bin", entry.name)
     ]
   );
-  if (existsSync2(path2.join(dir, "src", "main.rs"))) {
-    found.push([name, path2.join(dir, "src", "main.rs")]);
+  if (existsSync2(path3.join(dir, "src", "main.rs"))) {
+    found.push([name, path3.join(dir, "src", "main.rs")]);
   }
   for (const [binName, file2] of found) {
     const covered = binaries.some(
@@ -15024,13 +15552,13 @@ async function mainBinaryOf(manifest, name, defaultRun, dir) {
   const main2 = binaries.find((bin) => bin.main);
   if (!main2) {
     throw new Error(
-      `tauriConfig(): ${path2.join(dir, "Cargo.toml")} builds ${binaries.map((bin) => bin.name).join(", ")}; set package.default-run to the app's, as tauri build asks`
+      `tauriConfig(): ${path3.join(dir, "Cargo.toml")} builds ${binaries.map((bin) => bin.name).join(", ")}; set package.default-run to the app's, as tauri build asks`
     );
   }
   return main2.name;
 }
 async function readCargo(dir) {
-  const file2 = path2.join(dir, "Cargo.toml");
+  const file2 = path3.join(dir, "Cargo.toml");
   if (!existsSync2(file2)) {
     throw new Error(`tauriConfig(): no Cargo.toml in ${dir}`);
   }
@@ -15088,7 +15616,7 @@ async function readCargo(dir) {
     ...tauri.workspace === true && isObject2(workspaceTable) ? asStrings(tauriOf(workspaceTable.dependencies).features) : []
   ];
   const fromEnv = process.env.CARGO_TARGET_DIR ?? process.env.CARGO_BUILD_TARGET_DIR;
-  const targetDir = fromEnv ? path2.resolve(dir, fromEnv) : build2.targetDir ?? path2.join(workspace?.dir ?? dir, "target");
+  const targetDir = fromEnv ? path3.resolve(dir, fromEnv) : build2.targetDir ?? path3.join(workspace?.dir ?? dir, "target");
   const description = asString(field("description"));
   const homepage = asString(field("homepage"));
   const version2 = asString(field("version"));
@@ -15111,7 +15639,7 @@ async function readCargo(dir) {
 }
 async function readTauriProject(configDir, given) {
   const file2 = await findConfig(configDir, given);
-  const dir = path2.dirname(file2);
+  const dir = path3.dirname(file2);
   const shared = camelKeys(await parseFile(file2));
   const platforms2 = {};
   for (const platform of platformsInOrder) {
@@ -15126,8 +15654,8 @@ var binaryOf = (project, platform) => asString(project.platforms[platform].mainB
 async function versionOf(project) {
   const version2 = asString(project.shared.version);
   if (version2?.endsWith(".json")) {
-    const file2 = path2.resolve(project.dir, version2);
-    const json2 = JSON.parse(await readFile3(file2, "utf8"));
+    const file2 = path3.resolve(project.dir, version2);
+    const json2 = JSON.parse(await readFile4(file2, "utf8"));
     return asString(json2.version);
   }
   return version2 ?? project.cargo.version;
@@ -15147,7 +15675,7 @@ async function pngWidth(file2) {
 }
 async function iconsOf(project, platform) {
   const icons = asStrings(bundleOf(project.platforms[platform]).icon).map(
-    (icon) => path2.resolve(project.dir, icon)
+    (icon) => path3.resolve(project.dir, icon)
   );
   const ico = icons.find(
     (icon) => icon.toLowerCase().endsWith(".ico") && existsSync2(icon)
@@ -15170,7 +15698,7 @@ async function tauriPresetConfig(project, configDir) {
   const relative = (file2) => relativeTo(configDir, file2);
   const { cargo } = project;
   const sharedBundle = bundleOf(project.shared);
-  const release = path2.join(
+  const release = path3.join(
     cargo.targetDir,
     ...cargo.buildTarget ? [cargo.buildTarget] : [],
     "release"
@@ -15212,7 +15740,7 @@ async function tauriPresetConfig(project, configDir) {
       // tauri build --bundles app --target aarch64-apple-darwin
       apps: {
         arm64: relative(
-          path2.join(
+          path3.join(
             cargo.targetDir,
             "aarch64-apple-darwin",
             "release",
@@ -15222,7 +15750,7 @@ async function tauriPresetConfig(project, configDir) {
           )
         )
       },
-      entitlements: entitlements ? relative(path2.resolve(project.dir, entitlements)) : void 0,
+      entitlements: entitlements ? relative(path3.resolve(project.dir, entitlements)) : void 0,
       formats: ["dmg"]
     }),
     maintainer: authors || asString(sharedBundle.publisher),
@@ -15237,7 +15765,7 @@ async function tauriPresetConfig(project, configDir) {
   });
 }
 function splitWritten(written) {
-  const root = path2.isAbsolute(written) ? path2.parse(written).root.replaceAll("\\", "/") : "";
+  const root = path3.isAbsolute(written) ? path3.parse(written).root.replaceAll("\\", "/") : "";
   const parts = written.slice(root.length).split(/[\\/]+/).filter((part) => part !== "" && part !== ".");
   return { parts, root };
 }
@@ -15277,7 +15805,7 @@ function componentRegExp(part) {
 var byName = (a, b) => a.name < b.name ? -1 : Number(a.name > b.name);
 async function entriesOf(dir) {
   try {
-    return (await readdir2(dir, { withFileTypes: true })).sort(byName);
+    return (await readdir3(dir, { withFileTypes: true })).sort(byName);
   } catch {
     return [];
   }
@@ -15296,7 +15824,7 @@ async function globWritten(pattern, cwd) {
       await walk(dir, shown, after);
       for (const entry of await entriesOf(dir)) {
         if (entry.isDirectory()) {
-          await walk(path2.join(dir, entry.name), join(shown, entry.name), rest);
+          await walk(path3.join(dir, entry.name), join(shown, entry.name), rest);
         }
       }
     } else if (hasMagic(part)) {
@@ -15304,21 +15832,21 @@ async function globWritten(pattern, cwd) {
       for (const entry of await entriesOf(dir)) {
         if (matcher.test(entry.name)) {
           await walk(
-            path2.join(dir, entry.name),
+            path3.join(dir, entry.name),
             join(shown, entry.name),
             after
           );
         }
       }
-    } else if (existsSync2(path2.join(dir, part))) {
-      await walk(path2.join(dir, part), join(shown, part), after);
+    } else if (existsSync2(path3.join(dir, part))) {
+      await walk(path3.join(dir, part), join(shown, part), after);
     }
   };
-  await walk(root ? path2.resolve(root) : cwd, root, parts);
+  await walk(root ? path3.resolve(root) : cwd, root, parts);
   if (/[\\/]$/.test(pattern)) {
     const dirs = [];
     for (const match of found) {
-      if (await isDirectory(path2.resolve(cwd, match))) dirs.push(match);
+      if (await isDirectory(path3.resolve(cwd, match))) dirs.push(match);
     }
     return dirs;
   }
@@ -15328,11 +15856,11 @@ async function filesUnder(dir, shown) {
   const files = [];
   for (const entry of await entriesOf(dir)) {
     const child = `${shown}/${entry.name}`;
-    const full = path2.join(dir, entry.name);
+    const full = path3.join(dir, entry.name);
     if (entry.isDirectory()) {
       files.push(...await filesUnder(full, child));
     } else if (entry.isSymbolicLink()) {
-      const target = await stat(full).catch(() => void 0);
+      const target = await stat2(full).catch(() => void 0);
       if (!target) {
         throw new Error(`bundle.resources: ${child} is a broken link`);
       }
@@ -15341,7 +15869,7 @@ async function filesUnder(dir, shown) {
   }
   return files;
 }
-var isDirectory = async (file2) => (await stat(file2).catch(() => void 0))?.isDirectory() ?? false;
+var isDirectory = async (file2) => (await stat2(file2).catch(() => void 0))?.isDirectory() ?? false;
 async function tauriResources(resources, dir) {
   const out = [];
   let entries = [];
@@ -15359,7 +15887,7 @@ async function tauriResources(resources, dir) {
     if (hasMagic(pattern)) {
       const files = [];
       for (const written2 of await globWritten(pattern, dir)) {
-        if (!await isDirectory(path2.resolve(dir, written2))) {
+        if (!await isDirectory(path3.resolve(dir, written2))) {
           files.push(written2);
         }
       }
@@ -15368,28 +15896,28 @@ async function tauriResources(resources, dir) {
       }
       for (const written2 of files) {
         out.push({
-          source: path2.resolve(dir, written2),
-          target: target === void 0 ? resourceRelpath(written2) : under(target, path2.posix.basename(written2))
+          source: path3.resolve(dir, written2),
+          target: target === void 0 ? resourceRelpath(written2) : under(target, path3.posix.basename(written2))
         });
       }
       continue;
     }
     const written = normalizeWritten(pattern);
-    const source = path2.resolve(dir, written);
+    const source = path3.resolve(dir, written);
     if (!existsSync2(source)) {
       throw new Error(`bundle.resources: ${pattern} doesn't exist`);
     }
     if (await isDirectory(source)) {
       for (const file2 of await filesUnder(source, written)) {
         out.push({
-          source: path2.resolve(dir, file2),
+          source: path3.resolve(dir, file2),
           target: target === void 0 ? resourceRelpath(file2) : under(target, file2.slice(written.length + 1))
         });
       }
     } else {
       out.push({
         source,
-        target: target === void 0 ? resourceRelpath(written) : target || path2.posix.basename(written)
+        target: target === void 0 ? resourceRelpath(written) : target || path3.posix.basename(written)
       });
     }
   }
@@ -15405,19 +15933,19 @@ var defaultTriples = {
 async function sidecarFile(dir, bin, platform, arch, buildTarget) {
   const ext = platform === "windows" ? ".exe" : "";
   const cpu = arch === "arm64" ? "aarch64" : "x86_64";
-  const base = path2.resolve(dir, bin);
+  const base = path3.resolve(dir, bin);
   const preferred = `${base}-${buildTarget ?? defaultTriples[platform][arch === "arm64" ? "arm64" : "x64"]}${ext}`;
   if (existsSync2(preferred)) return preferred;
-  const prefix = `${path2.basename(base)}-${cpu}-`;
-  const other = (await entriesOf(path2.dirname(base))).find(
+  const prefix = `${path3.basename(base)}-${cpu}-`;
+  const other = (await entriesOf(path3.dirname(base))).find(
     ({ name }) => name.startsWith(prefix) && name.includes(platform) && (ext ? name.endsWith(ext) : !name.endsWith(".exe"))
   );
   if (!other) {
     throw new Error(
-      `bundle.externalBin: no ${path2.relative(dir, preferred)} (${bin} for ${platform} ${arch})`
+      `bundle.externalBin: no ${path3.relative(dir, preferred)} (${bin} for ${platform} ${arch})`
     );
   }
-  return path2.join(path2.dirname(base), other.name);
+  return path3.join(path3.dirname(base), other.name);
 }
 async function isBinaryFor(file2, platform) {
   try {
@@ -15434,8 +15962,8 @@ async function isBinaryFor(file2, platform) {
   }
 }
 async function copyInto(source, target) {
-  await mkdir2(path2.dirname(target), { recursive: true });
-  await copyFile(source, target);
+  await mkdir2(path3.dirname(target), { recursive: true });
+  await copyFile2(source, target);
 }
 function isSet(value) {
   if (Array.isArray(value)) return value.length > 0;
@@ -15523,14 +16051,14 @@ async function assembleTauri(given, context) {
   const project = await readTauriProject(configDir, given);
   const config2 = project.platforms[platform];
   const ext = platform === "windows" ? ".exe" : "";
-  const binary = path2.join(source, `${binaryOf(project, platform)}${ext}`);
+  const binary = path3.join(source, `${binaryOf(project, platform)}${ext}`);
   if (!await isBinaryFor(binary, platform)) return false;
   for (const ignored of ignoredTauriSettings(config2, platform)) {
     console.warn(`tauriConfig(): ${platform}: ${ignored}`);
   }
   const executable = context.config[platform]?.executable ?? `${binaryOf(project, platform)}${ext}`;
-  await copyInto(binary, path2.join(appDir, executable));
-  if (platform === "linux") await chmod(path2.join(appDir, executable), 493);
+  await copyInto(binary, path3.join(appDir, executable));
+  if (platform === "linux") await chmod(path3.join(appDir, executable), 493);
   const bundle = bundleOf(config2);
   for (const bin of asStrings(bundle.externalBin)) {
     const file2 = await sidecarFile(
@@ -15540,7 +16068,7 @@ async function assembleTauri(given, context) {
       arch,
       project.cargo.buildTarget
     );
-    const target = path2.join(appDir, `${path2.basename(bin)}${ext}`);
+    const target = path3.join(appDir, `${path3.basename(bin)}${ext}`);
     await copyInto(file2, target);
     if (platform === "linux") await chmod(target, 493);
   }
@@ -15554,11 +16082,11 @@ async function assembleTauri(given, context) {
     resources = [...asStrings(resources), fixedRuntime];
   }
   const files = await tauriResources(resources, project.dir);
-  const resourceDir = platform === "windows" ? appDir : path2.join(appDir, "usr", "lib", productNameOf(project, config2));
+  const resourceDir = platform === "windows" ? appDir : path3.join(appDir, "usr", "lib", productNameOf(project, config2));
   for (const file2 of files) {
     await copyInto(
       file2.source,
-      path2.join(resourceDir, ...file2.target.split("/"))
+      path3.join(resourceDir, ...file2.target.split("/"))
     );
   }
   if (platform === "linux" && files.length > 0 && context.config.linux?.formats.includes("tar.gz")) {
@@ -15585,6 +16113,7 @@ var presets = {
 // ../config/src/schema.ts
 var fileName = external_exports.string().regex(/^[\w.-]+$/, "Must be a file name, not a path");
 var appPath = external_exports.string().min(1);
+var nestedCodePath = /^Contents(?:\/(?!\.{1,2}(?:\/|$))[^/\\]+)+$/;
 var linuxFormats = [
   "deb",
   "rpm",
@@ -15642,8 +16171,48 @@ var macPlatform = external_exports.strictObject({
     (apps) => !(apps.universal && (apps.arm64 || apps.x64)),
     "Use a universal app or per-arch apps, not both"
   ),
-  /** Entitlements plist for the app, relative to the config file. */
+  /**
+   * Entitlements plist for the app (and the apps nested in it, such as an
+   * Electron app's helpers), relative to the config file. An Xcode
+   * project's `.entitlements` file works as it is: ToDesktop fills in
+   * `$(PRODUCT_BUNDLE_IDENTIFIER)`, `$(TeamIdentifierPrefix)` and
+   * `$(AppIdentifierPrefix)` as Xcode would.
+   */
   entitlements: external_exports.string().optional(),
+  /**
+   * Code nested in the app that needs its own entitlements or provisioning
+   * profile, by its path inside the app: an app extension
+   * (`Contents/PlugIns/Share.appex`), an XPC service
+   * (`Contents/XPCServices/Helper.xpc`), a login item
+   * (`Contents/Library/LoginItems/Helper.app`) or a helper executable
+   * (`Contents/MacOS/helper`, entitlements only). Nested code that isn't
+   * listed is signed with none, except nested apps, which take
+   * `entitlements`.
+   */
+  nested: external_exports.record(
+    external_exports.string().regex(
+      nestedCodePath,
+      "Must be a path inside the app, like Contents/PlugIns/Share.appex"
+    ),
+    external_exports.strictObject({
+      /** Its entitlements plist, relative to the config file. */
+      entitlements: external_exports.string().optional(),
+      /**
+       * Its Developer ID provisioning profile, relative to the config
+       * file: put in the bundle as `Contents/embedded.provisionprofile`.
+       */
+      provisioningProfile: external_exports.string().optional()
+    })
+  ).optional(),
+  /**
+   * The app's Developer ID provisioning profile (`.provisionprofile`),
+   * relative to the config file, for entitlements Apple grants only
+   * through one (iCloud, push notifications, associated domains, Sign in
+   * with Apple...). Put in the app as `Contents/embedded.provisionprofile`
+   * before it's uploaded; it must be for the app's bundle ID and the team
+   * that signs it.
+   */
+  provisioningProfile: external_exports.string().optional(),
   /**
    * Formats besides the zip, which is always built because the updater
    * installs it: `dmg` for people, `pkg` for IT teams (installs into
@@ -15817,9 +16386,9 @@ async function bundleModule(file2) {
   return output.text;
 }
 async function importBundle(bundle) {
-  const dir = await mkdtemp(path3.join(tmpdir(), "todesktop-config-"));
+  const dir = await mkdtemp(path4.join(tmpdir(), "todesktop-config-"));
   try {
-    const file2 = path3.join(dir, "todesktop.config.mjs");
+    const file2 = path4.join(dir, "todesktop.config.mjs");
     await writeFile2(file2, bundle);
     const module = await import(pathToFileURL(file2).href);
     return module.default;
@@ -15831,11 +16400,11 @@ function isPlainObject3(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 async function loadConfig(file2, context) {
-  const extension = path3.extname(file2);
+  const extension = path4.extname(file2);
   let exported;
   let bundle;
   if (extension === ".json") {
-    exported = JSON.parse(await readFile4(file2, "utf8"));
+    exported = JSON.parse(await readFile5(file2, "utf8"));
   } else if (moduleExtensions.has(extension)) {
     try {
       bundle = await bundleModule(file2);
@@ -15858,10 +16427,10 @@ async function loadConfig(file2, context) {
       `${file2}: extends takes presets, which are code: use todesktop.ts`
     );
   }
-  const configDir = path3.dirname(file2);
+  const configDir = path4.dirname(file2);
   const { assemble, data, hooks, sources } = await resolveExtends(
     value,
-    path3.basename(file2),
+    path4.basename(file2),
     { ...context, configDir }
   );
   const windowsFormats2 = isPlainObject3(data.windows) ? data.windows.formats : void 0;
@@ -15879,7 +16448,7 @@ async function loadConfig(file2, context) {
           const source = Object.entries(sources).find(
             ([leaf]) => leaf === key || leaf.startsWith(`${key}.`)
           )?.[1];
-          return source && source !== path3.basename(file2) ? [`${key} is ${source}'s`] : [];
+          return source && source !== path4.basename(file2) ? [`${key} is ${source}'s`] : [];
         })
       )
     ];
@@ -15907,7 +16476,7 @@ function appsFor(loaded, platform, overrides = []) {
   const apps = {};
   for (const [arch, relative] of Object.entries(configured)) {
     if (relative) {
-      apps[arch] = path3.resolve(loaded.configDir, relative);
+      apps[arch] = path4.resolve(loaded.configDir, relative);
     }
   }
   for (const override of overrides) {
@@ -15921,7 +16490,7 @@ function appsFor(loaded, platform, overrides = []) {
         `--input ${arch}: ${loaded.file} has no ${platform}.apps.${arch} (it lists ${Object.keys(apps).join(", ")})`
       );
     }
-    apps[arch] = path3.resolve(file2);
+    apps[arch] = path4.resolve(file2);
   }
   return apps;
 }
@@ -15939,6 +16508,12 @@ async function assembleApp(loaded, platform, arch, source, appDir) {
     source
   });
 }
+
+// ../contracts/src/appIcon.ts
+var MAX_ICON_SOURCE_BYTES = 4 * 1024 * 1024;
+var MAX_ICON_BYTES = 1024 * 1024;
+var ICON_TAIL_BYTES = MAX_ICON_SOURCE_BYTES + 512 + 20 * 512;
+var decoder = new TextDecoder();
 
 // ../contracts/src/ci.ts
 var pieceKey = (platform, arch) => `${platform}/${arch}`;
@@ -16013,7 +16588,7 @@ var placeholderModulus = hexBytes(
 );
 
 // ../contracts/src/keyVaultAccess.ts
-var decoder = new TextDecoder();
+var decoder2 = new TextDecoder();
 var encoder = new TextEncoder();
 
 // ../contracts/src/liveTicket.ts
@@ -16023,9 +16598,9 @@ var LIVE_SOCKET_GRACE_MS = 10 * 6e4;
 import { execFile as execFile3 } from "node:child_process";
 import { createHash } from "node:crypto";
 import { createReadStream, existsSync as existsSync3, openAsBlob, statSync } from "node:fs";
-import { copyFile as copyFile2, cp, mkdtemp as mkdtemp2, readFile as readFile5, rm as rm2, stat as stat2 } from "node:fs/promises";
+import { copyFile as copyFile3, cp, lstat, mkdtemp as mkdtemp2, rm as rm2, stat as stat3 } from "node:fs/promises";
 import { tmpdir as tmpdir2 } from "node:os";
-import path4 from "node:path";
+import path5 from "node:path";
 import process3 from "node:process";
 import { promisify as promisify3 } from "node:util";
 var run3 = promisify3(execFile3);
@@ -16036,12 +16611,12 @@ function overridesFor(platform, inputs) {
 async function inspect(config2, platform, arch, appPath2) {
   if (platform === "mac") {
     const plist = await plistStrings(
-      path4.join(appPath2, "Contents", "Info.plist")
+      path5.join(appPath2, "Contents", "Info.plist")
     );
     const executable2 = plist.CFBundleExecutable;
     if (!executable2) throw new Error(`${appPath2} has no CFBundleExecutable`);
     const actual2 = await machOArch(
-      path4.join(appPath2, "Contents", "MacOS", executable2)
+      path5.join(appPath2, "Contents", "MacOS", executable2)
     );
     if (actual2 !== arch) {
       throw new Error(`mac.apps.${arch} is ${appPath2}, but it's ${actual2}`);
@@ -16056,7 +16631,7 @@ async function inspect(config2, platform, arch, appPath2) {
   }
   const executable = config2[platform]?.executable ?? "";
   const actual = await (platform === "windows" ? peArch : elfArch)(
-    path4.join(appPath2, executable)
+    path5.join(appPath2, executable)
   );
   if (actual !== arch) {
     throw new Error(
@@ -16130,11 +16705,27 @@ function checkAppIdentifiers(appId, pinned, apps) {
     });
   }
 }
-var iconNames = { linux: "icon.png", windows: "icon.ico" };
+var iconNames = {
+  linux: "icon.png",
+  mac: "icon.icns",
+  windows: "icon.ico"
+};
+async function macIconFile(app) {
+  const named = (await plistStrings(path5.join(app, "Contents", "Info.plist"))).CFBundleIconFile;
+  if (!named || named.includes("/") || named.startsWith(".")) return void 0;
+  const file2 = path5.join(
+    app,
+    "Contents",
+    "Resources",
+    path5.extname(named) ? named : `${named}.icns`
+  );
+  const info = await lstat(file2).catch(() => null);
+  return info?.isFile() && info.size <= MAX_ICON_SOURCE_BYTES ? file2 : void 0;
+}
 function iconFor(loaded, platform) {
   const icon = platform === "mac" ? void 0 : loaded.config[platform]?.icon;
   if (!icon) return void 0;
-  const file2 = path4.resolve(loaded.configDir, icon);
+  const file2 = path5.resolve(loaded.configDir, icon);
   if (!statSync(file2, { throwIfNoEntry: false })?.isFile()) {
     throw new Error(
       `${platform}.icon is ${icon}, but there's no such file (${file2}): ToDesktop's builders need it to brand the app`
@@ -16143,12 +16734,13 @@ function iconFor(loaded, platform) {
   return file2;
 }
 async function preparedTar(loaded, app, version2, work, icon) {
-  const name = app.platform === "mac" ? path4.basename(app.path) : "app";
-  const staging = path4.join(work, `${app.platform}-${app.arch}`);
-  const copy = path4.join(staging, name);
+  const name = app.platform === "mac" ? path5.basename(app.path) : "app";
+  const staging = path5.join(work, `${app.platform}-${app.arch}`);
+  const copy = path5.join(staging, name);
   await cp(app.path, copy, { recursive: true, verbatimSymlinks: true });
-  const iconName = icon && app.platform !== "mac" ? iconNames[app.platform] : void 0;
-  if (icon && iconName) await copyFile2(icon, path4.join(staging, iconName));
+  let iconName = icon && app.platform !== "mac" ? iconNames[app.platform] : void 0;
+  if (icon && iconName) await copyFile3(icon, path5.join(staging, iconName));
+  if (app.platform === "mac") await embedProvisioningProfiles(loaded, copy);
   const hook = loaded.hooks.prepareApp;
   if (hook) {
     await hook({
@@ -16160,9 +16752,22 @@ async function preparedTar(loaded, app, version2, work, icon) {
     });
     console.info(`  ${app.platform}/${app.arch}: prepareApp hook ran`);
   }
+  let entitlements;
+  if (app.platform === "mac") {
+    const read = await macEntitlements(loaded, copy);
+    for (const warning of read.warnings) {
+      console.warn(`  ${app.platform}/${app.arch}: ${warning}`);
+    }
+    entitlements = read.entitlements;
+    const macIcon = await macIconFile(copy);
+    if (macIcon) {
+      iconName = iconNames.mac;
+      await copyFile3(macIcon, path5.join(staging, iconNames.mac));
+    }
+  }
   const tar = `${staging}.tar`;
   const macTar = process3.platform === "darwin" ? ["--no-mac-metadata"] : [];
-  const stagingName = path4.basename(staging);
+  const stagingName = path5.basename(staging);
   await run3(
     "tar",
     [
@@ -16179,9 +16784,10 @@ async function preparedTar(loaded, app, version2, work, icon) {
   const hash2 = createHash("sha256");
   for await (const chunk of createReadStream(tar)) hash2.update(chunk);
   return {
+    ...entitlements ? { entitlements } : {},
     ...iconName ? { iconName } : {},
     sha256: hash2.digest("hex"),
-    size: (await stat2(tar)).size,
+    size: (await stat3(tar)).size,
     tar
   };
 }
@@ -16227,7 +16833,7 @@ function describe(status) {
   return build2 && started.length > 0 ? `${waiting}. Build ${build2.buildNumber} (${build2.buildId}) has started ${started.join(" and ")}` : waiting;
 }
 async function upload(options) {
-  const file2 = path4.resolve(options.configFile);
+  const file2 = path5.resolve(options.configFile);
   const loadedByPlatform = Object.fromEntries(
     await Promise.all(
       platforms.map(
@@ -16253,7 +16859,7 @@ async function upload(options) {
   const { config: config2 } = loaded;
   const unbuildable = ciConfigProblem(config2);
   if (unbuildable) throw new Error(unbuildable);
-  const work = await mkdtemp2(path4.join(tmpdir2(), "todesktop-upload-"));
+  const work = await mkdtemp2(path5.join(tmpdir2(), "todesktop-upload-"));
   try {
     const expected = [];
     const found = [];
@@ -16269,7 +16875,7 @@ async function upload(options) {
         expected.push(pieceKey(platform, arch));
         if (!existsSync3(appPath2)) continue;
         if (loadedHere.assemble[platform]) {
-          const appDir = path4.join(work, "assembled", `${platform}-${arch}`);
+          const appDir = path5.join(work, "assembled", `${platform}-${arch}`);
           if (await assembleApp(loadedHere, platform, arch, appPath2, appDir)) {
             console.info(`  ${platform}/${arch}: made from ${appPath2}`);
             found.push(await inspect(config2, platform, arch, appDir));
@@ -16310,10 +16916,6 @@ async function upload(options) {
       );
     }
     let status;
-    const entitlements = config2.mac?.entitlements ? await readFile5(
-      path4.resolve(path4.dirname(file2), config2.mac.entitlements),
-      "utf8"
-    ) : void 0;
     for (const app of found) {
       const tar = await preparedTar(
         loadedByPlatform[app.platform],
@@ -16327,9 +16929,11 @@ async function upload(options) {
         ...app.bundleId ? { bundleId: app.bundleId } : {},
         config: config2,
         configSha256: createHash("sha256").update(json2).digest("hex"),
-        ...app.platform === "mac" && entitlements ? { entitlements } : {},
+        // The config holds the entitlements' paths; builders get the plists.
+        ...tar.entitlements?.app ? { entitlements: tar.entitlements.app } : {},
         expected,
         ...tar.iconName ? { icon: tar.iconName } : {},
+        ...tar.entitlements && Object.keys(tar.entitlements.nested).length > 0 ? { nestedEntitlements: tar.entitlements.nested } : {},
         platform: app.platform,
         sha256: tar.sha256,
         size: tar.size,
@@ -16337,7 +16941,7 @@ async function upload(options) {
       };
       if (!auth) {
         console.info(
-          `  ${app.platform}/${app.arch}: ready (${Math.round(tar.size / 1024)} KiB${tar.iconName ? `, with ${app.platform}.icon` : ""}), not uploaded (--dry-run)`
+          `  ${app.platform}/${app.arch}: ready (${Math.round(tar.size / 1024)} KiB${tar.iconName ? ", with its icon" : ""}), not uploaded (--dry-run)`
         );
         continue;
       }
