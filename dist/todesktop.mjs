@@ -23923,13 +23923,14 @@ function edgeNote(edgeUrl) {
   }
   return "not ToDesktop's production: take this line out before a real release";
 }
+var uploadActionRef = (edgeUrl) => edgeUrl.replace(/\/+$/, "") === productionEdgeUrl ? "v1" : "staging";
 var uploadStep = (edgeUrl, {
   packageJson = false,
   refs = []
 } = {}) => `${packageJson ? `      - id: version   # package.json's, for runs without a tag
         shell: bash
         run: echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
-` : ""}      - uses: ToDesktop/upload-action@v1   # sends the built app
+` : ""}      - uses: ToDesktop/upload-action@${uploadActionRef(edgeUrl)}   # sends the built app
         with:
           # A tag (v1.2.3) names the version; other runs use${packageJson ? "\n          # package.json's" : " the\n          # config's"}, as branch names aren't versions.
           version: \${{ github.ref_type == 'tag' && github.ref_name || ${packageJson ? "steps.version.outputs.version" : "''"} }}${refs.includes(testRef) ? `
@@ -23983,6 +23984,7 @@ var electronWorkflow = {
   description: `In .github/workflows/release.yml. A job per platform builds the app, unpacked and unsigned, and uploads it.`,
   title: "Build and upload in GitHub Actions"
 };
+var updatePolicyNote = "With no `updates` in todesktop.config.ts, the updater checks every hour, downloads an update by itself and installs it when the app quits. `updates` changes that: `check` ({ every: '15m' } or 'manual'), `download` ('automatic' or 'manual'), `install` ('on-quit', 'immediately' or 'manual'); `updates: 'manual'` leaves all three to the app's own calls (@todesktop/config's README, \"Updates\"). If the app has its own setting or prompt for updates, wire it to these (`download: 'manual'`, then the updater's download call when the person agrees), or tell the person it no longer decides.";
 var electronUpdates = {
   description: "The updater follows the update policy in todesktop.config.ts. Commit this with step 1.",
   via: "Installs update through @todesktop/updater, or apt and dnf on Linux"
@@ -24144,7 +24146,7 @@ function fitWorkflow(app, workflow) {
         shell: bash
         run: echo "version=\${GITHUB_REF_NAME#${prefix}}" >> "$GITHUB_OUTPUT"
 `;
-    text3 = text3.replace(/^( {6}- uses: ToDesktop\/upload-action@v1)/m, `${step}$1`).replaceAll(
+    text3 = text3.replace(/^( {6}- uses: ToDesktop\/upload-action@[\w.-]+)/m, `${step}$1`).replaceAll(
       "github.ref_type == 'tag' && github.ref_name",
       "github.ref_type == 'tag' && steps.tag.outputs.version"
     );
@@ -24158,7 +24160,7 @@ function fitWorkflow(app, workflow) {
         working-directory: ${dir}   # the app's folder
 `
     ).replace(
-      /(uses: ToDesktop\/upload-action@v1[^\n]*\n {8}with:\n)/,
+      /(uses: ToDesktop\/upload-action@[\w.-]+[^\n]*\n {8}with:\n)/,
       `$1          config: ${dir}/todesktop.config.ts
 `
     );
@@ -24578,7 +24580,10 @@ ${uploadStep(edgeUrl, { refs: app.refs })}`,
       file: (app, edgeUrl) => matrixWorkflow(
         app,
         electronBuilderMatrix(app),
-        `      - run: npm ci
+        `      - run: npm ci${(app.buildSteps ?? []).map(
+          (command, index) => `${index === 0 ? "\n      # Your own scripts run this before electron-builder." : ""}
+      - run: ${command}`
+        ).join("")}
       # Unpacked and unsigned: ToDesktop signs and packages it.${app.electronBuilderAppId ? `
       # -c.appId is the installed app's bundle ID: macOS takes this as its update.` : ""}${linuxExecutableArg(app) ? `
       # -c.linux.executableName names the Linux executable as todesktop.config.ts does.` : ""}
@@ -25419,6 +25424,67 @@ function electronBuilderPaths(pkg, { settings, source }) {
   }
   return found;
 }
+var settingKey = { linux: "linux", mac: "mac", windows: "win" };
+function targetArches(target) {
+  const arches = (Array.isArray(target) ? target : [target]).flatMap(
+    (each) => isObject3(each) ? (Array.isArray(each.arch) ? each.arch : [each.arch]).filter(
+      (arch) => typeof arch === "string"
+    ) : []
+  );
+  return [...new Set(arches)].sort();
+}
+function beforeElectronBuilder(script) {
+  const commands = script.split("&&").map((command) => command.trim());
+  const at = commands.findIndex(
+    (command) => /(^|[\s/])electron-builder(\s|$)/.test(command) && // Rebuilding native modules isn't a build of the app.
+    !/electron-builder\s+install-app-deps\b/.test(command)
+  );
+  return at === -1 ? void 0 : commands.slice(0, at).filter(Boolean);
+}
+function electronBuilderShips(pkg, { settings, source }) {
+  const found = {};
+  const scripts = Object.entries(isObject3(pkg?.scripts) ? pkg.scripts : {}).map(([name, script]) => ({
+    before: typeof script === "string" ? beforeElectronBuilder(script) : void 0,
+    name
+  })).filter(
+    (each) => each.before !== void 0
+  );
+  if (scripts.some(({ before }) => before.length > 0)) {
+    const [first, ...rest] = scripts;
+    found.buildSteps = {
+      common: first.before.filter(
+        (command) => rest.every(({ before }) => before.includes(command))
+      ),
+      scripts
+    };
+  }
+  const entitlements2 = text(settings?.mac?.entitlements);
+  if (entitlements2) {
+    found.entitlements = {
+      file: entitlements2.replace(/^\.\//, ""),
+      from: `${source}: mac.entitlements`
+    };
+  }
+  const others = [];
+  for (const platform of ["mac", "windows", "linux"]) {
+    const key = settingKey[platform];
+    const arches = targetArches(settings?.[key]?.target);
+    const from = `${source}: ${key}.target`;
+    if (platform === "mac") {
+      const drafted = arches.filter(
+        (arch) => arch === "arm64" || arch === "x64"
+      );
+      if (drafted.length) found.macArches = { arches: drafted, from };
+    }
+    others.push(
+      ...arches.filter(
+        (arch) => platform === "mac" ? arch === "universal" : arch !== "x64"
+      ).map((arch) => ({ arch, from, platform }))
+    );
+  }
+  if (others.length) found.otherArches = others;
+  return found;
+}
 
 // ../recipes/src/native.ts
 var import_yaml2 = __toESM(require_dist(), 1);
@@ -26059,6 +26125,11 @@ async function detect(dir) {
       await electronBuilderFilesIn(dir)
     );
     Object.assign(result, electronBuilderPaths(pkg, config4));
+    const ships = electronBuilderShips(pkg, config4);
+    if (ships.entitlements && !existsSync4(path4.join(dir, ships.entitlements.file))) {
+      delete ships.entitlements;
+    }
+    if (Object.keys(ships).length) result.electronBuilder = ships;
   }
   const tauriManifest = tauriFile ? await readText2(path4.join(dir, "src-tauri", "Cargo.toml")) : void 0;
   const updater = (dep("@todesktop/updater") ? "package.json: @todesktop/updater" : "") || (dep("@todesktop/tauri") ? "package.json: @todesktop/tauri" : "") || (tauriManifest && cargoDepends(tauriManifest, "tauri-plugin-todesktop") ? "src-tauri/Cargo.toml: tauri-plugin-todesktop" : "") || (cargo && cargoDepends(cargo, "todesktop-updater") ? "Cargo.toml: todesktop-updater" : "") || await dotnetClient(dir, csprojs) || (xcodeProjects.length ? await swiftClient(dir, xcodeProjects) : "");
@@ -28792,6 +28863,7 @@ async function planOf(values, { withoutApp = false } = {}) {
   const name = app.name ?? appId ?? "Your App";
   const root = detection.appDir ? path10.resolve(dir, ...detection.appDir.split("/").map(() => "..")) : dir;
   const configApps = framework.id === "other" && detection.config ? await configAppsOf(path10.join(dir, detection.config)) : void 0;
+  const ships = framework.id === "electron-builder" ? detection.electronBuilder : void 0;
   const recipeApp = {
     ...configApps ? { configApps } : {},
     id,
@@ -28804,6 +28876,12 @@ async function planOf(values, { withoutApp = false } = {}) {
     // The workflow runs on what's trusted, else on the repository's own tags.
     refs: trusted?.refs ?? refsOf(detection),
     ...detection.outputDir ? { outputDir: detection.outputDir.dir } : {},
+    // What an electron-builder app ships today, where its files say:
+    // its Mac arches, its own entitlements file, and the steps every
+    // one of its scripts runs before electron-builder.
+    ...ships?.macArches ? { macArches: ships.macArches.arches } : {},
+    ...ships?.entitlements ? { entitlementsFile: ships.entitlements.file } : {},
+    ...ships?.buildSteps?.common.length ? { buildSteps: ships.buildSteps.common } : {},
     ...detection.linuxExecutable ? { linuxExecutable: detection.linuxExecutable.name } : {},
     ...detection.linuxExecutable?.replaces ? { setLinuxExecutable: true } : {},
     // "Something else" for a native app: its kind, and .NET's client.
@@ -28844,6 +28922,21 @@ async function planOf(values, { withoutApp = false } = {}) {
       `${detection.v1Config} is ToDesktop v1's config: keep it for v1's builds. v2 reads todesktop.config.ts, beside it.`
     );
   }
+  if (ships?.macArches) {
+    configNotes.push(
+      `mac.apps lists ${ships.macArches.arches.join(" and ")}, the Mac arches your electron-builder config builds (${ships.macArches.from}).`
+    );
+  }
+  if (ships?.otherArches?.length) {
+    configNotes.push(
+      `Your electron-builder config also builds ${ships.otherArches.map(({ arch, platform }) => `${platform} ${arch}`).join(", ")} (${[...new Set(ships.otherArches.map(({ from }) => from))].join(", ")}), which this draft leaves out: it lists x64 for Windows and Linux, and one app per Mac arch. Add each you still ship to its platform's apps (electron-builder puts it in ${ships.otherArches.map(({ arch, platform }) => platform === "mac" ? "mac-universal" : `${platform === "windows" ? "win" : "linux"}-${arch}-unpacked`).join(", ")}) and to the workflow's matrix, or tell the person it's dropped.`
+    );
+  }
+  if (ships?.entitlements) {
+    configNotes.push(
+      `mac.entitlements is your own ${ships.entitlements.file} (${ships.entitlements.from}); no second file is added. ToDesktop signs with exactly what it grants: Electron needs com.apple.security.cs.allow-jit, allow-unsigned-executable-memory and disable-library-validation, so add any it lacks.`
+    );
+  }
   if (recipe.warning) {
     configNotes.push(`${recipe.warning.title} ${recipe.warning.text}`);
   }
@@ -28861,6 +28954,7 @@ async function planOf(values, { withoutApp = false } = {}) {
     updateNotes.push(`Take out ${what} (in ${where.join(", ")}).`);
   }
   if (recipe.updates.note) updateNotes.push(recipe.updates.note);
+  updateNotes.push(updatePolicyNote);
   const client = clientOf(framework.id, detection);
   if (client && !detection.updater) {
     const files = await clientFiles(client);
@@ -28941,7 +29035,18 @@ async function planOf(values, { withoutApp = false } = {}) {
   );
   if (others.length) {
     workflowNotes.push(
-      `Your other workflows (${others.join(", ")}) stay as they are.`
+      `This draft doesn't touch your other workflows (${others.join(", ")}). Read each: one that builds installers, signs or publishes the app (a publish script, a release upload) goes, or loses those steps, as ToDesktop does that now.`
+    );
+  }
+  const own = ships?.buildSteps;
+  if (own) {
+    const named = own.scripts.map((script) => script.name).join(", ");
+    const extra = own.scripts.map((script) => ({
+      only: script.before.filter((command) => !own.common.includes(command)),
+      script: script.name
+    })).filter(({ only }) => only.length > 0);
+    workflowNotes.push(
+      `${own.common.length ? `The workflow runs ${own.common.map((command) => `\`${command}\``).join(", ")} before electron-builder, as every package.json script that calls electron-builder does (${named}).` : `Your package.json scripts that call electron-builder (${named}) don't all run the same steps before it, so the workflow has none of them.`}${extra.length ? ` Some run more, which the workflow doesn't: ${extra.map(({ only, script }) => `${script} runs ${only.map((command) => `\`${command}\``).join(", ")}`).join("; ")}. Add what each platform's job needs.` : ""}`
     );
   }
   if (detection.appDir) {
