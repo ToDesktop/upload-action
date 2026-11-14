@@ -30,11 +30,12 @@ release.
 
 ## Inputs
 
-| Input     | Default                                | What                                                                    |
-| --------- | -------------------------------------- | ----------------------------------------------------------------------- |
-| `version` | the config's, or the Mac app's         | The version to release; a leading `v` is dropped.                       |
-| `config`  | `todesktop.config.ts` in the directory | Path to the config file.                                                |
-| `url`     | `https://updates.todesktop.com`        | Where to upload. Leave it unset unless ToDesktop gives you another URL. |
+| Input     | Default                                | What                                                                                                                                                        |
+| --------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `version` | the config's, or the Mac app's         | The version to release; a leading `v` is dropped.                                                                                                           |
+| `test`    | `false`                                | `true` makes a test build: built, signed and smoke-tested, never released. Every job of the run passes the same value. Without a version it's `0.0.0-test`. |
+| `config`  | `todesktop.config.ts` in the directory | Path to the config file.                                                                                                                                    |
+| `url`     | `https://updates.todesktop.com`        | Where to upload. Leave it unset unless ToDesktop gives you another URL.                                                                                     |
 
 `v1` follows the latest 1.x release; pin a full tag (`v1.2.3`) or a commit SHA
 to stay on one.
