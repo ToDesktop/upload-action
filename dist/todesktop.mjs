@@ -22648,6 +22648,61 @@ function ignoredTauriSettings(config3, platform) {
   }
   return ignored;
 }
+var multiarchOf = (arch) => arch === "arm64" ? "aarch64-linux-gnu" : "x86_64-linux-gnu";
+var trayLibraries = [
+  "libayatana-appindicator3.so.1",
+  "libappindicator3.so.1"
+];
+var trayFamily = /^lib(?:ayatana-|appindicator|indicator|dbusmenu-)/;
+var libraryDirsOf = (arch) => [
+  `/usr/lib/${multiarchOf(arch)}`,
+  `/lib/${multiarchOf(arch)}`,
+  ...arch === process.arch ? ["/usr/lib64", "/usr/lib"] : []
+];
+async function bundleTrayLibraries(appDir, executable, dirs) {
+  const find = (name) => dirs.map((dir) => path.join(dir, name)).find((file3) => existsSync(file3));
+  const tray = trayLibraries.map(find).find(Boolean);
+  if (!tray) {
+    return "libayatana-appindicator3 isn\u2019t on this machine (apt-get install libayatana-appindicator3-1)";
+  }
+  const needed = async (file3) => {
+    const { stdout } = await run("patchelf", ["--print-needed", file3]);
+    return stdout.split("\n").filter((name) => trayFamily.test(name));
+  };
+  try {
+    const files = /* @__PURE__ */ new Map([[path.basename(tray), tray]]);
+    const queue = [tray];
+    for (let file3 = queue.shift(); file3; file3 = queue.shift()) {
+      for (const name of await needed(file3)) {
+        const found = find(name);
+        if (found && !files.has(name)) {
+          files.set(name, found);
+          queue.push(found);
+        }
+      }
+    }
+    const binary = path.join(appDir, executable);
+    const { stdout } = await run("patchelf", ["--print-rpath", binary]);
+    const rpath = ["$ORIGIN/lib", ...stdout.trim().split(":")].filter(
+      (entry, index, all) => entry && all.indexOf(entry) === index
+    );
+    await run("patchelf", [
+      "--force-rpath",
+      "--set-rpath",
+      rpath.join(":"),
+      binary
+    ]);
+    await Promise.all(
+      [...files].map(
+        ([name, file3]) => copyInto(file3, path.join(appDir, "lib", name))
+      )
+    );
+    return void 0;
+  } catch (error46) {
+    const { code, message, stderr } = error46;
+    return code === "ENOENT" ? "patchelf isn\u2019t on this machine (apt-get install patchelf)" : `patchelf failed: ${(stderr?.trim() || message).split("\n").at(-1)}`;
+  }
+}
 async function assembleTauri(given, context) {
   const { appDir, arch, configDir, platform, source } = context;
   if (platform === "mac") return false;
@@ -22674,6 +22729,21 @@ async function assembleTauri(given, context) {
     const target = path.join(appDir, `${path.basename(bin)}${ext}`);
     await copyInto(file3, target);
     if (platform === "linux") await chmod(target, 493);
+  }
+  const carried = (context.config.linux?.formats ?? []).filter(
+    (format) => format !== "deb"
+  );
+  if (platform === "linux" && project.cargo.trayIcon && carried.length > 0) {
+    const unbundled = await bundleTrayLibraries(
+      appDir,
+      executable,
+      libraryDirsOf(arch)
+    );
+    if (unbundled) {
+      console.warn(
+        `tauriConfig(): linux: the tray's library isn't in the app: ${unbundled}. A ${carried.join(" or ")} install then needs libayatana-appindicator3 on the person's machine, and the app panics at start without it`
+      );
+    }
   }
   let { resources } = bundle;
   const windowsBundle = isObject2(bundle.windows) ? bundle.windows : {};
@@ -23792,6 +23862,14 @@ function firstPush(refs = [], version3, tags = []) {
   }
   return { command: null, title: "Run your workflow" };
 }
+var tauriBuildFixed = "2.7.0";
+var rustForOldTauriBuild = "1.99.0";
+function oldTauriBuild(version3) {
+  const [major, minor] = (version3 ?? "").split(".").map(Number);
+  const [, fixedMinor = 0] = tauriBuildFixed.split(".").map(Number);
+  return major === 2 && Number.isInteger(minor) && (minor ?? 0) < fixedMinor;
+}
+var oldTauriBuildNote = (version3) => `tauri-build ${version3} (Cargo.lock) can't build the app with the updater's sidecar on Rust 1.100 or later: Rust moved its build folders, tauri-build follows from ${tauriBuildFixed}, and until then \`tauri build\` panics in the app's build script ("Is a directory", in tauri-build's lib.rs). The app built before only because it had no bundle.externalBin. So the workflow builds with Rust ${rustForOldTauriBuild}; build with it on your machine too (\`rustup override set ${rustForOldTauriBuild}\` in src-tauri). Or upgrade Tauri, which is the bigger change: \`cargo update\` in src-tauri takes tauri-build past ${tauriBuildFixed} with the rest of Tauri, and the workflow goes back to \`dtolnay/rust-toolchain@stable\`.`;
 var testBranch = "todesktop-test";
 var testRef = `refs/heads/${testBranch}`;
 var withTestRef = (refs) => refs.includes(testRef) ? refs : [...refs, testRef];
@@ -24859,11 +24937,15 @@ npm install @todesktop/tauri`,
             args: --no-bundle
             updater: x86_64-unknown-linux-musl   # static, so any glibc
             target: x86_64-unknown-linux-gnu`,
-        `      - uses: dtolnay/rust-toolchain@stable
+        `${app.rustToolchain ? `      # Not stable: your tauri-build can't place the sidecar with Rust 1.100
+      # or later. Upgrade Tauri (tauri-build ${tauriBuildFixed} or later), then use @stable.
+` : ""}      - uses: dtolnay/rust-toolchain@${app.rustToolchain ?? "stable"}
         with:
           targets: aarch64-apple-darwin
+      # Tauri's own packages. A tray's library goes into the app from here
+      # (tauriConfig() copies it, with patchelf), for AppImage and tar.gz installs.
       - if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev librsvg2-dev
+        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev librsvg2-dev libayatana-appindicator3-dev patchelf
       - run: npm ci
       # todesktop-updater beside the app (tauri.conf.json's externalBin), from
       # ToDesktop's runtime release, named for the target as Tauri expects.
@@ -25987,6 +26069,15 @@ async function detect(dir) {
     const tauriCargo = await readText2(
       path4.join(dir, "src-tauri", "Cargo.toml")
     );
+    for (const lock of [path4.join("src-tauri", "Cargo.lock"), "Cargo.lock"]) {
+      const locked = (await readText2(path4.join(dir, lock)))?.match(
+        /\[\[package\]\]\s*\nname = "tauri-build"\s*\nversion = "([^"]+)"/
+      )?.[1];
+      if (locked) {
+        result.tauriBuild = locked;
+        break;
+      }
+    }
     if (tauriCargo && cargoDepends(tauriCargo, "tauri-plugin-updater")) {
       remove.push({
         what: "tauri-plugin-updater",
@@ -26704,18 +26795,40 @@ function refusalLine(app, refused) {
   return `ToDesktop refused an upload from ${refused.repository} on ${refused.ref}${refused.workflow ? ` (${refused.workflow.replace(/@.*$/, "").split("/").slice(2).join("/")})` : ""} at ${refused.at}: ${trusted ? `it trusts ${describeTarget(trusted)} only` : "no workflow is trusted yet"}.`;
 }
 var smokeOf = (build2) => typeof build2.smokeTest === "string" ? build2.smokeTest : build2.smokeTest?.status;
+var uploadOverdueMs = 5 * 6e4;
+function awaitedUploads(build2) {
+  const { expected = [], received = [], updatedAt } = build2.uploads ?? {};
+  const missing = expected.filter((key) => !received.includes(key));
+  if (build2.status !== "building" || missing.length === 0) return void 0;
+  const source = build2.source;
+  const run4 = source?.provider === "github" && source.repository && source.runId ? `https://github.com/${source.repository}/actions/runs/${source.runId}` : void 0;
+  const waited = Date.now() - Date.parse(updatedAt ?? "");
+  return {
+    missing,
+    ...waited >= uploadOverdueMs ? { overdue: `${Math.round(waited / 6e4)} min` } : {},
+    ...run4 ? { run: run4 } : {}
+  };
+}
+var overdueUploads = ({
+  missing,
+  overdue,
+  run: run4
+}) => `Nothing has uploaded for ${overdue}, and ${missing.join(" and ")} ${missing.length > 1 ? "haven't" : "hasn't"}. A job that failed or was cancelled never uploads, and this build can't finish without ${missing.length > 1 ? "them" : "it"}${run4 ? `: look at ${run4}` : ""}. Re-run the failed job to finish this build, or push again for a new one.`;
 function buildLine(build2) {
   const smoke = smokeOf(build2);
+  const awaited = awaitedUploads(build2);
   return [
     build2.buildId.padEnd(12),
     String(build2.version ?? "").padEnd(10),
     build2.status.padEnd(9),
     smoke ? `smoke ${smoke}` : "",
     isTestBuild(build2) ? "\xB7 test build" : "",
+    awaited ? `\xB7 waiting for ${awaited.missing.join(", ")} to upload` : "",
     build2.error ? `\xB7 ${build2.error}` : ""
   ].join(" ").trimEnd();
 }
-function buildNext({ buildId, status: status2 }, appArg) {
+function buildNext(build2, appArg) {
+  const { buildId, status: status2 } = build2;
   if (status2 === "failed") {
     return [
       {
@@ -26725,7 +26838,13 @@ function buildNext({ buildId, status: status2 }, appArg) {
     ];
   }
   if (status2 === "building") {
-    return [{ command: `${cli()} builds wait ${buildId}${appArg}` }];
+    const awaited = awaitedUploads(build2);
+    return [
+      {
+        command: `${cli()} builds wait ${buildId}${appArg}`,
+        ...awaited?.overdue ? { why: overdueUploads(awaited) } : {}
+      }
+    ];
   }
   return [];
 }
@@ -27394,6 +27513,7 @@ var buildsWait = {
       `Waiting for ${buildId} for up to ${timeout.replace(/^(\d+)s$/, "$1 s")}${until === "smoke" ? " (its build, then its smoke test)" : ""}. If it isn't done by then, \`${again}\` picks up where this left off.`
     );
     let said = "";
+    let overdue = "";
     while (Date.now() < deadline) {
       const { build: build2 } = await api("getBuild", {
         appId,
@@ -27401,9 +27521,12 @@ var buildsWait = {
       });
       const steps = Object.entries(build2.progress ?? {}).map(([platform, step]) => `${platform} ${step}`).join(", ");
       const smoke = smokeOf(build2);
-      const line = `${buildId} ${build2.status}${steps ? ` \xB7 ${steps}` : ""}${smoke ? ` \xB7 smoke ${smoke}` : ""}`;
+      const awaited = awaitedUploads(build2);
+      const line = `${buildId} ${build2.status}${steps ? ` \xB7 ${steps}` : ""}${awaited ? ` \xB7 waiting for ${awaited.missing.join(", ")} to upload` : ""}${smoke ? ` \xB7 smoke ${smoke}` : ""}`;
       if (line !== said) progress(line);
       said = line;
+      if (awaited?.overdue && !overdue) progress(overdueUploads(awaited));
+      overdue = awaited?.overdue ? overdueUploads(awaited) : "";
       if (build2.status === "failed") {
         throw new CliError(
           "build-failed",
@@ -27466,10 +27589,15 @@ var buildsWait = {
     }
     throw new CliError(
       "timed-out",
-      `${buildId} isn't done yet (${said || buildId}). Nothing is wrong: run it again to keep waiting from here, as often as it takes.`,
+      overdue ? `${buildId} isn't done yet (${said || buildId}). ${overdue}` : `${buildId} isn't done yet (${said || buildId}). Nothing is wrong: run it again to keep waiting from here, as often as it takes.`,
       {
         exit: exitCodes.timedOut,
-        fix: [{ command: again, why: "keep waiting" }]
+        fix: [
+          {
+            command: again,
+            why: overdue ? "once the job has been re-run" : "keep waiting"
+          }
+        ]
       }
     );
   },
@@ -28876,6 +29004,7 @@ async function planOf(values, { withoutApp = false } = {}) {
     // The workflow runs on what's trusted, else on the repository's own tags.
     refs: trusted?.refs ?? refsOf(detection),
     ...detection.outputDir ? { outputDir: detection.outputDir.dir } : {},
+    ...framework.id === "tauri" && oldTauriBuild(detection.tauriBuild) ? { rustToolchain: rustForOldTauriBuild } : {},
     // What an electron-builder app ships today, where its files say:
     // its Mac arches, its own entitlements file, and the steps every
     // one of its scripts runs before electron-builder.
@@ -29037,6 +29166,9 @@ async function planOf(values, { withoutApp = false } = {}) {
     workflowNotes.push(
       `This draft doesn't touch your other workflows (${others.join(", ")}). Read each: one that builds installers, signs or publishes the app (a publish script, a release upload) goes, or loses those steps, as ToDesktop does that now.`
     );
+  }
+  if (framework.id === "tauri" && detection.tauriBuild && oldTauriBuild(detection.tauriBuild)) {
+    workflowNotes.push(oldTauriBuildNote(detection.tauriBuild));
   }
   const own = ships?.buildSteps;
   if (own) {
