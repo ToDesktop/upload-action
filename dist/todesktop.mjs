@@ -24125,11 +24125,16 @@ win.webContents.once('did-finish-load', () => updates?.healthReady());`,
   when: healthWhen
 };
 var updaterGlob = "**/node_modules/@todesktop/updater-*/**";
+var linuxRunner = "ubuntu-22.04";
+var linuxArmRunner = "ubuntu-22.04-arm";
+var linuxRunnerNote = `          # The oldest Ubuntu GitHub hosts: what's built here runs on it and on
+          # anything newer. A newer runner raises the oldest Linux your app starts on.`;
 var packagerMatrix = `          - os: macos-15
             target: --platform=darwin --arch=arm64
           - os: windows-latest
             target: --platform=win32 --arch=x64
-          - os: ubuntu-latest
+${linuxRunnerNote}
+          - os: ${linuxRunner}
             target: --platform=linux --arch=x64`;
 var tauriHealthSnippet = {
   code: `import { health } from '@todesktop/tauri';
@@ -24299,17 +24304,18 @@ var electronBuilderMatrix = (app) => [
             target: --win --x64`
   ] : [],
   ...builds(app, "linux") ? [
-    `          - os: ubuntu-latest
+    `${linuxRunnerNote}
+          - os: ${linuxRunner}
             target: --linux --x64`
   ] : []
 ].join("\n");
 var otherRunners = {
   linux: {
     arm64: {
-      os: "ubuntu-24.04-arm",
+      os: linuxArmRunner,
       updater: "aarch64-unknown-linux-musl.tar.gz"
     },
-    x64: { os: "ubuntu-latest", updater: "x86_64-unknown-linux-musl.tar.gz" }
+    x64: { os: linuxRunner, updater: "x86_64-unknown-linux-musl.tar.gz" }
   },
   mac: {
     arm64: { os: "macos-15", updater: "aarch64-apple-darwin.tar.gz" },
@@ -24341,9 +24347,10 @@ var otherTargets = (app) => {
   ]).filter(([, arches]) => arches.length > 0);
 };
 var otherMatrix = (app) => otherTargets(app).flatMap(
-  ([platform, arches]) => arches.map((arch) => {
+  ([platform, arches]) => arches.map((arch, index) => {
     const runner = otherRunners[platform][arch];
-    return `          - os: ${runner.os}
+    return `${platform === "linux" && index === 0 ? `${linuxRunnerNote}
+` : ""}          - os: ${runner.os}
             updater: ${runner.updater}${app.configApps ? `
             target: ${platform}-${arch}` : ""}`;
   })
@@ -24540,6 +24547,122 @@ function dotnetStart(ui) {
     title: `Add ToDesktopUpdater.cs, ToDesktop\u2019s .NET client, to your project, then start it when your app starts (${file3}): it runs todesktop-updater serve and speaks to it for you`
   };
 }
+var goKinds = ["fyne", "go", "wails"];
+var goClientDir = "internal/todesktopupdater";
+function goStart(module) {
+  return {
+    code: `import (
+	"context"
+	"log"
+
+	"${module ?? "<your module>"}/${goClientDir}"
+)
+
+func main() {
+	// Nil in development (no todesktop-updater beside the executable):
+	// every call on a nil updater does nothing, so there's nothing to check.
+	updater, err := todesktopupdater.Start(todesktopupdater.Options{
+		// An update is in place: quit as a user would, within 30 seconds.
+		// The updater starts the new version once this process has gone.
+		OnQuit: func(*todesktopupdater.Updater) { quit() },
+	})
+	if err != nil {
+		log.Print(err) // the app runs without updates
+	}
+	// This exit is clean. os.Exit skips defers: call Shutdown before it too.
+	defer updater.Shutdown()
+
+	// ... your app. Once it works (its first window is up and usable, a
+	// server is listening), from wherever that's known:
+	ctx := context.Background()
+	_ = updater.WindowShown(ctx) // apps with a window
+	_ = updater.HealthReady(ctx) // this launch works
+}`,
+    detail: "todesktop_updater.go isn\u2019t a module of its own yet: the CLI\u2019s integrate --write adds it to yours, in internal/todesktopupdater (it\u2019s v2/updater/clients/go in ToDesktop\u2019s repository; standard library only). It starts todesktop-updater serve without a console window, says hello with your arguments and turns its JSON-RPC into Go calls: HealthReady once your app works (smoke tests require it), OnQuit when an update is in place, Shutdown as you quit so the exit isn\u2019t counted as a crash. The updater checks, downloads and installs by itself, as todesktop.config.ts says: there\u2019s no check to schedule. todesktopupdater.IsSmokeTest() is true when ToDesktop\u2019s smoke test launched your app, which it quits and relaunches unattended: use it only to skip what would block that quit (an exit confirmation, a crash dialog, an unsaved-changes prompt).",
+    heading: "Add todesktop_updater.go and start it with your app",
+    label: "Copy main.go code",
+    language: "go",
+    title: "Add todesktop_updater.go, ToDesktop\u2019s Go client, to your module, then start it when your app starts (main.go): it runs todesktop-updater serve and speaks to it for you"
+  };
+}
+var qtClientDir = "todesktop";
+function qtStart() {
+  return {
+    code: `// CMakeLists.txt: add the two files to your app's target.
+//   target_sources(your_app PRIVATE ${qtClientDir}/todesktopupdater.cpp ${qtClientDir}/todesktopupdater.h)
+//   target_include_directories(your_app PRIVATE ${qtClientDir})
+//   set_target_properties(your_app PROPERTIES AUTOMOC ON) # unless CMAKE_AUTOMOC is on
+
+// main.cpp
+#include "todesktopupdater.h"
+
+int main(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+    // nullptr in development (no todesktop-updater beside the executable).
+    ToDesktop::Updater *updater = ToDesktop::Updater::start();
+    MainWindow window;
+    window.show();
+    if (updater) {
+        // An update is in place: run your real quit path, and exit within
+        // 30 seconds. The updater starts the new version once you've gone.
+        QObject::connect(updater, &ToDesktop::Updater::quitRequested,
+                         &app, &QApplication::quit);
+        updater->windowShown(); // the first window is on screen
+        updater->healthReady(); // this launch works
+    }
+    return app.exec(); // shutdown is sent as the application quits
+}`,
+    detail: "todesktopupdater.h and todesktopupdater.cpp aren\u2019t a package yet: the CLI\u2019s integrate --write adds them to your source tree, in todesktop/ (they\u2019re v2/updater/clients/qt in ToDesktop\u2019s repository; Qt Core only, Qt 5.15 or Qt 6, C++17). The client starts todesktop-updater serve with no console window, says hello with your arguments, sends nothing else until that\u2019s answered, and tells the updater the exit is clean when the application quits (aboutToQuit): there\u2019s no shutdown to call. It never kills the updater, which must outlive your app to finish an update. healthReady once your app works (smoke tests require it); quitRequested when an update is in place. An app that closes to the tray connects quitRequested to its real quit action, not to close(): in Qt 5, QApplication::quit sends no close events. The updater checks, downloads and installs by itself, as todesktop.config.ts says: there\u2019s no check to schedule. ToDesktop::Updater::isSmokeTest() is true when ToDesktop\u2019s smoke test launched your app, which it quits and relaunches unattended: use it only to skip what would block that quit (an exit confirmation, a crash dialog, an unsaved-changes prompt).",
+    heading: "Add todesktopupdater.h and .cpp and start the updater with your app",
+    label: "Copy main.cpp code",
+    language: "cpp",
+    title: "Add todesktopupdater.h and todesktopupdater.cpp, ToDesktop\u2019s Qt client, to your app\u2019s target, then start it in main() (main.cpp): it runs todesktop-updater serve and speaks to it for you"
+  };
+}
+var dartClientPath = "lib/todesktop_updater.dart";
+function dartStart() {
+  return {
+    code: `import 'dart:ui'; // AppExitResponse, AppExitType
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'todesktop_updater.dart';
+
+Future<void> main(List<String> args) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Null in development (no todesktop-updater beside the executable):
+  // write every call as \`updater?.\`, and there's nothing else to check.
+  final updater = await ToDesktopUpdater.start(
+    args: args, // what the new version is started with
+    // An update is in place: quit as a user would, within 30 seconds.
+    onQuit: () =>
+        ServicesBinding.instance.exitApplication(AppExitType.cancelable),
+  );
+  // Every quit tells the updater the exit is clean, not a crash.
+  AppLifecycleListener(onExitRequested: () async {
+    await updater?.shutdown();
+    return AppExitResponse.exit;
+  });
+  runApp(const MyApp());
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    updater?.windowShown(); // the first frame is drawn
+    updater?.healthReady(); // this launch works
+  });
+}`,
+    detail: "todesktop_updater.dart isn\u2019t on pub.dev yet: the CLI\u2019s integrate --write adds it to your app\u2019s lib/ folder (it\u2019s v2/updater/clients/dart in ToDesktop\u2019s repository; dart:io only, no packages). It starts todesktop-updater serve with no console window, says hello with your arguments and has the answer before start() returns, so nothing can be sent to an updater that isn\u2019t running yet. Then healthReady once your app works (smoke tests require it), onQuit when an update is in place, shutdown as you quit so the exit isn\u2019t counted as a crash. The updater checks, downloads and installs by itself, as todesktop.config.ts says: there\u2019s no check to schedule. If your app already handles exit requests or quits by exit(), call shutdown() there instead and exit within 30 seconds of onQuit. ToDesktopUpdater.isSmokeTest is true when ToDesktop\u2019s smoke test launched your app, which it quits and relaunches unattended: use it only to skip what would block that quit (an exit confirmation, a crash dialog, an unsaved-changes prompt).",
+    heading: "Add todesktop_updater.dart and start it with your app",
+    label: "Copy main.dart code",
+    language: "dart",
+    title: "Add todesktop_updater.dart, ToDesktop\u2019s Dart client, to your app\u2019s lib/ folder, then start it in main() (lib/main.dart): it runs todesktop-updater serve and speaks to it for you"
+  };
+}
+function clientStart(app) {
+  if (app.native?.dotnet) return [dotnetStart(app.native.dotnet.ui)];
+  if (app.native?.go) return [goStart(app.native.go.module)];
+  if (app.native?.dart) return [dartStart()];
+  if (app.native?.qt) return [qtStart()];
+  return otherServe;
+}
 var allRecipes = [
   {
     caption: "Any app you can build",
@@ -24590,7 +24713,7 @@ Expand-Archive todesktop-updater.zip -DestinationPath ${shellWord(where)}`;
           })),
           title: `Put todesktop-updater in the app you build, unsigned: from ToDesktop's runtime release, ${sidecarUrl("<target>", "tar.gz")} (aarch64-apple-darwin, universal-apple-darwin, x86_64-unknown-linux-musl\u2026; .zip for x86_64-pc-windows-msvc), or the @todesktop/updater-<platform> npm packages`
         },
-        ...app.native?.dotnet ? [dotnetStart(app.native.dotnet.ui)] : otherServe,
+        ...clientStart(app),
         {
           code: `state, check, download, joinChannel {channel}
     \u2192 {"status": "idle" | "checking" | "available" | "downloading" | "ready" | "error" | "managed" | "blocked", ...}
@@ -24841,7 +24964,8 @@ updates.healthReady();`,
         app,
         `          - os: macos-15
           - os: windows-latest
-          - os: ubuntu-latest`,
+${linuxRunnerNote}
+          - os: ${linuxRunner}`,
         `      - run: npm ci
       # Your packaging: the app and its node_modules, unsigned, where
       # todesktop.config.ts points (ToDesktop signs and packages it).
@@ -24933,7 +25057,8 @@ npm install @todesktop/tauri`,
           # Windows and Linux: just the binary; tauriConfig() makes the app.
           - os: windows-latest
             args: --no-bundle
-          - os: ubuntu-22.04
+${linuxRunnerNote}
+          - os: ${linuxRunner}
             args: --no-bundle
             updater: x86_64-unknown-linux-musl   # static, so any glibc
             target: x86_64-unknown-linux-gnu`,
@@ -25382,7 +25507,7 @@ impl qobject::Updates {
         return `${workflowHead(app.refs)}jobs:
   release:
     # The oldest glibc you support: the app runs there and anywhere newer.
-    runs-on: ubuntu-22.04
+    runs-on: ${linuxRunner}
     permissions:
       id-token: write   # lets ToDesktop check the job is yours
       contents: read
@@ -25670,13 +25795,17 @@ async function nativeApp(dir) {
     };
   }
   if (existsSync3(path3.join(dir, "go.mod"))) {
+    const named = (await readText(path3.join(dir, "go.mod")))?.match(
+      /^module\s+(\S+)/m
+    )?.[1];
+    const module = named ? { module: named.replace(/^"|"$/g, "") } : {};
     if (existsSync3(path3.join(dir, "wails.json"))) {
-      return { kind: "wails", label: "Go (Wails)" };
+      return { kind: "wails", label: "Go (Wails)", ...module };
     }
     if (existsSync3(path3.join(dir, "FyneApp.toml"))) {
-      return { kind: "fyne", label: "Go (Fyne)" };
+      return { kind: "fyne", label: "Go (Fyne)", ...module };
     }
-    return { kind: "go", label: "Go" };
+    return { kind: "go", label: "Go", ...module };
   }
   if (existsSync3(path3.join(dir, "Cargo.toml"))) {
     return { kind: "rust", label: "Rust" };
@@ -25981,6 +26110,19 @@ async function swiftClient(dir, xcodeProjects) {
   }
   return "";
 }
+var goClient = (dir) => {
+  const file3 = path4.posix.join(goClientDir, "todesktop_updater.go");
+  return existsSync4(path4.join(dir, file3)) ? file3 : "";
+};
+var dartClient = (dir, flutter) => {
+  if (flutter === void 0) return "";
+  const file3 = path4.posix.join(flutter, dartClientPath);
+  return existsSync4(path4.join(dir, file3)) ? file3 : "";
+};
+var qtClient = (dir) => {
+  const file3 = path4.posix.join(qtClientDir, "todesktopupdater.h");
+  return existsSync4(path4.join(dir, file3)) ? file3 : "";
+};
 var nativeExtensions = /* @__PURE__ */ new Set([
   ".c",
   ".cc",
@@ -26005,6 +26147,18 @@ function updaterUse(updater) {
   }
   if (updater.includes("ToDesktopUpdater (Swift)")) {
     return ["import ToDesktopUpdater", /* @__PURE__ */ new Set([".swift"])];
+  }
+  if (updater.endsWith("todesktopupdater.h")) {
+    return [
+      "todesktopupdater.h",
+      /* @__PURE__ */ new Set([".cc", ".cpp", ".cxx", ".h", ".hpp"])
+    ];
+  }
+  if (updater.endsWith("todesktop_updater.dart")) {
+    return ["todesktop_updater.dart'", /* @__PURE__ */ new Set([".dart"])];
+  }
+  if (updater.endsWith("todesktop_updater.go")) {
+    return [`/${goClientDir}"`, /* @__PURE__ */ new Set([".go"])];
   }
   if (updater.includes("@todesktop/updater")) {
     return ["@todesktop/updater", sourceExtensions];
@@ -26223,11 +26377,13 @@ async function detect(dir) {
     if (Object.keys(ships).length) result.electronBuilder = ships;
   }
   const tauriManifest = tauriFile ? await readText2(path4.join(dir, "src-tauri", "Cargo.toml")) : void 0;
-  const updater = (dep("@todesktop/updater") ? "package.json: @todesktop/updater" : "") || (dep("@todesktop/tauri") ? "package.json: @todesktop/tauri" : "") || (tauriManifest && cargoDepends(tauriManifest, "tauri-plugin-todesktop") ? "src-tauri/Cargo.toml: tauri-plugin-todesktop" : "") || (cargo && cargoDepends(cargo, "todesktop-updater") ? "Cargo.toml: todesktop-updater" : "") || await dotnetClient(dir, csprojs) || (xcodeProjects.length ? await swiftClient(dir, xcodeProjects) : "");
+  const updater = (dep("@todesktop/updater") ? "package.json: @todesktop/updater" : "") || (dep("@todesktop/tauri") ? "package.json: @todesktop/tauri" : "") || (tauriManifest && cargoDepends(tauriManifest, "tauri-plugin-todesktop") ? "src-tauri/Cargo.toml: tauri-plugin-todesktop" : "") || (cargo && cargoDepends(cargo, "todesktop-updater") ? "Cargo.toml: todesktop-updater" : "") || await dotnetClient(dir, csprojs) || (xcodeProjects.length ? await swiftClient(dir, xcodeProjects) : "") || goClient(dir) || dartClient(dir, flutter) || qtClient(dir);
   if (updater) {
     result.updater = updater;
     const [needle, extensions] = updaterUse(updater);
-    const usedIn = await filesMentioning(dir, needle, 5, extensions);
+    const usedIn = (await filesMentioning(dir, needle, 5, extensions)).filter(
+      (file3) => !file3.startsWith(`${qtClientDir}/`)
+    );
     if (usedIn.length) result.updaterUsedIn = usedIn;
   } else if (framework === "other") {
     const usedIn = (await filesMentioning(dir, "todesktop-updater", 5, nativeExtensions)).filter((file3) => !/(?:^|\/)\.github\//.test(file3));
@@ -27666,13 +27822,6 @@ var agentCommands = [
   smokeShow
 ];
 
-// src/agent/integrate.ts
-import { existsSync as existsSync9 } from "node:fs";
-import { mkdir as mkdir4, mkdtemp as mkdtemp3, readFile as readFile11, rm as rm4, writeFile as writeFile3 } from "node:fs/promises";
-import { tmpdir as tmpdir3 } from "node:os";
-import path10 from "node:path";
-import process9 from "node:process";
-
 // ../config/src/mac.ts
 import { copyFile as copyFile2, readdir as readdir4, readFile as readFile8, stat as stat2 } from "node:fs/promises";
 import path7 from "node:path";
@@ -28071,7 +28220,25 @@ async function macEntitlements(loaded, app, now = /* @__PURE__ */ new Date()) {
     }
   }
   const warnings = await checkSigning(app, entitlements2, now);
+  const sandboxed = await sandboxProblem(loaded);
+  if (sandboxed) warnings.push(sandboxed);
   return { entitlements: entitlements2, warnings };
+}
+async function sandboxProblem(loaded) {
+  const file3 = loaded.config.mac?.entitlements;
+  if (!file3) return void 0;
+  const bytes = await readIfFile(path7.resolve(loaded.configDir, file3));
+  if (!bytes) return void 0;
+  let parsed;
+  try {
+    parsed = parsePlist(bytes);
+  } catch {
+    return void 0;
+  }
+  if (!isDict(parsed) || parsed["com.apple.security.app-sandbox"] !== true) {
+    return void 0;
+  }
+  return `mac.entitlements (${file3}) turns the App Sandbox on, and a sandboxed app can't update itself: ToDesktop's updater runs inside the app's sandbox, where it never sees an update and can't replace the app. Sign with a copy of the file without com.apple.security.app-sandbox (an extension in mac.nested can stay sandboxed)`;
 }
 function granted(want, have) {
   if (have === void 0) return false;
@@ -28201,6 +28368,13 @@ async function bundlesWithProfiles(app) {
   }
   return found;
 }
+
+// src/agent/integrate.ts
+import { existsSync as existsSync9 } from "node:fs";
+import { mkdir as mkdir4, mkdtemp as mkdtemp3, readFile as readFile11, rm as rm4, writeFile as writeFile3 } from "node:fs/promises";
+import { tmpdir as tmpdir3 } from "node:os";
+import path10 from "node:path";
+import process9 from "node:process";
 
 // src/upload.ts
 import { execFile as execFile3 } from "node:child_process";
@@ -28714,9 +28888,8 @@ async function upload(options) {
       const icon = iconFor(loadedByPlatform[platform], platform);
       if (icon) icons.set(platform, icon);
     }
-    const version3 = options.version ?? config3.version ?? found.find((app) => app.ownVersion)?.ownVersion ?? // Every job of the run must agree, and a Linux or Windows job has
-    // no app version to read: the same stand-in for all of them.
-    (options.test ? testVersion : void 0);
+    const macOnly = expected.every((key) => key.startsWith("mac/"));
+    const version3 = options.version ?? config3.version ?? (options.test && !macOnly ? void 0 : found.find((app) => app.ownVersion)?.ownVersion) ?? (options.test ? testVersion : void 0);
     if (!version3) {
       throw new Error(
         "No version: pass --version or set version in the config (Linux apps don\u2019t state one)"
@@ -28803,11 +28976,40 @@ import { existsSync as existsSync8 } from "node:fs";
 import { readFile as readFile10 } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 var clientSources = {
+  dart: [
+    {
+      from: "dart/todesktop_updater.dart",
+      language: "dart",
+      // In the Flutter app's folder, beside main.dart.
+      path: "lib/todesktop_updater.dart"
+    }
+  ],
   dotnet: [
     {
       from: "dotnet/ToDesktopUpdater.cs",
       language: "csharp",
       path: "ToDesktopUpdater.cs"
+    }
+  ],
+  go: [
+    {
+      from: "go/todesktop_updater.go",
+      language: "go",
+      // In the app's own module, where only it can import it.
+      path: "internal/todesktopupdater/todesktop_updater.go"
+    }
+  ],
+  qt: [
+    {
+      from: "qt/todesktopupdater.h",
+      language: "cpp",
+      // A folder of their own, for the app's target to add.
+      path: "todesktop/todesktopupdater.h"
+    },
+    {
+      from: "qt/todesktopupdater.cpp",
+      language: "cpp",
+      path: "todesktop/todesktopupdater.cpp"
     }
   ],
   swift: [
@@ -28906,13 +29108,33 @@ function clientOf(framework, detection) {
   if (framework === "other" && detection.native?.kind === "dotnet") {
     return "dotnet";
   }
+  if (framework === "other" && detection.native && goKinds.includes(detection.native.kind)) {
+    return "go";
+  }
+  if (framework === "other" && detection.native?.kind === "flutter") {
+    return "dart";
+  }
+  if (framework === "other" && detection.native?.kind === "qt") return "qt";
   return void 0;
 }
+var clientNames = {
+  dart: "Dart client (todesktop_updater.dart)",
+  dotnet: ".NET client (ToDesktopUpdater.cs)",
+  go: "Go client (todesktop_updater.go)",
+  qt: "Qt client (todesktopupdater.h and .cpp)",
+  swift: "Swift package (ToDesktopUpdater)"
+};
 function clientNote(client, carried) {
   if (!carried) {
-    return `This CLI doesn't carry ToDesktop's ${client === "dotnet" ? ".NET client (ToDesktopUpdater.cs)" : "Swift package (ToDesktopUpdater)"}: it's v2/updater/clients/${client} in ToDesktop's repository.`;
+    return `This CLI doesn't carry ToDesktop's ${clientNames[client]}: it's v2/updater/clients/${client} in ToDesktop's repository.`;
   }
-  return client === "dotnet" ? "ToDesktopUpdater.cs is ToDesktop's .NET client, not on NuGet yet: integrate --write adds it beside your .csproj, which compiles it with the rest of your code. Keep it as it is: a later CLI hands over its next version." : "ToDesktopUpdater/ is ToDesktop's Swift package, not in a registry yet: integrate --write adds it beside your Xcode project. Then add it to your app target as a local package (File \u203A Add Package Dependencies\u2026 \u203A Add Local\u2026): nothing here edits the .xcodeproj.";
+  return {
+    dart: `todesktop_updater.dart is ToDesktop's Dart client, not on pub.dev yet: integrate --write adds it to your app's lib/ folder (${dartClientPath}), dart:io only, so pubspec.yaml doesn't change. Write no JSON-RPC of your own, and keep the file as it is: a later CLI hands over its next version. Take out any other updater the app has.`,
+    dotnet: "ToDesktopUpdater.cs is ToDesktop's .NET client, not on NuGet yet: integrate --write adds it beside your .csproj, which compiles it with the rest of your code. Keep it as it is: a later CLI hands over its next version.",
+    go: `todesktop_updater.go is ToDesktop's Go client, not a module of its own yet: integrate --write adds it to your module in ${goClientDir}, standard library only, so go.mod doesn't change. Write no JSON-RPC of your own, and keep the file as it is: a later CLI hands over its next version. Take out any other updater the app has.`,
+    qt: `todesktopupdater.h and todesktopupdater.cpp are ToDesktop's Qt client, not a package yet: integrate --write adds them in ${qtClientDir}/, Qt Core only (Qt 5.15 or Qt 6), for your app's CMake target to compile (the code below has the lines). Write no JSON-RPC and no QProcess of your own, and keep the files as they are: a later CLI hands over their next version. Take out any other updater the app has.`,
+    swift: "ToDesktopUpdater/ is ToDesktop's Swift package, not in a registry yet: integrate --write adds it beside your Xcode project. Then add it to your app target as a local package (File \u203A Add Package Dependencies\u2026 \u203A Add Local\u2026): nothing here edits the .xcodeproj."
+  }[client];
 }
 function sortSnippets(snippets) {
   const files = [];
@@ -29019,6 +29241,11 @@ async function planOf(values, { withoutApp = false } = {}) {
         label: detection.native.label,
         ...detection.native.kind === "dotnet" ? {
           dotnet: detection.native.ui ? { ui: detection.native.ui } : {}
+        } : {},
+        ...detection.native.kind === "flutter" ? { dart: {} } : {},
+        ...detection.native.kind === "qt" ? { qt: {} } : {},
+        ...goKinds.includes(detection.native.kind) ? {
+          go: detection.native.module ? { module: detection.native.module } : {}
         } : {}
       }
     } : {}
@@ -29087,7 +29314,7 @@ async function planOf(values, { withoutApp = false } = {}) {
   const client = clientOf(framework.id, detection);
   if (client && !detection.updater) {
     const files = await clientFiles(client);
-    const folder = client === "dotnet" && detection.native?.project ? path10.posix.dirname(detection.native.project) : ".";
+    const folder = (client === "dotnet" || client === "dart") && detection.native?.project ? path10.posix.dirname(detection.native.project) : ".";
     updates.files.push(
       ...files.map(({ content, language, path: file3 }) => ({
         client: true,
@@ -29853,6 +30080,10 @@ var configCheck = {
       checks.push(await appIdCheck(config3.appId, values.app));
       checks.push(...placeholderChecks(config3));
       checks.push(...await appChecks(loaded, unchecked));
+      const sandboxed = await sandboxProblem(loaded.mac);
+      if (sandboxed) {
+        checks.push({ detail: sandboxed, name: "mac.sandbox", ok: false });
+      }
     }
     const failed = checks.filter(({ ok }) => ok === false);
     const lines = checks.map(
