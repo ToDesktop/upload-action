@@ -6,7 +6,13 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __commonJS = (cb, mod) => function __require() {
+var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
+  get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
+}) : x)(function(x) {
+  if (typeof require !== "undefined") return require.apply(this, arguments);
+  throw Error('Dynamic require of "' + x + '" is not supported');
+});
+var __commonJS = (cb, mod) => function __require2() {
   try {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   } catch (e) {
@@ -80,8 +86,8 @@ var require_parse = __commonJS({
     var token;
     var key;
     var root;
-    module.exports = function parse4(text, reviver) {
-      source = String(text);
+    module.exports = function parse4(text3, reviver) {
+      source = String(text3);
       parseState = "start";
       stack = [];
       pos = 0;
@@ -920,7 +926,7 @@ var require_stringify = __commonJS({
     var util = require_util();
     module.exports = function stringify2(value, replacer, space) {
       const stack = [];
-      let indent = "";
+      let indent2 = "";
       let propertyList;
       let replacerFunc;
       let gap = "";
@@ -1052,8 +1058,8 @@ var require_stringify = __commonJS({
           throw TypeError("Converting circular structure to JSON5");
         }
         stack.push(value2);
-        let stepback = indent;
-        indent = indent + gap;
+        let stepback = indent2;
+        indent2 = indent2 + gap;
         let keys = propertyList || Object.keys(value2);
         let partial2 = [];
         for (const key of keys) {
@@ -1076,13 +1082,13 @@ var require_stringify = __commonJS({
             properties = partial2.join(",");
             final = "{" + properties + "}";
           } else {
-            let separator = ",\n" + indent;
+            let separator = ",\n" + indent2;
             properties = partial2.join(separator);
-            final = "{\n" + indent + properties + ",\n" + stepback + "}";
+            final = "{\n" + indent2 + properties + ",\n" + stepback + "}";
           }
         }
         stack.pop();
-        indent = stepback;
+        indent2 = stepback;
         return final;
       }
       function serializeKey(key) {
@@ -1105,8 +1111,8 @@ var require_stringify = __commonJS({
           throw TypeError("Converting circular structure to JSON5");
         }
         stack.push(value2);
-        let stepback = indent;
-        indent = indent + gap;
+        let stepback = indent2;
+        indent2 = indent2 + gap;
         let partial2 = [];
         for (let i = 0; i < value2.length; i++) {
           const propertyString = serializeProperty(String(i), value2);
@@ -1120,13 +1126,13 @@ var require_stringify = __commonJS({
             let properties = partial2.join(",");
             final = "[" + properties + "]";
           } else {
-            let separator = ",\n" + indent;
+            let separator = ",\n" + indent2;
             let properties = partial2.join(separator);
-            final = "[\n" + indent + properties + ",\n" + stepback + "]";
+            final = "[\n" + indent2 + properties + ",\n" + stepback + "]";
           }
         }
         stack.pop();
-        indent = stepback;
+        indent2 = stepback;
         return final;
       }
     };
@@ -1138,16 +1144,7346 @@ var require_lib = __commonJS({
   "../../node_modules/.pnpm/json5@2.2.3/node_modules/json5/lib/index.js"(exports, module) {
     var parse4 = require_parse();
     var stringify2 = require_stringify();
-    var JSON52 = {
+    var JSON53 = {
       parse: parse4,
       stringify: stringify2
     };
-    module.exports = JSON52;
+    module.exports = JSON53;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/identity.js
+var require_identity = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/identity.js"(exports) {
+    "use strict";
+    var ALIAS = /* @__PURE__ */ Symbol.for("yaml.alias");
+    var DOC = /* @__PURE__ */ Symbol.for("yaml.document");
+    var MAP = /* @__PURE__ */ Symbol.for("yaml.map");
+    var PAIR = /* @__PURE__ */ Symbol.for("yaml.pair");
+    var SCALAR = /* @__PURE__ */ Symbol.for("yaml.scalar");
+    var SEQ = /* @__PURE__ */ Symbol.for("yaml.seq");
+    var NODE_TYPE = /* @__PURE__ */ Symbol.for("yaml.node.type");
+    var isAlias = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === ALIAS;
+    var isDocument = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === DOC;
+    var isMap = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === MAP;
+    var isPair = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === PAIR;
+    var isScalar = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === SCALAR;
+    var isSeq = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === SEQ;
+    function isCollection(node) {
+      if (node && typeof node === "object")
+        switch (node[NODE_TYPE]) {
+          case MAP:
+          case SEQ:
+            return true;
+        }
+      return false;
+    }
+    function isNode(node) {
+      if (node && typeof node === "object")
+        switch (node[NODE_TYPE]) {
+          case ALIAS:
+          case MAP:
+          case SCALAR:
+          case SEQ:
+            return true;
+        }
+      return false;
+    }
+    var hasAnchor = (node) => (isScalar(node) || isCollection(node)) && !!node.anchor;
+    exports.ALIAS = ALIAS;
+    exports.DOC = DOC;
+    exports.MAP = MAP;
+    exports.NODE_TYPE = NODE_TYPE;
+    exports.PAIR = PAIR;
+    exports.SCALAR = SCALAR;
+    exports.SEQ = SEQ;
+    exports.hasAnchor = hasAnchor;
+    exports.isAlias = isAlias;
+    exports.isCollection = isCollection;
+    exports.isDocument = isDocument;
+    exports.isMap = isMap;
+    exports.isNode = isNode;
+    exports.isPair = isPair;
+    exports.isScalar = isScalar;
+    exports.isSeq = isSeq;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/visit.js
+var require_visit = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/visit.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var BREAK = /* @__PURE__ */ Symbol("break visit");
+    var SKIP = /* @__PURE__ */ Symbol("skip children");
+    var REMOVE = /* @__PURE__ */ Symbol("remove node");
+    function visit(node, visitor) {
+      const visitor_ = initVisitor(visitor);
+      if (identity.isDocument(node)) {
+        const cd = visit_(null, node.contents, visitor_, Object.freeze([node]));
+        if (cd === REMOVE)
+          node.contents = null;
+      } else
+        visit_(null, node, visitor_, Object.freeze([]));
+    }
+    visit.BREAK = BREAK;
+    visit.SKIP = SKIP;
+    visit.REMOVE = REMOVE;
+    function visit_(key, node, visitor, path12) {
+      const ctrl = callVisitor(key, node, visitor, path12);
+      if (identity.isNode(ctrl) || identity.isPair(ctrl)) {
+        replaceNode(key, path12, ctrl);
+        return visit_(key, ctrl, visitor, path12);
+      }
+      if (typeof ctrl !== "symbol") {
+        if (identity.isCollection(node)) {
+          path12 = Object.freeze(path12.concat(node));
+          for (let i = 0; i < node.items.length; ++i) {
+            const ci = visit_(i, node.items[i], visitor, path12);
+            if (typeof ci === "number")
+              i = ci - 1;
+            else if (ci === BREAK)
+              return BREAK;
+            else if (ci === REMOVE) {
+              node.items.splice(i, 1);
+              i -= 1;
+            }
+          }
+        } else if (identity.isPair(node)) {
+          path12 = Object.freeze(path12.concat(node));
+          const ck = visit_("key", node.key, visitor, path12);
+          if (ck === BREAK)
+            return BREAK;
+          else if (ck === REMOVE)
+            node.key = null;
+          const cv = visit_("value", node.value, visitor, path12);
+          if (cv === BREAK)
+            return BREAK;
+          else if (cv === REMOVE)
+            node.value = null;
+        }
+      }
+      return ctrl;
+    }
+    async function visitAsync(node, visitor) {
+      const visitor_ = initVisitor(visitor);
+      if (identity.isDocument(node)) {
+        const cd = await visitAsync_(null, node.contents, visitor_, Object.freeze([node]));
+        if (cd === REMOVE)
+          node.contents = null;
+      } else
+        await visitAsync_(null, node, visitor_, Object.freeze([]));
+    }
+    visitAsync.BREAK = BREAK;
+    visitAsync.SKIP = SKIP;
+    visitAsync.REMOVE = REMOVE;
+    async function visitAsync_(key, node, visitor, path12) {
+      const ctrl = await callVisitor(key, node, visitor, path12);
+      if (identity.isNode(ctrl) || identity.isPair(ctrl)) {
+        replaceNode(key, path12, ctrl);
+        return visitAsync_(key, ctrl, visitor, path12);
+      }
+      if (typeof ctrl !== "symbol") {
+        if (identity.isCollection(node)) {
+          path12 = Object.freeze(path12.concat(node));
+          for (let i = 0; i < node.items.length; ++i) {
+            const ci = await visitAsync_(i, node.items[i], visitor, path12);
+            if (typeof ci === "number")
+              i = ci - 1;
+            else if (ci === BREAK)
+              return BREAK;
+            else if (ci === REMOVE) {
+              node.items.splice(i, 1);
+              i -= 1;
+            }
+          }
+        } else if (identity.isPair(node)) {
+          path12 = Object.freeze(path12.concat(node));
+          const ck = await visitAsync_("key", node.key, visitor, path12);
+          if (ck === BREAK)
+            return BREAK;
+          else if (ck === REMOVE)
+            node.key = null;
+          const cv = await visitAsync_("value", node.value, visitor, path12);
+          if (cv === BREAK)
+            return BREAK;
+          else if (cv === REMOVE)
+            node.value = null;
+        }
+      }
+      return ctrl;
+    }
+    function initVisitor(visitor) {
+      if (typeof visitor === "object" && (visitor.Collection || visitor.Node || visitor.Value)) {
+        return Object.assign({
+          Alias: visitor.Node,
+          Map: visitor.Node,
+          Scalar: visitor.Node,
+          Seq: visitor.Node
+        }, visitor.Value && {
+          Map: visitor.Value,
+          Scalar: visitor.Value,
+          Seq: visitor.Value
+        }, visitor.Collection && {
+          Map: visitor.Collection,
+          Seq: visitor.Collection
+        }, visitor);
+      }
+      return visitor;
+    }
+    function callVisitor(key, node, visitor, path12) {
+      if (typeof visitor === "function")
+        return visitor(key, node, path12);
+      if (identity.isMap(node))
+        return visitor.Map?.(key, node, path12);
+      if (identity.isSeq(node))
+        return visitor.Seq?.(key, node, path12);
+      if (identity.isPair(node))
+        return visitor.Pair?.(key, node, path12);
+      if (identity.isScalar(node))
+        return visitor.Scalar?.(key, node, path12);
+      if (identity.isAlias(node))
+        return visitor.Alias?.(key, node, path12);
+      return void 0;
+    }
+    function replaceNode(key, path12, node) {
+      const parent = path12[path12.length - 1];
+      if (identity.isCollection(parent)) {
+        parent.items[key] = node;
+      } else if (identity.isPair(parent)) {
+        if (key === "key")
+          parent.key = node;
+        else
+          parent.value = node;
+      } else if (identity.isDocument(parent)) {
+        parent.contents = node;
+      } else {
+        const pt = identity.isAlias(parent) ? "alias" : "scalar";
+        throw new Error(`Cannot replace node with ${pt} parent`);
+      }
+    }
+    exports.visit = visit;
+    exports.visitAsync = visitAsync;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/doc/directives.js
+var require_directives = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/doc/directives.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var visit = require_visit();
+    var escapeChars = {
+      "!": "%21",
+      ",": "%2C",
+      "[": "%5B",
+      "]": "%5D",
+      "{": "%7B",
+      "}": "%7D"
+    };
+    var escapeTagName = (tn) => tn.replace(/[!,[\]{}]/g, (ch) => escapeChars[ch]);
+    var Directives = class _Directives {
+      constructor(yaml, tags) {
+        this.docStart = null;
+        this.docEnd = false;
+        this.yaml = Object.assign({}, _Directives.defaultYaml, yaml);
+        this.tags = Object.assign({}, _Directives.defaultTags, tags);
+      }
+      clone() {
+        const copy = new _Directives(this.yaml, this.tags);
+        copy.docStart = this.docStart;
+        return copy;
+      }
+      /**
+       * During parsing, get a Directives instance for the current document and
+       * update the stream state according to the current version's spec.
+       */
+      atDocument() {
+        const res = new _Directives(this.yaml, this.tags);
+        switch (this.yaml.version) {
+          case "1.1":
+            this.atNextDocument = true;
+            break;
+          case "1.2":
+            this.atNextDocument = false;
+            this.yaml = {
+              explicit: _Directives.defaultYaml.explicit,
+              version: "1.2"
+            };
+            this.tags = Object.assign({}, _Directives.defaultTags);
+            break;
+        }
+        return res;
+      }
+      /**
+       * @param onError - May be called even if the action was successful
+       * @returns `true` on success
+       */
+      add(line, onError) {
+        if (this.atNextDocument) {
+          this.yaml = { explicit: _Directives.defaultYaml.explicit, version: "1.1" };
+          this.tags = Object.assign({}, _Directives.defaultTags);
+          this.atNextDocument = false;
+        }
+        const parts = line.trim().split(/[ \t]+/);
+        const name = parts.shift();
+        switch (name) {
+          case "%TAG": {
+            if (parts.length !== 2) {
+              onError(0, "%TAG directive should contain exactly two parts");
+              if (parts.length < 2)
+                return false;
+            }
+            const [handle, prefix] = parts;
+            this.tags[handle] = prefix;
+            return true;
+          }
+          case "%YAML": {
+            this.yaml.explicit = true;
+            if (parts.length !== 1) {
+              onError(0, "%YAML directive should contain exactly one part");
+              return false;
+            }
+            const [version3] = parts;
+            if (version3 === "1.1" || version3 === "1.2") {
+              this.yaml.version = version3;
+              return true;
+            } else {
+              const isValid = /^\d+\.\d+$/.test(version3);
+              onError(6, `Unsupported YAML version ${version3}`, isValid);
+              return false;
+            }
+          }
+          default:
+            onError(0, `Unknown directive ${name}`, true);
+            return false;
+        }
+      }
+      /**
+       * Resolves a tag, matching handles to those defined in %TAG directives.
+       *
+       * @returns Resolved tag, which may also be the non-specific tag `'!'` or a
+       *   `'!local'` tag, or `null` if unresolvable.
+       */
+      tagName(source, onError) {
+        if (source === "!")
+          return "!";
+        if (source[0] !== "!") {
+          onError(`Not a valid tag: ${source}`);
+          return null;
+        }
+        if (source[1] === "<") {
+          const verbatim = source.slice(2, -1);
+          if (verbatim === "!" || verbatim === "!!") {
+            onError(`Verbatim tags aren't resolved, so ${source} is invalid.`);
+            return null;
+          }
+          if (source[source.length - 1] !== ">")
+            onError("Verbatim tags must end with a >");
+          return verbatim;
+        }
+        const [, handle, suffix] = source.match(/^(.*!)([^!]*)$/s);
+        if (!suffix)
+          onError(`The ${source} tag has no suffix`);
+        const prefix = this.tags[handle];
+        if (prefix) {
+          try {
+            return prefix + decodeURIComponent(suffix);
+          } catch (error46) {
+            onError(String(error46));
+            return null;
+          }
+        }
+        if (handle === "!")
+          return source;
+        onError(`Could not resolve tag: ${source}`);
+        return null;
+      }
+      /**
+       * Given a fully resolved tag, returns its printable string form,
+       * taking into account current tag prefixes and defaults.
+       */
+      tagString(tag) {
+        for (const [handle, prefix] of Object.entries(this.tags)) {
+          if (tag.startsWith(prefix))
+            return handle + escapeTagName(tag.substring(prefix.length));
+        }
+        return tag[0] === "!" ? tag : `!<${tag}>`;
+      }
+      toString(doc) {
+        const lines = this.yaml.explicit ? [`%YAML ${this.yaml.version || "1.2"}`] : [];
+        const tagEntries = Object.entries(this.tags);
+        let tagNames;
+        if (doc && tagEntries.length > 0 && identity.isNode(doc.contents)) {
+          const tags = {};
+          visit.visit(doc.contents, (_key, node) => {
+            if (identity.isNode(node) && node.tag)
+              tags[node.tag] = true;
+          });
+          tagNames = Object.keys(tags);
+        } else
+          tagNames = [];
+        for (const [handle, prefix] of tagEntries) {
+          if (handle === "!!" && prefix === "tag:yaml.org,2002:")
+            continue;
+          if (!doc || tagNames.some((tn) => tn.startsWith(prefix)))
+            lines.push(`%TAG ${handle} ${prefix}`);
+        }
+        return lines.join("\n");
+      }
+    };
+    Directives.defaultYaml = { explicit: false, version: "1.2" };
+    Directives.defaultTags = { "!!": "tag:yaml.org,2002:" };
+    exports.Directives = Directives;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/doc/anchors.js
+var require_anchors = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/doc/anchors.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var visit = require_visit();
+    function anchorIsValid(anchor) {
+      if (/[\x00-\x19\s,[\]{}]/.test(anchor)) {
+        const sa = JSON.stringify(anchor);
+        const msg = `Anchor must not contain whitespace or control characters: ${sa}`;
+        throw new Error(msg);
+      }
+      return true;
+    }
+    function anchorNames(root) {
+      const anchors = /* @__PURE__ */ new Set();
+      visit.visit(root, {
+        Value(_key, node) {
+          if (node.anchor)
+            anchors.add(node.anchor);
+        }
+      });
+      return anchors;
+    }
+    function findNewAnchor(prefix, exclude) {
+      for (let i = 1; true; ++i) {
+        const name = `${prefix}${i}`;
+        if (!exclude.has(name))
+          return name;
+      }
+    }
+    function createNodeAnchors(doc, prefix) {
+      const aliasObjects = [];
+      const sourceObjects = /* @__PURE__ */ new Map();
+      let prevAnchors = null;
+      return {
+        onAnchor: (source) => {
+          aliasObjects.push(source);
+          prevAnchors ?? (prevAnchors = anchorNames(doc));
+          const anchor = findNewAnchor(prefix, prevAnchors);
+          prevAnchors.add(anchor);
+          return anchor;
+        },
+        /**
+         * With circular references, the source node is only resolved after all
+         * of its child nodes are. This is why anchors are set only after all of
+         * the nodes have been created.
+         */
+        setAnchors: () => {
+          for (const source of aliasObjects) {
+            const ref = sourceObjects.get(source);
+            if (typeof ref === "object" && ref.anchor && (identity.isScalar(ref.node) || identity.isCollection(ref.node))) {
+              ref.node.anchor = ref.anchor;
+            } else {
+              const error46 = new Error("Failed to resolve repeated object (this should not happen)");
+              error46.source = source;
+              throw error46;
+            }
+          }
+        },
+        sourceObjects
+      };
+    }
+    exports.anchorIsValid = anchorIsValid;
+    exports.anchorNames = anchorNames;
+    exports.createNodeAnchors = createNodeAnchors;
+    exports.findNewAnchor = findNewAnchor;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/doc/applyReviver.js
+var require_applyReviver = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/doc/applyReviver.js"(exports) {
+    "use strict";
+    function applyReviver(reviver, obj, key, val) {
+      if (val && typeof val === "object") {
+        if (Array.isArray(val)) {
+          for (let i = 0, len = val.length; i < len; ++i) {
+            const v0 = val[i];
+            const v1 = applyReviver(reviver, val, String(i), v0);
+            if (v1 === void 0)
+              delete val[i];
+            else if (v1 !== v0)
+              val[i] = v1;
+          }
+        } else if (val instanceof Map) {
+          for (const k of Array.from(val.keys())) {
+            const v0 = val.get(k);
+            const v1 = applyReviver(reviver, val, k, v0);
+            if (v1 === void 0)
+              val.delete(k);
+            else if (v1 !== v0)
+              val.set(k, v1);
+          }
+        } else if (val instanceof Set) {
+          for (const v0 of Array.from(val)) {
+            const v1 = applyReviver(reviver, val, v0, v0);
+            if (v1 === void 0)
+              val.delete(v0);
+            else if (v1 !== v0) {
+              val.delete(v0);
+              val.add(v1);
+            }
+          }
+        } else {
+          for (const [k, v0] of Object.entries(val)) {
+            const v1 = applyReviver(reviver, val, k, v0);
+            if (v1 === void 0)
+              delete val[k];
+            else if (v1 !== v0)
+              val[k] = v1;
+          }
+        }
+      }
+      return reviver.call(obj, key, val);
+    }
+    exports.applyReviver = applyReviver;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/toJS.js
+var require_toJS = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/toJS.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    function toJS(value, arg, ctx) {
+      if (Array.isArray(value))
+        return value.map((v, i) => toJS(v, String(i), ctx));
+      if (value && typeof value.toJSON === "function") {
+        if (!ctx || !identity.hasAnchor(value))
+          return value.toJSON(arg, ctx);
+        const data = { aliasCount: 0, count: 1, res: void 0 };
+        ctx.anchors.set(value, data);
+        ctx.onCreate = (res2) => {
+          data.res = res2;
+          delete ctx.onCreate;
+        };
+        const res = value.toJSON(arg, ctx);
+        if (ctx.onCreate)
+          ctx.onCreate(res);
+        return res;
+      }
+      if (typeof value === "bigint" && !ctx?.keep)
+        return Number(value);
+      return value;
+    }
+    exports.toJS = toJS;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/Node.js
+var require_Node = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/Node.js"(exports) {
+    "use strict";
+    var applyReviver = require_applyReviver();
+    var identity = require_identity();
+    var toJS = require_toJS();
+    var NodeBase = class {
+      constructor(type) {
+        Object.defineProperty(this, identity.NODE_TYPE, { value: type });
+      }
+      /** Create a copy of this node.  */
+      clone() {
+        const copy = Object.create(Object.getPrototypeOf(this), Object.getOwnPropertyDescriptors(this));
+        if (this.range)
+          copy.range = this.range.slice();
+        return copy;
+      }
+      /** A plain JavaScript representation of this node. */
+      toJS(doc, { mapAsMap, maxAliasCount, onAnchor, reviver } = {}) {
+        if (!identity.isDocument(doc))
+          throw new TypeError("A document argument is required");
+        const ctx = {
+          anchors: /* @__PURE__ */ new Map(),
+          doc,
+          keep: true,
+          mapAsMap: mapAsMap === true,
+          mapKeyWarned: false,
+          maxAliasCount: typeof maxAliasCount === "number" ? maxAliasCount : 100
+        };
+        const res = toJS.toJS(this, "", ctx);
+        if (typeof onAnchor === "function")
+          for (const { count, res: res2 } of ctx.anchors.values())
+            onAnchor(res2, count);
+        return typeof reviver === "function" ? applyReviver.applyReviver(reviver, { "": res }, "", res) : res;
+      }
+    };
+    exports.NodeBase = NodeBase;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/Alias.js
+var require_Alias = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/Alias.js"(exports) {
+    "use strict";
+    var anchors = require_anchors();
+    var visit = require_visit();
+    var identity = require_identity();
+    var Node = require_Node();
+    var toJS = require_toJS();
+    var Alias = class extends Node.NodeBase {
+      constructor(source) {
+        super(identity.ALIAS);
+        this.source = source;
+        Object.defineProperty(this, "tag", {
+          set() {
+            throw new Error("Alias nodes cannot have tags");
+          }
+        });
+      }
+      /**
+       * Resolve the value of this alias within `doc`, finding the last
+       * instance of the `source` anchor before this node.
+       */
+      resolve(doc, ctx) {
+        if (ctx?.maxAliasCount === 0)
+          throw new ReferenceError("Alias resolution is disabled");
+        let nodes;
+        if (ctx?.aliasResolveCache) {
+          nodes = ctx.aliasResolveCache;
+        } else {
+          nodes = [];
+          visit.visit(doc, {
+            Node: (_key, node) => {
+              if (identity.isAlias(node) || identity.hasAnchor(node))
+                nodes.push(node);
+            }
+          });
+          if (ctx)
+            ctx.aliasResolveCache = nodes;
+        }
+        let found = void 0;
+        for (const node of nodes) {
+          if (node === this)
+            break;
+          if (node.anchor === this.source)
+            found = node;
+        }
+        if (found && ctx) {
+          const { anchors: anchors2, doc: doc2, maxAliasCount } = ctx;
+          let data = anchors2.get(found);
+          if (!data) {
+            toJS.toJS(found, null, ctx);
+            data = anchors2.get(found);
+          }
+          if (data?.res === void 0) {
+            const msg = "This should not happen: Alias anchor was not resolved?";
+            throw new ReferenceError(msg);
+          }
+          if (maxAliasCount >= 0) {
+            data.count += 1;
+            if (data.aliasCount === 0)
+              data.aliasCount = getAliasCount(doc2, found, anchors2);
+            if (data.count * data.aliasCount > maxAliasCount) {
+              const msg = "Excessive alias count indicates a resource exhaustion attack";
+              throw new ReferenceError(msg);
+            }
+          }
+        }
+        return found;
+      }
+      toJSON(_arg, ctx) {
+        if (!ctx)
+          return { source: this.source };
+        const source = this.resolve(ctx.doc, ctx);
+        if (!source) {
+          const msg = `Unresolved alias (the anchor must be set before the alias): ${this.source}`;
+          throw new ReferenceError(msg);
+        }
+        return ctx.anchors.get(source).res;
+      }
+      toString(ctx, _onComment, _onChompKeep) {
+        const src = `*${this.source}`;
+        if (ctx) {
+          anchors.anchorIsValid(this.source);
+          if (ctx.options.verifyAliasOrder && !ctx.anchors.has(this.source)) {
+            const msg = `Unresolved alias (the anchor must be set before the alias): ${this.source}`;
+            throw new Error(msg);
+          }
+          if (ctx.implicitKey)
+            return `${src} `;
+        }
+        return src;
+      }
+    };
+    function getAliasCount(doc, node, anchors2) {
+      if (identity.isAlias(node)) {
+        const source = node.resolve(doc);
+        const anchor = anchors2 && source && anchors2.get(source);
+        return anchor ? anchor.count * anchor.aliasCount : 0;
+      } else if (identity.isCollection(node)) {
+        let count = 0;
+        for (const item of node.items) {
+          const c = getAliasCount(doc, item, anchors2);
+          if (c > count)
+            count = c;
+        }
+        return count;
+      } else if (identity.isPair(node)) {
+        const kc = getAliasCount(doc, node.key, anchors2);
+        const vc = getAliasCount(doc, node.value, anchors2);
+        return Math.max(kc, vc);
+      }
+      return 1;
+    }
+    exports.Alias = Alias;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/Scalar.js
+var require_Scalar = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/Scalar.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var Node = require_Node();
+    var toJS = require_toJS();
+    var isScalarValue = (value) => !value || typeof value !== "function" && typeof value !== "object";
+    var Scalar = class extends Node.NodeBase {
+      constructor(value) {
+        super(identity.SCALAR);
+        this.value = value;
+      }
+      toJSON(arg, ctx) {
+        return ctx?.keep ? this.value : toJS.toJS(this.value, arg, ctx);
+      }
+      toString() {
+        return String(this.value);
+      }
+    };
+    Scalar.BLOCK_FOLDED = "BLOCK_FOLDED";
+    Scalar.BLOCK_LITERAL = "BLOCK_LITERAL";
+    Scalar.PLAIN = "PLAIN";
+    Scalar.QUOTE_DOUBLE = "QUOTE_DOUBLE";
+    Scalar.QUOTE_SINGLE = "QUOTE_SINGLE";
+    exports.Scalar = Scalar;
+    exports.isScalarValue = isScalarValue;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/doc/createNode.js
+var require_createNode = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/doc/createNode.js"(exports) {
+    "use strict";
+    var Alias = require_Alias();
+    var identity = require_identity();
+    var Scalar = require_Scalar();
+    var defaultTagPrefix = "tag:yaml.org,2002:";
+    function findTagObject(value, tagName, tags) {
+      if (tagName) {
+        const match = tags.filter((t) => t.tag === tagName);
+        const tagObj = match.find((t) => !t.format) ?? match[0];
+        if (!tagObj)
+          throw new Error(`Tag ${tagName} not found`);
+        return tagObj;
+      }
+      return tags.find((t) => t.identify?.(value) && !t.format);
+    }
+    function createNode(value, tagName, ctx) {
+      if (identity.isDocument(value))
+        value = value.contents;
+      if (identity.isNode(value))
+        return value;
+      if (identity.isPair(value)) {
+        const map2 = ctx.schema[identity.MAP].createNode?.(ctx.schema, null, ctx);
+        map2.items.push(value);
+        return map2;
+      }
+      if (value instanceof String || value instanceof Number || value instanceof Boolean || typeof BigInt !== "undefined" && value instanceof BigInt) {
+        value = value.valueOf();
+      }
+      const { aliasDuplicateObjects, onAnchor, onTagObj, schema, sourceObjects } = ctx;
+      let ref = void 0;
+      if (aliasDuplicateObjects && value && typeof value === "object") {
+        ref = sourceObjects.get(value);
+        if (ref) {
+          ref.anchor ?? (ref.anchor = onAnchor(value));
+          return new Alias.Alias(ref.anchor);
+        } else {
+          ref = { anchor: null, node: null };
+          sourceObjects.set(value, ref);
+        }
+      }
+      if (tagName?.startsWith("!!"))
+        tagName = defaultTagPrefix + tagName.slice(2);
+      let tagObj = findTagObject(value, tagName, schema.tags);
+      if (!tagObj) {
+        if (value && typeof value.toJSON === "function") {
+          value = value.toJSON();
+        }
+        if (!value || typeof value !== "object") {
+          const node2 = new Scalar.Scalar(value);
+          if (ref)
+            ref.node = node2;
+          return node2;
+        }
+        tagObj = value instanceof Map ? schema[identity.MAP] : Symbol.iterator in Object(value) ? schema[identity.SEQ] : schema[identity.MAP];
+      }
+      if (onTagObj) {
+        onTagObj(tagObj);
+        delete ctx.onTagObj;
+      }
+      const node = tagObj?.createNode ? tagObj.createNode(ctx.schema, value, ctx) : typeof tagObj?.nodeClass?.from === "function" ? tagObj.nodeClass.from(ctx.schema, value, ctx) : new Scalar.Scalar(value);
+      if (tagName)
+        node.tag = tagName;
+      else if (!tagObj.default)
+        node.tag = tagObj.tag;
+      if (ref)
+        ref.node = node;
+      return node;
+    }
+    exports.createNode = createNode;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/Collection.js
+var require_Collection = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/Collection.js"(exports) {
+    "use strict";
+    var createNode = require_createNode();
+    var identity = require_identity();
+    var Node = require_Node();
+    function collectionFromPath(schema, path12, value) {
+      let v = value;
+      for (let i = path12.length - 1; i >= 0; --i) {
+        const k = path12[i];
+        if (typeof k === "number" && Number.isInteger(k) && k >= 0) {
+          const a = [];
+          a[k] = v;
+          v = a;
+        } else {
+          v = /* @__PURE__ */ new Map([[k, v]]);
+        }
+      }
+      return createNode.createNode(v, void 0, {
+        aliasDuplicateObjects: false,
+        keepUndefined: false,
+        onAnchor: () => {
+          throw new Error("This should not happen, please report a bug.");
+        },
+        schema,
+        sourceObjects: /* @__PURE__ */ new Map()
+      });
+    }
+    var isEmptyPath = (path12) => path12 == null || typeof path12 === "object" && !!path12[Symbol.iterator]().next().done;
+    var Collection = class extends Node.NodeBase {
+      constructor(type, schema) {
+        super(type);
+        Object.defineProperty(this, "schema", {
+          value: schema,
+          configurable: true,
+          enumerable: false,
+          writable: true
+        });
+      }
+      /**
+       * Create a copy of this collection.
+       *
+       * @param schema - If defined, overwrites the original's schema
+       */
+      clone(schema) {
+        const copy = Object.create(Object.getPrototypeOf(this), Object.getOwnPropertyDescriptors(this));
+        if (schema)
+          copy.schema = schema;
+        copy.items = copy.items.map((it) => identity.isNode(it) || identity.isPair(it) ? it.clone(schema) : it);
+        if (this.range)
+          copy.range = this.range.slice();
+        return copy;
+      }
+      /**
+       * Adds a value to the collection. For `!!map` and `!!omap` the value must
+       * be a Pair instance or a `{ key, value }` object, which may not have a key
+       * that already exists in the map.
+       */
+      addIn(path12, value) {
+        if (isEmptyPath(path12))
+          this.add(value);
+        else {
+          const [key, ...rest] = path12;
+          const node = this.get(key, true);
+          if (identity.isCollection(node))
+            node.addIn(rest, value);
+          else if (node === void 0 && this.schema)
+            this.set(key, collectionFromPath(this.schema, rest, value));
+          else
+            throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
+        }
+      }
+      /**
+       * Removes a value from the collection.
+       * @returns `true` if the item was found and removed.
+       */
+      deleteIn(path12) {
+        const [key, ...rest] = path12;
+        if (rest.length === 0)
+          return this.delete(key);
+        const node = this.get(key, true);
+        if (identity.isCollection(node))
+          return node.deleteIn(rest);
+        else
+          throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
+      }
+      /**
+       * Returns item at `key`, or `undefined` if not found. By default unwraps
+       * scalar values from their surrounding node; to disable set `keepScalar` to
+       * `true` (collections are always returned intact).
+       */
+      getIn(path12, keepScalar) {
+        const [key, ...rest] = path12;
+        const node = this.get(key, true);
+        if (rest.length === 0)
+          return !keepScalar && identity.isScalar(node) ? node.value : node;
+        else
+          return identity.isCollection(node) ? node.getIn(rest, keepScalar) : void 0;
+      }
+      hasAllNullValues(allowScalar) {
+        return this.items.every((node) => {
+          if (!identity.isPair(node))
+            return false;
+          const n = node.value;
+          return n == null || allowScalar && identity.isScalar(n) && n.value == null && !n.commentBefore && !n.comment && !n.tag;
+        });
+      }
+      /**
+       * Checks if the collection includes a value with the key `key`.
+       */
+      hasIn(path12) {
+        const [key, ...rest] = path12;
+        if (rest.length === 0)
+          return this.has(key);
+        const node = this.get(key, true);
+        return identity.isCollection(node) ? node.hasIn(rest) : false;
+      }
+      /**
+       * Sets a value in this collection. For `!!set`, `value` needs to be a
+       * boolean to add/remove the item from the set.
+       */
+      setIn(path12, value) {
+        const [key, ...rest] = path12;
+        if (rest.length === 0) {
+          this.set(key, value);
+        } else {
+          const node = this.get(key, true);
+          if (identity.isCollection(node))
+            node.setIn(rest, value);
+          else if (node === void 0 && this.schema)
+            this.set(key, collectionFromPath(this.schema, rest, value));
+          else
+            throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
+        }
+      }
+    };
+    exports.Collection = Collection;
+    exports.collectionFromPath = collectionFromPath;
+    exports.isEmptyPath = isEmptyPath;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/stringifyComment.js
+var require_stringifyComment = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/stringifyComment.js"(exports) {
+    "use strict";
+    var stringifyComment = (str2) => str2.replace(/^(?!$)(?: $)?/gm, "#");
+    function indentComment(comment, indent2) {
+      if (/^\n+$/.test(comment))
+        return comment.substring(1);
+      return indent2 ? comment.replace(/^(?! *$)/gm, indent2) : comment;
+    }
+    var lineComment = (str2, indent2, comment) => str2.endsWith("\n") ? indentComment(comment, indent2) : comment.includes("\n") ? "\n" + indentComment(comment, indent2) : (str2.endsWith(" ") ? "" : " ") + comment;
+    exports.indentComment = indentComment;
+    exports.lineComment = lineComment;
+    exports.stringifyComment = stringifyComment;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/foldFlowLines.js
+var require_foldFlowLines = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/foldFlowLines.js"(exports) {
+    "use strict";
+    var FOLD_FLOW = "flow";
+    var FOLD_BLOCK = "block";
+    var FOLD_QUOTED = "quoted";
+    function foldFlowLines(text3, indent2, mode = "flow", { indentAtStart, lineWidth = 80, minContentWidth = 20, onFold, onOverflow } = {}) {
+      if (!lineWidth || lineWidth < 0)
+        return text3;
+      if (lineWidth < minContentWidth)
+        minContentWidth = 0;
+      const endStep = Math.max(1 + minContentWidth, 1 + lineWidth - indent2.length);
+      if (text3.length <= endStep)
+        return text3;
+      const folds = [];
+      const escapedFolds = {};
+      let end = lineWidth - indent2.length;
+      if (typeof indentAtStart === "number") {
+        if (indentAtStart > lineWidth - Math.max(2, minContentWidth))
+          folds.push(0);
+        else
+          end = lineWidth - indentAtStart;
+      }
+      let split = void 0;
+      let prev = void 0;
+      let overflow = false;
+      let i = -1;
+      let escStart = -1;
+      let escEnd = -1;
+      if (mode === FOLD_BLOCK) {
+        i = consumeMoreIndentedLines(text3, i, indent2.length);
+        if (i !== -1)
+          end = i + endStep;
+      }
+      for (let ch; ch = text3[i += 1]; ) {
+        if (mode === FOLD_QUOTED && ch === "\\") {
+          escStart = i;
+          switch (text3[i + 1]) {
+            case "x":
+              i += 3;
+              break;
+            case "u":
+              i += 5;
+              break;
+            case "U":
+              i += 9;
+              break;
+            default:
+              i += 1;
+          }
+          escEnd = i;
+        }
+        if (ch === "\n") {
+          if (mode === FOLD_BLOCK)
+            i = consumeMoreIndentedLines(text3, i, indent2.length);
+          end = i + indent2.length + endStep;
+          split = void 0;
+        } else {
+          if (ch === " " && prev && prev !== " " && prev !== "\n" && prev !== "	") {
+            const next = text3[i + 1];
+            if (next && next !== " " && next !== "\n" && next !== "	")
+              split = i;
+          }
+          if (i >= end) {
+            if (split) {
+              folds.push(split);
+              end = split + endStep;
+              split = void 0;
+            } else if (mode === FOLD_QUOTED) {
+              while (prev === " " || prev === "	") {
+                prev = ch;
+                ch = text3[i += 1];
+                overflow = true;
+              }
+              const j = i > escEnd + 1 ? i - 2 : escStart - 1;
+              if (escapedFolds[j])
+                return text3;
+              folds.push(j);
+              escapedFolds[j] = true;
+              end = j + endStep;
+              split = void 0;
+            } else {
+              overflow = true;
+            }
+          }
+        }
+        prev = ch;
+      }
+      if (overflow && onOverflow)
+        onOverflow();
+      if (folds.length === 0)
+        return text3;
+      if (onFold)
+        onFold();
+      let res = text3.slice(0, folds[0]);
+      for (let i2 = 0; i2 < folds.length; ++i2) {
+        const fold = folds[i2];
+        const end2 = folds[i2 + 1] || text3.length;
+        if (fold === 0)
+          res = `
+${indent2}${text3.slice(0, end2)}`;
+        else {
+          if (mode === FOLD_QUOTED && escapedFolds[fold])
+            res += `${text3[fold]}\\`;
+          res += `
+${indent2}${text3.slice(fold + 1, end2)}`;
+        }
+      }
+      return res;
+    }
+    function consumeMoreIndentedLines(text3, i, indent2) {
+      let end = i;
+      let start = i + 1;
+      let ch = text3[start];
+      while (ch === " " || ch === "	") {
+        if (i < start + indent2) {
+          ch = text3[++i];
+        } else {
+          do {
+            ch = text3[++i];
+          } while (ch && ch !== "\n");
+          end = i;
+          start = i + 1;
+          ch = text3[start];
+        }
+      }
+      return end;
+    }
+    exports.FOLD_BLOCK = FOLD_BLOCK;
+    exports.FOLD_FLOW = FOLD_FLOW;
+    exports.FOLD_QUOTED = FOLD_QUOTED;
+    exports.foldFlowLines = foldFlowLines;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/stringifyString.js
+var require_stringifyString = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/stringifyString.js"(exports) {
+    "use strict";
+    var Scalar = require_Scalar();
+    var foldFlowLines = require_foldFlowLines();
+    var getFoldOptions = (ctx, isBlock) => ({
+      indentAtStart: isBlock ? ctx.indent.length : ctx.indentAtStart,
+      lineWidth: ctx.options.lineWidth,
+      minContentWidth: ctx.options.minContentWidth
+    });
+    var containsDocumentMarker = (str2) => /^(%|---|\.\.\.)/m.test(str2);
+    function lineLengthOverLimit(str2, lineWidth, indentLength) {
+      if (!lineWidth || lineWidth < 0)
+        return false;
+      const limit = lineWidth - indentLength;
+      const strLen = str2.length;
+      if (strLen <= limit)
+        return false;
+      for (let i = 0, start = 0; i < strLen; ++i) {
+        if (str2[i] === "\n") {
+          if (i - start > limit)
+            return true;
+          start = i + 1;
+          if (strLen - start <= limit)
+            return false;
+        }
+      }
+      return true;
+    }
+    function doubleQuotedString(value, ctx) {
+      const json2 = JSON.stringify(value);
+      if (ctx.options.doubleQuotedAsJSON)
+        return json2;
+      const { implicitKey } = ctx;
+      const minMultiLineLength = ctx.options.doubleQuotedMinMultiLineLength;
+      const indent2 = ctx.indent || (containsDocumentMarker(value) ? "  " : "");
+      let str2 = "";
+      let start = 0;
+      for (let i = 0, ch = json2[i]; ch; ch = json2[++i]) {
+        if (ch === " " && json2[i + 1] === "\\" && json2[i + 2] === "n") {
+          str2 += json2.slice(start, i) + "\\ ";
+          i += 1;
+          start = i;
+          ch = "\\";
+        }
+        if (ch === "\\")
+          switch (json2[i + 1]) {
+            case "u":
+              {
+                str2 += json2.slice(start, i);
+                const code = json2.substr(i + 2, 4);
+                switch (code) {
+                  case "0000":
+                    str2 += "\\0";
+                    break;
+                  case "0007":
+                    str2 += "\\a";
+                    break;
+                  case "000b":
+                    str2 += "\\v";
+                    break;
+                  case "001b":
+                    str2 += "\\e";
+                    break;
+                  case "0085":
+                    str2 += "\\N";
+                    break;
+                  case "00a0":
+                    str2 += "\\_";
+                    break;
+                  case "2028":
+                    str2 += "\\L";
+                    break;
+                  case "2029":
+                    str2 += "\\P";
+                    break;
+                  default:
+                    if (code.substr(0, 2) === "00")
+                      str2 += "\\x" + code.substr(2);
+                    else
+                      str2 += json2.substr(i, 6);
+                }
+                i += 5;
+                start = i + 1;
+              }
+              break;
+            case "n":
+              if (implicitKey || json2[i + 2] === '"' || json2.length < minMultiLineLength) {
+                i += 1;
+              } else {
+                str2 += json2.slice(start, i) + "\n\n";
+                while (json2[i + 2] === "\\" && json2[i + 3] === "n" && json2[i + 4] !== '"') {
+                  str2 += "\n";
+                  i += 2;
+                }
+                str2 += indent2;
+                if (json2[i + 2] === " ")
+                  str2 += "\\";
+                i += 1;
+                start = i + 1;
+              }
+              break;
+            default:
+              i += 1;
+          }
+      }
+      str2 = start ? str2 + json2.slice(start) : json2;
+      return implicitKey ? str2 : foldFlowLines.foldFlowLines(str2, indent2, foldFlowLines.FOLD_QUOTED, getFoldOptions(ctx, false));
+    }
+    function singleQuotedString(value, ctx) {
+      if (ctx.options.singleQuote === false || ctx.implicitKey && value.includes("\n") || /[ \t]\n|\n[ \t]/.test(value))
+        return doubleQuotedString(value, ctx);
+      const indent2 = ctx.indent || (containsDocumentMarker(value) ? "  " : "");
+      const res = "'" + value.replace(/'/g, "''").replace(/\n+/g, `$&
+${indent2}`) + "'";
+      return ctx.implicitKey ? res : foldFlowLines.foldFlowLines(res, indent2, foldFlowLines.FOLD_FLOW, getFoldOptions(ctx, false));
+    }
+    function quotedString(value, ctx) {
+      const { singleQuote } = ctx.options;
+      let qs;
+      if (singleQuote === false)
+        qs = doubleQuotedString;
+      else {
+        const hasDouble = value.includes('"');
+        const hasSingle = value.includes("'");
+        if (hasDouble && !hasSingle)
+          qs = singleQuotedString;
+        else if (hasSingle && !hasDouble)
+          qs = doubleQuotedString;
+        else
+          qs = singleQuote ? singleQuotedString : doubleQuotedString;
+      }
+      return qs(value, ctx);
+    }
+    var blockEndNewlines;
+    try {
+      blockEndNewlines = new RegExp("(^|(?<!\n))\n+(?!\n|$)", "g");
+    } catch {
+      blockEndNewlines = /\n+(?!\n|$)/g;
+    }
+    function blockString({ comment, type, value }, ctx, onComment, onChompKeep) {
+      const { blockQuote, commentString, lineWidth } = ctx.options;
+      if (!blockQuote || /\n[\t ]+$/.test(value)) {
+        return quotedString(value, ctx);
+      }
+      const indent2 = ctx.indent || (ctx.forceBlockIndent || containsDocumentMarker(value) ? "  " : "");
+      const literal2 = blockQuote === "literal" ? true : blockQuote === "folded" || type === Scalar.Scalar.BLOCK_FOLDED ? false : type === Scalar.Scalar.BLOCK_LITERAL ? true : !lineLengthOverLimit(value, lineWidth, indent2.length);
+      if (!value)
+        return literal2 ? "|\n" : ">\n";
+      let chomp;
+      let endStart;
+      for (endStart = value.length; endStart > 0; --endStart) {
+        const ch = value[endStart - 1];
+        if (ch !== "\n" && ch !== "	" && ch !== " ")
+          break;
+      }
+      let end = value.substring(endStart);
+      const endNlPos = end.indexOf("\n");
+      if (endNlPos === -1) {
+        chomp = "-";
+      } else if (value === end || endNlPos !== end.length - 1) {
+        chomp = "+";
+        if (onChompKeep)
+          onChompKeep();
+      } else {
+        chomp = "";
+      }
+      if (end) {
+        value = value.slice(0, -end.length);
+        if (end[end.length - 1] === "\n")
+          end = end.slice(0, -1);
+        end = end.replace(blockEndNewlines, `$&${indent2}`);
+      }
+      let startWithSpace = false;
+      let startEnd;
+      let startNlPos = -1;
+      for (startEnd = 0; startEnd < value.length; ++startEnd) {
+        const ch = value[startEnd];
+        if (ch === " ")
+          startWithSpace = true;
+        else if (ch === "\n")
+          startNlPos = startEnd;
+        else
+          break;
+      }
+      let start = value.substring(0, startNlPos < startEnd ? startNlPos + 1 : startEnd);
+      if (start) {
+        value = value.substring(start.length);
+        start = start.replace(/\n+/g, `$&${indent2}`);
+      }
+      const indentSize = indent2 ? "2" : "1";
+      let header = (startWithSpace ? indentSize : "") + chomp;
+      if (comment) {
+        header += " " + commentString(comment.replace(/ ?[\r\n]+/g, " "));
+        if (onComment)
+          onComment();
+      }
+      if (!literal2) {
+        const foldedValue = value.replace(/\n+/g, "\n$&").replace(/(?:^|\n)([\t ].*)(?:([\n\t ]*)\n(?![\n\t ]))?/g, "$1$2").replace(/\n+/g, `$&${indent2}`);
+        let literalFallback = false;
+        const foldOptions = getFoldOptions(ctx, true);
+        if (blockQuote !== "folded" && type !== Scalar.Scalar.BLOCK_FOLDED) {
+          foldOptions.onOverflow = () => {
+            literalFallback = true;
+          };
+        }
+        const body = foldFlowLines.foldFlowLines(`${start}${foldedValue}${end}`, indent2, foldFlowLines.FOLD_BLOCK, foldOptions);
+        if (!literalFallback)
+          return `>${header}
+${indent2}${body}`;
+      }
+      value = value.replace(/\n+/g, `$&${indent2}`);
+      return `|${header}
+${indent2}${start}${value}${end}`;
+    }
+    function plainString(item, ctx, onComment, onChompKeep) {
+      const { type, value } = item;
+      const { actualString, implicitKey, indent: indent2, indentStep, inFlow } = ctx;
+      if (implicitKey && value.includes("\n") || inFlow && /[[\]{},]/.test(value)) {
+        return quotedString(value, ctx);
+      }
+      if (/^[\n\t ,[\]{}#&*!|>'"%@`]|^[?-]$|^[?-][ \t]|[\n:][ \t]|[ \t]\n|[\n\t ]#|[\n\t :]$/.test(value)) {
+        return implicitKey || inFlow || !value.includes("\n") ? quotedString(value, ctx) : blockString(item, ctx, onComment, onChompKeep);
+      }
+      if (!implicitKey && !inFlow && type !== Scalar.Scalar.PLAIN && value.includes("\n")) {
+        return blockString(item, ctx, onComment, onChompKeep);
+      }
+      if (containsDocumentMarker(value)) {
+        if (indent2 === "") {
+          ctx.forceBlockIndent = true;
+          return blockString(item, ctx, onComment, onChompKeep);
+        } else if (implicitKey && indent2 === indentStep) {
+          return quotedString(value, ctx);
+        }
+      }
+      const str2 = value.replace(/\n+/g, `$&
+${indent2}`);
+      if (actualString) {
+        const test = (tag) => tag.default && tag.tag !== "tag:yaml.org,2002:str" && tag.test?.test(str2);
+        const { compat, tags } = ctx.doc.schema;
+        if (tags.some(test) || compat?.some(test))
+          return quotedString(value, ctx);
+      }
+      return implicitKey ? str2 : foldFlowLines.foldFlowLines(str2, indent2, foldFlowLines.FOLD_FLOW, getFoldOptions(ctx, false));
+    }
+    function stringifyString(item, ctx, onComment, onChompKeep) {
+      const { implicitKey, inFlow } = ctx;
+      const ss = typeof item.value === "string" ? item : Object.assign({}, item, { value: String(item.value) });
+      let { type } = item;
+      if (type !== Scalar.Scalar.QUOTE_DOUBLE) {
+        if (/[\x00-\x08\x0b-\x1f\x7f-\x9f\u{D800}-\u{DFFF}]/u.test(ss.value))
+          type = Scalar.Scalar.QUOTE_DOUBLE;
+      }
+      const _stringify = (_type) => {
+        switch (_type) {
+          case Scalar.Scalar.BLOCK_FOLDED:
+          case Scalar.Scalar.BLOCK_LITERAL:
+            return implicitKey || inFlow ? quotedString(ss.value, ctx) : blockString(ss, ctx, onComment, onChompKeep);
+          case Scalar.Scalar.QUOTE_DOUBLE:
+            return doubleQuotedString(ss.value, ctx);
+          case Scalar.Scalar.QUOTE_SINGLE:
+            return singleQuotedString(ss.value, ctx);
+          case Scalar.Scalar.PLAIN:
+            return plainString(ss, ctx, onComment, onChompKeep);
+          default:
+            return null;
+        }
+      };
+      let res = _stringify(type);
+      if (res === null) {
+        const { defaultKeyType, defaultStringType } = ctx.options;
+        const t = implicitKey && defaultKeyType || defaultStringType;
+        res = _stringify(t);
+        if (res === null)
+          throw new Error(`Unsupported default string type ${t}`);
+      }
+      return res;
+    }
+    exports.stringifyString = stringifyString;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/stringify.js
+var require_stringify2 = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/stringify.js"(exports) {
+    "use strict";
+    var anchors = require_anchors();
+    var identity = require_identity();
+    var stringifyComment = require_stringifyComment();
+    var stringifyString = require_stringifyString();
+    function createStringifyContext(doc, options) {
+      const opt = Object.assign({
+        blockQuote: true,
+        commentString: stringifyComment.stringifyComment,
+        defaultKeyType: null,
+        defaultStringType: "PLAIN",
+        directives: null,
+        doubleQuotedAsJSON: false,
+        doubleQuotedMinMultiLineLength: 40,
+        falseStr: "false",
+        flowCollectionPadding: true,
+        indentSeq: true,
+        lineWidth: 80,
+        minContentWidth: 20,
+        nullStr: "null",
+        simpleKeys: false,
+        singleQuote: null,
+        trailingComma: false,
+        trueStr: "true",
+        verifyAliasOrder: true
+      }, doc.schema.toStringOptions, options);
+      let inFlow;
+      switch (opt.collectionStyle) {
+        case "block":
+          inFlow = false;
+          break;
+        case "flow":
+          inFlow = true;
+          break;
+        default:
+          inFlow = null;
+      }
+      return {
+        anchors: /* @__PURE__ */ new Set(),
+        doc,
+        flowCollectionPadding: opt.flowCollectionPadding ? " " : "",
+        indent: "",
+        indentStep: typeof opt.indent === "number" ? " ".repeat(opt.indent) : "  ",
+        inFlow,
+        options: opt
+      };
+    }
+    function getTagObject(tags, item) {
+      if (item.tag) {
+        const match = tags.filter((t) => t.tag === item.tag);
+        if (match.length > 0)
+          return match.find((t) => t.format === item.format) ?? match[0];
+      }
+      let tagObj = void 0;
+      let obj;
+      if (identity.isScalar(item)) {
+        obj = item.value;
+        let match = tags.filter((t) => t.identify?.(obj));
+        if (match.length > 1) {
+          const testMatch = match.filter((t) => t.test);
+          if (testMatch.length > 0)
+            match = testMatch;
+        }
+        tagObj = match.find((t) => t.format === item.format) ?? match.find((t) => !t.format);
+      } else {
+        obj = item;
+        tagObj = tags.find((t) => t.nodeClass && obj instanceof t.nodeClass);
+      }
+      if (!tagObj) {
+        const name = obj?.constructor?.name ?? (obj === null ? "null" : typeof obj);
+        throw new Error(`Tag not resolved for ${name} value`);
+      }
+      return tagObj;
+    }
+    function stringifyProps(node, tagObj, { anchors: anchors$1, doc }) {
+      if (!doc.directives)
+        return "";
+      const props = [];
+      const anchor = (identity.isScalar(node) || identity.isCollection(node)) && node.anchor;
+      if (anchor && anchors.anchorIsValid(anchor)) {
+        anchors$1.add(anchor);
+        props.push(`&${anchor}`);
+      }
+      const tag = node.tag ?? (tagObj.default ? null : tagObj.tag);
+      if (tag)
+        props.push(doc.directives.tagString(tag));
+      return props.join(" ");
+    }
+    function stringify2(item, ctx, onComment, onChompKeep) {
+      if (identity.isPair(item))
+        return item.toString(ctx, onComment, onChompKeep);
+      if (identity.isAlias(item)) {
+        if (ctx.doc.directives)
+          return item.toString(ctx);
+        if (ctx.resolvedAliases?.has(item)) {
+          throw new TypeError(`Cannot stringify circular structure without alias nodes`);
+        } else {
+          if (ctx.resolvedAliases)
+            ctx.resolvedAliases.add(item);
+          else
+            ctx.resolvedAliases = /* @__PURE__ */ new Set([item]);
+          item = item.resolve(ctx.doc);
+        }
+      }
+      let tagObj = void 0;
+      const node = identity.isNode(item) ? item : ctx.doc.createNode(item, { onTagObj: (o) => tagObj = o });
+      tagObj ?? (tagObj = getTagObject(ctx.doc.schema.tags, node));
+      const props = stringifyProps(node, tagObj, ctx);
+      if (props.length > 0)
+        ctx.indentAtStart = (ctx.indentAtStart ?? 0) + props.length + 1;
+      const str2 = typeof tagObj.stringify === "function" ? tagObj.stringify(node, ctx, onComment, onChompKeep) : identity.isScalar(node) ? stringifyString.stringifyString(node, ctx, onComment, onChompKeep) : node.toString(ctx, onComment, onChompKeep);
+      if (!props)
+        return str2;
+      return identity.isScalar(node) || str2[0] === "{" || str2[0] === "[" ? `${props} ${str2}` : `${props}
+${ctx.indent}${str2}`;
+    }
+    exports.createStringifyContext = createStringifyContext;
+    exports.stringify = stringify2;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/stringifyPair.js
+var require_stringifyPair = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/stringifyPair.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var Scalar = require_Scalar();
+    var stringify2 = require_stringify2();
+    var stringifyComment = require_stringifyComment();
+    function stringifyPair({ key, value }, ctx, onComment, onChompKeep) {
+      const { allNullValues, doc, indent: indent2, indentStep, options: { commentString, indentSeq, simpleKeys } } = ctx;
+      let keyComment = identity.isNode(key) && key.comment || null;
+      if (simpleKeys) {
+        if (keyComment) {
+          throw new Error("With simple keys, key nodes cannot have comments");
+        }
+        if (identity.isCollection(key) || !identity.isNode(key) && typeof key === "object") {
+          const msg = "With simple keys, collection cannot be used as a key value";
+          throw new Error(msg);
+        }
+      }
+      let explicitKey = !simpleKeys && (!key || keyComment && value == null && !ctx.inFlow || identity.isCollection(key) || (identity.isScalar(key) ? key.type === Scalar.Scalar.BLOCK_FOLDED || key.type === Scalar.Scalar.BLOCK_LITERAL : typeof key === "object"));
+      ctx = Object.assign({}, ctx, {
+        allNullValues: false,
+        implicitKey: !explicitKey && (simpleKeys || !allNullValues),
+        indent: indent2 + indentStep
+      });
+      let keyCommentDone = false;
+      let chompKeep = false;
+      let str2 = stringify2.stringify(key, ctx, () => keyCommentDone = true, () => chompKeep = true);
+      if (!explicitKey && !ctx.inFlow && str2.length > 1024) {
+        if (simpleKeys)
+          throw new Error("With simple keys, single line scalar must not span more than 1024 characters");
+        explicitKey = true;
+      }
+      if (ctx.inFlow) {
+        if (allNullValues || value == null) {
+          if (keyCommentDone && onComment)
+            onComment();
+          return str2 === "" ? "?" : explicitKey ? `? ${str2}` : str2;
+        }
+      } else if (allNullValues && !simpleKeys || value == null && explicitKey) {
+        str2 = `? ${str2}`;
+        if (keyComment && !keyCommentDone) {
+          str2 += stringifyComment.lineComment(str2, ctx.indent, commentString(keyComment));
+        } else if (chompKeep && onChompKeep)
+          onChompKeep();
+        return str2;
+      }
+      if (keyCommentDone)
+        keyComment = null;
+      if (explicitKey) {
+        if (keyComment)
+          str2 += stringifyComment.lineComment(str2, ctx.indent, commentString(keyComment));
+        str2 = `? ${str2}
+${indent2}:`;
+      } else {
+        str2 = `${str2}:`;
+        if (keyComment)
+          str2 += stringifyComment.lineComment(str2, ctx.indent, commentString(keyComment));
+      }
+      let vsb, vcb, valueComment;
+      if (identity.isNode(value)) {
+        vsb = !!value.spaceBefore;
+        vcb = value.commentBefore;
+        valueComment = value.comment;
+      } else {
+        vsb = false;
+        vcb = null;
+        valueComment = null;
+        if (value && typeof value === "object")
+          value = doc.createNode(value);
+      }
+      ctx.implicitKey = false;
+      if (!explicitKey && !keyComment && identity.isScalar(value))
+        ctx.indentAtStart = str2.length + 1;
+      chompKeep = false;
+      if (!indentSeq && indentStep.length >= 2 && !ctx.inFlow && !explicitKey && identity.isSeq(value) && !value.flow && !value.tag && !value.anchor) {
+        ctx.indent = ctx.indent.substring(2);
+      }
+      let valueCommentDone = false;
+      const valueStr = stringify2.stringify(value, ctx, () => valueCommentDone = true, () => chompKeep = true);
+      let ws = " ";
+      if (keyComment || vsb || vcb) {
+        ws = vsb ? "\n" : "";
+        if (vcb) {
+          const cs = commentString(vcb);
+          ws += `
+${stringifyComment.indentComment(cs, ctx.indent)}`;
+        }
+        if (valueStr === "" && !ctx.inFlow) {
+          if (ws === "\n" && valueComment)
+            ws = "\n\n";
+        } else {
+          ws += `
+${ctx.indent}`;
+        }
+      } else if (!explicitKey && identity.isCollection(value)) {
+        const vs0 = valueStr[0];
+        const nl0 = valueStr.indexOf("\n");
+        const hasNewline = nl0 !== -1;
+        const flow = ctx.inFlow ?? value.flow ?? value.items.length === 0;
+        if (hasNewline || !flow) {
+          let hasPropsLine = false;
+          if (hasNewline && (vs0 === "&" || vs0 === "!")) {
+            let sp0 = valueStr.indexOf(" ");
+            if (vs0 === "&" && sp0 !== -1 && sp0 < nl0 && valueStr[sp0 + 1] === "!") {
+              sp0 = valueStr.indexOf(" ", sp0 + 1);
+            }
+            if (sp0 === -1 || nl0 < sp0)
+              hasPropsLine = true;
+          }
+          if (!hasPropsLine)
+            ws = `
+${ctx.indent}`;
+        }
+      } else if (valueStr === "" || valueStr[0] === "\n") {
+        ws = "";
+      }
+      str2 += ws + valueStr;
+      if (ctx.inFlow) {
+        if (valueCommentDone && onComment)
+          onComment();
+      } else if (valueComment && !valueCommentDone) {
+        str2 += stringifyComment.lineComment(str2, ctx.indent, commentString(valueComment));
+      } else if (chompKeep && onChompKeep) {
+        onChompKeep();
+      }
+      return str2;
+    }
+    exports.stringifyPair = stringifyPair;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/log.js
+var require_log = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/log.js"(exports) {
+    "use strict";
+    var node_process = __require("process");
+    function debug(logLevel, ...messages) {
+      if (logLevel === "debug")
+        console.log(...messages);
+    }
+    function warn(logLevel, warning) {
+      if (logLevel === "debug" || logLevel === "warn") {
+        if (typeof node_process.emitWarning === "function")
+          node_process.emitWarning(warning);
+        else
+          console.warn(warning);
+      }
+    }
+    exports.debug = debug;
+    exports.warn = warn;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/merge.js
+var require_merge = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/merge.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var Scalar = require_Scalar();
+    var MERGE_KEY = "<<";
+    var merge2 = {
+      identify: (value) => value === MERGE_KEY || typeof value === "symbol" && value.description === MERGE_KEY,
+      default: "key",
+      tag: "tag:yaml.org,2002:merge",
+      test: /^<<$/,
+      resolve: () => Object.assign(new Scalar.Scalar(Symbol(MERGE_KEY)), {
+        addToJSMap: addMergeToJSMap
+      }),
+      stringify: () => MERGE_KEY
+    };
+    var isMergeKey = (ctx, key) => (merge2.identify(key) || identity.isScalar(key) && (!key.type || key.type === Scalar.Scalar.PLAIN) && merge2.identify(key.value)) && ctx?.doc.schema.tags.some((tag) => tag.tag === merge2.tag && tag.default);
+    function addMergeToJSMap(ctx, map2, value) {
+      const source = resolveAliasValue(ctx, value);
+      if (identity.isSeq(source))
+        for (const it of source.items)
+          mergeValue(ctx, map2, it);
+      else if (Array.isArray(source))
+        for (const it of source)
+          mergeValue(ctx, map2, it);
+      else
+        mergeValue(ctx, map2, source);
+    }
+    function mergeValue(ctx, map2, value) {
+      const source = resolveAliasValue(ctx, value);
+      if (!identity.isMap(source))
+        throw new Error("Merge sources must be maps or map aliases");
+      const srcMap = source.toJSON(null, ctx, Map);
+      for (const [key, value2] of srcMap) {
+        if (map2 instanceof Map) {
+          if (!map2.has(key))
+            map2.set(key, value2);
+        } else if (map2 instanceof Set) {
+          map2.add(key);
+        } else if (!Object.prototype.hasOwnProperty.call(map2, key)) {
+          Object.defineProperty(map2, key, {
+            value: value2,
+            writable: true,
+            enumerable: true,
+            configurable: true
+          });
+        }
+      }
+      return map2;
+    }
+    function resolveAliasValue(ctx, value) {
+      return ctx && identity.isAlias(value) ? value.resolve(ctx.doc, ctx) : value;
+    }
+    exports.addMergeToJSMap = addMergeToJSMap;
+    exports.isMergeKey = isMergeKey;
+    exports.merge = merge2;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/addPairToJSMap.js
+var require_addPairToJSMap = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/addPairToJSMap.js"(exports) {
+    "use strict";
+    var log = require_log();
+    var merge2 = require_merge();
+    var stringify2 = require_stringify2();
+    var identity = require_identity();
+    var toJS = require_toJS();
+    function addPairToJSMap(ctx, map2, { key, value }) {
+      if (identity.isNode(key) && key.addToJSMap)
+        key.addToJSMap(ctx, map2, value);
+      else if (merge2.isMergeKey(ctx, key))
+        merge2.addMergeToJSMap(ctx, map2, value);
+      else {
+        const jsKey = toJS.toJS(key, "", ctx);
+        if (map2 instanceof Map) {
+          map2.set(jsKey, toJS.toJS(value, jsKey, ctx));
+        } else if (map2 instanceof Set) {
+          map2.add(jsKey);
+        } else {
+          const stringKey = stringifyKey(key, jsKey, ctx);
+          const jsValue = toJS.toJS(value, stringKey, ctx);
+          if (stringKey in map2)
+            Object.defineProperty(map2, stringKey, {
+              value: jsValue,
+              writable: true,
+              enumerable: true,
+              configurable: true
+            });
+          else
+            map2[stringKey] = jsValue;
+        }
+      }
+      return map2;
+    }
+    function stringifyKey(key, jsKey, ctx) {
+      if (jsKey === null)
+        return "";
+      if (typeof jsKey !== "object")
+        return String(jsKey);
+      if (identity.isNode(key) && ctx?.doc) {
+        const strCtx = stringify2.createStringifyContext(ctx.doc, {});
+        strCtx.anchors = /* @__PURE__ */ new Set();
+        for (const node of ctx.anchors.keys())
+          strCtx.anchors.add(node.anchor);
+        strCtx.inFlow = true;
+        strCtx.inStringifyKey = true;
+        const strKey = key.toString(strCtx);
+        if (!ctx.mapKeyWarned) {
+          let jsonStr = JSON.stringify(strKey);
+          if (jsonStr.length > 40)
+            jsonStr = jsonStr.substring(0, 36) + '..."';
+          log.warn(ctx.doc.options.logLevel, `Keys with collection values will be stringified due to JS Object restrictions: ${jsonStr}. Set mapAsMap: true to use object keys.`);
+          ctx.mapKeyWarned = true;
+        }
+        return strKey;
+      }
+      return JSON.stringify(jsKey);
+    }
+    exports.addPairToJSMap = addPairToJSMap;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/Pair.js
+var require_Pair = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/Pair.js"(exports) {
+    "use strict";
+    var createNode = require_createNode();
+    var stringifyPair = require_stringifyPair();
+    var addPairToJSMap = require_addPairToJSMap();
+    var identity = require_identity();
+    function createPair(key, value, ctx) {
+      const k = createNode.createNode(key, void 0, ctx);
+      const v = createNode.createNode(value, void 0, ctx);
+      return new Pair(k, v);
+    }
+    var Pair = class _Pair {
+      constructor(key, value = null) {
+        Object.defineProperty(this, identity.NODE_TYPE, { value: identity.PAIR });
+        this.key = key;
+        this.value = value;
+      }
+      clone(schema) {
+        let { key, value } = this;
+        if (identity.isNode(key))
+          key = key.clone(schema);
+        if (identity.isNode(value))
+          value = value.clone(schema);
+        return new _Pair(key, value);
+      }
+      toJSON(_, ctx) {
+        const pair = ctx?.mapAsMap ? /* @__PURE__ */ new Map() : {};
+        return addPairToJSMap.addPairToJSMap(ctx, pair, this);
+      }
+      toString(ctx, onComment, onChompKeep) {
+        return ctx?.doc ? stringifyPair.stringifyPair(this, ctx, onComment, onChompKeep) : JSON.stringify(this);
+      }
+    };
+    exports.Pair = Pair;
+    exports.createPair = createPair;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/stringifyCollection.js
+var require_stringifyCollection = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/stringifyCollection.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var stringify2 = require_stringify2();
+    var stringifyComment = require_stringifyComment();
+    function stringifyCollection(collection, ctx, options) {
+      const flow = ctx.inFlow ?? collection.flow;
+      const stringify3 = flow ? stringifyFlowCollection : stringifyBlockCollection;
+      return stringify3(collection, ctx, options);
+    }
+    function stringifyBlockCollection({ comment, items }, ctx, { blockItemPrefix, flowChars, itemIndent, onChompKeep, onComment }) {
+      const { indent: indent2, options: { commentString } } = ctx;
+      const itemCtx = Object.assign({}, ctx, { indent: itemIndent, type: null });
+      let chompKeep = false;
+      const lines = [];
+      for (let i = 0; i < items.length; ++i) {
+        const item = items[i];
+        let comment2 = null;
+        if (identity.isNode(item)) {
+          if (!chompKeep && item.spaceBefore)
+            lines.push("");
+          addCommentBefore(ctx, lines, item.commentBefore, chompKeep);
+          if (item.comment)
+            comment2 = item.comment;
+        } else if (identity.isPair(item)) {
+          const ik = identity.isNode(item.key) ? item.key : null;
+          if (ik) {
+            if (!chompKeep && ik.spaceBefore)
+              lines.push("");
+            addCommentBefore(ctx, lines, ik.commentBefore, chompKeep);
+          }
+        }
+        chompKeep = false;
+        let str3 = stringify2.stringify(item, itemCtx, () => comment2 = null, () => chompKeep = true);
+        if (comment2)
+          str3 += stringifyComment.lineComment(str3, itemIndent, commentString(comment2));
+        if (chompKeep && comment2)
+          chompKeep = false;
+        lines.push(blockItemPrefix + str3);
+      }
+      let str2;
+      if (lines.length === 0) {
+        str2 = flowChars.start + flowChars.end;
+      } else {
+        str2 = lines[0];
+        for (let i = 1; i < lines.length; ++i) {
+          const line = lines[i];
+          str2 += line ? `
+${indent2}${line}` : "\n";
+        }
+      }
+      if (comment) {
+        str2 += "\n" + stringifyComment.indentComment(commentString(comment), indent2);
+        if (onComment)
+          onComment();
+      } else if (chompKeep && onChompKeep)
+        onChompKeep();
+      return str2;
+    }
+    function stringifyFlowCollection({ items }, ctx, { flowChars, itemIndent }) {
+      const { indent: indent2, indentStep, flowCollectionPadding: fcPadding, options: { commentString } } = ctx;
+      itemIndent += indentStep;
+      const itemCtx = Object.assign({}, ctx, {
+        indent: itemIndent,
+        inFlow: true,
+        type: null
+      });
+      let reqNewline = false;
+      let linesAtValue = 0;
+      const lines = [];
+      for (let i = 0; i < items.length; ++i) {
+        const item = items[i];
+        let comment = null;
+        if (identity.isNode(item)) {
+          if (item.spaceBefore)
+            lines.push("");
+          addCommentBefore(ctx, lines, item.commentBefore, false);
+          if (item.comment)
+            comment = item.comment;
+        } else if (identity.isPair(item)) {
+          const ik = identity.isNode(item.key) ? item.key : null;
+          if (ik) {
+            if (ik.spaceBefore)
+              lines.push("");
+            addCommentBefore(ctx, lines, ik.commentBefore, false);
+            if (ik.comment)
+              reqNewline = true;
+          }
+          const iv = identity.isNode(item.value) ? item.value : null;
+          if (iv) {
+            if (iv.comment)
+              comment = iv.comment;
+            if (iv.commentBefore)
+              reqNewline = true;
+          } else if (item.value == null && ik?.comment) {
+            comment = ik.comment;
+          }
+        }
+        if (comment)
+          reqNewline = true;
+        let str2 = stringify2.stringify(item, itemCtx, () => comment = null);
+        reqNewline || (reqNewline = lines.length > linesAtValue || str2.includes("\n"));
+        if (i < items.length - 1) {
+          str2 += ",";
+        } else if (ctx.options.trailingComma) {
+          if (ctx.options.lineWidth > 0) {
+            reqNewline || (reqNewline = lines.reduce((sum, line) => sum + line.length + 2, 2) + (str2.length + 2) > ctx.options.lineWidth);
+          }
+          if (reqNewline) {
+            str2 += ",";
+          }
+        }
+        if (comment)
+          str2 += stringifyComment.lineComment(str2, itemIndent, commentString(comment));
+        lines.push(str2);
+        linesAtValue = lines.length;
+      }
+      const { start, end } = flowChars;
+      if (lines.length === 0) {
+        return start + end;
+      } else {
+        if (!reqNewline) {
+          const len = lines.reduce((sum, line) => sum + line.length + 2, 2);
+          reqNewline = ctx.options.lineWidth > 0 && len > ctx.options.lineWidth;
+        }
+        if (reqNewline) {
+          let str2 = start;
+          for (const line of lines)
+            str2 += line ? `
+${indentStep}${indent2}${line}` : "\n";
+          return `${str2}
+${indent2}${end}`;
+        } else {
+          return `${start}${fcPadding}${lines.join(" ")}${fcPadding}${end}`;
+        }
+      }
+    }
+    function addCommentBefore({ indent: indent2, options: { commentString } }, lines, comment, chompKeep) {
+      if (comment && chompKeep)
+        comment = comment.replace(/^\n+/, "");
+      if (comment) {
+        const ic = stringifyComment.indentComment(commentString(comment), indent2);
+        lines.push(ic.trimStart());
+      }
+    }
+    exports.stringifyCollection = stringifyCollection;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/YAMLMap.js
+var require_YAMLMap = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/YAMLMap.js"(exports) {
+    "use strict";
+    var stringifyCollection = require_stringifyCollection();
+    var addPairToJSMap = require_addPairToJSMap();
+    var Collection = require_Collection();
+    var identity = require_identity();
+    var Pair = require_Pair();
+    var Scalar = require_Scalar();
+    function findPair(items, key) {
+      const k = identity.isScalar(key) ? key.value : key;
+      for (const it of items) {
+        if (identity.isPair(it)) {
+          if (it.key === key || it.key === k)
+            return it;
+          if (identity.isScalar(it.key) && it.key.value === k)
+            return it;
+        }
+      }
+      return void 0;
+    }
+    var YAMLMap = class extends Collection.Collection {
+      static get tagName() {
+        return "tag:yaml.org,2002:map";
+      }
+      constructor(schema) {
+        super(identity.MAP, schema);
+        this.items = [];
+      }
+      /**
+       * A generic collection parsing method that can be extended
+       * to other node classes that inherit from YAMLMap
+       */
+      static from(schema, obj, ctx) {
+        const { keepUndefined, replacer } = ctx;
+        const map2 = new this(schema);
+        const add = (key, value) => {
+          if (typeof replacer === "function")
+            value = replacer.call(obj, key, value);
+          else if (Array.isArray(replacer) && !replacer.includes(key))
+            return;
+          if (value !== void 0 || keepUndefined)
+            map2.items.push(Pair.createPair(key, value, ctx));
+        };
+        if (obj instanceof Map) {
+          for (const [key, value] of obj)
+            add(key, value);
+        } else if (obj && typeof obj === "object") {
+          for (const key of Object.keys(obj))
+            add(key, obj[key]);
+        }
+        if (typeof schema.sortMapEntries === "function") {
+          map2.items.sort(schema.sortMapEntries);
+        }
+        return map2;
+      }
+      /**
+       * Adds a value to the collection.
+       *
+       * @param overwrite - If not set `true`, using a key that is already in the
+       *   collection will throw. Otherwise, overwrites the previous value.
+       */
+      add(pair, overwrite) {
+        let _pair;
+        if (identity.isPair(pair))
+          _pair = pair;
+        else if (!pair || typeof pair !== "object" || !("key" in pair)) {
+          _pair = new Pair.Pair(pair, pair?.value);
+        } else
+          _pair = new Pair.Pair(pair.key, pair.value);
+        const prev = findPair(this.items, _pair.key);
+        const sortEntries = this.schema?.sortMapEntries;
+        if (prev) {
+          if (!overwrite)
+            throw new Error(`Key ${_pair.key} already set`);
+          if (identity.isScalar(prev.value) && Scalar.isScalarValue(_pair.value))
+            prev.value.value = _pair.value;
+          else
+            prev.value = _pair.value;
+        } else if (sortEntries) {
+          const i = this.items.findIndex((item) => sortEntries(_pair, item) < 0);
+          if (i === -1)
+            this.items.push(_pair);
+          else
+            this.items.splice(i, 0, _pair);
+        } else {
+          this.items.push(_pair);
+        }
+      }
+      delete(key) {
+        const it = findPair(this.items, key);
+        if (!it)
+          return false;
+        const del = this.items.splice(this.items.indexOf(it), 1);
+        return del.length > 0;
+      }
+      get(key, keepScalar) {
+        const it = findPair(this.items, key);
+        const node = it?.value;
+        return (!keepScalar && identity.isScalar(node) ? node.value : node) ?? void 0;
+      }
+      has(key) {
+        return !!findPair(this.items, key);
+      }
+      set(key, value) {
+        this.add(new Pair.Pair(key, value), true);
+      }
+      /**
+       * @param ctx - Conversion context, originally set in Document#toJS()
+       * @param {Class} Type - If set, forces the returned collection type
+       * @returns Instance of Type, Map, or Object
+       */
+      toJSON(_, ctx, Type) {
+        const map2 = Type ? new Type() : ctx?.mapAsMap ? /* @__PURE__ */ new Map() : {};
+        if (ctx?.onCreate)
+          ctx.onCreate(map2);
+        for (const item of this.items)
+          addPairToJSMap.addPairToJSMap(ctx, map2, item);
+        return map2;
+      }
+      toString(ctx, onComment, onChompKeep) {
+        if (!ctx)
+          return JSON.stringify(this);
+        for (const item of this.items) {
+          if (!identity.isPair(item))
+            throw new Error(`Map items must all be pairs; found ${JSON.stringify(item)} instead`);
+        }
+        if (!ctx.allNullValues && this.hasAllNullValues(false))
+          ctx = Object.assign({}, ctx, { allNullValues: true });
+        return stringifyCollection.stringifyCollection(this, ctx, {
+          blockItemPrefix: "",
+          flowChars: { start: "{", end: "}" },
+          itemIndent: ctx.indent || "",
+          onChompKeep,
+          onComment
+        });
+      }
+    };
+    exports.YAMLMap = YAMLMap;
+    exports.findPair = findPair;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/common/map.js
+var require_map = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/common/map.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var YAMLMap = require_YAMLMap();
+    var map2 = {
+      collection: "map",
+      default: true,
+      nodeClass: YAMLMap.YAMLMap,
+      tag: "tag:yaml.org,2002:map",
+      resolve(map3, onError) {
+        if (!identity.isMap(map3))
+          onError("Expected a mapping for this tag");
+        return map3;
+      },
+      createNode: (schema, obj, ctx) => YAMLMap.YAMLMap.from(schema, obj, ctx)
+    };
+    exports.map = map2;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/YAMLSeq.js
+var require_YAMLSeq = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/nodes/YAMLSeq.js"(exports) {
+    "use strict";
+    var createNode = require_createNode();
+    var stringifyCollection = require_stringifyCollection();
+    var Collection = require_Collection();
+    var identity = require_identity();
+    var Scalar = require_Scalar();
+    var toJS = require_toJS();
+    var YAMLSeq = class extends Collection.Collection {
+      static get tagName() {
+        return "tag:yaml.org,2002:seq";
+      }
+      constructor(schema) {
+        super(identity.SEQ, schema);
+        this.items = [];
+      }
+      add(value) {
+        this.items.push(value);
+      }
+      /**
+       * Removes a value from the collection.
+       *
+       * `key` must contain a representation of an integer for this to succeed.
+       * It may be wrapped in a `Scalar`.
+       *
+       * @returns `true` if the item was found and removed.
+       */
+      delete(key) {
+        const idx = asItemIndex(key);
+        if (typeof idx !== "number")
+          return false;
+        const del = this.items.splice(idx, 1);
+        return del.length > 0;
+      }
+      get(key, keepScalar) {
+        const idx = asItemIndex(key);
+        if (typeof idx !== "number")
+          return void 0;
+        const it = this.items[idx];
+        return !keepScalar && identity.isScalar(it) ? it.value : it;
+      }
+      /**
+       * Checks if the collection includes a value with the key `key`.
+       *
+       * `key` must contain a representation of an integer for this to succeed.
+       * It may be wrapped in a `Scalar`.
+       */
+      has(key) {
+        const idx = asItemIndex(key);
+        return typeof idx === "number" && idx < this.items.length;
+      }
+      /**
+       * Sets a value in this collection. For `!!set`, `value` needs to be a
+       * boolean to add/remove the item from the set.
+       *
+       * If `key` does not contain a representation of an integer, this will throw.
+       * It may be wrapped in a `Scalar`.
+       */
+      set(key, value) {
+        const idx = asItemIndex(key);
+        if (typeof idx !== "number")
+          throw new Error(`Expected a valid index, not ${key}.`);
+        const prev = this.items[idx];
+        if (identity.isScalar(prev) && Scalar.isScalarValue(value))
+          prev.value = value;
+        else
+          this.items[idx] = value;
+      }
+      toJSON(_, ctx) {
+        const seq = [];
+        if (ctx?.onCreate)
+          ctx.onCreate(seq);
+        let i = 0;
+        for (const item of this.items)
+          seq.push(toJS.toJS(item, String(i++), ctx));
+        return seq;
+      }
+      toString(ctx, onComment, onChompKeep) {
+        if (!ctx)
+          return JSON.stringify(this);
+        return stringifyCollection.stringifyCollection(this, ctx, {
+          blockItemPrefix: "- ",
+          flowChars: { start: "[", end: "]" },
+          itemIndent: (ctx.indent || "") + "  ",
+          onChompKeep,
+          onComment
+        });
+      }
+      static from(schema, obj, ctx) {
+        const { replacer } = ctx;
+        const seq = new this(schema);
+        if (obj && Symbol.iterator in Object(obj)) {
+          let i = 0;
+          for (let it of obj) {
+            if (typeof replacer === "function") {
+              const key = obj instanceof Set ? it : String(i++);
+              it = replacer.call(obj, key, it);
+            }
+            seq.items.push(createNode.createNode(it, void 0, ctx));
+          }
+        }
+        return seq;
+      }
+    };
+    function asItemIndex(key) {
+      let idx = identity.isScalar(key) ? key.value : key;
+      if (idx && typeof idx === "string")
+        idx = Number(idx);
+      return typeof idx === "number" && Number.isInteger(idx) && idx >= 0 ? idx : null;
+    }
+    exports.YAMLSeq = YAMLSeq;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/common/seq.js
+var require_seq = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/common/seq.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var YAMLSeq = require_YAMLSeq();
+    var seq = {
+      collection: "seq",
+      default: true,
+      nodeClass: YAMLSeq.YAMLSeq,
+      tag: "tag:yaml.org,2002:seq",
+      resolve(seq2, onError) {
+        if (!identity.isSeq(seq2))
+          onError("Expected a sequence for this tag");
+        return seq2;
+      },
+      createNode: (schema, obj, ctx) => YAMLSeq.YAMLSeq.from(schema, obj, ctx)
+    };
+    exports.seq = seq;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/common/string.js
+var require_string = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/common/string.js"(exports) {
+    "use strict";
+    var stringifyString = require_stringifyString();
+    var string4 = {
+      identify: (value) => typeof value === "string",
+      default: true,
+      tag: "tag:yaml.org,2002:str",
+      resolve: (str2) => str2,
+      stringify(item, ctx, onComment, onChompKeep) {
+        ctx = Object.assign({ actualString: true }, ctx);
+        return stringifyString.stringifyString(item, ctx, onComment, onChompKeep);
+      }
+    };
+    exports.string = string4;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/common/null.js
+var require_null = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/common/null.js"(exports) {
+    "use strict";
+    var Scalar = require_Scalar();
+    var nullTag = {
+      identify: (value) => value == null,
+      createNode: () => new Scalar.Scalar(null),
+      default: true,
+      tag: "tag:yaml.org,2002:null",
+      test: /^(?:~|[Nn]ull|NULL)?$/,
+      resolve: () => new Scalar.Scalar(null),
+      stringify: ({ source }, ctx) => typeof source === "string" && nullTag.test.test(source) ? source : ctx.options.nullStr
+    };
+    exports.nullTag = nullTag;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/core/bool.js
+var require_bool = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/core/bool.js"(exports) {
+    "use strict";
+    var Scalar = require_Scalar();
+    var boolTag = {
+      identify: (value) => typeof value === "boolean",
+      default: true,
+      tag: "tag:yaml.org,2002:bool",
+      test: /^(?:[Tt]rue|TRUE|[Ff]alse|FALSE)$/,
+      resolve: (str2) => new Scalar.Scalar(str2[0] === "t" || str2[0] === "T"),
+      stringify({ source, value }, ctx) {
+        if (source && boolTag.test.test(source)) {
+          const sv = source[0] === "t" || source[0] === "T";
+          if (value === sv)
+            return source;
+        }
+        return value ? ctx.options.trueStr : ctx.options.falseStr;
+      }
+    };
+    exports.boolTag = boolTag;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/stringifyNumber.js
+var require_stringifyNumber = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/stringifyNumber.js"(exports) {
+    "use strict";
+    function stringifyNumber({ format, minFractionDigits, tag, value }) {
+      if (typeof value === "bigint")
+        return String(value);
+      const num = typeof value === "number" ? value : Number(value);
+      if (!isFinite(num))
+        return isNaN(num) ? ".nan" : num < 0 ? "-.inf" : ".inf";
+      let n = Object.is(value, -0) ? "-0" : JSON.stringify(value);
+      if (!format && minFractionDigits && (!tag || tag === "tag:yaml.org,2002:float") && /^-?\d/.test(n) && !n.includes("e")) {
+        let i = n.indexOf(".");
+        if (i < 0) {
+          i = n.length;
+          n += ".";
+        }
+        let d = minFractionDigits - (n.length - i - 1);
+        while (d-- > 0)
+          n += "0";
+      }
+      return n;
+    }
+    exports.stringifyNumber = stringifyNumber;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/core/float.js
+var require_float = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/core/float.js"(exports) {
+    "use strict";
+    var Scalar = require_Scalar();
+    var stringifyNumber = require_stringifyNumber();
+    var floatNaN = {
+      identify: (value) => typeof value === "number",
+      default: true,
+      tag: "tag:yaml.org,2002:float",
+      test: /^(?:[-+]?\.(?:inf|Inf|INF)|\.nan|\.NaN|\.NAN)$/,
+      resolve: (str2) => str2.slice(-3).toLowerCase() === "nan" ? NaN : str2[0] === "-" ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY,
+      stringify: stringifyNumber.stringifyNumber
+    };
+    var floatExp = {
+      identify: (value) => typeof value === "number",
+      default: true,
+      tag: "tag:yaml.org,2002:float",
+      format: "EXP",
+      test: /^[-+]?(?:\.[0-9]+|[0-9]+(?:\.[0-9]*)?)[eE][-+]?[0-9]+$/,
+      resolve: (str2) => parseFloat(str2),
+      stringify(node) {
+        const num = Number(node.value);
+        return isFinite(num) ? num.toExponential() : stringifyNumber.stringifyNumber(node);
+      }
+    };
+    var float = {
+      identify: (value) => typeof value === "number",
+      default: true,
+      tag: "tag:yaml.org,2002:float",
+      test: /^[-+]?(?:\.[0-9]+|[0-9]+\.[0-9]*)$/,
+      resolve(str2) {
+        const node = new Scalar.Scalar(parseFloat(str2));
+        const dot = str2.indexOf(".");
+        if (dot !== -1 && str2[str2.length - 1] === "0")
+          node.minFractionDigits = str2.length - dot - 1;
+        return node;
+      },
+      stringify: stringifyNumber.stringifyNumber
+    };
+    exports.float = float;
+    exports.floatExp = floatExp;
+    exports.floatNaN = floatNaN;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/core/int.js
+var require_int = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/core/int.js"(exports) {
+    "use strict";
+    var stringifyNumber = require_stringifyNumber();
+    var intIdentify = (value) => typeof value === "bigint" || Number.isInteger(value);
+    var intResolve = (str2, offset, radix, { intAsBigInt }) => intAsBigInt ? BigInt(str2) : parseInt(str2.substring(offset), radix);
+    function intStringify(node, radix, prefix) {
+      const { value } = node;
+      if (intIdentify(value) && value >= 0)
+        return prefix + value.toString(radix);
+      return stringifyNumber.stringifyNumber(node);
+    }
+    var intOct = {
+      identify: (value) => intIdentify(value) && value >= 0,
+      default: true,
+      tag: "tag:yaml.org,2002:int",
+      format: "OCT",
+      test: /^0o[0-7]+$/,
+      resolve: (str2, _onError, opt) => intResolve(str2, 2, 8, opt),
+      stringify: (node) => intStringify(node, 8, "0o")
+    };
+    var int2 = {
+      identify: intIdentify,
+      default: true,
+      tag: "tag:yaml.org,2002:int",
+      test: /^[-+]?[0-9]+$/,
+      resolve: (str2, _onError, opt) => intResolve(str2, 0, 10, opt),
+      stringify: stringifyNumber.stringifyNumber
+    };
+    var intHex = {
+      identify: (value) => intIdentify(value) && value >= 0,
+      default: true,
+      tag: "tag:yaml.org,2002:int",
+      format: "HEX",
+      test: /^0x[0-9a-fA-F]+$/,
+      resolve: (str2, _onError, opt) => intResolve(str2, 2, 16, opt),
+      stringify: (node) => intStringify(node, 16, "0x")
+    };
+    exports.int = int2;
+    exports.intHex = intHex;
+    exports.intOct = intOct;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/core/schema.js
+var require_schema = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/core/schema.js"(exports) {
+    "use strict";
+    var map2 = require_map();
+    var _null4 = require_null();
+    var seq = require_seq();
+    var string4 = require_string();
+    var bool = require_bool();
+    var float = require_float();
+    var int2 = require_int();
+    var schema = [
+      map2.map,
+      seq.seq,
+      string4.string,
+      _null4.nullTag,
+      bool.boolTag,
+      int2.intOct,
+      int2.int,
+      int2.intHex,
+      float.floatNaN,
+      float.floatExp,
+      float.float
+    ];
+    exports.schema = schema;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/json/schema.js
+var require_schema2 = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/json/schema.js"(exports) {
+    "use strict";
+    var Scalar = require_Scalar();
+    var map2 = require_map();
+    var seq = require_seq();
+    function intIdentify(value) {
+      return typeof value === "bigint" || Number.isInteger(value);
+    }
+    var stringifyJSON = ({ value }) => JSON.stringify(value);
+    var jsonScalars = [
+      {
+        identify: (value) => typeof value === "string",
+        default: true,
+        tag: "tag:yaml.org,2002:str",
+        resolve: (str2) => str2,
+        stringify: stringifyJSON
+      },
+      {
+        identify: (value) => value == null,
+        createNode: () => new Scalar.Scalar(null),
+        default: true,
+        tag: "tag:yaml.org,2002:null",
+        test: /^null$/,
+        resolve: () => null,
+        stringify: stringifyJSON
+      },
+      {
+        identify: (value) => typeof value === "boolean",
+        default: true,
+        tag: "tag:yaml.org,2002:bool",
+        test: /^true$|^false$/,
+        resolve: (str2) => str2 === "true",
+        stringify: stringifyJSON
+      },
+      {
+        identify: intIdentify,
+        default: true,
+        tag: "tag:yaml.org,2002:int",
+        test: /^-?(?:0|[1-9][0-9]*)$/,
+        resolve: (str2, _onError, { intAsBigInt }) => intAsBigInt ? BigInt(str2) : parseInt(str2, 10),
+        stringify: ({ value }) => intIdentify(value) ? value.toString() : JSON.stringify(value)
+      },
+      {
+        identify: (value) => typeof value === "number",
+        default: true,
+        tag: "tag:yaml.org,2002:float",
+        test: /^-?(?:0|[1-9][0-9]*)(?:\.[0-9]*)?(?:[eE][-+]?[0-9]+)?$/,
+        resolve: (str2) => parseFloat(str2),
+        stringify: stringifyJSON
+      }
+    ];
+    var jsonError = {
+      default: true,
+      tag: "",
+      test: /^/,
+      resolve(str2, onError) {
+        onError(`Unresolved plain scalar ${JSON.stringify(str2)}`);
+        return str2;
+      }
+    };
+    var schema = [map2.map, seq.seq].concat(jsonScalars, jsonError);
+    exports.schema = schema;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/binary.js
+var require_binary = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/binary.js"(exports) {
+    "use strict";
+    var node_buffer = __require("buffer");
+    var Scalar = require_Scalar();
+    var stringifyString = require_stringifyString();
+    var binary = {
+      identify: (value) => value instanceof Uint8Array,
+      // Buffer inherits from Uint8Array
+      default: false,
+      tag: "tag:yaml.org,2002:binary",
+      /**
+       * Returns a Buffer in node and an Uint8Array in browsers
+       *
+       * To use the resulting buffer as an image, you'll want to do something like:
+       *
+       *   const blob = new Blob([buffer], { type: 'image/jpeg' })
+       *   document.querySelector('#photo').src = URL.createObjectURL(blob)
+       */
+      resolve(src, onError) {
+        if (typeof node_buffer.Buffer === "function") {
+          return node_buffer.Buffer.from(src, "base64");
+        } else if (typeof atob === "function") {
+          const str2 = atob(src.replace(/[\n\r]/g, ""));
+          const buffer = new Uint8Array(str2.length);
+          for (let i = 0; i < str2.length; ++i)
+            buffer[i] = str2.charCodeAt(i);
+          return buffer;
+        } else {
+          onError("This environment does not support reading binary tags; either Buffer or atob is required");
+          return src;
+        }
+      },
+      stringify({ comment, type, value }, ctx, onComment, onChompKeep) {
+        if (!value)
+          return "";
+        const buf = value;
+        let str2;
+        if (typeof node_buffer.Buffer === "function") {
+          str2 = buf instanceof node_buffer.Buffer ? buf.toString("base64") : node_buffer.Buffer.from(buf.buffer).toString("base64");
+        } else if (typeof btoa === "function") {
+          let s = "";
+          for (let i = 0; i < buf.length; ++i)
+            s += String.fromCharCode(buf[i]);
+          str2 = btoa(s);
+        } else {
+          throw new Error("This environment does not support writing binary tags; either Buffer or btoa is required");
+        }
+        type ?? (type = Scalar.Scalar.BLOCK_LITERAL);
+        if (type !== Scalar.Scalar.QUOTE_DOUBLE) {
+          const lineWidth = Math.max(ctx.options.lineWidth - ctx.indent.length, ctx.options.minContentWidth);
+          const n = Math.ceil(str2.length / lineWidth);
+          const lines = new Array(n);
+          for (let i = 0, o = 0; i < n; ++i, o += lineWidth) {
+            lines[i] = str2.substr(o, lineWidth);
+          }
+          str2 = lines.join(type === Scalar.Scalar.BLOCK_LITERAL ? "\n" : " ");
+        }
+        return stringifyString.stringifyString({ comment, type, value: str2 }, ctx, onComment, onChompKeep);
+      }
+    };
+    exports.binary = binary;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/pairs.js
+var require_pairs = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/pairs.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var Pair = require_Pair();
+    var Scalar = require_Scalar();
+    var YAMLSeq = require_YAMLSeq();
+    function resolvePairs(seq, onError) {
+      if (identity.isSeq(seq)) {
+        for (let i = 0; i < seq.items.length; ++i) {
+          let item = seq.items[i];
+          if (identity.isPair(item))
+            continue;
+          else if (identity.isMap(item)) {
+            if (item.items.length > 1)
+              onError("Each pair must have its own sequence indicator");
+            const pair = item.items[0] || new Pair.Pair(new Scalar.Scalar(null));
+            if (item.commentBefore)
+              pair.key.commentBefore = pair.key.commentBefore ? `${item.commentBefore}
+${pair.key.commentBefore}` : item.commentBefore;
+            if (item.comment) {
+              const cn = pair.value ?? pair.key;
+              cn.comment = cn.comment ? `${item.comment}
+${cn.comment}` : item.comment;
+            }
+            item = pair;
+          }
+          seq.items[i] = identity.isPair(item) ? item : new Pair.Pair(item);
+        }
+      } else
+        onError("Expected a sequence for this tag");
+      return seq;
+    }
+    function createPairs(schema, iterable, ctx) {
+      const { replacer } = ctx;
+      const pairs2 = new YAMLSeq.YAMLSeq(schema);
+      pairs2.tag = "tag:yaml.org,2002:pairs";
+      let i = 0;
+      if (iterable && Symbol.iterator in Object(iterable))
+        for (let it of iterable) {
+          if (typeof replacer === "function")
+            it = replacer.call(iterable, String(i++), it);
+          let key, value;
+          if (Array.isArray(it)) {
+            if (it.length === 2) {
+              key = it[0];
+              value = it[1];
+            } else
+              throw new TypeError(`Expected [key, value] tuple: ${it}`);
+          } else if (it && it instanceof Object) {
+            const keys = Object.keys(it);
+            if (keys.length === 1) {
+              key = keys[0];
+              value = it[key];
+            } else {
+              throw new TypeError(`Expected tuple with one key, not ${keys.length} keys`);
+            }
+          } else {
+            key = it;
+          }
+          pairs2.items.push(Pair.createPair(key, value, ctx));
+        }
+      return pairs2;
+    }
+    var pairs = {
+      collection: "seq",
+      default: false,
+      tag: "tag:yaml.org,2002:pairs",
+      resolve: resolvePairs,
+      createNode: createPairs
+    };
+    exports.createPairs = createPairs;
+    exports.pairs = pairs;
+    exports.resolvePairs = resolvePairs;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/omap.js
+var require_omap = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/omap.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var toJS = require_toJS();
+    var YAMLMap = require_YAMLMap();
+    var YAMLSeq = require_YAMLSeq();
+    var pairs = require_pairs();
+    var YAMLOMap = class _YAMLOMap extends YAMLSeq.YAMLSeq {
+      constructor() {
+        super();
+        this.add = YAMLMap.YAMLMap.prototype.add.bind(this);
+        this.delete = YAMLMap.YAMLMap.prototype.delete.bind(this);
+        this.get = YAMLMap.YAMLMap.prototype.get.bind(this);
+        this.has = YAMLMap.YAMLMap.prototype.has.bind(this);
+        this.set = YAMLMap.YAMLMap.prototype.set.bind(this);
+        this.tag = _YAMLOMap.tag;
+      }
+      /**
+       * If `ctx` is given, the return type is actually `Map<unknown, unknown>`,
+       * but TypeScript won't allow widening the signature of a child method.
+       */
+      toJSON(_, ctx) {
+        if (!ctx)
+          return super.toJSON(_);
+        const map2 = /* @__PURE__ */ new Map();
+        if (ctx?.onCreate)
+          ctx.onCreate(map2);
+        for (const pair of this.items) {
+          let key, value;
+          if (identity.isPair(pair)) {
+            key = toJS.toJS(pair.key, "", ctx);
+            value = toJS.toJS(pair.value, key, ctx);
+          } else {
+            key = toJS.toJS(pair, "", ctx);
+          }
+          if (map2.has(key))
+            throw new Error("Ordered maps must not include duplicate keys");
+          map2.set(key, value);
+        }
+        return map2;
+      }
+      static from(schema, iterable, ctx) {
+        const pairs$1 = pairs.createPairs(schema, iterable, ctx);
+        const omap2 = new this();
+        omap2.items = pairs$1.items;
+        return omap2;
+      }
+    };
+    YAMLOMap.tag = "tag:yaml.org,2002:omap";
+    var omap = {
+      collection: "seq",
+      identify: (value) => value instanceof Map,
+      nodeClass: YAMLOMap,
+      default: false,
+      tag: "tag:yaml.org,2002:omap",
+      resolve(seq, onError) {
+        const pairs$1 = pairs.resolvePairs(seq, onError);
+        const seenKeys = [];
+        for (const { key } of pairs$1.items) {
+          if (identity.isScalar(key)) {
+            if (seenKeys.includes(key.value)) {
+              onError(`Ordered maps must not include duplicate keys: ${key.value}`);
+            } else {
+              seenKeys.push(key.value);
+            }
+          }
+        }
+        return Object.assign(new YAMLOMap(), pairs$1);
+      },
+      createNode: (schema, iterable, ctx) => YAMLOMap.from(schema, iterable, ctx)
+    };
+    exports.YAMLOMap = YAMLOMap;
+    exports.omap = omap;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/bool.js
+var require_bool2 = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/bool.js"(exports) {
+    "use strict";
+    var Scalar = require_Scalar();
+    function boolStringify({ value, source }, ctx) {
+      const boolObj = value ? trueTag : falseTag;
+      if (source && boolObj.test.test(source))
+        return source;
+      return value ? ctx.options.trueStr : ctx.options.falseStr;
+    }
+    var trueTag = {
+      identify: (value) => value === true,
+      default: true,
+      tag: "tag:yaml.org,2002:bool",
+      test: /^(?:Y|y|[Yy]es|YES|[Tt]rue|TRUE|[Oo]n|ON)$/,
+      resolve: () => new Scalar.Scalar(true),
+      stringify: boolStringify
+    };
+    var falseTag = {
+      identify: (value) => value === false,
+      default: true,
+      tag: "tag:yaml.org,2002:bool",
+      test: /^(?:N|n|[Nn]o|NO|[Ff]alse|FALSE|[Oo]ff|OFF)$/,
+      resolve: () => new Scalar.Scalar(false),
+      stringify: boolStringify
+    };
+    exports.falseTag = falseTag;
+    exports.trueTag = trueTag;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/float.js
+var require_float2 = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/float.js"(exports) {
+    "use strict";
+    var Scalar = require_Scalar();
+    var stringifyNumber = require_stringifyNumber();
+    var floatNaN = {
+      identify: (value) => typeof value === "number",
+      default: true,
+      tag: "tag:yaml.org,2002:float",
+      test: /^(?:[-+]?\.(?:inf|Inf|INF)|\.nan|\.NaN|\.NAN)$/,
+      resolve: (str2) => str2.slice(-3).toLowerCase() === "nan" ? NaN : str2[0] === "-" ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY,
+      stringify: stringifyNumber.stringifyNumber
+    };
+    var floatExp = {
+      identify: (value) => typeof value === "number",
+      default: true,
+      tag: "tag:yaml.org,2002:float",
+      format: "EXP",
+      test: /^[-+]?(?:[0-9][0-9_]*)?(?:\.[0-9_]*)?[eE][-+]?[0-9]+$/,
+      resolve: (str2) => parseFloat(str2.replace(/_/g, "")),
+      stringify(node) {
+        const num = Number(node.value);
+        return isFinite(num) ? num.toExponential() : stringifyNumber.stringifyNumber(node);
+      }
+    };
+    var float = {
+      identify: (value) => typeof value === "number",
+      default: true,
+      tag: "tag:yaml.org,2002:float",
+      test: /^[-+]?(?:[0-9][0-9_]*)?\.[0-9_]*$/,
+      resolve(str2) {
+        const node = new Scalar.Scalar(parseFloat(str2.replace(/_/g, "")));
+        const dot = str2.indexOf(".");
+        if (dot !== -1) {
+          const f = str2.substring(dot + 1).replace(/_/g, "");
+          if (f[f.length - 1] === "0")
+            node.minFractionDigits = f.length;
+        }
+        return node;
+      },
+      stringify: stringifyNumber.stringifyNumber
+    };
+    exports.float = float;
+    exports.floatExp = floatExp;
+    exports.floatNaN = floatNaN;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/int.js
+var require_int2 = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/int.js"(exports) {
+    "use strict";
+    var stringifyNumber = require_stringifyNumber();
+    var intIdentify = (value) => typeof value === "bigint" || Number.isInteger(value);
+    function intResolve(str2, offset, radix, { intAsBigInt }) {
+      const sign = str2[0];
+      if (sign === "-" || sign === "+")
+        offset += 1;
+      str2 = str2.substring(offset).replace(/_/g, "");
+      if (intAsBigInt) {
+        switch (radix) {
+          case 2:
+            str2 = `0b${str2}`;
+            break;
+          case 8:
+            str2 = `0o${str2}`;
+            break;
+          case 16:
+            str2 = `0x${str2}`;
+            break;
+        }
+        const n2 = BigInt(str2);
+        return sign === "-" ? BigInt(-1) * n2 : n2;
+      }
+      const n = parseInt(str2, radix);
+      return sign === "-" ? -1 * n : n;
+    }
+    function intStringify(node, radix, prefix) {
+      const { value } = node;
+      if (intIdentify(value)) {
+        const str2 = value.toString(radix);
+        return value < 0 ? "-" + prefix + str2.substr(1) : prefix + str2;
+      }
+      return stringifyNumber.stringifyNumber(node);
+    }
+    var intBin = {
+      identify: intIdentify,
+      default: true,
+      tag: "tag:yaml.org,2002:int",
+      format: "BIN",
+      test: /^[-+]?0b[0-1_]+$/,
+      resolve: (str2, _onError, opt) => intResolve(str2, 2, 2, opt),
+      stringify: (node) => intStringify(node, 2, "0b")
+    };
+    var intOct = {
+      identify: intIdentify,
+      default: true,
+      tag: "tag:yaml.org,2002:int",
+      format: "OCT",
+      test: /^[-+]?0[0-7_]+$/,
+      resolve: (str2, _onError, opt) => intResolve(str2, 1, 8, opt),
+      stringify: (node) => intStringify(node, 8, "0")
+    };
+    var int2 = {
+      identify: intIdentify,
+      default: true,
+      tag: "tag:yaml.org,2002:int",
+      test: /^[-+]?[0-9][0-9_]*$/,
+      resolve: (str2, _onError, opt) => intResolve(str2, 0, 10, opt),
+      stringify: stringifyNumber.stringifyNumber
+    };
+    var intHex = {
+      identify: intIdentify,
+      default: true,
+      tag: "tag:yaml.org,2002:int",
+      format: "HEX",
+      test: /^[-+]?0x[0-9a-fA-F_]+$/,
+      resolve: (str2, _onError, opt) => intResolve(str2, 2, 16, opt),
+      stringify: (node) => intStringify(node, 16, "0x")
+    };
+    exports.int = int2;
+    exports.intBin = intBin;
+    exports.intHex = intHex;
+    exports.intOct = intOct;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/set.js
+var require_set = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/set.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var Pair = require_Pair();
+    var YAMLMap = require_YAMLMap();
+    var YAMLSet = class _YAMLSet extends YAMLMap.YAMLMap {
+      constructor(schema) {
+        super(schema);
+        this.tag = _YAMLSet.tag;
+      }
+      add(key) {
+        let pair;
+        if (identity.isPair(key))
+          pair = key;
+        else if (key && typeof key === "object" && "key" in key && "value" in key && key.value === null)
+          pair = new Pair.Pair(key.key, null);
+        else
+          pair = new Pair.Pair(key, null);
+        const prev = YAMLMap.findPair(this.items, pair.key);
+        if (!prev)
+          this.items.push(pair);
+      }
+      /**
+       * If `keepPair` is `true`, returns the Pair matching `key`.
+       * Otherwise, returns the value of that Pair's key.
+       */
+      get(key, keepPair) {
+        const pair = YAMLMap.findPair(this.items, key);
+        return !keepPair && identity.isPair(pair) ? identity.isScalar(pair.key) ? pair.key.value : pair.key : pair;
+      }
+      set(key, value) {
+        if (typeof value !== "boolean")
+          throw new Error(`Expected boolean value for set(key, value) in a YAML set, not ${typeof value}`);
+        const prev = YAMLMap.findPair(this.items, key);
+        if (prev && !value) {
+          this.items.splice(this.items.indexOf(prev), 1);
+        } else if (!prev && value) {
+          this.items.push(new Pair.Pair(key));
+        }
+      }
+      toJSON(_, ctx) {
+        return super.toJSON(_, ctx, Set);
+      }
+      toString(ctx, onComment, onChompKeep) {
+        if (!ctx)
+          return JSON.stringify(this);
+        if (this.hasAllNullValues(true))
+          return super.toString(Object.assign({}, ctx, { allNullValues: true }), onComment, onChompKeep);
+        else
+          throw new Error("Set items must all have null values");
+      }
+      static from(schema, iterable, ctx) {
+        const { replacer } = ctx;
+        const set3 = new this(schema);
+        if (iterable && Symbol.iterator in Object(iterable))
+          for (let value of iterable) {
+            if (typeof replacer === "function")
+              value = replacer.call(iterable, value, value);
+            set3.items.push(Pair.createPair(value, null, ctx));
+          }
+        return set3;
+      }
+    };
+    YAMLSet.tag = "tag:yaml.org,2002:set";
+    var set2 = {
+      collection: "map",
+      identify: (value) => value instanceof Set,
+      nodeClass: YAMLSet,
+      default: false,
+      tag: "tag:yaml.org,2002:set",
+      createNode: (schema, iterable, ctx) => YAMLSet.from(schema, iterable, ctx),
+      resolve(map2, onError) {
+        if (identity.isMap(map2)) {
+          if (map2.hasAllNullValues(true))
+            return Object.assign(new YAMLSet(), map2);
+          else
+            onError("Set items must all have null values");
+        } else
+          onError("Expected a mapping for this tag");
+        return map2;
+      }
+    };
+    exports.YAMLSet = YAMLSet;
+    exports.set = set2;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/timestamp.js
+var require_timestamp = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/timestamp.js"(exports) {
+    "use strict";
+    var stringifyNumber = require_stringifyNumber();
+    function parseSexagesimal(str2, asBigInt) {
+      const sign = str2[0];
+      const parts = sign === "-" || sign === "+" ? str2.substring(1) : str2;
+      const num = (n) => asBigInt ? BigInt(n) : Number(n);
+      const res = parts.replace(/_/g, "").split(":").reduce((res2, p) => res2 * num(60) + num(p), num(0));
+      return sign === "-" ? num(-1) * res : res;
+    }
+    function stringifySexagesimal(node) {
+      let { value } = node;
+      let num = (n) => n;
+      if (typeof value === "bigint")
+        num = (n) => BigInt(n);
+      else if (isNaN(value) || !isFinite(value))
+        return stringifyNumber.stringifyNumber(node);
+      let sign = "";
+      if (value < 0) {
+        sign = "-";
+        value *= num(-1);
+      }
+      const _60 = num(60);
+      const parts = [value % _60];
+      if (value < 60) {
+        parts.unshift(0);
+      } else {
+        value = (value - parts[0]) / _60;
+        parts.unshift(value % _60);
+        if (value >= 60) {
+          value = (value - parts[0]) / _60;
+          parts.unshift(value);
+        }
+      }
+      return sign + parts.map((n) => String(n).padStart(2, "0")).join(":").replace(/000000\d*$/, "");
+    }
+    var intTime = {
+      identify: (value) => typeof value === "bigint" || Number.isInteger(value),
+      default: true,
+      tag: "tag:yaml.org,2002:int",
+      format: "TIME",
+      test: /^[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+$/,
+      resolve: (str2, _onError, { intAsBigInt }) => parseSexagesimal(str2, intAsBigInt),
+      stringify: stringifySexagesimal
+    };
+    var floatTime = {
+      identify: (value) => typeof value === "number",
+      default: true,
+      tag: "tag:yaml.org,2002:float",
+      format: "TIME",
+      test: /^[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\.[0-9_]*$/,
+      resolve: (str2) => parseSexagesimal(str2, false),
+      stringify: stringifySexagesimal
+    };
+    var timestamp = {
+      identify: (value) => value instanceof Date,
+      default: true,
+      tag: "tag:yaml.org,2002:timestamp",
+      // If the time zone is omitted, the timestamp is assumed to be specified in UTC. The time part
+      // may be omitted altogether, resulting in a date format. In such a case, the time part is
+      // assumed to be 00:00:00Z (start of day, UTC).
+      test: RegExp("^([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})(?:(?:t|T|[ \\t]+)([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2}(\\.[0-9]+)?)(?:[ \\t]*(Z|[-+][012]?[0-9](?::[0-9]{2})?))?)?$"),
+      resolve(str2) {
+        const match = str2.match(timestamp.test);
+        if (!match)
+          throw new Error("!!timestamp expects a date, starting with yyyy-mm-dd");
+        const [, year, month, day, hour, minute, second] = match.map(Number);
+        const millisec = match[7] ? Number((match[7] + "00").substr(1, 3)) : 0;
+        let date5 = Date.UTC(year, month - 1, day, hour || 0, minute || 0, second || 0, millisec);
+        const tz = match[8];
+        if (tz && tz !== "Z") {
+          let d = parseSexagesimal(tz, false);
+          if (Math.abs(d) < 30)
+            d *= 60;
+          date5 -= 6e4 * d;
+        }
+        return new Date(date5);
+      },
+      stringify: ({ value }) => value?.toISOString().replace(/(T00:00:00)?\.000Z$/, "") ?? ""
+    };
+    exports.floatTime = floatTime;
+    exports.intTime = intTime;
+    exports.timestamp = timestamp;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/schema.js
+var require_schema3 = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/yaml-1.1/schema.js"(exports) {
+    "use strict";
+    var map2 = require_map();
+    var _null4 = require_null();
+    var seq = require_seq();
+    var string4 = require_string();
+    var binary = require_binary();
+    var bool = require_bool2();
+    var float = require_float2();
+    var int2 = require_int2();
+    var merge2 = require_merge();
+    var omap = require_omap();
+    var pairs = require_pairs();
+    var set2 = require_set();
+    var timestamp = require_timestamp();
+    var schema = [
+      map2.map,
+      seq.seq,
+      string4.string,
+      _null4.nullTag,
+      bool.trueTag,
+      bool.falseTag,
+      int2.intBin,
+      int2.intOct,
+      int2.int,
+      int2.intHex,
+      float.floatNaN,
+      float.floatExp,
+      float.float,
+      binary.binary,
+      merge2.merge,
+      omap.omap,
+      pairs.pairs,
+      set2.set,
+      timestamp.intTime,
+      timestamp.floatTime,
+      timestamp.timestamp
+    ];
+    exports.schema = schema;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/tags.js
+var require_tags = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/tags.js"(exports) {
+    "use strict";
+    var map2 = require_map();
+    var _null4 = require_null();
+    var seq = require_seq();
+    var string4 = require_string();
+    var bool = require_bool();
+    var float = require_float();
+    var int2 = require_int();
+    var schema = require_schema();
+    var schema$1 = require_schema2();
+    var binary = require_binary();
+    var merge2 = require_merge();
+    var omap = require_omap();
+    var pairs = require_pairs();
+    var schema$2 = require_schema3();
+    var set2 = require_set();
+    var timestamp = require_timestamp();
+    var schemas = /* @__PURE__ */ new Map([
+      ["core", schema.schema],
+      ["failsafe", [map2.map, seq.seq, string4.string]],
+      ["json", schema$1.schema],
+      ["yaml11", schema$2.schema],
+      ["yaml-1.1", schema$2.schema]
+    ]);
+    var tagsByName = {
+      binary: binary.binary,
+      bool: bool.boolTag,
+      float: float.float,
+      floatExp: float.floatExp,
+      floatNaN: float.floatNaN,
+      floatTime: timestamp.floatTime,
+      int: int2.int,
+      intHex: int2.intHex,
+      intOct: int2.intOct,
+      intTime: timestamp.intTime,
+      map: map2.map,
+      merge: merge2.merge,
+      null: _null4.nullTag,
+      omap: omap.omap,
+      pairs: pairs.pairs,
+      seq: seq.seq,
+      set: set2.set,
+      timestamp: timestamp.timestamp
+    };
+    var coreKnownTags = {
+      "tag:yaml.org,2002:binary": binary.binary,
+      "tag:yaml.org,2002:merge": merge2.merge,
+      "tag:yaml.org,2002:omap": omap.omap,
+      "tag:yaml.org,2002:pairs": pairs.pairs,
+      "tag:yaml.org,2002:set": set2.set,
+      "tag:yaml.org,2002:timestamp": timestamp.timestamp
+    };
+    function getTags(customTags, schemaName, addMergeTag) {
+      const schemaTags = schemas.get(schemaName);
+      if (schemaTags && !customTags) {
+        return addMergeTag && !schemaTags.includes(merge2.merge) ? schemaTags.concat(merge2.merge) : schemaTags.slice();
+      }
+      let tags = schemaTags;
+      if (!tags) {
+        if (Array.isArray(customTags))
+          tags = [];
+        else {
+          const keys = Array.from(schemas.keys()).filter((key) => key !== "yaml11").map((key) => JSON.stringify(key)).join(", ");
+          throw new Error(`Unknown schema "${schemaName}"; use one of ${keys} or define customTags array`);
+        }
+      }
+      if (Array.isArray(customTags)) {
+        for (const tag of customTags)
+          tags = tags.concat(tag);
+      } else if (typeof customTags === "function") {
+        tags = customTags(tags.slice());
+      }
+      if (addMergeTag)
+        tags = tags.concat(merge2.merge);
+      return tags.reduce((tags2, tag) => {
+        const tagObj = typeof tag === "string" ? tagsByName[tag] : tag;
+        if (!tagObj) {
+          const tagName = JSON.stringify(tag);
+          const keys = Object.keys(tagsByName).map((key) => JSON.stringify(key)).join(", ");
+          throw new Error(`Unknown custom tag ${tagName}; use one of ${keys}`);
+        }
+        if (!tags2.includes(tagObj))
+          tags2.push(tagObj);
+        return tags2;
+      }, []);
+    }
+    exports.coreKnownTags = coreKnownTags;
+    exports.getTags = getTags;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/Schema.js
+var require_Schema = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/schema/Schema.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var map2 = require_map();
+    var seq = require_seq();
+    var string4 = require_string();
+    var tags = require_tags();
+    var sortMapEntriesByKey = (a, b) => a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
+    var Schema = class _Schema {
+      constructor({ compat, customTags, merge: merge2, resolveKnownTags, schema, sortMapEntries, toStringDefaults }) {
+        this.compat = Array.isArray(compat) ? tags.getTags(compat, "compat") : compat ? tags.getTags(null, compat) : null;
+        this.name = typeof schema === "string" && schema || "core";
+        this.knownTags = resolveKnownTags ? tags.coreKnownTags : {};
+        this.tags = tags.getTags(customTags, this.name, merge2);
+        this.toStringOptions = toStringDefaults ?? null;
+        Object.defineProperty(this, identity.MAP, { value: map2.map });
+        Object.defineProperty(this, identity.SCALAR, { value: string4.string });
+        Object.defineProperty(this, identity.SEQ, { value: seq.seq });
+        this.sortMapEntries = typeof sortMapEntries === "function" ? sortMapEntries : sortMapEntries === true ? sortMapEntriesByKey : null;
+      }
+      clone() {
+        const copy = Object.create(_Schema.prototype, Object.getOwnPropertyDescriptors(this));
+        copy.tags = this.tags.slice();
+        return copy;
+      }
+    };
+    exports.Schema = Schema;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/stringifyDocument.js
+var require_stringifyDocument = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/stringify/stringifyDocument.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var stringify2 = require_stringify2();
+    var stringifyComment = require_stringifyComment();
+    function stringifyDocument(doc, options) {
+      const lines = [];
+      let hasDirectives = options.directives === true;
+      if (options.directives !== false && doc.directives) {
+        const dir = doc.directives.toString(doc);
+        if (dir) {
+          lines.push(dir);
+          hasDirectives = true;
+        } else if (doc.directives.docStart)
+          hasDirectives = true;
+      }
+      if (hasDirectives)
+        lines.push("---");
+      const ctx = stringify2.createStringifyContext(doc, options);
+      const { commentString } = ctx.options;
+      if (doc.commentBefore) {
+        if (lines.length !== 1)
+          lines.unshift("");
+        const cs = commentString(doc.commentBefore);
+        lines.unshift(stringifyComment.indentComment(cs, ""));
+      }
+      let chompKeep = false;
+      let contentComment = null;
+      if (doc.contents) {
+        if (identity.isNode(doc.contents)) {
+          if (doc.contents.spaceBefore && hasDirectives)
+            lines.push("");
+          if (doc.contents.commentBefore) {
+            const cs = commentString(doc.contents.commentBefore);
+            lines.push(stringifyComment.indentComment(cs, ""));
+          }
+          ctx.forceBlockIndent = !!doc.comment;
+          contentComment = doc.contents.comment;
+        }
+        const onChompKeep = contentComment ? void 0 : () => chompKeep = true;
+        let body = stringify2.stringify(doc.contents, ctx, () => contentComment = null, onChompKeep);
+        if (contentComment)
+          body += stringifyComment.lineComment(body, "", commentString(contentComment));
+        if ((body[0] === "|" || body[0] === ">") && lines[lines.length - 1] === "---") {
+          lines[lines.length - 1] = `--- ${body}`;
+        } else
+          lines.push(body);
+      } else {
+        lines.push(stringify2.stringify(doc.contents, ctx));
+      }
+      if (doc.directives?.docEnd) {
+        if (doc.comment) {
+          const cs = commentString(doc.comment);
+          if (cs.includes("\n")) {
+            lines.push("...");
+            lines.push(stringifyComment.indentComment(cs, ""));
+          } else {
+            lines.push(`... ${cs}`);
+          }
+        } else {
+          lines.push("...");
+        }
+      } else {
+        let dc = doc.comment;
+        if (dc && chompKeep)
+          dc = dc.replace(/^\n+/, "");
+        if (dc) {
+          if ((!chompKeep || contentComment) && lines[lines.length - 1] !== "")
+            lines.push("");
+          lines.push(stringifyComment.indentComment(commentString(dc), ""));
+        }
+      }
+      return lines.join("\n") + "\n";
+    }
+    exports.stringifyDocument = stringifyDocument;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/doc/Document.js
+var require_Document = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/doc/Document.js"(exports) {
+    "use strict";
+    var Alias = require_Alias();
+    var Collection = require_Collection();
+    var identity = require_identity();
+    var Pair = require_Pair();
+    var toJS = require_toJS();
+    var Schema = require_Schema();
+    var stringifyDocument = require_stringifyDocument();
+    var anchors = require_anchors();
+    var applyReviver = require_applyReviver();
+    var createNode = require_createNode();
+    var directives = require_directives();
+    var Document = class _Document {
+      constructor(value, replacer, options) {
+        this.commentBefore = null;
+        this.comment = null;
+        this.errors = [];
+        this.warnings = [];
+        Object.defineProperty(this, identity.NODE_TYPE, { value: identity.DOC });
+        let _replacer = null;
+        if (typeof replacer === "function" || Array.isArray(replacer)) {
+          _replacer = replacer;
+        } else if (options === void 0 && replacer) {
+          options = replacer;
+          replacer = void 0;
+        }
+        const opt = Object.assign({
+          intAsBigInt: false,
+          keepSourceTokens: false,
+          logLevel: "warn",
+          prettyErrors: true,
+          strict: true,
+          stringKeys: false,
+          uniqueKeys: true,
+          version: "1.2"
+        }, options);
+        this.options = opt;
+        let { version: version3 } = opt;
+        if (options?._directives) {
+          this.directives = options._directives.atDocument();
+          if (this.directives.yaml.explicit)
+            version3 = this.directives.yaml.version;
+        } else
+          this.directives = new directives.Directives({ version: version3 });
+        this.setSchema(version3, options);
+        this.contents = value === void 0 ? null : this.createNode(value, _replacer, options);
+      }
+      /**
+       * Create a deep copy of this Document and its contents.
+       *
+       * Custom Node values that inherit from `Object` still refer to their original instances.
+       */
+      clone() {
+        const copy = Object.create(_Document.prototype, {
+          [identity.NODE_TYPE]: { value: identity.DOC }
+        });
+        copy.commentBefore = this.commentBefore;
+        copy.comment = this.comment;
+        copy.errors = this.errors.slice();
+        copy.warnings = this.warnings.slice();
+        copy.options = Object.assign({}, this.options);
+        if (this.directives)
+          copy.directives = this.directives.clone();
+        copy.schema = this.schema.clone();
+        copy.contents = identity.isNode(this.contents) ? this.contents.clone(copy.schema) : this.contents;
+        if (this.range)
+          copy.range = this.range.slice();
+        return copy;
+      }
+      /** Adds a value to the document. */
+      add(value) {
+        if (assertCollection(this.contents))
+          this.contents.add(value);
+      }
+      /** Adds a value to the document. */
+      addIn(path12, value) {
+        if (assertCollection(this.contents))
+          this.contents.addIn(path12, value);
+      }
+      /**
+       * Create a new `Alias` node, ensuring that the target `node` has the required anchor.
+       *
+       * If `node` already has an anchor, `name` is ignored.
+       * Otherwise, the `node.anchor` value will be set to `name`,
+       * or if an anchor with that name is already present in the document,
+       * `name` will be used as a prefix for a new unique anchor.
+       * If `name` is undefined, the generated anchor will use 'a' as a prefix.
+       */
+      createAlias(node, name) {
+        if (!node.anchor) {
+          const prev = anchors.anchorNames(this);
+          node.anchor = // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+          !name || prev.has(name) ? anchors.findNewAnchor(name || "a", prev) : name;
+        }
+        return new Alias.Alias(node.anchor);
+      }
+      createNode(value, replacer, options) {
+        let _replacer = void 0;
+        if (typeof replacer === "function") {
+          value = replacer.call({ "": value }, "", value);
+          _replacer = replacer;
+        } else if (Array.isArray(replacer)) {
+          const keyToStr = (v) => typeof v === "number" || v instanceof String || v instanceof Number;
+          const asStr = replacer.filter(keyToStr).map(String);
+          if (asStr.length > 0)
+            replacer = replacer.concat(asStr);
+          _replacer = replacer;
+        } else if (options === void 0 && replacer) {
+          options = replacer;
+          replacer = void 0;
+        }
+        const { aliasDuplicateObjects, anchorPrefix, flow, keepUndefined, onTagObj, tag } = options ?? {};
+        const { onAnchor, setAnchors, sourceObjects } = anchors.createNodeAnchors(
+          this,
+          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+          anchorPrefix || "a"
+        );
+        const ctx = {
+          aliasDuplicateObjects: aliasDuplicateObjects ?? true,
+          keepUndefined: keepUndefined ?? false,
+          onAnchor,
+          onTagObj,
+          replacer: _replacer,
+          schema: this.schema,
+          sourceObjects
+        };
+        const node = createNode.createNode(value, tag, ctx);
+        if (flow && identity.isCollection(node))
+          node.flow = true;
+        setAnchors();
+        return node;
+      }
+      /**
+       * Convert a key and a value into a `Pair` using the current schema,
+       * recursively wrapping all values as `Scalar` or `Collection` nodes.
+       */
+      createPair(key, value, options = {}) {
+        const k = this.createNode(key, null, options);
+        const v = this.createNode(value, null, options);
+        return new Pair.Pair(k, v);
+      }
+      /**
+       * Removes a value from the document.
+       * @returns `true` if the item was found and removed.
+       */
+      delete(key) {
+        return assertCollection(this.contents) ? this.contents.delete(key) : false;
+      }
+      /**
+       * Removes a value from the document.
+       * @returns `true` if the item was found and removed.
+       */
+      deleteIn(path12) {
+        if (Collection.isEmptyPath(path12)) {
+          if (this.contents == null)
+            return false;
+          this.contents = null;
+          return true;
+        }
+        return assertCollection(this.contents) ? this.contents.deleteIn(path12) : false;
+      }
+      /**
+       * Returns item at `key`, or `undefined` if not found. By default unwraps
+       * scalar values from their surrounding node; to disable set `keepScalar` to
+       * `true` (collections are always returned intact).
+       */
+      get(key, keepScalar) {
+        return identity.isCollection(this.contents) ? this.contents.get(key, keepScalar) : void 0;
+      }
+      /**
+       * Returns item at `path`, or `undefined` if not found. By default unwraps
+       * scalar values from their surrounding node; to disable set `keepScalar` to
+       * `true` (collections are always returned intact).
+       */
+      getIn(path12, keepScalar) {
+        if (Collection.isEmptyPath(path12))
+          return !keepScalar && identity.isScalar(this.contents) ? this.contents.value : this.contents;
+        return identity.isCollection(this.contents) ? this.contents.getIn(path12, keepScalar) : void 0;
+      }
+      /**
+       * Checks if the document includes a value with the key `key`.
+       */
+      has(key) {
+        return identity.isCollection(this.contents) ? this.contents.has(key) : false;
+      }
+      /**
+       * Checks if the document includes a value at `path`.
+       */
+      hasIn(path12) {
+        if (Collection.isEmptyPath(path12))
+          return this.contents !== void 0;
+        return identity.isCollection(this.contents) ? this.contents.hasIn(path12) : false;
+      }
+      /**
+       * Sets a value in this document. For `!!set`, `value` needs to be a
+       * boolean to add/remove the item from the set.
+       */
+      set(key, value) {
+        if (this.contents == null) {
+          this.contents = Collection.collectionFromPath(this.schema, [key], value);
+        } else if (assertCollection(this.contents)) {
+          this.contents.set(key, value);
+        }
+      }
+      /**
+       * Sets a value in this document. For `!!set`, `value` needs to be a
+       * boolean to add/remove the item from the set.
+       */
+      setIn(path12, value) {
+        if (Collection.isEmptyPath(path12)) {
+          this.contents = value;
+        } else if (this.contents == null) {
+          this.contents = Collection.collectionFromPath(this.schema, Array.from(path12), value);
+        } else if (assertCollection(this.contents)) {
+          this.contents.setIn(path12, value);
+        }
+      }
+      /**
+       * Change the YAML version and schema used by the document.
+       * A `null` version disables support for directives, explicit tags, anchors, and aliases.
+       * It also requires the `schema` option to be given as a `Schema` instance value.
+       *
+       * Overrides all previously set schema options.
+       */
+      setSchema(version3, options = {}) {
+        if (typeof version3 === "number")
+          version3 = String(version3);
+        let opt;
+        switch (version3) {
+          case "1.1":
+            if (this.directives)
+              this.directives.yaml.version = "1.1";
+            else
+              this.directives = new directives.Directives({ version: "1.1" });
+            opt = { resolveKnownTags: false, schema: "yaml-1.1" };
+            break;
+          case "1.2":
+          case "next":
+            if (this.directives)
+              this.directives.yaml.version = version3;
+            else
+              this.directives = new directives.Directives({ version: version3 });
+            opt = { resolveKnownTags: true, schema: "core" };
+            break;
+          case null:
+            if (this.directives)
+              delete this.directives;
+            opt = null;
+            break;
+          default: {
+            const sv = JSON.stringify(version3);
+            throw new Error(`Expected '1.1', '1.2' or null as first argument, but found: ${sv}`);
+          }
+        }
+        if (options.schema instanceof Object)
+          this.schema = options.schema;
+        else if (opt)
+          this.schema = new Schema.Schema(Object.assign(opt, options));
+        else
+          throw new Error(`With a null YAML version, the { schema: Schema } option is required`);
+      }
+      // json & jsonArg are only used from toJSON()
+      toJS({ json: json2, jsonArg, mapAsMap, maxAliasCount, onAnchor, reviver } = {}) {
+        const ctx = {
+          anchors: /* @__PURE__ */ new Map(),
+          doc: this,
+          keep: !json2,
+          mapAsMap: mapAsMap === true,
+          mapKeyWarned: false,
+          maxAliasCount: typeof maxAliasCount === "number" ? maxAliasCount : 100
+        };
+        const res = toJS.toJS(this.contents, jsonArg ?? "", ctx);
+        if (typeof onAnchor === "function")
+          for (const { count, res: res2 } of ctx.anchors.values())
+            onAnchor(res2, count);
+        return typeof reviver === "function" ? applyReviver.applyReviver(reviver, { "": res }, "", res) : res;
+      }
+      /**
+       * A JSON representation of the document `contents`.
+       *
+       * @param jsonArg Used by `JSON.stringify` to indicate the array index or
+       *   property name.
+       */
+      toJSON(jsonArg, onAnchor) {
+        return this.toJS({ json: true, jsonArg, mapAsMap: false, onAnchor });
+      }
+      /** A YAML representation of the document. */
+      toString(options = {}) {
+        if (this.errors.length > 0)
+          throw new Error("Document with errors cannot be stringified");
+        if ("indent" in options && (!Number.isInteger(options.indent) || Number(options.indent) <= 0)) {
+          const s = JSON.stringify(options.indent);
+          throw new Error(`"indent" option must be a positive integer, not ${s}`);
+        }
+        return stringifyDocument.stringifyDocument(this, options);
+      }
+    };
+    function assertCollection(contents) {
+      if (identity.isCollection(contents))
+        return true;
+      throw new Error("Expected a YAML collection as document contents");
+    }
+    exports.Document = Document;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/errors.js
+var require_errors = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/errors.js"(exports) {
+    "use strict";
+    var YAMLError = class extends Error {
+      constructor(name, pos, code, message) {
+        super();
+        this.name = name;
+        this.code = code;
+        this.message = message;
+        this.pos = pos;
+      }
+    };
+    var YAMLParseError = class extends YAMLError {
+      constructor(pos, code, message) {
+        super("YAMLParseError", pos, code, message);
+      }
+    };
+    var YAMLWarning = class extends YAMLError {
+      constructor(pos, code, message) {
+        super("YAMLWarning", pos, code, message);
+      }
+    };
+    var prettifyError2 = (src, lc) => (error46) => {
+      if (error46.pos[0] === -1)
+        return;
+      error46.linePos = error46.pos.map((pos) => lc.linePos(pos));
+      const { line, col } = error46.linePos[0];
+      error46.message += ` at line ${line}, column ${col}`;
+      let ci = col - 1;
+      let lineStr = src.substring(lc.lineStarts[line - 1], lc.lineStarts[line]).replace(/[\n\r]+$/, "");
+      if (ci >= 60 && lineStr.length > 80) {
+        const trimStart = Math.min(ci - 39, lineStr.length - 79);
+        lineStr = "\u2026" + lineStr.substring(trimStart);
+        ci -= trimStart - 1;
+      }
+      if (lineStr.length > 80)
+        lineStr = lineStr.substring(0, 79) + "\u2026";
+      if (line > 1 && /^ *$/.test(lineStr.substring(0, ci))) {
+        let prev = src.substring(lc.lineStarts[line - 2], lc.lineStarts[line - 1]);
+        if (prev.length > 80)
+          prev = prev.substring(0, 79) + "\u2026\n";
+        lineStr = prev + lineStr;
+      }
+      if (/[^ ]/.test(lineStr)) {
+        let count = 1;
+        const end = error46.linePos[1];
+        if (end?.line === line && end.col > col) {
+          count = Math.max(1, Math.min(end.col - col, 80 - ci));
+        }
+        const pointer = " ".repeat(ci) + "^".repeat(count);
+        error46.message += `:
+
+${lineStr}
+${pointer}
+`;
+      }
+    };
+    exports.YAMLError = YAMLError;
+    exports.YAMLParseError = YAMLParseError;
+    exports.YAMLWarning = YAMLWarning;
+    exports.prettifyError = prettifyError2;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/resolve-props.js
+var require_resolve_props = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/resolve-props.js"(exports) {
+    "use strict";
+    function resolveProps(tokens, { flow, indicator, next, offset, onError, parentIndent, startOnNewline }) {
+      let spaceBefore = false;
+      let atNewline = startOnNewline;
+      let hasSpace = startOnNewline;
+      let comment = "";
+      let commentSep = "";
+      let hasNewline = false;
+      let reqSpace = false;
+      let tab = null;
+      let anchor = null;
+      let tag = null;
+      let newlineAfterProp = null;
+      let comma = null;
+      let found = null;
+      let start = null;
+      for (const token of tokens) {
+        if (reqSpace) {
+          if (token.type !== "space" && token.type !== "newline" && token.type !== "comma")
+            onError(token.offset, "MISSING_CHAR", "Tags and anchors must be separated from the next token by white space");
+          reqSpace = false;
+        }
+        if (tab) {
+          if (atNewline && token.type !== "comment" && token.type !== "newline") {
+            onError(tab, "TAB_AS_INDENT", "Tabs are not allowed as indentation");
+          }
+          tab = null;
+        }
+        switch (token.type) {
+          case "space":
+            if (!flow && (indicator !== "doc-start" || next?.type !== "flow-collection") && token.source.includes("	")) {
+              tab = token;
+            }
+            hasSpace = true;
+            break;
+          case "comment": {
+            if (!hasSpace)
+              onError(token, "MISSING_CHAR", "Comments must be separated from other tokens by white space characters");
+            const cb = token.source.substring(1) || " ";
+            if (!comment)
+              comment = cb;
+            else
+              comment += commentSep + cb;
+            commentSep = "";
+            atNewline = false;
+            break;
+          }
+          case "newline":
+            if (atNewline) {
+              if (comment)
+                comment += token.source;
+              else if (!found || indicator !== "seq-item-ind")
+                spaceBefore = true;
+            } else
+              commentSep += token.source;
+            atNewline = true;
+            hasNewline = true;
+            if (anchor || tag)
+              newlineAfterProp = token;
+            hasSpace = true;
+            break;
+          case "anchor":
+            if (anchor)
+              onError(token, "MULTIPLE_ANCHORS", "A node can have at most one anchor");
+            if (token.source.endsWith(":"))
+              onError(token.offset + token.source.length - 1, "BAD_ALIAS", "Anchor ending in : is ambiguous", true);
+            anchor = token;
+            start ?? (start = token.offset);
+            atNewline = false;
+            hasSpace = false;
+            reqSpace = true;
+            break;
+          case "tag": {
+            if (tag)
+              onError(token, "MULTIPLE_TAGS", "A node can have at most one tag");
+            tag = token;
+            start ?? (start = token.offset);
+            atNewline = false;
+            hasSpace = false;
+            reqSpace = true;
+            break;
+          }
+          case indicator:
+            if (anchor || tag)
+              onError(token, "BAD_PROP_ORDER", `Anchors and tags must be after the ${token.source} indicator`);
+            if (found)
+              onError(token, "UNEXPECTED_TOKEN", `Unexpected ${token.source} in ${flow ?? "collection"}`);
+            found = token;
+            atNewline = indicator === "seq-item-ind" || indicator === "explicit-key-ind";
+            hasSpace = false;
+            break;
+          case "comma":
+            if (flow) {
+              if (comma)
+                onError(token, "UNEXPECTED_TOKEN", `Unexpected , in ${flow}`);
+              comma = token;
+              atNewline = false;
+              hasSpace = false;
+              break;
+            }
+          // else fallthrough
+          default:
+            onError(token, "UNEXPECTED_TOKEN", `Unexpected ${token.type} token`);
+            atNewline = false;
+            hasSpace = false;
+        }
+      }
+      const last = tokens[tokens.length - 1];
+      const end = last ? last.offset + last.source.length : offset;
+      if (reqSpace && next && next.type !== "space" && next.type !== "newline" && next.type !== "comma" && (next.type !== "scalar" || next.source !== "")) {
+        onError(next.offset, "MISSING_CHAR", "Tags and anchors must be separated from the next token by white space");
+      }
+      if (tab && (atNewline && tab.indent <= parentIndent || next?.type === "block-map" || next?.type === "block-seq"))
+        onError(tab, "TAB_AS_INDENT", "Tabs are not allowed as indentation");
+      return {
+        comma,
+        found,
+        spaceBefore,
+        comment,
+        hasNewline,
+        anchor,
+        tag,
+        newlineAfterProp,
+        end,
+        start: start ?? end
+      };
+    }
+    exports.resolveProps = resolveProps;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/util-contains-newline.js
+var require_util_contains_newline = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/util-contains-newline.js"(exports) {
+    "use strict";
+    function containsNewline(key) {
+      if (!key)
+        return null;
+      switch (key.type) {
+        case "alias":
+        case "scalar":
+        case "double-quoted-scalar":
+        case "single-quoted-scalar":
+          if (key.source.includes("\n"))
+            return true;
+          if (key.end) {
+            for (const st of key.end)
+              if (st.type === "newline")
+                return true;
+          }
+          return false;
+        case "flow-collection":
+          for (const it of key.items) {
+            for (const st of it.start)
+              if (st.type === "newline")
+                return true;
+            if (it.sep) {
+              for (const st of it.sep)
+                if (st.type === "newline")
+                  return true;
+            }
+            if (containsNewline(it.key) || containsNewline(it.value))
+              return true;
+          }
+          return false;
+        default:
+          return true;
+      }
+    }
+    exports.containsNewline = containsNewline;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/util-flow-indent-check.js
+var require_util_flow_indent_check = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/util-flow-indent-check.js"(exports) {
+    "use strict";
+    var utilContainsNewline = require_util_contains_newline();
+    function flowIndentCheck(indent2, fc, onError) {
+      if (fc?.type === "flow-collection") {
+        const end = fc.end[0];
+        if (end.indent === indent2 && (end.source === "]" || end.source === "}") && utilContainsNewline.containsNewline(fc)) {
+          const msg = "Flow end indicator should be more indented than parent";
+          onError(end, "BAD_INDENT", msg, true);
+        }
+      }
+    }
+    exports.flowIndentCheck = flowIndentCheck;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/util-map-includes.js
+var require_util_map_includes = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/util-map-includes.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    function mapIncludes(ctx, items, search) {
+      const { uniqueKeys } = ctx.options;
+      if (uniqueKeys === false)
+        return false;
+      const isEqual = typeof uniqueKeys === "function" ? uniqueKeys : (a, b) => a === b || identity.isScalar(a) && identity.isScalar(b) && a.value === b.value;
+      return items.some((pair) => isEqual(pair.key, search));
+    }
+    exports.mapIncludes = mapIncludes;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/resolve-block-map.js
+var require_resolve_block_map = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/resolve-block-map.js"(exports) {
+    "use strict";
+    var Pair = require_Pair();
+    var YAMLMap = require_YAMLMap();
+    var resolveProps = require_resolve_props();
+    var utilContainsNewline = require_util_contains_newline();
+    var utilFlowIndentCheck = require_util_flow_indent_check();
+    var utilMapIncludes = require_util_map_includes();
+    var startColMsg = "All mapping items must start at the same column";
+    function resolveBlockMap({ composeNode, composeEmptyNode }, ctx, bm, onError, tag) {
+      const NodeClass = tag?.nodeClass ?? YAMLMap.YAMLMap;
+      const map2 = new NodeClass(ctx.schema);
+      if (ctx.atRoot)
+        ctx.atRoot = false;
+      let offset = bm.offset;
+      let commentEnd = null;
+      for (const collItem of bm.items) {
+        const { start, key, sep, value } = collItem;
+        const keyProps = resolveProps.resolveProps(start, {
+          indicator: "explicit-key-ind",
+          next: key ?? sep?.[0],
+          offset,
+          onError,
+          parentIndent: bm.indent,
+          startOnNewline: true
+        });
+        const implicitKey = !keyProps.found;
+        if (implicitKey) {
+          if (key) {
+            if (key.type === "block-seq")
+              onError(offset, "BLOCK_AS_IMPLICIT_KEY", "A block sequence may not be used as an implicit map key");
+            else if ("indent" in key && key.indent !== bm.indent)
+              onError(offset, "BAD_INDENT", startColMsg);
+          }
+          if (!keyProps.anchor && !keyProps.tag && !sep) {
+            commentEnd = keyProps.end;
+            if (keyProps.comment) {
+              if (map2.comment)
+                map2.comment += "\n" + keyProps.comment;
+              else
+                map2.comment = keyProps.comment;
+            }
+            continue;
+          }
+          if (keyProps.newlineAfterProp || utilContainsNewline.containsNewline(key)) {
+            onError(key ?? start[start.length - 1], "MULTILINE_IMPLICIT_KEY", "Implicit keys need to be on a single line");
+          }
+        } else if (keyProps.found?.indent !== bm.indent) {
+          onError(offset, "BAD_INDENT", startColMsg);
+        }
+        ctx.atKey = true;
+        const keyStart = keyProps.end;
+        const keyNode = key ? composeNode(ctx, key, keyProps, onError) : composeEmptyNode(ctx, keyStart, start, null, keyProps, onError);
+        if (ctx.schema.compat)
+          utilFlowIndentCheck.flowIndentCheck(bm.indent, key, onError);
+        ctx.atKey = false;
+        if (utilMapIncludes.mapIncludes(ctx, map2.items, keyNode))
+          onError(keyStart, "DUPLICATE_KEY", "Map keys must be unique");
+        const valueProps = resolveProps.resolveProps(sep ?? [], {
+          indicator: "map-value-ind",
+          next: value,
+          offset: keyNode.range[2],
+          onError,
+          parentIndent: bm.indent,
+          startOnNewline: !key || key.type === "block-scalar"
+        });
+        offset = valueProps.end;
+        if (valueProps.found) {
+          if (implicitKey) {
+            if (value?.type === "block-map" && !valueProps.hasNewline)
+              onError(offset, "BLOCK_AS_IMPLICIT_KEY", "Nested mappings are not allowed in compact mappings");
+            if (ctx.options.strict && keyProps.start < valueProps.found.offset - 1024)
+              onError(keyNode.range, "KEY_OVER_1024_CHARS", "The : indicator must be at most 1024 chars after the start of an implicit block mapping key");
+          }
+          const valueNode = value ? composeNode(ctx, value, valueProps, onError) : composeEmptyNode(ctx, offset, sep, null, valueProps, onError);
+          if (ctx.schema.compat)
+            utilFlowIndentCheck.flowIndentCheck(bm.indent, value, onError);
+          offset = valueNode.range[2];
+          const pair = new Pair.Pair(keyNode, valueNode);
+          if (ctx.options.keepSourceTokens)
+            pair.srcToken = collItem;
+          map2.items.push(pair);
+        } else {
+          if (implicitKey)
+            onError(keyNode.range, "MISSING_CHAR", "Implicit map keys need to be followed by map values");
+          if (valueProps.comment) {
+            if (keyNode.comment)
+              keyNode.comment += "\n" + valueProps.comment;
+            else
+              keyNode.comment = valueProps.comment;
+          }
+          const pair = new Pair.Pair(keyNode);
+          if (ctx.options.keepSourceTokens)
+            pair.srcToken = collItem;
+          map2.items.push(pair);
+        }
+      }
+      if (commentEnd && commentEnd < offset)
+        onError(commentEnd, "IMPOSSIBLE", "Map comment with trailing content");
+      map2.range = [bm.offset, offset, commentEnd ?? offset];
+      return map2;
+    }
+    exports.resolveBlockMap = resolveBlockMap;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/resolve-block-seq.js
+var require_resolve_block_seq = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/resolve-block-seq.js"(exports) {
+    "use strict";
+    var YAMLSeq = require_YAMLSeq();
+    var resolveProps = require_resolve_props();
+    var utilFlowIndentCheck = require_util_flow_indent_check();
+    function resolveBlockSeq({ composeNode, composeEmptyNode }, ctx, bs, onError, tag) {
+      const NodeClass = tag?.nodeClass ?? YAMLSeq.YAMLSeq;
+      const seq = new NodeClass(ctx.schema);
+      if (ctx.atRoot)
+        ctx.atRoot = false;
+      if (ctx.atKey)
+        ctx.atKey = false;
+      let offset = bs.offset;
+      let commentEnd = null;
+      for (const { start, value } of bs.items) {
+        const props = resolveProps.resolveProps(start, {
+          indicator: "seq-item-ind",
+          next: value,
+          offset,
+          onError,
+          parentIndent: bs.indent,
+          startOnNewline: true
+        });
+        if (!props.found) {
+          if (props.anchor || props.tag || value) {
+            if (value?.type === "block-seq")
+              onError(props.end, "BAD_INDENT", "All sequence items must start at the same column");
+            else
+              onError(offset, "MISSING_CHAR", "Sequence item without - indicator");
+          } else {
+            commentEnd = props.end;
+            if (props.comment)
+              seq.comment = props.comment;
+            continue;
+          }
+        }
+        const node = value ? composeNode(ctx, value, props, onError) : composeEmptyNode(ctx, props.end, start, null, props, onError);
+        if (ctx.schema.compat)
+          utilFlowIndentCheck.flowIndentCheck(bs.indent, value, onError);
+        offset = node.range[2];
+        seq.items.push(node);
+      }
+      seq.range = [bs.offset, offset, commentEnd ?? offset];
+      return seq;
+    }
+    exports.resolveBlockSeq = resolveBlockSeq;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/resolve-end.js
+var require_resolve_end = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/resolve-end.js"(exports) {
+    "use strict";
+    function resolveEnd(end, offset, reqSpace, onError) {
+      let comment = "";
+      if (end) {
+        let hasSpace = false;
+        let sep = "";
+        for (const token of end) {
+          const { source, type } = token;
+          switch (type) {
+            case "space":
+              hasSpace = true;
+              break;
+            case "comment": {
+              if (reqSpace && !hasSpace)
+                onError(token, "MISSING_CHAR", "Comments must be separated from other tokens by white space characters");
+              const cb = source.substring(1) || " ";
+              if (!comment)
+                comment = cb;
+              else
+                comment += sep + cb;
+              sep = "";
+              break;
+            }
+            case "newline":
+              if (comment)
+                sep += source;
+              hasSpace = true;
+              break;
+            default:
+              onError(token, "UNEXPECTED_TOKEN", `Unexpected ${type} at node end`);
+          }
+          offset += source.length;
+        }
+      }
+      return { comment, offset };
+    }
+    exports.resolveEnd = resolveEnd;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/resolve-flow-collection.js
+var require_resolve_flow_collection = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/resolve-flow-collection.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var Pair = require_Pair();
+    var YAMLMap = require_YAMLMap();
+    var YAMLSeq = require_YAMLSeq();
+    var resolveEnd = require_resolve_end();
+    var resolveProps = require_resolve_props();
+    var utilContainsNewline = require_util_contains_newline();
+    var utilMapIncludes = require_util_map_includes();
+    var blockMsg = "Block collections are not allowed within flow collections";
+    var isBlock = (token) => token && (token.type === "block-map" || token.type === "block-seq");
+    function resolveFlowCollection({ composeNode, composeEmptyNode }, ctx, fc, onError, tag) {
+      const isMap = fc.start.source === "{";
+      const fcName = isMap ? "flow map" : "flow sequence";
+      const NodeClass = tag?.nodeClass ?? (isMap ? YAMLMap.YAMLMap : YAMLSeq.YAMLSeq);
+      const coll = new NodeClass(ctx.schema);
+      coll.flow = true;
+      const atRoot = ctx.atRoot;
+      if (atRoot)
+        ctx.atRoot = false;
+      if (ctx.atKey)
+        ctx.atKey = false;
+      let offset = fc.offset + fc.start.source.length;
+      for (let i = 0; i < fc.items.length; ++i) {
+        const collItem = fc.items[i];
+        const { start, key, sep, value } = collItem;
+        const props = resolveProps.resolveProps(start, {
+          flow: fcName,
+          indicator: "explicit-key-ind",
+          next: key ?? sep?.[0],
+          offset,
+          onError,
+          parentIndent: fc.indent,
+          startOnNewline: false
+        });
+        if (!props.found) {
+          if (!props.anchor && !props.tag && !sep && !value) {
+            if (i === 0 && props.comma)
+              onError(props.comma, "UNEXPECTED_TOKEN", `Unexpected , in ${fcName}`);
+            else if (i < fc.items.length - 1)
+              onError(props.start, "UNEXPECTED_TOKEN", `Unexpected empty item in ${fcName}`);
+            if (props.comment) {
+              if (coll.comment)
+                coll.comment += "\n" + props.comment;
+              else
+                coll.comment = props.comment;
+            }
+            offset = props.end;
+            continue;
+          }
+          if (!isMap && ctx.options.strict && utilContainsNewline.containsNewline(key))
+            onError(
+              key,
+              // checked by containsNewline()
+              "MULTILINE_IMPLICIT_KEY",
+              "Implicit keys of flow sequence pairs need to be on a single line"
+            );
+        }
+        if (i === 0) {
+          if (props.comma)
+            onError(props.comma, "UNEXPECTED_TOKEN", `Unexpected , in ${fcName}`);
+        } else {
+          if (!props.comma)
+            onError(props.start, "MISSING_CHAR", `Missing , between ${fcName} items`);
+          if (props.comment) {
+            let prevItemComment = "";
+            loop: for (const st of start) {
+              switch (st.type) {
+                case "comma":
+                case "space":
+                  break;
+                case "comment":
+                  prevItemComment = st.source.substring(1);
+                  break loop;
+                default:
+                  break loop;
+              }
+            }
+            if (prevItemComment) {
+              let prev = coll.items[coll.items.length - 1];
+              if (identity.isPair(prev))
+                prev = prev.value ?? prev.key;
+              if (prev.comment)
+                prev.comment += "\n" + prevItemComment;
+              else
+                prev.comment = prevItemComment;
+              props.comment = props.comment.substring(prevItemComment.length + 1);
+            }
+          }
+        }
+        if (!isMap && !sep && !props.found) {
+          const valueNode = value ? composeNode(ctx, value, props, onError) : composeEmptyNode(ctx, props.end, sep, null, props, onError);
+          coll.items.push(valueNode);
+          offset = valueNode.range[2];
+          if (isBlock(value))
+            onError(valueNode.range, "BLOCK_IN_FLOW", blockMsg);
+        } else {
+          ctx.atKey = true;
+          const keyStart = props.end;
+          const keyNode = key ? composeNode(ctx, key, props, onError) : composeEmptyNode(ctx, keyStart, start, null, props, onError);
+          if (isBlock(key))
+            onError(keyNode.range, "BLOCK_IN_FLOW", blockMsg);
+          ctx.atKey = false;
+          const valueProps = resolveProps.resolveProps(sep ?? [], {
+            flow: fcName,
+            indicator: "map-value-ind",
+            next: value,
+            offset: keyNode.range[2],
+            onError,
+            parentIndent: fc.indent,
+            startOnNewline: false
+          });
+          if (valueProps.found) {
+            if (!isMap && !props.found && ctx.options.strict) {
+              if (sep)
+                for (const st of sep) {
+                  if (st === valueProps.found)
+                    break;
+                  if (st.type === "newline") {
+                    onError(st, "MULTILINE_IMPLICIT_KEY", "Implicit keys of flow sequence pairs need to be on a single line");
+                    break;
+                  }
+                }
+              if (props.start < valueProps.found.offset - 1024)
+                onError(valueProps.found, "KEY_OVER_1024_CHARS", "The : indicator must be at most 1024 chars after the start of an implicit flow sequence key");
+            }
+          } else if (value) {
+            if ("source" in value && value.source?.[0] === ":")
+              onError(value, "MISSING_CHAR", `Missing space after : in ${fcName}`);
+            else
+              onError(valueProps.start, "MISSING_CHAR", `Missing , or : between ${fcName} items`);
+          }
+          const valueNode = value ? composeNode(ctx, value, valueProps, onError) : valueProps.found ? composeEmptyNode(ctx, valueProps.end, sep, null, valueProps, onError) : null;
+          if (valueNode) {
+            if (isBlock(value))
+              onError(valueNode.range, "BLOCK_IN_FLOW", blockMsg);
+          } else if (valueProps.comment) {
+            if (keyNode.comment)
+              keyNode.comment += "\n" + valueProps.comment;
+            else
+              keyNode.comment = valueProps.comment;
+          }
+          const pair = new Pair.Pair(keyNode, valueNode);
+          if (ctx.options.keepSourceTokens)
+            pair.srcToken = collItem;
+          if (isMap) {
+            const map2 = coll;
+            if (utilMapIncludes.mapIncludes(ctx, map2.items, keyNode))
+              onError(keyStart, "DUPLICATE_KEY", "Map keys must be unique");
+            map2.items.push(pair);
+          } else {
+            const map2 = new YAMLMap.YAMLMap(ctx.schema);
+            map2.flow = true;
+            map2.items.push(pair);
+            const endRange = (valueNode ?? keyNode).range;
+            map2.range = [keyNode.range[0], endRange[1], endRange[2]];
+            coll.items.push(map2);
+          }
+          offset = valueNode ? valueNode.range[2] : valueProps.end;
+        }
+      }
+      const expectedEnd = isMap ? "}" : "]";
+      const [ce, ...ee] = fc.end;
+      let cePos = offset;
+      if (ce?.source === expectedEnd)
+        cePos = ce.offset + ce.source.length;
+      else {
+        const name = fcName[0].toUpperCase() + fcName.substring(1);
+        const msg = atRoot ? `${name} must end with a ${expectedEnd}` : `${name} in block collection must be sufficiently indented and end with a ${expectedEnd}`;
+        onError(offset, atRoot ? "MISSING_CHAR" : "BAD_INDENT", msg);
+        if (ce && ce.source.length !== 1)
+          ee.unshift(ce);
+      }
+      if (ee.length > 0) {
+        const end = resolveEnd.resolveEnd(ee, cePos, ctx.options.strict, onError);
+        if (end.comment) {
+          if (coll.comment)
+            coll.comment += "\n" + end.comment;
+          else
+            coll.comment = end.comment;
+        }
+        coll.range = [fc.offset, cePos, end.offset];
+      } else {
+        coll.range = [fc.offset, cePos, cePos];
+      }
+      return coll;
+    }
+    exports.resolveFlowCollection = resolveFlowCollection;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/compose-collection.js
+var require_compose_collection = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/compose-collection.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var Scalar = require_Scalar();
+    var YAMLMap = require_YAMLMap();
+    var YAMLSeq = require_YAMLSeq();
+    var resolveBlockMap = require_resolve_block_map();
+    var resolveBlockSeq = require_resolve_block_seq();
+    var resolveFlowCollection = require_resolve_flow_collection();
+    function resolveCollection(CN, ctx, token, onError, tagName, tag) {
+      const coll = token.type === "block-map" ? resolveBlockMap.resolveBlockMap(CN, ctx, token, onError, tag) : token.type === "block-seq" ? resolveBlockSeq.resolveBlockSeq(CN, ctx, token, onError, tag) : resolveFlowCollection.resolveFlowCollection(CN, ctx, token, onError, tag);
+      const Coll = coll.constructor;
+      if (tagName === "!" || tagName === Coll.tagName) {
+        coll.tag = Coll.tagName;
+        return coll;
+      }
+      if (tagName)
+        coll.tag = tagName;
+      return coll;
+    }
+    function composeCollection(CN, ctx, token, props, onError) {
+      const tagToken = props.tag;
+      const tagName = !tagToken ? null : ctx.directives.tagName(tagToken.source, (msg) => onError(tagToken, "TAG_RESOLVE_FAILED", msg));
+      if (token.type === "block-seq") {
+        const { anchor, newlineAfterProp: nl } = props;
+        const lastProp = anchor && tagToken ? anchor.offset > tagToken.offset ? anchor : tagToken : anchor ?? tagToken;
+        if (lastProp && (!nl || nl.offset < lastProp.offset)) {
+          const message = "Missing newline after block sequence props";
+          onError(lastProp, "MISSING_CHAR", message);
+        }
+      }
+      const expType = token.type === "block-map" ? "map" : token.type === "block-seq" ? "seq" : token.start.source === "{" ? "map" : "seq";
+      if (!tagToken || !tagName || tagName === "!" || tagName === YAMLMap.YAMLMap.tagName && expType === "map" || tagName === YAMLSeq.YAMLSeq.tagName && expType === "seq") {
+        return resolveCollection(CN, ctx, token, onError, tagName);
+      }
+      let tag = ctx.schema.tags.find((t) => t.tag === tagName && t.collection === expType);
+      if (!tag) {
+        const kt = ctx.schema.knownTags[tagName];
+        if (kt?.collection === expType) {
+          ctx.schema.tags.push(Object.assign({}, kt, { default: false }));
+          tag = kt;
+        } else {
+          if (kt) {
+            onError(tagToken, "BAD_COLLECTION_TYPE", `${kt.tag} used for ${expType} collection, but expects ${kt.collection ?? "scalar"}`, true);
+          } else {
+            onError(tagToken, "TAG_RESOLVE_FAILED", `Unresolved tag: ${tagName}`, true);
+          }
+          return resolveCollection(CN, ctx, token, onError, tagName);
+        }
+      }
+      const coll = resolveCollection(CN, ctx, token, onError, tagName, tag);
+      const res = tag.resolve?.(coll, (msg) => onError(tagToken, "TAG_RESOLVE_FAILED", msg), ctx.options) ?? coll;
+      const node = identity.isNode(res) ? res : new Scalar.Scalar(res);
+      node.range = coll.range;
+      node.tag = tagName;
+      if (tag?.format)
+        node.format = tag.format;
+      return node;
+    }
+    exports.composeCollection = composeCollection;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/resolve-block-scalar.js
+var require_resolve_block_scalar = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/resolve-block-scalar.js"(exports) {
+    "use strict";
+    var Scalar = require_Scalar();
+    function resolveBlockScalar(ctx, scalar, onError) {
+      const start = scalar.offset;
+      const header = parseBlockScalarHeader(scalar, ctx.options.strict, onError);
+      if (!header)
+        return { value: "", type: null, comment: "", range: [start, start, start] };
+      const type = header.mode === ">" ? Scalar.Scalar.BLOCK_FOLDED : Scalar.Scalar.BLOCK_LITERAL;
+      const lines = scalar.source ? splitLines(scalar.source) : [];
+      let chompStart = lines.length;
+      for (let i = lines.length - 1; i >= 0; --i) {
+        const content = lines[i][1];
+        if (content === "" || content === "\r")
+          chompStart = i;
+        else
+          break;
+      }
+      if (chompStart === 0) {
+        const value2 = header.chomp === "+" && lines.length > 0 ? "\n".repeat(Math.max(1, lines.length - 1)) : "";
+        let end2 = start + header.length;
+        if (scalar.source)
+          end2 += scalar.source.length;
+        return { value: value2, type, comment: header.comment, range: [start, end2, end2] };
+      }
+      let trimIndent = scalar.indent + header.indent;
+      let offset = scalar.offset + header.length;
+      let contentStart = 0;
+      for (let i = 0; i < chompStart; ++i) {
+        const [indent2, content] = lines[i];
+        if (content === "" || content === "\r") {
+          if (header.indent === 0 && indent2.length > trimIndent)
+            trimIndent = indent2.length;
+        } else {
+          if (indent2.length < trimIndent) {
+            const message = "Block scalars with more-indented leading empty lines must use an explicit indentation indicator";
+            onError(offset + indent2.length, "MISSING_CHAR", message);
+          }
+          if (header.indent === 0)
+            trimIndent = indent2.length;
+          contentStart = i;
+          if (trimIndent === 0 && !ctx.atRoot) {
+            const message = "Block scalar values in collections must be indented";
+            onError(offset, "BAD_INDENT", message);
+          }
+          break;
+        }
+        offset += indent2.length + content.length + 1;
+      }
+      for (let i = lines.length - 1; i >= chompStart; --i) {
+        if (lines[i][0].length > trimIndent)
+          chompStart = i + 1;
+      }
+      let value = "";
+      let sep = "";
+      let prevMoreIndented = false;
+      for (let i = 0; i < contentStart; ++i)
+        value += lines[i][0].slice(trimIndent) + "\n";
+      for (let i = contentStart; i < chompStart; ++i) {
+        let [indent2, content] = lines[i];
+        offset += indent2.length + content.length + 1;
+        const crlf = content[content.length - 1] === "\r";
+        if (crlf)
+          content = content.slice(0, -1);
+        if (content && indent2.length < trimIndent) {
+          const src = header.indent ? "explicit indentation indicator" : "first line";
+          const message = `Block scalar lines must not be less indented than their ${src}`;
+          onError(offset - content.length - (crlf ? 2 : 1), "BAD_INDENT", message);
+          indent2 = "";
+        }
+        if (type === Scalar.Scalar.BLOCK_LITERAL) {
+          value += sep + indent2.slice(trimIndent) + content;
+          sep = "\n";
+        } else if (indent2.length > trimIndent || content[0] === "	") {
+          if (sep === " ")
+            sep = "\n";
+          else if (!prevMoreIndented && sep === "\n")
+            sep = "\n\n";
+          value += sep + indent2.slice(trimIndent) + content;
+          sep = "\n";
+          prevMoreIndented = true;
+        } else if (content === "") {
+          if (sep === "\n")
+            value += "\n";
+          else
+            sep = "\n";
+        } else {
+          value += sep + content;
+          sep = " ";
+          prevMoreIndented = false;
+        }
+      }
+      switch (header.chomp) {
+        case "-":
+          break;
+        case "+":
+          for (let i = chompStart; i < lines.length; ++i)
+            value += "\n" + lines[i][0].slice(trimIndent);
+          if (value[value.length - 1] !== "\n")
+            value += "\n";
+          break;
+        default:
+          value += "\n";
+      }
+      const end = start + header.length + scalar.source.length;
+      return { value, type, comment: header.comment, range: [start, end, end] };
+    }
+    function parseBlockScalarHeader({ offset, props }, strict, onError) {
+      if (props[0].type !== "block-scalar-header") {
+        onError(props[0], "IMPOSSIBLE", "Block scalar header not found");
+        return null;
+      }
+      const { source } = props[0];
+      const mode = source[0];
+      let indent2 = 0;
+      let chomp = "";
+      let error46 = -1;
+      for (let i = 1; i < source.length; ++i) {
+        const ch = source[i];
+        if (!chomp && (ch === "-" || ch === "+"))
+          chomp = ch;
+        else {
+          const n = Number(ch);
+          if (!indent2 && n)
+            indent2 = n;
+          else if (error46 === -1)
+            error46 = offset + i;
+        }
+      }
+      if (error46 !== -1)
+        onError(error46, "UNEXPECTED_TOKEN", `Block scalar header includes extra characters: ${source}`);
+      let hasSpace = false;
+      let comment = "";
+      let length = source.length;
+      for (let i = 1; i < props.length; ++i) {
+        const token = props[i];
+        switch (token.type) {
+          case "space":
+            hasSpace = true;
+          // fallthrough
+          case "newline":
+            length += token.source.length;
+            break;
+          case "comment":
+            if (strict && !hasSpace) {
+              const message = "Comments must be separated from other tokens by white space characters";
+              onError(token, "MISSING_CHAR", message);
+            }
+            length += token.source.length;
+            comment = token.source.substring(1);
+            break;
+          case "error":
+            onError(token, "UNEXPECTED_TOKEN", token.message);
+            length += token.source.length;
+            break;
+          /* istanbul ignore next should not happen */
+          default: {
+            const message = `Unexpected token in block scalar header: ${token.type}`;
+            onError(token, "UNEXPECTED_TOKEN", message);
+            const ts = token.source;
+            if (ts && typeof ts === "string")
+              length += ts.length;
+          }
+        }
+      }
+      return { mode, indent: indent2, chomp, comment, length };
+    }
+    function splitLines(source) {
+      const split = source.split(/\n( *)/);
+      const first = split[0];
+      const m = first.match(/^( *)/);
+      const line0 = m?.[1] ? [m[1], first.slice(m[1].length)] : ["", first];
+      const lines = [line0];
+      for (let i = 1; i < split.length; i += 2)
+        lines.push([split[i], split[i + 1]]);
+      return lines;
+    }
+    exports.resolveBlockScalar = resolveBlockScalar;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/resolve-flow-scalar.js
+var require_resolve_flow_scalar = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/resolve-flow-scalar.js"(exports) {
+    "use strict";
+    var Scalar = require_Scalar();
+    var resolveEnd = require_resolve_end();
+    function resolveFlowScalar(scalar, strict, onError) {
+      const { offset, type, source, end } = scalar;
+      let _type;
+      let value;
+      const _onError = (rel, code, msg) => onError(offset + rel, code, msg);
+      switch (type) {
+        case "scalar":
+          _type = Scalar.Scalar.PLAIN;
+          value = plainValue(source, _onError);
+          break;
+        case "single-quoted-scalar":
+          _type = Scalar.Scalar.QUOTE_SINGLE;
+          value = singleQuotedValue(source, _onError);
+          break;
+        case "double-quoted-scalar":
+          _type = Scalar.Scalar.QUOTE_DOUBLE;
+          value = doubleQuotedValue(source, _onError);
+          break;
+        /* istanbul ignore next should not happen */
+        default:
+          onError(scalar, "UNEXPECTED_TOKEN", `Expected a flow scalar value, but found: ${type}`);
+          return {
+            value: "",
+            type: null,
+            comment: "",
+            range: [offset, offset + source.length, offset + source.length]
+          };
+      }
+      const valueEnd = offset + source.length;
+      const re = resolveEnd.resolveEnd(end, valueEnd, strict, onError);
+      return {
+        value,
+        type: _type,
+        comment: re.comment,
+        range: [offset, valueEnd, re.offset]
+      };
+    }
+    function plainValue(source, onError) {
+      let badChar = "";
+      switch (source[0]) {
+        /* istanbul ignore next should not happen */
+        case "	":
+          badChar = "a tab character";
+          break;
+        case ",":
+          badChar = "flow indicator character ,";
+          break;
+        case "%":
+          badChar = "directive indicator character %";
+          break;
+        case "|":
+        case ">": {
+          badChar = `block scalar indicator ${source[0]}`;
+          break;
+        }
+        case "@":
+        case "`": {
+          badChar = `reserved character ${source[0]}`;
+          break;
+        }
+      }
+      if (badChar)
+        onError(0, "BAD_SCALAR_START", `Plain value cannot start with ${badChar}`);
+      return unfoldLines(source);
+    }
+    function singleQuotedValue(source, onError) {
+      if (source[source.length - 1] !== "'" || source.length === 1)
+        onError(source.length, "MISSING_CHAR", "Missing closing 'quote");
+      return unfoldLines(source.slice(1, -1)).replace(/''/g, "'");
+    }
+    function unfoldLines(source) {
+      const line = /(.*?)\r?\n/sy;
+      let match = line.exec(source);
+      if (!match)
+        return source;
+      let trimEnd, trimBoth;
+      try {
+        trimEnd = new RegExp("(?<![ 	])[ 	]+$");
+        trimBoth = new RegExp("^[ 	]+|(?<![ 	])[ 	]+$", "g");
+      } catch {
+        trimEnd = /[ \t]+$/;
+        trimBoth = /^[ \t]+|[ \t]+$/g;
+      }
+      let res = match[1].replace(trimEnd, "");
+      let sep = " ";
+      let pos = line.lastIndex;
+      while (match = line.exec(source)) {
+        const lm = match[1].replace(trimBoth, "");
+        if (lm === "") {
+          if (sep === "\n")
+            res += sep;
+          else
+            sep = "\n";
+        } else {
+          res += sep + lm;
+          sep = " ";
+        }
+        pos = line.lastIndex;
+      }
+      const last = /[ \t]*(.*)/sy;
+      last.lastIndex = pos;
+      match = last.exec(source);
+      return res + sep + (match?.[1] ?? "");
+    }
+    function doubleQuotedValue(source, onError) {
+      let res = "";
+      for (let i = 1; i < source.length - 1; ++i) {
+        const ch = source[i];
+        if (ch === "\r" && source[i + 1] === "\n")
+          continue;
+        if (ch === "\n") {
+          const { fold, offset } = foldNewline(source, i);
+          res += fold;
+          i = offset;
+        } else if (ch === "\\") {
+          let next = source[++i];
+          const cc = escapeCodes[next];
+          if (cc)
+            res += cc;
+          else if (next === "\n") {
+            next = source[i + 1];
+            while (next === " " || next === "	")
+              next = source[++i + 1];
+          } else if (next === "\r" && source[i + 1] === "\n") {
+            next = source[++i + 1];
+            while (next === " " || next === "	")
+              next = source[++i + 1];
+          } else if (next === "x" || next === "u" || next === "U") {
+            const length = next === "x" ? 2 : next === "u" ? 4 : 8;
+            res += parseCharCode(source, i + 1, length, onError);
+            i += length;
+          } else {
+            const raw = source.substr(i - 1, 2);
+            onError(i - 1, "BAD_DQ_ESCAPE", `Invalid escape sequence ${raw}`);
+            res += raw;
+          }
+        } else if (ch === " " || ch === "	") {
+          const wsStart = i;
+          let next = source[i + 1];
+          while (next === " " || next === "	")
+            next = source[++i + 1];
+          if (next !== "\n" && !(next === "\r" && source[i + 2] === "\n"))
+            res += i > wsStart ? source.slice(wsStart, i + 1) : ch;
+        } else {
+          res += ch;
+        }
+      }
+      if (source[source.length - 1] !== '"' || source.length === 1)
+        onError(source.length, "MISSING_CHAR", 'Missing closing "quote');
+      return res;
+    }
+    function foldNewline(source, offset) {
+      let fold = "";
+      let ch = source[offset + 1];
+      while (ch === " " || ch === "	" || ch === "\n" || ch === "\r") {
+        if (ch === "\r" && source[offset + 2] !== "\n")
+          break;
+        if (ch === "\n")
+          fold += "\n";
+        offset += 1;
+        ch = source[offset + 1];
+      }
+      if (!fold)
+        fold = " ";
+      return { fold, offset };
+    }
+    var escapeCodes = {
+      "0": "\0",
+      // null character
+      a: "\x07",
+      // bell character
+      b: "\b",
+      // backspace
+      e: "\x1B",
+      // escape character
+      f: "\f",
+      // form feed
+      n: "\n",
+      // line feed
+      r: "\r",
+      // carriage return
+      t: "	",
+      // horizontal tab
+      v: "\v",
+      // vertical tab
+      N: "\x85",
+      // Unicode next line
+      _: "\xA0",
+      // Unicode non-breaking space
+      L: "\u2028",
+      // Unicode line separator
+      P: "\u2029",
+      // Unicode paragraph separator
+      " ": " ",
+      '"': '"',
+      "/": "/",
+      "\\": "\\",
+      "	": "	"
+    };
+    function parseCharCode(source, offset, length, onError) {
+      const cc = source.substr(offset, length);
+      const ok = cc.length === length && /^[0-9a-fA-F]+$/.test(cc);
+      const code = ok ? parseInt(cc, 16) : NaN;
+      try {
+        return String.fromCodePoint(code);
+      } catch {
+        const raw = source.substr(offset - 2, length + 2);
+        onError(offset - 2, "BAD_DQ_ESCAPE", `Invalid escape sequence ${raw}`);
+        return raw;
+      }
+    }
+    exports.resolveFlowScalar = resolveFlowScalar;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/compose-scalar.js
+var require_compose_scalar = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/compose-scalar.js"(exports) {
+    "use strict";
+    var identity = require_identity();
+    var Scalar = require_Scalar();
+    var resolveBlockScalar = require_resolve_block_scalar();
+    var resolveFlowScalar = require_resolve_flow_scalar();
+    function composeScalar(ctx, token, tagToken, onError) {
+      const { value, type, comment, range } = token.type === "block-scalar" ? resolveBlockScalar.resolveBlockScalar(ctx, token, onError) : resolveFlowScalar.resolveFlowScalar(token, ctx.options.strict, onError);
+      const tagName = tagToken ? ctx.directives.tagName(tagToken.source, (msg) => onError(tagToken, "TAG_RESOLVE_FAILED", msg)) : null;
+      let tag;
+      if (ctx.options.stringKeys && ctx.atKey) {
+        tag = ctx.schema[identity.SCALAR];
+      } else if (tagName)
+        tag = findScalarTagByName(ctx.schema, value, tagName, tagToken, onError);
+      else if (token.type === "scalar")
+        tag = findScalarTagByTest(ctx, value, token, onError);
+      else
+        tag = ctx.schema[identity.SCALAR];
+      let scalar;
+      try {
+        const res = tag.resolve(value, (msg) => onError(tagToken ?? token, "TAG_RESOLVE_FAILED", msg), ctx.options);
+        scalar = identity.isScalar(res) ? res : new Scalar.Scalar(res);
+      } catch (error46) {
+        const msg = error46 instanceof Error ? error46.message : String(error46);
+        onError(tagToken ?? token, "TAG_RESOLVE_FAILED", msg);
+        scalar = new Scalar.Scalar(value);
+      }
+      scalar.range = range;
+      scalar.source = value;
+      if (type)
+        scalar.type = type;
+      if (tagName)
+        scalar.tag = tagName;
+      if (tag.format)
+        scalar.format = tag.format;
+      if (comment)
+        scalar.comment = comment;
+      return scalar;
+    }
+    function findScalarTagByName(schema, value, tagName, tagToken, onError) {
+      if (tagName === "!")
+        return schema[identity.SCALAR];
+      const matchWithTest = [];
+      for (const tag of schema.tags) {
+        if (!tag.collection && tag.tag === tagName) {
+          if (tag.default && tag.test)
+            matchWithTest.push(tag);
+          else
+            return tag;
+        }
+      }
+      for (const tag of matchWithTest)
+        if (tag.test?.test(value))
+          return tag;
+      const kt = schema.knownTags[tagName];
+      if (kt && !kt.collection) {
+        schema.tags.push(Object.assign({}, kt, { default: false, test: void 0 }));
+        return kt;
+      }
+      onError(tagToken, "TAG_RESOLVE_FAILED", `Unresolved tag: ${tagName}`, tagName !== "tag:yaml.org,2002:str");
+      return schema[identity.SCALAR];
+    }
+    function findScalarTagByTest({ atKey, directives, schema }, value, token, onError) {
+      const tag = schema.tags.find((tag2) => (tag2.default === true || atKey && tag2.default === "key") && tag2.test?.test(value)) || schema[identity.SCALAR];
+      if (schema.compat) {
+        const compat = schema.compat.find((tag2) => tag2.default && tag2.test?.test(value)) ?? schema[identity.SCALAR];
+        if (tag.tag !== compat.tag) {
+          const ts = directives.tagString(tag.tag);
+          const cs = directives.tagString(compat.tag);
+          const msg = `Value may be parsed as either ${ts} or ${cs}`;
+          onError(token, "TAG_RESOLVE_FAILED", msg, true);
+        }
+      }
+      return tag;
+    }
+    exports.composeScalar = composeScalar;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/util-empty-scalar-position.js
+var require_util_empty_scalar_position = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/util-empty-scalar-position.js"(exports) {
+    "use strict";
+    function emptyScalarPosition(offset, before, pos) {
+      if (before) {
+        pos ?? (pos = before.length);
+        for (let i = pos - 1; i >= 0; --i) {
+          let st = before[i];
+          switch (st.type) {
+            case "space":
+            case "comment":
+            case "newline":
+              offset -= st.source.length;
+              continue;
+          }
+          st = before[++i];
+          while (st?.type === "space") {
+            offset += st.source.length;
+            st = before[++i];
+          }
+          break;
+        }
+      }
+      return offset;
+    }
+    exports.emptyScalarPosition = emptyScalarPosition;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/compose-node.js
+var require_compose_node = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/compose-node.js"(exports) {
+    "use strict";
+    var Alias = require_Alias();
+    var identity = require_identity();
+    var composeCollection = require_compose_collection();
+    var composeScalar = require_compose_scalar();
+    var resolveEnd = require_resolve_end();
+    var utilEmptyScalarPosition = require_util_empty_scalar_position();
+    var CN = { composeNode, composeEmptyNode };
+    function composeNode(ctx, token, props, onError) {
+      const atKey = ctx.atKey;
+      const { spaceBefore, comment, anchor, tag } = props;
+      let node;
+      let isSrcToken = true;
+      switch (token.type) {
+        case "alias":
+          node = composeAlias(ctx, token, onError);
+          if (anchor || tag)
+            onError(token, "ALIAS_PROPS", "An alias node must not specify any properties");
+          break;
+        case "scalar":
+        case "single-quoted-scalar":
+        case "double-quoted-scalar":
+        case "block-scalar":
+          node = composeScalar.composeScalar(ctx, token, tag, onError);
+          if (anchor)
+            node.anchor = anchor.source.substring(1);
+          break;
+        case "block-map":
+        case "block-seq":
+        case "flow-collection":
+          try {
+            node = composeCollection.composeCollection(CN, ctx, token, props, onError);
+            if (anchor)
+              node.anchor = anchor.source.substring(1);
+          } catch (error46) {
+            const message = error46 instanceof Error ? error46.message : String(error46);
+            onError(token, "RESOURCE_EXHAUSTION", message);
+          }
+          break;
+        default: {
+          const message = token.type === "error" ? token.message : `Unsupported token (type: ${token.type})`;
+          onError(token, "UNEXPECTED_TOKEN", message);
+          isSrcToken = false;
+        }
+      }
+      node ?? (node = composeEmptyNode(ctx, token.offset, void 0, null, props, onError));
+      if (anchor && node.anchor === "")
+        onError(anchor, "BAD_ALIAS", "Anchor cannot be an empty string");
+      if (atKey && ctx.options.stringKeys && (!identity.isScalar(node) || typeof node.value !== "string" || node.tag && node.tag !== "tag:yaml.org,2002:str")) {
+        const msg = "With stringKeys, all keys must be strings";
+        onError(tag ?? token, "NON_STRING_KEY", msg);
+      }
+      if (spaceBefore)
+        node.spaceBefore = true;
+      if (comment) {
+        if (token.type === "scalar" && token.source === "")
+          node.comment = comment;
+        else
+          node.commentBefore = comment;
+      }
+      if (ctx.options.keepSourceTokens && isSrcToken)
+        node.srcToken = token;
+      return node;
+    }
+    function composeEmptyNode(ctx, offset, before, pos, { spaceBefore, comment, anchor, tag, end }, onError) {
+      const token = {
+        type: "scalar",
+        offset: utilEmptyScalarPosition.emptyScalarPosition(offset, before, pos),
+        indent: -1,
+        source: ""
+      };
+      const node = composeScalar.composeScalar(ctx, token, tag, onError);
+      if (anchor) {
+        node.anchor = anchor.source.substring(1);
+        if (node.anchor === "")
+          onError(anchor, "BAD_ALIAS", "Anchor cannot be an empty string");
+      }
+      if (spaceBefore)
+        node.spaceBefore = true;
+      if (comment) {
+        node.comment = comment;
+        node.range[2] = end;
+      }
+      return node;
+    }
+    function composeAlias({ options }, { offset, source, end }, onError) {
+      const alias = new Alias.Alias(source.substring(1));
+      if (alias.source === "")
+        onError(offset, "BAD_ALIAS", "Alias cannot be an empty string");
+      if (alias.source.endsWith(":"))
+        onError(offset + source.length - 1, "BAD_ALIAS", "Alias ending in : is ambiguous", true);
+      const valueEnd = offset + source.length;
+      const re = resolveEnd.resolveEnd(end, valueEnd, options.strict, onError);
+      alias.range = [offset, valueEnd, re.offset];
+      if (re.comment)
+        alias.comment = re.comment;
+      return alias;
+    }
+    exports.composeEmptyNode = composeEmptyNode;
+    exports.composeNode = composeNode;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/compose-doc.js
+var require_compose_doc = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/compose-doc.js"(exports) {
+    "use strict";
+    var Document = require_Document();
+    var composeNode = require_compose_node();
+    var resolveEnd = require_resolve_end();
+    var resolveProps = require_resolve_props();
+    function composeDoc(options, directives, { offset, start, value, end }, onError) {
+      const opts = Object.assign({ _directives: directives }, options);
+      const doc = new Document.Document(void 0, opts);
+      const ctx = {
+        atKey: false,
+        atRoot: true,
+        directives: doc.directives,
+        options: doc.options,
+        schema: doc.schema
+      };
+      const props = resolveProps.resolveProps(start, {
+        indicator: "doc-start",
+        next: value ?? end?.[0],
+        offset,
+        onError,
+        parentIndent: 0,
+        startOnNewline: true
+      });
+      if (props.found) {
+        doc.directives.docStart = true;
+        if (value && (value.type === "block-map" || value.type === "block-seq") && !props.hasNewline)
+          onError(props.end, "MISSING_CHAR", "Block collection cannot start on same line with directives-end marker");
+      }
+      doc.contents = value ? composeNode.composeNode(ctx, value, props, onError) : composeNode.composeEmptyNode(ctx, props.end, start, null, props, onError);
+      const contentEnd = doc.contents.range[2];
+      const re = resolveEnd.resolveEnd(end, contentEnd, false, onError);
+      if (re.comment)
+        doc.comment = re.comment;
+      doc.range = [offset, contentEnd, re.offset];
+      return doc;
+    }
+    exports.composeDoc = composeDoc;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/composer.js
+var require_composer = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/compose/composer.js"(exports) {
+    "use strict";
+    var node_process = __require("process");
+    var directives = require_directives();
+    var Document = require_Document();
+    var errors = require_errors();
+    var identity = require_identity();
+    var composeDoc = require_compose_doc();
+    var resolveEnd = require_resolve_end();
+    function getErrorPos(src) {
+      if (typeof src === "number")
+        return [src, src + 1];
+      if (Array.isArray(src))
+        return src.length === 2 ? src : [src[0], src[1]];
+      const { offset, source } = src;
+      return [offset, offset + (typeof source === "string" ? source.length : 1)];
+    }
+    function parsePrelude(prelude) {
+      let comment = "";
+      let atComment = false;
+      let afterEmptyLine = false;
+      for (let i = 0; i < prelude.length; ++i) {
+        const source = prelude[i];
+        switch (source[0]) {
+          case "#":
+            comment += (comment === "" ? "" : afterEmptyLine ? "\n\n" : "\n") + (source.substring(1) || " ");
+            atComment = true;
+            afterEmptyLine = false;
+            break;
+          case "%":
+            if (prelude[i + 1]?.[0] !== "#")
+              i += 1;
+            atComment = false;
+            break;
+          default:
+            if (!atComment)
+              afterEmptyLine = true;
+            atComment = false;
+        }
+      }
+      return { comment, afterEmptyLine };
+    }
+    var Composer = class {
+      constructor(options = {}) {
+        this.doc = null;
+        this.atDirectives = false;
+        this.prelude = [];
+        this.errors = [];
+        this.warnings = [];
+        this.onError = (source, code, message, warning) => {
+          const pos = getErrorPos(source);
+          if (warning)
+            this.warnings.push(new errors.YAMLWarning(pos, code, message));
+          else
+            this.errors.push(new errors.YAMLParseError(pos, code, message));
+        };
+        this.directives = new directives.Directives({ version: options.version || "1.2" });
+        this.options = options;
+      }
+      decorate(doc, afterDoc) {
+        const { comment, afterEmptyLine } = parsePrelude(this.prelude);
+        if (comment) {
+          const dc = doc.contents;
+          if (afterDoc) {
+            doc.comment = doc.comment ? `${doc.comment}
+${comment}` : comment;
+          } else if (afterEmptyLine || doc.directives.docStart || !dc) {
+            doc.commentBefore = comment;
+          } else if (identity.isCollection(dc) && !dc.flow && dc.items.length > 0) {
+            let it = dc.items[0];
+            if (identity.isPair(it))
+              it = it.key;
+            const cb = it.commentBefore;
+            it.commentBefore = cb ? `${comment}
+${cb}` : comment;
+          } else {
+            const cb = dc.commentBefore;
+            dc.commentBefore = cb ? `${comment}
+${cb}` : comment;
+          }
+        }
+        if (afterDoc) {
+          for (let i = 0; i < this.errors.length; ++i)
+            doc.errors.push(this.errors[i]);
+          for (let i = 0; i < this.warnings.length; ++i)
+            doc.warnings.push(this.warnings[i]);
+        } else {
+          doc.errors = this.errors;
+          doc.warnings = this.warnings;
+        }
+        this.prelude = [];
+        this.errors = [];
+        this.warnings = [];
+      }
+      /**
+       * Current stream status information.
+       *
+       * Mostly useful at the end of input for an empty stream.
+       */
+      streamInfo() {
+        return {
+          comment: parsePrelude(this.prelude).comment,
+          directives: this.directives,
+          errors: this.errors,
+          warnings: this.warnings
+        };
+      }
+      /**
+       * Compose tokens into documents.
+       *
+       * @param forceDoc - If the stream contains no document, still emit a final document including any comments and directives that would be applied to a subsequent document.
+       * @param endOffset - Should be set if `forceDoc` is also set, to set the document range end and to indicate errors correctly.
+       */
+      *compose(tokens, forceDoc = false, endOffset = -1) {
+        for (const token of tokens)
+          yield* this.next(token);
+        yield* this.end(forceDoc, endOffset);
+      }
+      /** Advance the composer by one CST token. */
+      *next(token) {
+        if (node_process.env.LOG_STREAM)
+          console.dir(token, { depth: null });
+        switch (token.type) {
+          case "directive":
+            this.directives.add(token.source, (offset, message, warning) => {
+              const pos = getErrorPos(token);
+              pos[0] += offset;
+              this.onError(pos, "BAD_DIRECTIVE", message, warning);
+            });
+            this.prelude.push(token.source);
+            this.atDirectives = true;
+            break;
+          case "document": {
+            const doc = composeDoc.composeDoc(this.options, this.directives, token, this.onError);
+            if (this.atDirectives && !doc.directives.docStart)
+              this.onError(token, "MISSING_CHAR", "Missing directives-end/doc-start indicator line");
+            this.decorate(doc, false);
+            if (this.doc)
+              yield this.doc;
+            this.doc = doc;
+            this.atDirectives = false;
+            break;
+          }
+          case "byte-order-mark":
+          case "space":
+            break;
+          case "comment":
+          case "newline":
+            this.prelude.push(token.source);
+            break;
+          case "error": {
+            const msg = token.source ? `${token.message}: ${JSON.stringify(token.source)}` : token.message;
+            const error46 = new errors.YAMLParseError(getErrorPos(token), "UNEXPECTED_TOKEN", msg);
+            if (this.atDirectives || !this.doc)
+              this.errors.push(error46);
+            else
+              this.doc.errors.push(error46);
+            break;
+          }
+          case "doc-end": {
+            if (!this.doc) {
+              const msg = "Unexpected doc-end without preceding document";
+              this.errors.push(new errors.YAMLParseError(getErrorPos(token), "UNEXPECTED_TOKEN", msg));
+              break;
+            }
+            this.doc.directives.docEnd = true;
+            const end = resolveEnd.resolveEnd(token.end, token.offset + token.source.length, this.doc.options.strict, this.onError);
+            this.decorate(this.doc, true);
+            if (end.comment) {
+              const dc = this.doc.comment;
+              this.doc.comment = dc ? `${dc}
+${end.comment}` : end.comment;
+            }
+            this.doc.range[2] = end.offset;
+            break;
+          }
+          default:
+            this.errors.push(new errors.YAMLParseError(getErrorPos(token), "UNEXPECTED_TOKEN", `Unsupported token ${token.type}`));
+        }
+      }
+      /**
+       * Call at end of input to yield any remaining document.
+       *
+       * @param forceDoc - If the stream contains no document, still emit a final document including any comments and directives that would be applied to a subsequent document.
+       * @param endOffset - Should be set if `forceDoc` is also set, to set the document range end and to indicate errors correctly.
+       */
+      *end(forceDoc = false, endOffset = -1) {
+        if (this.doc) {
+          this.decorate(this.doc, true);
+          yield this.doc;
+          this.doc = null;
+        } else if (forceDoc) {
+          const opts = Object.assign({ _directives: this.directives }, this.options);
+          const doc = new Document.Document(void 0, opts);
+          if (this.atDirectives)
+            this.onError(endOffset, "MISSING_CHAR", "Missing directives-end indicator line");
+          doc.range = [0, endOffset, endOffset];
+          this.decorate(doc, false);
+          yield doc;
+        }
+      }
+    };
+    exports.Composer = Composer;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/parse/cst-scalar.js
+var require_cst_scalar = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/parse/cst-scalar.js"(exports) {
+    "use strict";
+    var resolveBlockScalar = require_resolve_block_scalar();
+    var resolveFlowScalar = require_resolve_flow_scalar();
+    var errors = require_errors();
+    var stringifyString = require_stringifyString();
+    function resolveAsScalar(token, strict = true, onError) {
+      if (token) {
+        const _onError = (pos, code, message) => {
+          const offset = typeof pos === "number" ? pos : Array.isArray(pos) ? pos[0] : pos.offset;
+          if (onError)
+            onError(offset, code, message);
+          else
+            throw new errors.YAMLParseError([offset, offset + 1], code, message);
+        };
+        switch (token.type) {
+          case "scalar":
+          case "single-quoted-scalar":
+          case "double-quoted-scalar":
+            return resolveFlowScalar.resolveFlowScalar(token, strict, _onError);
+          case "block-scalar":
+            return resolveBlockScalar.resolveBlockScalar({ options: { strict } }, token, _onError);
+        }
+      }
+      return null;
+    }
+    function createScalarToken(value, context) {
+      const { implicitKey = false, indent: indent2, inFlow = false, offset = -1, type = "PLAIN" } = context;
+      const source = stringifyString.stringifyString({ type, value }, {
+        implicitKey,
+        indent: indent2 > 0 ? " ".repeat(indent2) : "",
+        inFlow,
+        options: { blockQuote: true, lineWidth: -1 }
+      });
+      const end = context.end ?? [
+        { type: "newline", offset: -1, indent: indent2, source: "\n" }
+      ];
+      switch (source[0]) {
+        case "|":
+        case ">": {
+          const he = source.indexOf("\n");
+          const head2 = source.substring(0, he);
+          const body = source.substring(he + 1) + "\n";
+          const props = [
+            { type: "block-scalar-header", offset, indent: indent2, source: head2 }
+          ];
+          if (!addEndtoBlockProps(props, end))
+            props.push({ type: "newline", offset: -1, indent: indent2, source: "\n" });
+          return { type: "block-scalar", offset, indent: indent2, props, source: body };
+        }
+        case '"':
+          return { type: "double-quoted-scalar", offset, indent: indent2, source, end };
+        case "'":
+          return { type: "single-quoted-scalar", offset, indent: indent2, source, end };
+        default:
+          return { type: "scalar", offset, indent: indent2, source, end };
+      }
+    }
+    function setScalarValue(token, value, context = {}) {
+      let { afterKey = false, implicitKey = false, inFlow = false, type } = context;
+      let indent2 = "indent" in token ? token.indent : null;
+      if (afterKey && typeof indent2 === "number")
+        indent2 += 2;
+      if (!type)
+        switch (token.type) {
+          case "single-quoted-scalar":
+            type = "QUOTE_SINGLE";
+            break;
+          case "double-quoted-scalar":
+            type = "QUOTE_DOUBLE";
+            break;
+          case "block-scalar": {
+            const header = token.props[0];
+            if (header.type !== "block-scalar-header")
+              throw new Error("Invalid block scalar header");
+            type = header.source[0] === ">" ? "BLOCK_FOLDED" : "BLOCK_LITERAL";
+            break;
+          }
+          default:
+            type = "PLAIN";
+        }
+      const source = stringifyString.stringifyString({ type, value }, {
+        implicitKey: implicitKey || indent2 === null,
+        indent: indent2 !== null && indent2 > 0 ? " ".repeat(indent2) : "",
+        inFlow,
+        options: { blockQuote: true, lineWidth: -1 }
+      });
+      switch (source[0]) {
+        case "|":
+        case ">":
+          setBlockScalarValue(token, source);
+          break;
+        case '"':
+          setFlowScalarValue(token, source, "double-quoted-scalar");
+          break;
+        case "'":
+          setFlowScalarValue(token, source, "single-quoted-scalar");
+          break;
+        default:
+          setFlowScalarValue(token, source, "scalar");
+      }
+    }
+    function setBlockScalarValue(token, source) {
+      const he = source.indexOf("\n");
+      const head2 = source.substring(0, he);
+      const body = source.substring(he + 1) + "\n";
+      if (token.type === "block-scalar") {
+        const header = token.props[0];
+        if (header.type !== "block-scalar-header")
+          throw new Error("Invalid block scalar header");
+        header.source = head2;
+        token.source = body;
+      } else {
+        const { offset } = token;
+        const indent2 = "indent" in token ? token.indent : -1;
+        const props = [
+          { type: "block-scalar-header", offset, indent: indent2, source: head2 }
+        ];
+        if (!addEndtoBlockProps(props, "end" in token ? token.end : void 0))
+          props.push({ type: "newline", offset: -1, indent: indent2, source: "\n" });
+        for (const key of Object.keys(token))
+          if (key !== "type" && key !== "offset")
+            delete token[key];
+        Object.assign(token, { type: "block-scalar", indent: indent2, props, source: body });
+      }
+    }
+    function addEndtoBlockProps(props, end) {
+      if (end)
+        for (const st of end)
+          switch (st.type) {
+            case "space":
+            case "comment":
+              props.push(st);
+              break;
+            case "newline":
+              props.push(st);
+              return true;
+          }
+      return false;
+    }
+    function setFlowScalarValue(token, source, type) {
+      switch (token.type) {
+        case "scalar":
+        case "double-quoted-scalar":
+        case "single-quoted-scalar":
+          token.type = type;
+          token.source = source;
+          break;
+        case "block-scalar": {
+          const end = token.props.slice(1);
+          let oa = source.length;
+          if (token.props[0].type === "block-scalar-header")
+            oa -= token.props[0].source.length;
+          for (const tok of end)
+            tok.offset += oa;
+          delete token.props;
+          Object.assign(token, { type, source, end });
+          break;
+        }
+        case "block-map":
+        case "block-seq": {
+          const offset = token.offset + source.length;
+          const nl = { type: "newline", offset, indent: token.indent, source: "\n" };
+          delete token.items;
+          Object.assign(token, { type, source, end: [nl] });
+          break;
+        }
+        default: {
+          const indent2 = "indent" in token ? token.indent : -1;
+          const end = "end" in token && Array.isArray(token.end) ? token.end.filter((st) => st.type === "space" || st.type === "comment" || st.type === "newline") : [];
+          for (const key of Object.keys(token))
+            if (key !== "type" && key !== "offset")
+              delete token[key];
+          Object.assign(token, { type, indent: indent2, source, end });
+        }
+      }
+    }
+    exports.createScalarToken = createScalarToken;
+    exports.resolveAsScalar = resolveAsScalar;
+    exports.setScalarValue = setScalarValue;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/parse/cst-stringify.js
+var require_cst_stringify = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/parse/cst-stringify.js"(exports) {
+    "use strict";
+    var stringify2 = (cst) => "type" in cst ? stringifyToken(cst) : stringifyItem(cst);
+    function stringifyToken(token) {
+      switch (token.type) {
+        case "block-scalar": {
+          let res = "";
+          for (const tok of token.props)
+            res += stringifyToken(tok);
+          return res + token.source;
+        }
+        case "block-map":
+        case "block-seq": {
+          let res = "";
+          for (const item of token.items)
+            res += stringifyItem(item);
+          return res;
+        }
+        case "flow-collection": {
+          let res = token.start.source;
+          for (const item of token.items)
+            res += stringifyItem(item);
+          for (const st of token.end)
+            res += st.source;
+          return res;
+        }
+        case "document": {
+          let res = stringifyItem(token);
+          if (token.end)
+            for (const st of token.end)
+              res += st.source;
+          return res;
+        }
+        default: {
+          let res = token.source;
+          if ("end" in token && token.end)
+            for (const st of token.end)
+              res += st.source;
+          return res;
+        }
+      }
+    }
+    function stringifyItem({ start, key, sep, value }) {
+      let res = "";
+      for (const st of start)
+        res += st.source;
+      if (key)
+        res += stringifyToken(key);
+      if (sep)
+        for (const st of sep)
+          res += st.source;
+      if (value)
+        res += stringifyToken(value);
+      return res;
+    }
+    exports.stringify = stringify2;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/parse/cst-visit.js
+var require_cst_visit = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/parse/cst-visit.js"(exports) {
+    "use strict";
+    var BREAK = /* @__PURE__ */ Symbol("break visit");
+    var SKIP = /* @__PURE__ */ Symbol("skip children");
+    var REMOVE = /* @__PURE__ */ Symbol("remove item");
+    function visit(cst, visitor) {
+      if ("type" in cst && cst.type === "document")
+        cst = { start: cst.start, value: cst.value };
+      _visit(Object.freeze([]), cst, visitor);
+    }
+    visit.BREAK = BREAK;
+    visit.SKIP = SKIP;
+    visit.REMOVE = REMOVE;
+    visit.itemAtPath = (cst, path12) => {
+      let item = cst;
+      for (const [field, index] of path12) {
+        const tok = item?.[field];
+        if (tok && "items" in tok) {
+          item = tok.items[index];
+        } else
+          return void 0;
+      }
+      return item;
+    };
+    visit.parentCollection = (cst, path12) => {
+      const parent = visit.itemAtPath(cst, path12.slice(0, -1));
+      const field = path12[path12.length - 1][0];
+      const coll = parent?.[field];
+      if (coll && "items" in coll)
+        return coll;
+      throw new Error("Parent collection not found");
+    };
+    function _visit(path12, item, visitor) {
+      let ctrl = visitor(item, path12);
+      if (typeof ctrl === "symbol")
+        return ctrl;
+      for (const field of ["key", "value"]) {
+        const token = item[field];
+        if (token && "items" in token) {
+          for (let i = 0; i < token.items.length; ++i) {
+            const ci = _visit(Object.freeze(path12.concat([[field, i]])), token.items[i], visitor);
+            if (typeof ci === "number")
+              i = ci - 1;
+            else if (ci === BREAK)
+              return BREAK;
+            else if (ci === REMOVE) {
+              token.items.splice(i, 1);
+              i -= 1;
+            }
+          }
+          if (typeof ctrl === "function" && field === "key")
+            ctrl = ctrl(item, path12);
+        }
+      }
+      return typeof ctrl === "function" ? ctrl(item, path12) : ctrl;
+    }
+    exports.visit = visit;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/parse/cst.js
+var require_cst = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/parse/cst.js"(exports) {
+    "use strict";
+    var cstScalar = require_cst_scalar();
+    var cstStringify = require_cst_stringify();
+    var cstVisit = require_cst_visit();
+    var BOM = "\uFEFF";
+    var DOCUMENT = "";
+    var FLOW_END = "";
+    var SCALAR = "";
+    var isCollection = (token) => !!token && "items" in token;
+    var isScalar = (token) => !!token && (token.type === "scalar" || token.type === "single-quoted-scalar" || token.type === "double-quoted-scalar" || token.type === "block-scalar");
+    function prettyToken(token) {
+      switch (token) {
+        case BOM:
+          return "<BOM>";
+        case DOCUMENT:
+          return "<DOC>";
+        case FLOW_END:
+          return "<FLOW_END>";
+        case SCALAR:
+          return "<SCALAR>";
+        default:
+          return JSON.stringify(token);
+      }
+    }
+    function tokenType(source) {
+      switch (source) {
+        case BOM:
+          return "byte-order-mark";
+        case DOCUMENT:
+          return "doc-mode";
+        case FLOW_END:
+          return "flow-error-end";
+        case SCALAR:
+          return "scalar";
+        case "---":
+          return "doc-start";
+        case "...":
+          return "doc-end";
+        case "":
+        case "\n":
+        case "\r\n":
+          return "newline";
+        case "-":
+          return "seq-item-ind";
+        case "?":
+          return "explicit-key-ind";
+        case ":":
+          return "map-value-ind";
+        case "{":
+          return "flow-map-start";
+        case "}":
+          return "flow-map-end";
+        case "[":
+          return "flow-seq-start";
+        case "]":
+          return "flow-seq-end";
+        case ",":
+          return "comma";
+      }
+      switch (source[0]) {
+        case " ":
+        case "	":
+          return "space";
+        case "#":
+          return "comment";
+        case "%":
+          return "directive-line";
+        case "*":
+          return "alias";
+        case "&":
+          return "anchor";
+        case "!":
+          return "tag";
+        case "'":
+          return "single-quoted-scalar";
+        case '"':
+          return "double-quoted-scalar";
+        case "|":
+        case ">":
+          return "block-scalar-header";
+      }
+      return null;
+    }
+    exports.createScalarToken = cstScalar.createScalarToken;
+    exports.resolveAsScalar = cstScalar.resolveAsScalar;
+    exports.setScalarValue = cstScalar.setScalarValue;
+    exports.stringify = cstStringify.stringify;
+    exports.visit = cstVisit.visit;
+    exports.BOM = BOM;
+    exports.DOCUMENT = DOCUMENT;
+    exports.FLOW_END = FLOW_END;
+    exports.SCALAR = SCALAR;
+    exports.isCollection = isCollection;
+    exports.isScalar = isScalar;
+    exports.prettyToken = prettyToken;
+    exports.tokenType = tokenType;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/parse/lexer.js
+var require_lexer = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/parse/lexer.js"(exports) {
+    "use strict";
+    var cst = require_cst();
+    function isEmpty(ch) {
+      switch (ch) {
+        case void 0:
+        case " ":
+        case "\n":
+        case "\r":
+        case "	":
+          return true;
+        default:
+          return false;
+      }
+    }
+    var hexDigits = new Set("0123456789ABCDEFabcdef");
+    var tagChars = new Set("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-#;/?:@&=+$_.!~*'()");
+    var flowIndicatorChars = new Set(",[]{}");
+    var invalidAnchorChars = new Set(" ,[]{}\n\r	");
+    var isNotAnchorChar = (ch) => !ch || invalidAnchorChars.has(ch);
+    var Lexer = class {
+      constructor() {
+        this.atEnd = false;
+        this.blockScalarIndent = -1;
+        this.blockScalarKeep = false;
+        this.buffer = "";
+        this.flowKey = false;
+        this.flowLevel = 0;
+        this.indentNext = 0;
+        this.indentValue = 0;
+        this.lineEndPos = null;
+        this.next = null;
+        this.pos = 0;
+      }
+      /**
+       * Generate YAML tokens from the `source` string. If `incomplete`,
+       * a part of the last line may be left as a buffer for the next call.
+       *
+       * @returns A generator of lexical tokens
+       */
+      *lex(source, incomplete = false) {
+        if (source) {
+          if (typeof source !== "string")
+            throw TypeError("source is not a string");
+          this.buffer = this.buffer ? this.buffer + source : source;
+          this.lineEndPos = null;
+        }
+        this.atEnd = !incomplete;
+        let next = this.next ?? "stream";
+        while (next && (incomplete || this.hasChars(1)))
+          next = yield* this.parseNext(next);
+      }
+      atLineEnd() {
+        let i = this.pos;
+        let ch = this.buffer[i];
+        while (ch === " " || ch === "	")
+          ch = this.buffer[++i];
+        if (!ch || ch === "#" || ch === "\n")
+          return true;
+        if (ch === "\r")
+          return this.buffer[i + 1] === "\n";
+        return false;
+      }
+      charAt(n) {
+        return this.buffer[this.pos + n];
+      }
+      continueScalar(offset) {
+        let ch = this.buffer[offset];
+        if (this.indentNext > 0) {
+          let indent2 = 0;
+          while (ch === " ")
+            ch = this.buffer[++indent2 + offset];
+          if (ch === "\r") {
+            const next = this.buffer[indent2 + offset + 1];
+            if (next === "\n" || !next && !this.atEnd)
+              return offset + indent2 + 1;
+          }
+          return ch === "\n" || indent2 >= this.indentNext || !ch && !this.atEnd ? offset + indent2 : -1;
+        }
+        if (ch === "-" || ch === ".") {
+          const dt = this.buffer.substr(offset, 3);
+          if ((dt === "---" || dt === "...") && isEmpty(this.buffer[offset + 3]))
+            return -1;
+        }
+        return offset;
+      }
+      getLine() {
+        let end = this.lineEndPos;
+        if (typeof end !== "number" || end !== -1 && end < this.pos) {
+          end = this.buffer.indexOf("\n", this.pos);
+          this.lineEndPos = end;
+        }
+        if (end === -1)
+          return this.atEnd ? this.buffer.substring(this.pos) : null;
+        if (this.buffer[end - 1] === "\r")
+          end -= 1;
+        return this.buffer.substring(this.pos, end);
+      }
+      hasChars(n) {
+        return this.pos + n <= this.buffer.length;
+      }
+      setNext(state) {
+        this.buffer = this.buffer.substring(this.pos);
+        this.pos = 0;
+        this.lineEndPos = null;
+        this.next = state;
+        return null;
+      }
+      peek(n) {
+        return this.buffer.substr(this.pos, n);
+      }
+      *parseNext(next) {
+        switch (next) {
+          case "stream":
+            return yield* this.parseStream();
+          case "line-start":
+            return yield* this.parseLineStart();
+          case "block-start":
+            return yield* this.parseBlockStart();
+          case "doc":
+            return yield* this.parseDocument();
+          case "flow":
+            return yield* this.parseFlowCollection();
+          case "quoted-scalar":
+            return yield* this.parseQuotedScalar();
+          case "block-scalar":
+            return yield* this.parseBlockScalar();
+          case "plain-scalar":
+            return yield* this.parsePlainScalar();
+        }
+      }
+      *parseStream() {
+        let line = this.getLine();
+        if (line === null)
+          return this.setNext("stream");
+        if (line[0] === cst.BOM) {
+          yield* this.pushCount(1);
+          line = line.substring(1);
+        }
+        if (line[0] === "%") {
+          let dirEnd = line.length;
+          let cs = line.indexOf("#");
+          while (cs !== -1) {
+            const ch = line[cs - 1];
+            if (ch === " " || ch === "	") {
+              dirEnd = cs - 1;
+              break;
+            } else {
+              cs = line.indexOf("#", cs + 1);
+            }
+          }
+          while (true) {
+            const ch = line[dirEnd - 1];
+            if (ch === " " || ch === "	")
+              dirEnd -= 1;
+            else
+              break;
+          }
+          const n = (yield* this.pushCount(dirEnd)) + (yield* this.pushSpaces(true));
+          yield* this.pushCount(line.length - n);
+          this.pushNewline();
+          return "stream";
+        }
+        if (this.atLineEnd()) {
+          const sp = yield* this.pushSpaces(true);
+          yield* this.pushCount(line.length - sp);
+          yield* this.pushNewline();
+          return "stream";
+        }
+        yield cst.DOCUMENT;
+        return yield* this.parseLineStart();
+      }
+      *parseLineStart() {
+        const ch = this.charAt(0);
+        if (!ch && !this.atEnd)
+          return this.setNext("line-start");
+        if (ch === "-" || ch === ".") {
+          if (!this.atEnd && !this.hasChars(4))
+            return this.setNext("line-start");
+          const s = this.peek(3);
+          if ((s === "---" || s === "...") && isEmpty(this.charAt(3))) {
+            yield* this.pushCount(3);
+            this.indentValue = 0;
+            this.indentNext = 0;
+            return s === "---" ? "doc" : "stream";
+          }
+        }
+        this.indentValue = yield* this.pushSpaces(false);
+        if (this.indentNext > this.indentValue && !isEmpty(this.charAt(1)))
+          this.indentNext = this.indentValue;
+        return yield* this.parseBlockStart();
+      }
+      *parseBlockStart() {
+        const [ch0, ch1] = this.peek(2);
+        if (!ch1 && !this.atEnd)
+          return this.setNext("block-start");
+        if ((ch0 === "-" || ch0 === "?" || ch0 === ":") && isEmpty(ch1)) {
+          const n = (yield* this.pushCount(1)) + (yield* this.pushSpaces(true));
+          this.indentNext = this.indentValue + 1;
+          this.indentValue += n;
+          return "block-start";
+        }
+        return "doc";
+      }
+      *parseDocument() {
+        yield* this.pushSpaces(true);
+        const line = this.getLine();
+        if (line === null)
+          return this.setNext("doc");
+        let n = yield* this.pushIndicators();
+        switch (line[n]) {
+          case "#":
+            yield* this.pushCount(line.length - n);
+          // fallthrough
+          case void 0:
+            yield* this.pushNewline();
+            return yield* this.parseLineStart();
+          case "{":
+          case "[":
+            yield* this.pushCount(1);
+            this.flowKey = false;
+            this.flowLevel = 1;
+            return "flow";
+          case "}":
+          case "]":
+            yield* this.pushCount(1);
+            return "doc";
+          case "*":
+            yield* this.pushUntil(isNotAnchorChar);
+            return "doc";
+          case '"':
+          case "'":
+            return yield* this.parseQuotedScalar();
+          case "|":
+          case ">":
+            n += yield* this.parseBlockScalarHeader();
+            n += yield* this.pushSpaces(true);
+            yield* this.pushCount(line.length - n);
+            yield* this.pushNewline();
+            return yield* this.parseBlockScalar();
+          default:
+            return yield* this.parsePlainScalar();
+        }
+      }
+      *parseFlowCollection() {
+        let nl, sp;
+        let indent2 = -1;
+        do {
+          nl = yield* this.pushNewline();
+          if (nl > 0) {
+            sp = yield* this.pushSpaces(false);
+            this.indentValue = indent2 = sp;
+          } else {
+            sp = 0;
+          }
+          sp += yield* this.pushSpaces(true);
+        } while (nl + sp > 0);
+        const line = this.getLine();
+        if (line === null)
+          return this.setNext("flow");
+        if (indent2 !== -1 && indent2 < this.indentNext && line[0] !== "#" || indent2 === 0 && (line.startsWith("---") || line.startsWith("...")) && isEmpty(line[3])) {
+          const atFlowEndMarker = indent2 === this.indentNext - 1 && this.flowLevel === 1 && (line[0] === "]" || line[0] === "}");
+          if (!atFlowEndMarker) {
+            this.flowLevel = 0;
+            yield cst.FLOW_END;
+            return yield* this.parseLineStart();
+          }
+        }
+        let n = 0;
+        while (line[n] === ",") {
+          n += yield* this.pushCount(1);
+          n += yield* this.pushSpaces(true);
+          this.flowKey = false;
+        }
+        n += yield* this.pushIndicators();
+        switch (line[n]) {
+          case void 0:
+            return "flow";
+          case "#":
+            yield* this.pushCount(line.length - n);
+            return "flow";
+          case "{":
+          case "[":
+            yield* this.pushCount(1);
+            this.flowKey = false;
+            this.flowLevel += 1;
+            return "flow";
+          case "}":
+          case "]":
+            yield* this.pushCount(1);
+            this.flowKey = true;
+            this.flowLevel -= 1;
+            return this.flowLevel ? "flow" : "doc";
+          case "*":
+            yield* this.pushUntil(isNotAnchorChar);
+            return "flow";
+          case '"':
+          case "'":
+            this.flowKey = true;
+            return yield* this.parseQuotedScalar();
+          case ":": {
+            const next = this.charAt(1);
+            if (this.flowKey || isEmpty(next) || next === ",") {
+              this.flowKey = false;
+              yield* this.pushCount(1);
+              yield* this.pushSpaces(true);
+              return "flow";
+            }
+          }
+          // fallthrough
+          default:
+            this.flowKey = false;
+            return yield* this.parsePlainScalar();
+        }
+      }
+      *parseQuotedScalar() {
+        const quote = this.charAt(0);
+        let end = this.buffer.indexOf(quote, this.pos + 1);
+        if (quote === "'") {
+          while (end !== -1 && this.buffer[end + 1] === "'")
+            end = this.buffer.indexOf("'", end + 2);
+        } else {
+          while (end !== -1) {
+            let n = 0;
+            while (this.buffer[end - 1 - n] === "\\")
+              n += 1;
+            if (n % 2 === 0)
+              break;
+            end = this.buffer.indexOf('"', end + 1);
+          }
+        }
+        const qb = this.buffer.substring(0, end);
+        let nl = qb.indexOf("\n", this.pos);
+        if (nl !== -1) {
+          while (nl !== -1) {
+            const cs = this.continueScalar(nl + 1);
+            if (cs === -1)
+              break;
+            nl = qb.indexOf("\n", cs);
+          }
+          if (nl !== -1) {
+            end = nl - (qb[nl - 1] === "\r" ? 2 : 1);
+          }
+        }
+        if (end === -1) {
+          if (!this.atEnd)
+            return this.setNext("quoted-scalar");
+          end = this.buffer.length;
+        }
+        yield* this.pushToIndex(end + 1, false);
+        return this.flowLevel ? "flow" : "doc";
+      }
+      *parseBlockScalarHeader() {
+        this.blockScalarIndent = -1;
+        this.blockScalarKeep = false;
+        let i = this.pos;
+        while (true) {
+          const ch = this.buffer[++i];
+          if (ch === "+")
+            this.blockScalarKeep = true;
+          else if (ch > "0" && ch <= "9")
+            this.blockScalarIndent = Number(ch) - 1;
+          else if (ch !== "-")
+            break;
+        }
+        return yield* this.pushUntil((ch) => isEmpty(ch) || ch === "#");
+      }
+      *parseBlockScalar() {
+        let nl = this.pos - 1;
+        let indent2 = 0;
+        let ch;
+        loop: for (let i2 = this.pos; ch = this.buffer[i2]; ++i2) {
+          switch (ch) {
+            case " ":
+              indent2 += 1;
+              break;
+            case "\n":
+              nl = i2;
+              indent2 = 0;
+              break;
+            case "\r": {
+              const next = this.buffer[i2 + 1];
+              if (!next && !this.atEnd)
+                return this.setNext("block-scalar");
+              if (next === "\n")
+                break;
+            }
+            // fallthrough
+            default:
+              break loop;
+          }
+        }
+        if (!ch && !this.atEnd)
+          return this.setNext("block-scalar");
+        if (indent2 >= this.indentNext) {
+          if (this.blockScalarIndent === -1)
+            this.indentNext = indent2;
+          else {
+            this.indentNext = this.blockScalarIndent + (this.indentNext === 0 ? 1 : this.indentNext);
+          }
+          do {
+            const cs = this.continueScalar(nl + 1);
+            if (cs === -1)
+              break;
+            nl = this.buffer.indexOf("\n", cs);
+          } while (nl !== -1);
+          if (nl === -1) {
+            if (!this.atEnd)
+              return this.setNext("block-scalar");
+            nl = this.buffer.length;
+          }
+        }
+        let i = nl + 1;
+        ch = this.buffer[i];
+        while (ch === " ")
+          ch = this.buffer[++i];
+        if (ch === "	") {
+          while (ch === "	" || ch === " " || ch === "\r" || ch === "\n")
+            ch = this.buffer[++i];
+          nl = i - 1;
+        } else if (!this.blockScalarKeep) {
+          do {
+            let i2 = nl - 1;
+            let ch2 = this.buffer[i2];
+            if (ch2 === "\r")
+              ch2 = this.buffer[--i2];
+            const lastChar = i2;
+            while (ch2 === " ")
+              ch2 = this.buffer[--i2];
+            if (ch2 === "\n" && i2 >= this.pos && i2 + 1 + indent2 > lastChar)
+              nl = i2;
+            else
+              break;
+          } while (true);
+        }
+        yield cst.SCALAR;
+        yield* this.pushToIndex(nl + 1, true);
+        return yield* this.parseLineStart();
+      }
+      *parsePlainScalar() {
+        const inFlow = this.flowLevel > 0;
+        let end = this.pos - 1;
+        let i = this.pos - 1;
+        let ch;
+        while (ch = this.buffer[++i]) {
+          if (ch === ":") {
+            const next = this.buffer[i + 1];
+            if (isEmpty(next) || inFlow && flowIndicatorChars.has(next))
+              break;
+            end = i;
+          } else if (isEmpty(ch)) {
+            let next = this.buffer[i + 1];
+            if (ch === "\r") {
+              if (next === "\n") {
+                i += 1;
+                ch = "\n";
+                next = this.buffer[i + 1];
+              } else
+                end = i;
+            }
+            if (next === "#" || inFlow && flowIndicatorChars.has(next))
+              break;
+            if (ch === "\n") {
+              const cs = this.continueScalar(i + 1);
+              if (cs === -1)
+                break;
+              i = Math.max(i, cs - 2);
+            }
+          } else {
+            if (inFlow && flowIndicatorChars.has(ch))
+              break;
+            end = i;
+          }
+        }
+        if (!ch && !this.atEnd)
+          return this.setNext("plain-scalar");
+        yield cst.SCALAR;
+        yield* this.pushToIndex(end + 1, true);
+        return inFlow ? "flow" : "doc";
+      }
+      *pushCount(n) {
+        if (n > 0) {
+          yield this.buffer.substr(this.pos, n);
+          this.pos += n;
+          return n;
+        }
+        return 0;
+      }
+      *pushToIndex(i, allowEmpty) {
+        const s = this.buffer.slice(this.pos, i);
+        if (s) {
+          yield s;
+          this.pos += s.length;
+          return s.length;
+        } else if (allowEmpty)
+          yield "";
+        return 0;
+      }
+      *pushIndicators() {
+        let n = 0;
+        loop: while (true) {
+          switch (this.charAt(0)) {
+            case "!":
+              n += yield* this.pushTag();
+              n += yield* this.pushSpaces(true);
+              continue loop;
+            case "&":
+              n += yield* this.pushUntil(isNotAnchorChar);
+              n += yield* this.pushSpaces(true);
+              continue loop;
+            case "-":
+            // this is an error
+            case "?":
+            // this is an error outside flow collections
+            case ":": {
+              const inFlow = this.flowLevel > 0;
+              const ch1 = this.charAt(1);
+              if (isEmpty(ch1) || inFlow && flowIndicatorChars.has(ch1)) {
+                if (!inFlow)
+                  this.indentNext = this.indentValue + 1;
+                else if (this.flowKey)
+                  this.flowKey = false;
+                n += yield* this.pushCount(1);
+                n += yield* this.pushSpaces(true);
+                continue loop;
+              }
+            }
+          }
+          break loop;
+        }
+        return n;
+      }
+      *pushTag() {
+        if (this.charAt(1) === "<") {
+          let i = this.pos + 2;
+          let ch = this.buffer[i];
+          while (!isEmpty(ch) && ch !== ">")
+            ch = this.buffer[++i];
+          return yield* this.pushToIndex(ch === ">" ? i + 1 : i, false);
+        } else {
+          let i = this.pos + 1;
+          let ch = this.buffer[i];
+          while (ch) {
+            if (tagChars.has(ch))
+              ch = this.buffer[++i];
+            else if (ch === "%" && hexDigits.has(this.buffer[i + 1]) && hexDigits.has(this.buffer[i + 2])) {
+              ch = this.buffer[i += 3];
+            } else
+              break;
+          }
+          return yield* this.pushToIndex(i, false);
+        }
+      }
+      *pushNewline() {
+        const ch = this.buffer[this.pos];
+        if (ch === "\n")
+          return yield* this.pushCount(1);
+        else if (ch === "\r" && this.charAt(1) === "\n")
+          return yield* this.pushCount(2);
+        else
+          return 0;
+      }
+      *pushSpaces(allowTabs) {
+        let i = this.pos - 1;
+        let ch;
+        do {
+          ch = this.buffer[++i];
+        } while (ch === " " || allowTabs && ch === "	");
+        const n = i - this.pos;
+        if (n > 0) {
+          yield this.buffer.substr(this.pos, n);
+          this.pos = i;
+        }
+        return n;
+      }
+      *pushUntil(test) {
+        let i = this.pos;
+        let ch = this.buffer[i];
+        while (!test(ch))
+          ch = this.buffer[++i];
+        return yield* this.pushToIndex(i, false);
+      }
+    };
+    exports.Lexer = Lexer;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/parse/line-counter.js
+var require_line_counter = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/parse/line-counter.js"(exports) {
+    "use strict";
+    var LineCounter = class {
+      constructor() {
+        this.lineStarts = [];
+        this.addNewLine = (offset) => this.lineStarts.push(offset);
+        this.linePos = (offset) => {
+          let low = 0;
+          let high = this.lineStarts.length;
+          while (low < high) {
+            const mid = low + high >> 1;
+            if (this.lineStarts[mid] < offset)
+              low = mid + 1;
+            else
+              high = mid;
+          }
+          if (this.lineStarts[low] === offset)
+            return { line: low + 1, col: 1 };
+          if (low === 0)
+            return { line: 0, col: offset };
+          const start = this.lineStarts[low - 1];
+          return { line: low, col: offset - start + 1 };
+        };
+      }
+    };
+    exports.LineCounter = LineCounter;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/parse/parser.js
+var require_parser = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/parse/parser.js"(exports) {
+    "use strict";
+    var node_process = __require("process");
+    var cst = require_cst();
+    var lexer = require_lexer();
+    function includesToken(list, type) {
+      for (let i = 0; i < list.length; ++i)
+        if (list[i].type === type)
+          return true;
+      return false;
+    }
+    function findNonEmptyIndex(list) {
+      for (let i = 0; i < list.length; ++i) {
+        switch (list[i].type) {
+          case "space":
+          case "comment":
+          case "newline":
+            break;
+          default:
+            return i;
+        }
+      }
+      return -1;
+    }
+    function isFlowToken(token) {
+      switch (token?.type) {
+        case "alias":
+        case "scalar":
+        case "single-quoted-scalar":
+        case "double-quoted-scalar":
+        case "flow-collection":
+          return true;
+        default:
+          return false;
+      }
+    }
+    function getPrevProps(parent) {
+      switch (parent.type) {
+        case "document":
+          return parent.start;
+        case "block-map": {
+          const it = parent.items[parent.items.length - 1];
+          return it.sep ?? it.start;
+        }
+        case "block-seq":
+          return parent.items[parent.items.length - 1].start;
+        /* istanbul ignore next should not happen */
+        default:
+          return [];
+      }
+    }
+    function getFirstKeyStartProps(prev) {
+      if (prev.length === 0)
+        return [];
+      let i = prev.length;
+      loop: while (--i >= 0) {
+        switch (prev[i].type) {
+          case "doc-start":
+          case "explicit-key-ind":
+          case "map-value-ind":
+          case "seq-item-ind":
+          case "newline":
+            break loop;
+        }
+      }
+      while (prev[++i]?.type === "space") {
+      }
+      return prev.splice(i, prev.length);
+    }
+    function arrayPushArray(target, source) {
+      if (source.length < 1e5)
+        Array.prototype.push.apply(target, source);
+      else
+        for (let i = 0; i < source.length; ++i)
+          target.push(source[i]);
+    }
+    function fixFlowSeqItems(fc) {
+      if (fc.start.type === "flow-seq-start") {
+        for (const it of fc.items) {
+          if (it.sep && !it.value && !includesToken(it.start, "explicit-key-ind") && !includesToken(it.sep, "map-value-ind")) {
+            if (it.key)
+              it.value = it.key;
+            delete it.key;
+            if (isFlowToken(it.value)) {
+              if (it.value.end)
+                arrayPushArray(it.value.end, it.sep);
+              else
+                it.value.end = it.sep;
+            } else
+              arrayPushArray(it.start, it.sep);
+            delete it.sep;
+          }
+        }
+      }
+    }
+    var Parser = class {
+      /**
+       * @param onNewLine - If defined, called separately with the start position of
+       *   each new line (in `parse()`, including the start of input).
+       */
+      constructor(onNewLine) {
+        this.atNewLine = true;
+        this.atScalar = false;
+        this.indent = 0;
+        this.offset = 0;
+        this.onKeyLine = false;
+        this.stack = [];
+        this.source = "";
+        this.type = "";
+        this.lexer = new lexer.Lexer();
+        this.onNewLine = onNewLine;
+      }
+      /**
+       * Parse `source` as a YAML stream.
+       * If `incomplete`, a part of the last line may be left as a buffer for the next call.
+       *
+       * Errors are not thrown, but yielded as `{ type: 'error', message }` tokens.
+       *
+       * @returns A generator of tokens representing each directive, document, and other structure.
+       */
+      *parse(source, incomplete = false) {
+        if (this.onNewLine && this.offset === 0)
+          this.onNewLine(0);
+        for (const lexeme of this.lexer.lex(source, incomplete))
+          yield* this.next(lexeme);
+        if (!incomplete)
+          yield* this.end();
+      }
+      /**
+       * Advance the parser by the `source` of one lexical token.
+       */
+      *next(source) {
+        this.source = source;
+        if (node_process.env.LOG_TOKENS)
+          console.log("|", cst.prettyToken(source));
+        if (this.atScalar) {
+          this.atScalar = false;
+          yield* this.step();
+          this.offset += source.length;
+          return;
+        }
+        const type = cst.tokenType(source);
+        if (!type) {
+          const message = `Not a YAML token: ${source}`;
+          yield* this.pop({ type: "error", offset: this.offset, message, source });
+          this.offset += source.length;
+        } else if (type === "scalar") {
+          this.atNewLine = false;
+          this.atScalar = true;
+          this.type = "scalar";
+        } else {
+          this.type = type;
+          yield* this.step();
+          switch (type) {
+            case "newline":
+              this.atNewLine = true;
+              this.indent = 0;
+              if (this.onNewLine)
+                this.onNewLine(this.offset + source.length);
+              break;
+            case "space":
+              if (this.atNewLine && source[0] === " ")
+                this.indent += source.length;
+              break;
+            case "explicit-key-ind":
+            case "map-value-ind":
+            case "seq-item-ind":
+              if (this.atNewLine)
+                this.indent += source.length;
+              break;
+            case "doc-mode":
+            case "flow-error-end":
+              return;
+            default:
+              this.atNewLine = false;
+          }
+          this.offset += source.length;
+        }
+      }
+      /** Call at end of input to push out any remaining constructions */
+      *end() {
+        while (this.stack.length > 0)
+          yield* this.pop();
+      }
+      get sourceToken() {
+        const st = {
+          type: this.type,
+          offset: this.offset,
+          indent: this.indent,
+          source: this.source
+        };
+        return st;
+      }
+      *step() {
+        const top = this.peek(1);
+        if (this.type === "doc-end" && top?.type !== "doc-end") {
+          while (this.stack.length > 0)
+            yield* this.pop();
+          this.stack.push({
+            type: "doc-end",
+            offset: this.offset,
+            source: this.source
+          });
+          return;
+        }
+        if (!top)
+          return yield* this.stream();
+        switch (top.type) {
+          case "document":
+            return yield* this.document(top);
+          case "alias":
+          case "scalar":
+          case "single-quoted-scalar":
+          case "double-quoted-scalar":
+            return yield* this.scalar(top);
+          case "block-scalar":
+            return yield* this.blockScalar(top);
+          case "block-map":
+            return yield* this.blockMap(top);
+          case "block-seq":
+            return yield* this.blockSequence(top);
+          case "flow-collection":
+            return yield* this.flowCollection(top);
+          case "doc-end":
+            return yield* this.documentEnd(top);
+        }
+        yield* this.pop();
+      }
+      peek(n) {
+        return this.stack[this.stack.length - n];
+      }
+      *pop(error46) {
+        const token = error46 ?? this.stack.pop();
+        if (!token) {
+          const message = "Tried to pop an empty stack";
+          yield { type: "error", offset: this.offset, source: "", message };
+        } else if (this.stack.length === 0) {
+          yield token;
+        } else {
+          const top = this.peek(1);
+          if (token.type === "block-scalar") {
+            token.indent = "indent" in top ? top.indent : 0;
+          } else if (token.type === "flow-collection" && top.type === "document") {
+            token.indent = 0;
+          }
+          if (token.type === "flow-collection")
+            fixFlowSeqItems(token);
+          switch (top.type) {
+            case "document":
+              top.value = token;
+              break;
+            case "block-scalar":
+              top.props.push(token);
+              break;
+            case "block-map": {
+              const it = top.items[top.items.length - 1];
+              if (it.value) {
+                top.items.push({ start: [], key: token, sep: [] });
+                this.onKeyLine = true;
+                return;
+              } else if (it.sep) {
+                it.value = token;
+              } else {
+                Object.assign(it, { key: token, sep: [] });
+                this.onKeyLine = !it.explicitKey;
+                return;
+              }
+              break;
+            }
+            case "block-seq": {
+              const it = top.items[top.items.length - 1];
+              if (it.value)
+                top.items.push({ start: [], value: token });
+              else
+                it.value = token;
+              break;
+            }
+            case "flow-collection": {
+              const it = top.items[top.items.length - 1];
+              if (!it || it.value)
+                top.items.push({ start: [], key: token, sep: [] });
+              else if (it.sep)
+                it.value = token;
+              else
+                Object.assign(it, { key: token, sep: [] });
+              return;
+            }
+            /* istanbul ignore next should not happen */
+            default:
+              yield* this.pop();
+              yield* this.pop(token);
+          }
+          if ((top.type === "document" || top.type === "block-map" || top.type === "block-seq") && (token.type === "block-map" || token.type === "block-seq")) {
+            const last = token.items[token.items.length - 1];
+            if (last && !last.sep && !last.value && last.start.length > 0 && findNonEmptyIndex(last.start) === -1 && (token.indent === 0 || last.start.every((st) => st.type !== "comment" || st.indent < token.indent))) {
+              if (top.type === "document")
+                top.end = last.start;
+              else
+                top.items.push({ start: last.start });
+              token.items.splice(-1, 1);
+            }
+          }
+        }
+      }
+      *stream() {
+        switch (this.type) {
+          case "directive-line":
+            yield { type: "directive", offset: this.offset, source: this.source };
+            return;
+          case "byte-order-mark":
+          case "space":
+          case "comment":
+          case "newline":
+            yield this.sourceToken;
+            return;
+          case "doc-mode":
+          case "doc-start": {
+            const doc = {
+              type: "document",
+              offset: this.offset,
+              start: []
+            };
+            if (this.type === "doc-start")
+              doc.start.push(this.sourceToken);
+            this.stack.push(doc);
+            return;
+          }
+        }
+        yield {
+          type: "error",
+          offset: this.offset,
+          message: `Unexpected ${this.type} token in YAML stream`,
+          source: this.source
+        };
+      }
+      *document(doc) {
+        if (doc.value)
+          return yield* this.lineEnd(doc);
+        switch (this.type) {
+          case "doc-start": {
+            if (findNonEmptyIndex(doc.start) !== -1) {
+              yield* this.pop();
+              yield* this.step();
+            } else
+              doc.start.push(this.sourceToken);
+            return;
+          }
+          case "anchor":
+          case "tag":
+          case "space":
+          case "comment":
+          case "newline":
+            doc.start.push(this.sourceToken);
+            return;
+        }
+        const bv = this.startBlockValue(doc);
+        if (bv)
+          this.stack.push(bv);
+        else {
+          yield {
+            type: "error",
+            offset: this.offset,
+            message: `Unexpected ${this.type} token in YAML document`,
+            source: this.source
+          };
+        }
+      }
+      *scalar(scalar) {
+        if (this.type === "map-value-ind") {
+          const prev = getPrevProps(this.peek(2));
+          const start = getFirstKeyStartProps(prev);
+          let sep;
+          if (scalar.end) {
+            sep = scalar.end;
+            sep.push(this.sourceToken);
+            delete scalar.end;
+          } else
+            sep = [this.sourceToken];
+          const map2 = {
+            type: "block-map",
+            offset: scalar.offset,
+            indent: scalar.indent,
+            items: [{ start, key: scalar, sep }]
+          };
+          this.onKeyLine = true;
+          this.stack[this.stack.length - 1] = map2;
+        } else
+          yield* this.lineEnd(scalar);
+      }
+      *blockScalar(scalar) {
+        switch (this.type) {
+          case "space":
+          case "comment":
+          case "newline":
+            scalar.props.push(this.sourceToken);
+            return;
+          case "scalar":
+            scalar.source = this.source;
+            this.atNewLine = true;
+            this.indent = 0;
+            if (this.onNewLine) {
+              let nl = this.source.indexOf("\n") + 1;
+              while (nl !== 0) {
+                this.onNewLine(this.offset + nl);
+                nl = this.source.indexOf("\n", nl) + 1;
+              }
+            }
+            yield* this.pop();
+            break;
+          /* istanbul ignore next should not happen */
+          default:
+            yield* this.pop();
+            yield* this.step();
+        }
+      }
+      *blockMap(map2) {
+        const it = map2.items[map2.items.length - 1];
+        switch (this.type) {
+          case "newline":
+            this.onKeyLine = false;
+            if (it.value) {
+              const end = "end" in it.value ? it.value.end : void 0;
+              const last = Array.isArray(end) ? end[end.length - 1] : void 0;
+              if (last?.type === "comment")
+                end?.push(this.sourceToken);
+              else
+                map2.items.push({ start: [this.sourceToken] });
+            } else if (it.sep) {
+              it.sep.push(this.sourceToken);
+            } else {
+              it.start.push(this.sourceToken);
+            }
+            return;
+          case "space":
+          case "comment":
+            if (it.value) {
+              map2.items.push({ start: [this.sourceToken] });
+            } else if (it.sep) {
+              it.sep.push(this.sourceToken);
+            } else {
+              if (this.atIndentedComment(it.start, map2.indent)) {
+                const prev = map2.items[map2.items.length - 2];
+                const end = prev?.value?.end;
+                if (Array.isArray(end)) {
+                  arrayPushArray(end, it.start);
+                  end.push(this.sourceToken);
+                  map2.items.pop();
+                  return;
+                }
+              }
+              it.start.push(this.sourceToken);
+            }
+            return;
+        }
+        if (this.indent >= map2.indent) {
+          const atMapIndent = !this.onKeyLine && this.indent === map2.indent;
+          const atNextItem = atMapIndent && (it.sep || it.explicitKey) && this.type !== "seq-item-ind";
+          let start = [];
+          if (atNextItem && it.sep && !it.value) {
+            const nl = [];
+            for (let i = 0; i < it.sep.length; ++i) {
+              const st = it.sep[i];
+              switch (st.type) {
+                case "newline":
+                  nl.push(i);
+                  break;
+                case "space":
+                  break;
+                case "comment":
+                  if (st.indent > map2.indent)
+                    nl.length = 0;
+                  break;
+                default:
+                  nl.length = 0;
+              }
+            }
+            if (nl.length >= 2)
+              start = it.sep.splice(nl[1]);
+          }
+          switch (this.type) {
+            case "anchor":
+            case "tag":
+              if (atNextItem || it.value) {
+                start.push(this.sourceToken);
+                map2.items.push({ start });
+                this.onKeyLine = true;
+              } else if (it.sep) {
+                it.sep.push(this.sourceToken);
+              } else {
+                it.start.push(this.sourceToken);
+              }
+              return;
+            case "explicit-key-ind":
+              if (!it.sep && !it.explicitKey) {
+                it.start.push(this.sourceToken);
+                it.explicitKey = true;
+              } else if (atNextItem || it.value) {
+                start.push(this.sourceToken);
+                map2.items.push({ start, explicitKey: true });
+              } else {
+                this.stack.push({
+                  type: "block-map",
+                  offset: this.offset,
+                  indent: this.indent,
+                  items: [{ start: [this.sourceToken], explicitKey: true }]
+                });
+              }
+              this.onKeyLine = true;
+              return;
+            case "map-value-ind":
+              if (it.explicitKey) {
+                if (!it.sep) {
+                  if (includesToken(it.start, "newline")) {
+                    Object.assign(it, { key: null, sep: [this.sourceToken] });
+                  } else {
+                    const start2 = getFirstKeyStartProps(it.start);
+                    this.stack.push({
+                      type: "block-map",
+                      offset: this.offset,
+                      indent: this.indent,
+                      items: [{ start: start2, key: null, sep: [this.sourceToken] }]
+                    });
+                  }
+                } else if (it.value) {
+                  map2.items.push({ start: [], key: null, sep: [this.sourceToken] });
+                } else if (includesToken(it.sep, "map-value-ind")) {
+                  this.stack.push({
+                    type: "block-map",
+                    offset: this.offset,
+                    indent: this.indent,
+                    items: [{ start, key: null, sep: [this.sourceToken] }]
+                  });
+                } else if (isFlowToken(it.key) && !includesToken(it.sep, "newline")) {
+                  const start2 = getFirstKeyStartProps(it.start);
+                  const key = it.key;
+                  const sep = it.sep;
+                  sep.push(this.sourceToken);
+                  delete it.key;
+                  delete it.sep;
+                  this.stack.push({
+                    type: "block-map",
+                    offset: this.offset,
+                    indent: this.indent,
+                    items: [{ start: start2, key, sep }]
+                  });
+                } else if (start.length > 0) {
+                  it.sep = it.sep.concat(start, this.sourceToken);
+                } else {
+                  it.sep.push(this.sourceToken);
+                }
+              } else {
+                if (!it.sep) {
+                  Object.assign(it, { key: null, sep: [this.sourceToken] });
+                } else if (it.value || atNextItem) {
+                  map2.items.push({ start, key: null, sep: [this.sourceToken] });
+                } else if (includesToken(it.sep, "map-value-ind")) {
+                  this.stack.push({
+                    type: "block-map",
+                    offset: this.offset,
+                    indent: this.indent,
+                    items: [{ start: [], key: null, sep: [this.sourceToken] }]
+                  });
+                } else {
+                  it.sep.push(this.sourceToken);
+                }
+              }
+              this.onKeyLine = true;
+              return;
+            case "alias":
+            case "scalar":
+            case "single-quoted-scalar":
+            case "double-quoted-scalar": {
+              const fs = this.flowScalar(this.type);
+              if (atNextItem || it.value) {
+                map2.items.push({ start, key: fs, sep: [] });
+                this.onKeyLine = true;
+              } else if (it.sep) {
+                this.stack.push(fs);
+              } else {
+                Object.assign(it, { key: fs, sep: [] });
+                this.onKeyLine = true;
+              }
+              return;
+            }
+            default: {
+              const bv = this.startBlockValue(map2);
+              if (bv) {
+                if (bv.type === "block-seq") {
+                  if (!it.explicitKey && it.sep && !includesToken(it.sep, "newline")) {
+                    yield* this.pop({
+                      type: "error",
+                      offset: this.offset,
+                      message: "Unexpected block-seq-ind on same line with key",
+                      source: this.source
+                    });
+                    return;
+                  }
+                } else if (atMapIndent) {
+                  map2.items.push({ start });
+                }
+                this.stack.push(bv);
+                return;
+              }
+            }
+          }
+        }
+        yield* this.pop();
+        yield* this.step();
+      }
+      *blockSequence(seq) {
+        const it = seq.items[seq.items.length - 1];
+        switch (this.type) {
+          case "newline":
+            if (it.value) {
+              const end = "end" in it.value ? it.value.end : void 0;
+              const last = Array.isArray(end) ? end[end.length - 1] : void 0;
+              if (last?.type === "comment")
+                end?.push(this.sourceToken);
+              else
+                seq.items.push({ start: [this.sourceToken] });
+            } else
+              it.start.push(this.sourceToken);
+            return;
+          case "space":
+          case "comment":
+            if (it.value)
+              seq.items.push({ start: [this.sourceToken] });
+            else {
+              if (this.atIndentedComment(it.start, seq.indent)) {
+                const prev = seq.items[seq.items.length - 2];
+                const end = prev?.value?.end;
+                if (Array.isArray(end)) {
+                  arrayPushArray(end, it.start);
+                  end.push(this.sourceToken);
+                  seq.items.pop();
+                  return;
+                }
+              }
+              it.start.push(this.sourceToken);
+            }
+            return;
+          case "anchor":
+          case "tag":
+            if (it.value || this.indent <= seq.indent)
+              break;
+            it.start.push(this.sourceToken);
+            return;
+          case "seq-item-ind":
+            if (this.indent !== seq.indent)
+              break;
+            if (it.value || includesToken(it.start, "seq-item-ind"))
+              seq.items.push({ start: [this.sourceToken] });
+            else
+              it.start.push(this.sourceToken);
+            return;
+        }
+        if (this.indent > seq.indent) {
+          const bv = this.startBlockValue(seq);
+          if (bv) {
+            this.stack.push(bv);
+            return;
+          }
+        }
+        yield* this.pop();
+        yield* this.step();
+      }
+      *flowCollection(fc) {
+        const it = fc.items[fc.items.length - 1];
+        if (this.type === "flow-error-end") {
+          let top;
+          do {
+            yield* this.pop();
+            top = this.peek(1);
+          } while (top?.type === "flow-collection");
+        } else if (fc.end.length === 0) {
+          switch (this.type) {
+            case "comma":
+            case "explicit-key-ind":
+              if (!it || it.sep)
+                fc.items.push({ start: [this.sourceToken] });
+              else
+                it.start.push(this.sourceToken);
+              return;
+            case "map-value-ind":
+              if (!it || it.value)
+                fc.items.push({ start: [], key: null, sep: [this.sourceToken] });
+              else if (it.sep)
+                it.sep.push(this.sourceToken);
+              else
+                Object.assign(it, { key: null, sep: [this.sourceToken] });
+              return;
+            case "space":
+            case "comment":
+            case "newline":
+            case "anchor":
+            case "tag":
+              if (!it || it.value)
+                fc.items.push({ start: [this.sourceToken] });
+              else if (it.sep)
+                it.sep.push(this.sourceToken);
+              else
+                it.start.push(this.sourceToken);
+              return;
+            case "alias":
+            case "scalar":
+            case "single-quoted-scalar":
+            case "double-quoted-scalar": {
+              const fs = this.flowScalar(this.type);
+              if (!it || it.value)
+                fc.items.push({ start: [], key: fs, sep: [] });
+              else if (it.sep)
+                this.stack.push(fs);
+              else
+                Object.assign(it, { key: fs, sep: [] });
+              return;
+            }
+            case "flow-map-end":
+            case "flow-seq-end":
+              fc.end.push(this.sourceToken);
+              return;
+          }
+          const bv = this.startBlockValue(fc);
+          if (bv)
+            this.stack.push(bv);
+          else {
+            yield* this.pop();
+            yield* this.step();
+          }
+        } else {
+          const parent = this.peek(2);
+          if (parent.type === "block-map" && (this.type === "map-value-ind" && parent.indent === fc.indent || this.type === "newline" && !parent.items[parent.items.length - 1].sep)) {
+            yield* this.pop();
+            yield* this.step();
+          } else if (this.type === "map-value-ind" && parent.type !== "flow-collection") {
+            const prev = getPrevProps(parent);
+            const start = getFirstKeyStartProps(prev);
+            fixFlowSeqItems(fc);
+            const sep = fc.end.splice(1, fc.end.length);
+            sep.push(this.sourceToken);
+            const map2 = {
+              type: "block-map",
+              offset: fc.offset,
+              indent: fc.indent,
+              items: [{ start, key: fc, sep }]
+            };
+            this.onKeyLine = true;
+            this.stack[this.stack.length - 1] = map2;
+          } else {
+            yield* this.lineEnd(fc);
+          }
+        }
+      }
+      flowScalar(type) {
+        if (this.onNewLine) {
+          let nl = this.source.indexOf("\n") + 1;
+          while (nl !== 0) {
+            this.onNewLine(this.offset + nl);
+            nl = this.source.indexOf("\n", nl) + 1;
+          }
+        }
+        return {
+          type,
+          offset: this.offset,
+          indent: this.indent,
+          source: this.source
+        };
+      }
+      startBlockValue(parent) {
+        switch (this.type) {
+          case "alias":
+          case "scalar":
+          case "single-quoted-scalar":
+          case "double-quoted-scalar":
+            return this.flowScalar(this.type);
+          case "block-scalar-header":
+            return {
+              type: "block-scalar",
+              offset: this.offset,
+              indent: this.indent,
+              props: [this.sourceToken],
+              source: ""
+            };
+          case "flow-map-start":
+          case "flow-seq-start":
+            return {
+              type: "flow-collection",
+              offset: this.offset,
+              indent: this.indent,
+              start: this.sourceToken,
+              items: [],
+              end: []
+            };
+          case "seq-item-ind":
+            return {
+              type: "block-seq",
+              offset: this.offset,
+              indent: this.indent,
+              items: [{ start: [this.sourceToken] }]
+            };
+          case "explicit-key-ind": {
+            this.onKeyLine = true;
+            const prev = getPrevProps(parent);
+            const start = getFirstKeyStartProps(prev);
+            start.push(this.sourceToken);
+            return {
+              type: "block-map",
+              offset: this.offset,
+              indent: this.indent,
+              items: [{ start, explicitKey: true }]
+            };
+          }
+          case "map-value-ind": {
+            this.onKeyLine = true;
+            const prev = getPrevProps(parent);
+            const start = getFirstKeyStartProps(prev);
+            return {
+              type: "block-map",
+              offset: this.offset,
+              indent: this.indent,
+              items: [{ start, key: null, sep: [this.sourceToken] }]
+            };
+          }
+        }
+        return null;
+      }
+      atIndentedComment(start, indent2) {
+        if (this.type !== "comment")
+          return false;
+        if (this.indent <= indent2)
+          return false;
+        return start.every((st) => st.type === "newline" || st.type === "space");
+      }
+      *documentEnd(docEnd) {
+        if (this.type !== "doc-mode") {
+          if (docEnd.end)
+            docEnd.end.push(this.sourceToken);
+          else
+            docEnd.end = [this.sourceToken];
+          if (this.type === "newline")
+            yield* this.pop();
+        }
+      }
+      *lineEnd(token) {
+        switch (this.type) {
+          case "comma":
+          case "doc-start":
+          case "doc-end":
+          case "flow-seq-end":
+          case "flow-map-end":
+          case "map-value-ind":
+            yield* this.pop();
+            yield* this.step();
+            break;
+          case "newline":
+            this.onKeyLine = false;
+          // fallthrough
+          case "space":
+          case "comment":
+          default:
+            if (token.end)
+              token.end.push(this.sourceToken);
+            else
+              token.end = [this.sourceToken];
+            if (this.type === "newline")
+              yield* this.pop();
+        }
+      }
+    };
+    exports.Parser = Parser;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/public-api.js
+var require_public_api = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/public-api.js"(exports) {
+    "use strict";
+    var composer = require_composer();
+    var Document = require_Document();
+    var errors = require_errors();
+    var log = require_log();
+    var identity = require_identity();
+    var lineCounter = require_line_counter();
+    var parser = require_parser();
+    function parseOptions(options) {
+      const prettyErrors = options.prettyErrors !== false;
+      const lineCounter$1 = options.lineCounter || prettyErrors && new lineCounter.LineCounter() || null;
+      return { lineCounter: lineCounter$1, prettyErrors };
+    }
+    function parseAllDocuments(source, options = {}) {
+      const { lineCounter: lineCounter2, prettyErrors } = parseOptions(options);
+      const parser$1 = new parser.Parser(lineCounter2?.addNewLine);
+      const composer$1 = new composer.Composer(options);
+      const docs = Array.from(composer$1.compose(parser$1.parse(source)));
+      if (prettyErrors && lineCounter2)
+        for (const doc of docs) {
+          doc.errors.forEach(errors.prettifyError(source, lineCounter2));
+          doc.warnings.forEach(errors.prettifyError(source, lineCounter2));
+        }
+      if (docs.length > 0)
+        return docs;
+      return Object.assign([], { empty: true }, composer$1.streamInfo());
+    }
+    function parseDocument(source, options = {}) {
+      const { lineCounter: lineCounter2, prettyErrors } = parseOptions(options);
+      const parser$1 = new parser.Parser(lineCounter2?.addNewLine);
+      const composer$1 = new composer.Composer(options);
+      let doc = null;
+      for (const _doc of composer$1.compose(parser$1.parse(source), true, source.length)) {
+        if (!doc)
+          doc = _doc;
+        else if (doc.options.logLevel !== "silent") {
+          doc.errors.push(new errors.YAMLParseError(_doc.range.slice(0, 2), "MULTIPLE_DOCS", "Source contains multiple documents; please use YAML.parseAllDocuments()"));
+          break;
+        }
+      }
+      if (prettyErrors && lineCounter2) {
+        doc.errors.forEach(errors.prettifyError(source, lineCounter2));
+        doc.warnings.forEach(errors.prettifyError(source, lineCounter2));
+      }
+      return doc;
+    }
+    function parse4(src, reviver, options) {
+      let _reviver = void 0;
+      if (typeof reviver === "function") {
+        _reviver = reviver;
+      } else if (options === void 0 && reviver && typeof reviver === "object") {
+        options = reviver;
+      }
+      const doc = parseDocument(src, options);
+      if (!doc)
+        return null;
+      doc.warnings.forEach((warning) => log.warn(doc.options.logLevel, warning));
+      if (doc.errors.length > 0) {
+        if (doc.options.logLevel !== "silent")
+          throw doc.errors[0];
+        else
+          doc.errors = [];
+      }
+      return doc.toJS(Object.assign({ reviver: _reviver }, options));
+    }
+    function stringify2(value, replacer, options) {
+      let _replacer = null;
+      if (typeof replacer === "function" || Array.isArray(replacer)) {
+        _replacer = replacer;
+      } else if (options === void 0 && replacer) {
+        options = replacer;
+      }
+      if (typeof options === "string")
+        options = options.length;
+      if (typeof options === "number") {
+        const indent2 = Math.round(options);
+        options = indent2 < 1 ? void 0 : indent2 > 8 ? { indent: 8 } : { indent: indent2 };
+      }
+      if (value === void 0) {
+        const { keepUndefined } = options ?? replacer ?? {};
+        if (!keepUndefined)
+          return void 0;
+      }
+      if (identity.isDocument(value) && !_replacer)
+        return value.toString(options);
+      return new Document.Document(value, _replacer, options).toString(options);
+    }
+    exports.parse = parse4;
+    exports.parseAllDocuments = parseAllDocuments;
+    exports.parseDocument = parseDocument;
+    exports.stringify = stringify2;
+  }
+});
+
+// ../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/index.js
+var require_dist = __commonJS({
+  "../../node_modules/.pnpm/yaml@2.9.1/node_modules/yaml/dist/index.js"(exports) {
+    "use strict";
+    var composer = require_composer();
+    var Document = require_Document();
+    var Schema = require_Schema();
+    var errors = require_errors();
+    var Alias = require_Alias();
+    var identity = require_identity();
+    var Pair = require_Pair();
+    var Scalar = require_Scalar();
+    var YAMLMap = require_YAMLMap();
+    var YAMLSeq = require_YAMLSeq();
+    var cst = require_cst();
+    var lexer = require_lexer();
+    var lineCounter = require_line_counter();
+    var parser = require_parser();
+    var publicApi = require_public_api();
+    var visit = require_visit();
+    exports.Composer = composer.Composer;
+    exports.Document = Document.Document;
+    exports.Schema = Schema.Schema;
+    exports.YAMLError = errors.YAMLError;
+    exports.YAMLParseError = errors.YAMLParseError;
+    exports.YAMLWarning = errors.YAMLWarning;
+    exports.Alias = Alias.Alias;
+    exports.isAlias = identity.isAlias;
+    exports.isCollection = identity.isCollection;
+    exports.isDocument = identity.isDocument;
+    exports.isMap = identity.isMap;
+    exports.isNode = identity.isNode;
+    exports.isPair = identity.isPair;
+    exports.isScalar = identity.isScalar;
+    exports.isSeq = identity.isSeq;
+    exports.Pair = Pair.Pair;
+    exports.Scalar = Scalar.Scalar;
+    exports.YAMLMap = YAMLMap.YAMLMap;
+    exports.YAMLSeq = YAMLSeq.YAMLSeq;
+    exports.CST = cst;
+    exports.Lexer = lexer.Lexer;
+    exports.LineCounter = lineCounter.LineCounter;
+    exports.Parser = parser.Parser;
+    exports.parse = publicApi.parse;
+    exports.parseAllDocuments = publicApi.parseAllDocuments;
+    exports.parseDocument = publicApi.parseDocument;
+    exports.stringify = publicApi.stringify;
+    exports.visit = visit.visit;
+    exports.visitAsync = visit.visitAsync;
   }
 });
 
 // ../config/src/load.ts
-import { build } from "esbuild";
+import { build, transform as transform2 } from "esbuild";
 import { existsSync as existsSync2 } from "node:fs";
 import { mkdir as mkdir2, mkdtemp, readFile as readFile2, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -1885,10 +9221,10 @@ function mergeDefs(...defs) {
 function cloneDef(schema) {
   return mergeDefs(schema._zod.def);
 }
-function getElementAtPath(obj, path6) {
-  if (!path6)
+function getElementAtPath(obj, path12) {
+  if (!path12)
     return obj;
-  return path6.reduce((acc, key) => acc?.[key], obj);
+  return path12.reduce((acc, key) => acc?.[key], obj);
 }
 function promiseAllObject(promisesObj) {
   const keys = Object.keys(promisesObj);
@@ -1903,14 +9239,14 @@ function promiseAllObject(promisesObj) {
 }
 function randomString(length = 10) {
   const chars = "abcdefghijklmnopqrstuvwxyz";
-  let str = "";
+  let str2 = "";
   for (let i = 0; i < length; i++) {
-    str += chars[Math.floor(Math.random() * chars.length)];
+    str2 += chars[Math.floor(Math.random() * chars.length)];
   }
-  return str;
+  return str2;
 }
-function esc(str) {
-  return JSON.stringify(str);
+function esc(str2) {
+  return JSON.stringify(str2);
 }
 var captureStackTrace = "captureStackTrace" in Error ? Error.captureStackTrace : (..._args) => {
 };
@@ -2005,8 +9341,8 @@ var getParsedType = (data) => {
 };
 var propertyKeyTypes = /* @__PURE__ */ new Set(["string", "number", "symbol"]);
 var primitiveTypes = /* @__PURE__ */ new Set(["string", "number", "bigint", "boolean", "symbol", "undefined"]);
-function escapeRegex(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function escapeRegex(str2) {
+  return str2.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 function clone(inst, def, params) {
   const cl = new inst._zod.constr(def ?? inst._zod.def);
@@ -2249,21 +9585,21 @@ function aborted(x, startIndex = 0) {
   }
   return false;
 }
-function prefixIssues(path6, issues) {
+function prefixIssues(path12, issues) {
   return issues.map((iss) => {
     var _a;
     (_a = iss).path ?? (_a.path = []);
-    iss.path.unshift(path6);
+    iss.path.unshift(path12);
     return iss;
   });
 }
 function unwrapMessage(message) {
   return typeof message === "string" ? message : message?.message;
 }
-function finalizeIssue(iss, ctx, config2) {
+function finalizeIssue(iss, ctx, config3) {
   const full = { ...iss, path: iss.path ?? [] };
   if (!iss.message) {
-    const message = unwrapMessage(iss.inst?._zod.def?.error?.(iss)) ?? unwrapMessage(ctx?.error?.(iss)) ?? unwrapMessage(config2.customError?.(iss)) ?? unwrapMessage(config2.localeError?.(iss)) ?? "Invalid input";
+    const message = unwrapMessage(iss.inst?._zod.def?.error?.(iss)) ?? unwrapMessage(ctx?.error?.(iss)) ?? unwrapMessage(config3.customError?.(iss)) ?? unwrapMessage(config3.localeError?.(iss)) ?? "Invalid input";
     full.message = message;
   }
   delete full.inst;
@@ -2415,7 +9751,7 @@ function formatError(error46, mapper = (issue2) => issue2.message) {
 }
 function treeifyError(error46, mapper = (issue2) => issue2.message) {
   const result = { errors: [] };
-  const processError = (error47, path6 = []) => {
+  const processError = (error47, path12 = []) => {
     var _a, _b;
     for (const issue2 of error47.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
@@ -2425,7 +9761,7 @@ function treeifyError(error46, mapper = (issue2) => issue2.message) {
       } else if (issue2.code === "invalid_element") {
         processError({ issues: issue2.issues }, issue2.path);
       } else {
-        const fullpath = [...path6, ...issue2.path];
+        const fullpath = [...path12, ...issue2.path];
         if (fullpath.length === 0) {
           result.errors.push(mapper(issue2));
           continue;
@@ -2457,8 +9793,8 @@ function treeifyError(error46, mapper = (issue2) => issue2.message) {
 }
 function toDotPath(_path) {
   const segs = [];
-  const path6 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
-  for (const seg of path6) {
+  const path12 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
+  for (const seg of path12) {
     if (typeof seg === "number")
       segs.push(`[${seg}]`);
     else if (typeof seg === "symbol")
@@ -2642,10 +9978,10 @@ var nanoid = /^[a-zA-Z0-9_-]{21}$/;
 var duration = /^P(?:(\d+W)|(?!.*W)(?=\d|T\d)(\d+Y)?(\d+M)?(\d+D)?(T(?=\d)(\d+H)?(\d+M)?(\d+([.,]\d+)?S)?)?)$/;
 var extendedDuration = /^[-+]?P(?!$)(?:(?:[-+]?\d+Y)|(?:[-+]?\d+[.,]\d+Y$))?(?:(?:[-+]?\d+M)|(?:[-+]?\d+[.,]\d+M$))?(?:(?:[-+]?\d+W)|(?:[-+]?\d+[.,]\d+W$))?(?:(?:[-+]?\d+D)|(?:[-+]?\d+[.,]\d+D$))?(?:T(?=[\d+-])(?:(?:[-+]?\d+H)|(?:[-+]?\d+[.,]\d+H$))?(?:(?:[-+]?\d+M)|(?:[-+]?\d+[.,]\d+M$))?(?:[-+]?\d+(?:[.,]\d+)?S)?)??$/;
 var guid = /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$/;
-var uuid = (version2) => {
-  if (!version2)
+var uuid = (version3) => {
+  if (!version3)
     return /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/;
-  return new RegExp(`^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-${version2}[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$`);
+  return new RegExp(`^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-${version3}[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$`);
 };
 var uuid4 = /* @__PURE__ */ uuid(4);
 var uuid6 = /* @__PURE__ */ uuid(6);
@@ -4046,13 +11382,13 @@ var $ZodObject = /* @__PURE__ */ $constructor("$ZodObject", (inst, def) => {
     }
     return propValues;
   });
-  const isObject3 = isObject;
+  const isObject4 = isObject;
   const catchall = def.catchall;
   let value;
   inst._zod.parse = (payload, ctx) => {
     value ?? (value = _normalized.value);
     const input = payload.value;
-    if (!isObject3(input)) {
+    if (!isObject4(input)) {
       payload.issues.push({
         expected: "object",
         code: "invalid_type",
@@ -4126,7 +11462,7 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
     return (payload, ctx) => fn(shape, payload, ctx);
   };
   let fastpass;
-  const isObject3 = isObject;
+  const isObject4 = isObject;
   const jit = !globalConfig.jitless;
   const allowsEval2 = allowsEval;
   const fastEnabled = jit && allowsEval2.value;
@@ -4135,7 +11471,7 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
   inst._zod.parse = (payload, ctx) => {
     value ?? (value = _normalized.value);
     const input = payload.value;
-    if (!isObject3(input)) {
+    if (!isObject4(input)) {
       payload.issues.push({
         expected: "object",
         code: "invalid_type",
@@ -8228,8 +15564,8 @@ var parsedTypeFromType = (t, data = void 0) => {
   }
   return t;
 };
-var capitalizeFirstCharacter = (text) => {
-  return text.charAt(0).toUpperCase() + text.slice(1);
+var capitalizeFirstCharacter = (text3) => {
+  return text3.charAt(0).toUpperCase() + text3.slice(1);
 };
 function getUnitTypeFromNumber(number4) {
   const abs = Math.abs(number4);
@@ -12130,28 +19466,28 @@ var JSONSchemaGenerator = class {
           }
           case "file": {
             const json2 = _json;
-            const file2 = {
+            const file3 = {
               type: "string",
               format: "binary",
               contentEncoding: "binary"
             };
             const { minimum, maximum, mime } = schema._zod.bag;
             if (minimum !== void 0)
-              file2.minLength = minimum;
+              file3.minLength = minimum;
             if (maximum !== void 0)
-              file2.maxLength = maximum;
+              file3.maxLength = maximum;
             if (mime) {
               if (mime.length === 1) {
-                file2.contentMediaType = mime[0];
-                Object.assign(json2, file2);
+                file3.contentMediaType = mime[0];
+                Object.assign(json2, file3);
               } else {
                 json2.anyOf = mime.map((m) => {
-                  const mFile = { ...file2, contentMediaType: m };
+                  const mFile = { ...file3, contentMediaType: m };
                   return mFile;
                 });
               }
             } else {
-              Object.assign(json2, file2);
+              Object.assign(json2, file3);
             }
             break;
           }
@@ -13712,11 +21048,11 @@ function asPresets(value, where) {
   }
   return presets2;
 }
-async function layersOf(config2, name, context, preset, depth = 0) {
+async function layersOf(config3, name, context, preset, depth = 0) {
   if (depth > 8) throw new Error(`${name}: presets extend too deeply`);
   const layers = [];
-  if (config2.extends !== void 0) {
-    for (const extended of asPresets(config2.extends, name)) {
+  if (config3.extends !== void 0) {
+    for (const extended of asPresets(config3.extends, name)) {
       const value = typeof extended.config === "function" ? (
         // oxlint-disable-next-line no-await-in-loop
         await extended.config(context)
@@ -13729,7 +21065,7 @@ async function layersOf(config2, name, context, preset, depth = 0) {
       );
     }
   }
-  layers.push({ config: config2, name, ...preset ? { preset } : {} });
+  layers.push({ config: config3, name, ...preset ? { preset } : {} });
   return layers;
 }
 function leaves(value, at, out) {
@@ -13773,8 +21109,8 @@ function mergeLayers(layers) {
   for (const layer of layers) data = merge2(data, layer.config, layer.name, "");
   return { data, sources };
 }
-async function resolveExtends(config2, name, context) {
-  const layers = await layersOf(config2, name, context);
+async function resolveExtends(config3, name, context) {
+  const layers = await layersOf(config3, name, context);
   const values = [];
   const prepareApps = [];
   for (const layer of layers) {
@@ -13826,11 +21162,11 @@ async function resolveExtends(config2, name, context) {
 function sourcesOf(resolved, sources) {
   const out = {};
   const lookup = (at) => {
-    for (let path6 = at; path6; ) {
-      const source = sources[path6];
+    for (let path12 = at; path12; ) {
+      const source = sources[path12];
       if (source) return source;
-      const dot = path6.lastIndexOf(".");
-      path6 = dot < 0 ? "" : path6.slice(0, dot);
+      const dot = path12.lastIndexOf(".");
+      path12 = dot < 0 ? "" : path12.slice(0, dot);
     }
     return "default";
   };
@@ -13844,8 +21180,8 @@ function sourcesOf(resolved, sources) {
 }
 
 // ../config/src/index.ts
-function configJson(config2) {
-  return `${JSON.stringify(config2, null, 2)}
+function configJson(config3) {
+  return `${JSON.stringify(config3, null, 2)}
 `;
 }
 var presetsKey = /* @__PURE__ */ Symbol.for("@todesktop/config/presets");
@@ -14229,10 +21565,10 @@ function parseNumber(ctx, startPtr, startChr, sign, endChr) {
   }
   if (!(state & 1))
     TomlError.x("unfinished numeric value", ctx, startPtr);
-  let str = ctx.s.slice(startPtr, ctx.p);
+  let str2 = ctx.s.slice(startPtr, ctx.p);
   if (hasUnderscores)
-    str = str.replaceAll("_", "");
-  return state > 1 ? parseFloat(str) : parseInteger(ctx, str, 10, startPtr);
+    str2 = str2.replaceAll("_", "");
+  return state > 1 ? parseFloat(str2) : parseInteger(ctx, str2, 10, startPtr);
 }
 function parseIntegerBaseN(ctx, startPtr, base, endChr) {
   let c, underscore = 1;
@@ -14248,15 +21584,15 @@ function parseIntegerBaseN(ctx, startPtr, base, endChr) {
   }
   if (underscore & 1)
     TomlError.x("unfinished numeric value", ctx);
-  let str = ctx.s.slice(startPtr + 2, ctx.p);
+  let str2 = ctx.s.slice(startPtr + 2, ctx.p);
   if (underscore)
-    str = str.replaceAll("_", "");
-  return parseInteger(ctx, str, base, startPtr);
+    str2 = str2.replaceAll("_", "");
+  return parseInteger(ctx, str2, base, startPtr);
 }
-function parseInteger(ctx, str, base, startPtr) {
+function parseInteger(ctx, str2, base, startPtr) {
   if (ctx.bi !== true)
     int: {
-      let val = parseInt(str, base);
+      let val = parseInt(str2, base);
       if (!Number.isSafeInteger(val)) {
         if (ctx.bi)
           break int;
@@ -14264,7 +21600,7 @@ function parseInteger(ctx, str, base, startPtr) {
       }
       return val;
     }
-  return base === 10 ? BigInt(str) : BigInt((base === 2 ? "0b" : base === 8 ? "0o" : "0x") + str);
+  return base === 10 ? BigInt(str2) : BigInt((base === 2 ? "0b" : base === 8 ? "0o" : "0x") + str2);
 }
 function parseDate(ctx, c, endChr) {
   let startPtr = ctx.p++, unsafeSeparator;
@@ -14311,25 +21647,25 @@ function parseTime(ctx, c, endChr) {
   let t = ctx.s.slice(start, ctx.p);
   return readDate(ctx, t, 4, false, start);
 }
-function readDate(ctx, str, type, unsafeDelim, errPtr, temporalSuffix) {
+function readDate(ctx, str2, type, unsafeDelim, errPtr, temporalSuffix) {
   if (ctx.ld) {
-    let date5 = new TomlDate(str, type, unsafeDelim);
+    let date5 = new TomlDate(str2, type, unsafeDelim);
     if (!date5.isValid())
       TomlError.x("invalid date", ctx, errPtr);
     return date5;
   }
   try {
     if (temporalSuffix)
-      str += temporalSuffix;
+      str2 += temporalSuffix;
     switch (type) {
       case 1:
-        return Temporal.ZonedDateTime.from(str);
+        return Temporal.ZonedDateTime.from(str2);
       case 2:
-        return Temporal.PlainDateTime.from(str);
+        return Temporal.PlainDateTime.from(str2);
       case 3:
-        return Temporal.PlainDate.from(str);
+        return Temporal.PlainDate.from(str2);
       case 4:
-        return Temporal.PlainTime.from(str);
+        return Temporal.PlainTime.from(str2);
     }
   } catch (e) {
     TomlError.x(e instanceof Error ? e.message : "" + e, ctx, errPtr);
@@ -14639,24 +21975,24 @@ function isObject2(value) {
 }
 var asString = (value) => typeof value === "string" && value !== "" ? value : void 0;
 var asStrings = (value) => Array.isArray(value) ? value.filter((item) => typeof item === "string") : [];
-var relativeTo = (configDir, file2) => path.relative(configDir, file2).split(path.sep).join("/") || ".";
-async function parseFile(file2) {
-  const text = await readFile(file2, "utf8");
+var relativeTo = (configDir, file3) => path.relative(configDir, file3).split(path.sep).join("/") || ".";
+async function parseFile(file3) {
+  const text3 = await readFile(file3, "utf8");
   let value;
   try {
-    if (file2.endsWith(".toml")) value = parse3(text);
-    else if (file2.endsWith(".json5")) value = import_json5.default.parse(text);
+    if (file3.endsWith(".toml")) value = parse3(text3);
+    else if (file3.endsWith(".json5")) value = import_json5.default.parse(text3);
     else {
       try {
-        value = JSON.parse(text);
+        value = JSON.parse(text3);
       } catch {
-        value = import_json5.default.parse(text);
+        value = import_json5.default.parse(text3);
       }
     }
   } catch (error46) {
-    throw new Error(`tauriConfig(): ${file2}: ${error46.message}`);
+    throw new Error(`tauriConfig(): ${file3}: ${error46.message}`);
   }
-  if (!isObject2(value)) throw new Error(`tauriConfig(): ${file2} isn't a table`);
+  if (!isObject2(value)) throw new Error(`tauriConfig(): ${file3} isn't a table`);
   return value;
 }
 var keyShape = {
@@ -14713,19 +22049,19 @@ async function findConfig(configDir, given) {
   return found;
 }
 async function platformOverride(dir, platform) {
-  const os = tauriPlatforms[platform];
-  const file2 = [
-    `tauri.${os}.conf.json`,
-    `tauri.${os}.conf.json5`,
-    `Tauri.${os}.toml`
+  const os3 = tauriPlatforms[platform];
+  const file3 = [
+    `tauri.${os3}.conf.json`,
+    `tauri.${os3}.conf.json5`,
+    `Tauri.${os3}.toml`
   ].map((name) => path.join(dir, name)).find(existsSync);
-  return file2 ? camelKeys(await parseFile(file2)) : void 0;
+  return file3 ? camelKeys(await parseFile(file3)) : void 0;
 }
 async function workspaceOf(dir) {
   for (let at = dir; ; at = path.dirname(at)) {
-    const file2 = path.join(at, "Cargo.toml");
-    if (existsSync(file2)) {
-      const manifest = await parseFile(file2);
+    const file3 = path.join(at, "Cargo.toml");
+    if (existsSync(file3)) {
+      const manifest = await parseFile(file3);
       if (isObject2(manifest.workspace)) return { dir: at, manifest };
     }
     if (path.dirname(at) === at) return void 0;
@@ -14736,9 +22072,9 @@ async function cargoBuildConfig(dir) {
   let targetDir;
   for (let at = dir; ; at = path.dirname(at)) {
     for (const name of ["config.toml", "config"]) {
-      const file2 = path.join(at, ".cargo", name);
-      if (!existsSync(file2)) continue;
-      const { build: build2 } = await parseFile(file2);
+      const file3 = path.join(at, ".cargo", name);
+      if (!existsSync(file3)) continue;
+      const { build: build2 } = await parseFile(file3);
       if (!isObject2(build2)) continue;
       const configuredDir = asString(build2["target-dir"]);
       targetDir ??= configuredDir ? path.resolve(at, configuredDir) : void 0;
@@ -14771,10 +22107,10 @@ async function cargoMetadata(dir) {
     return void 0;
   }
 }
-function endsWithPath(file2, suffix) {
+function endsWithPath(file3, suffix) {
   const parts = (value) => value.split(/[\\/]+/).filter((part) => part !== "" && part !== ".");
   const tail = parts(suffix);
-  const whole = parts(file2);
+  const whole = parts(file3);
   return tail.length > 0 && tail.length <= whole.length && tail.every(
     (part, index) => whole[whole.length - tail.length + index] === part
   );
@@ -14802,9 +22138,9 @@ async function mainBinaryOf(manifest, name, defaultRun, dir) {
   if (existsSync(path.join(dir, "src", "main.rs"))) {
     found.push([name, path.join(dir, "src", "main.rs")]);
   }
-  for (const [binName, file2] of found) {
+  for (const [binName, file3] of found) {
     const covered = binaries.some(
-      (bin) => bin.name === binName || bin.path !== void 0 && endsWithPath(file2, bin.path)
+      (bin) => bin.name === binName || bin.path !== void 0 && endsWithPath(file3, bin.path)
     );
     if (!covered) binaries.push({ main: false, name: binName });
   }
@@ -14825,18 +22161,18 @@ async function mainBinaryOf(manifest, name, defaultRun, dir) {
   return main2.name;
 }
 async function readCargo(dir) {
-  const file2 = path.join(dir, "Cargo.toml");
-  if (!existsSync(file2)) {
+  const file3 = path.join(dir, "Cargo.toml");
+  if (!existsSync(file3)) {
     throw new Error(`tauriConfig(): no Cargo.toml in ${dir}`);
   }
-  const manifest = await parseFile(file2);
+  const manifest = await parseFile(file3);
   const pkg = isObject2(manifest.package) ? manifest.package : {};
   const name = asString(pkg.name);
-  if (!name) throw new Error(`tauriConfig(): ${file2} has no package.name`);
+  if (!name) throw new Error(`tauriConfig(): ${file3} has no package.name`);
   const build2 = await cargoBuildConfig(dir);
   const buildTarget = process.env.CARGO_BUILD_TARGET ?? build2.target;
   const metadata = await cargoMetadata(dir);
-  const real = await realpath(file2).catch(() => file2);
+  const real = await realpath(file3).catch(() => file3);
   const packages = Array.isArray(metadata?.packages) ? metadata.packages.filter(isObject2) : [];
   let resolved;
   for (const candidate of packages) {
@@ -14851,7 +22187,7 @@ async function readCargo(dir) {
     const tauri2 = (Array.isArray(resolved.dependencies) ? resolved.dependencies.filter(isObject2) : []).find((dependency) => dependency.name === "tauri");
     const description2 = asString(resolved.description);
     const homepage2 = asString(resolved.homepage);
-    const version3 = asString(resolved.version);
+    const version4 = asString(resolved.version);
     return {
       authors: asStrings(resolved.authors),
       ...buildTarget ? { buildTarget } : {},
@@ -14866,7 +22202,7 @@ async function readCargo(dir) {
       name,
       targetDir: metadataTargetDir,
       trayIcon: asStrings(tauri2?.features).includes("tray-icon"),
-      ...version3 ? { version: version3 } : {}
+      ...version4 ? { version: version4 } : {}
     };
   }
   const workspace = await workspaceOf(dir);
@@ -14886,7 +22222,7 @@ async function readCargo(dir) {
   const targetDir = fromEnv ? path.resolve(dir, fromEnv) : build2.targetDir ?? path.join(workspace?.dir ?? dir, "target");
   const description = asString(field("description"));
   const homepage = asString(field("homepage"));
-  const version2 = asString(field("version"));
+  const version3 = asString(field("version"));
   return {
     authors: asStrings(field("authors")),
     ...buildTarget ? { buildTarget } : {},
@@ -14901,35 +22237,35 @@ async function readCargo(dir) {
     name,
     targetDir,
     trayIcon: features.includes("tray-icon"),
-    ...version2 ? { version: version2 } : {}
+    ...version3 ? { version: version3 } : {}
   };
 }
 async function readTauriProject(configDir, given) {
-  const file2 = await findConfig(configDir, given);
-  const dir = path.dirname(file2);
-  const shared = camelKeys(await parseFile(file2));
-  const platforms2 = {};
+  const file3 = await findConfig(configDir, given);
+  const dir = path.dirname(file3);
+  const shared = camelKeys(await parseFile(file3));
+  const platforms3 = {};
   for (const platform of platformsInOrder) {
     const patch = await platformOverride(dir, platform);
-    platforms2[platform] = patch ? mergePatch(shared, patch) : shared;
+    platforms3[platform] = patch ? mergePatch(shared, patch) : shared;
   }
-  return { cargo: await readCargo(dir), dir, file: file2, platforms: platforms2, shared };
+  return { cargo: await readCargo(dir), dir, file: file3, platforms: platforms3, shared };
 }
-var bundleOf = (config2) => isObject2(config2.bundle) ? config2.bundle : {};
-var productNameOf = (project, config2) => asString(config2.productName) ?? project.cargo.name;
+var bundleOf = (config3) => isObject2(config3.bundle) ? config3.bundle : {};
+var productNameOf = (project, config3) => asString(config3.productName) ?? project.cargo.name;
 var binaryOf = (project, platform) => asString(project.platforms[platform].mainBinaryName) ?? project.cargo.mainBinary;
 async function versionOf(project) {
-  const version2 = asString(project.shared.version);
-  if (version2?.endsWith(".json")) {
-    const file2 = path.resolve(project.dir, version2);
-    const json2 = JSON.parse(await readFile(file2, "utf8"));
+  const version3 = asString(project.shared.version);
+  if (version3?.endsWith(".json")) {
+    const file3 = path.resolve(project.dir, version3);
+    const json2 = JSON.parse(await readFile(file3, "utf8"));
     return asString(json2.version);
   }
-  return version2 ?? project.cargo.version;
+  return version3 ?? project.cargo.version;
 }
-async function pngWidth(file2) {
+async function pngWidth(file3) {
   try {
-    const handle = await open(file2, "r");
+    const handle = await open(file3, "r");
     try {
       const { buffer } = await handle.read(Buffer.alloc(24), 0, 24, 0);
       return buffer.toString("latin1", 12, 16) === "IHDR" ? buffer.readUInt32BE(16) : 0;
@@ -14950,7 +22286,7 @@ async function iconsOf(project, platform) {
   let png;
   let widest = 0;
   for (const icon of icons.filter(
-    (file2) => file2.toLowerCase().endsWith(".png")
+    (file3) => file3.toLowerCase().endsWith(".png")
   )) {
     const width = await pngWidth(icon);
     if (width > widest) [png, widest] = [icon, width];
@@ -14962,7 +22298,7 @@ var withoutUndefined = (value) => Object.fromEntries(
   Object.entries(value).filter(([, child]) => child !== void 0)
 );
 async function tauriPresetConfig(project, configDir) {
-  const relative = (file2) => relativeTo(configDir, file2);
+  const relative = (file3) => relativeTo(configDir, file3);
   const { cargo } = project;
   const sharedBundle = bundleOf(project.shared);
   const release = path.join(
@@ -14974,7 +22310,7 @@ async function tauriPresetConfig(project, configDir) {
   const authors = cargo.authors.join(", ");
   const { mac } = project.platforms;
   const macOS = isObject2(bundleOf(mac).macOS) ? bundleOf(mac).macOS : {};
-  const entitlements = asString(macOS.entitlements);
+  const entitlements2 = asString(macOS.entitlements);
   const windowsIcons = await iconsOf(project, "windows");
   const windowsPublisher = asString(
     bundleOf(project.platforms.windows).publisher
@@ -15017,7 +22353,7 @@ async function tauriPresetConfig(project, configDir) {
           )
         )
       },
-      entitlements: entitlements ? relative(path.resolve(project.dir, entitlements)) : void 0,
+      entitlements: entitlements2 ? relative(path.resolve(project.dir, entitlements2)) : void 0,
       formats: ["dmg"]
     }),
     maintainer: authors || asString(sharedBundle.publisher),
@@ -15080,18 +22416,18 @@ async function entriesOf(dir) {
 async function globWritten(pattern, cwd) {
   const { parts, root } = splitWritten(pattern);
   const found = /* @__PURE__ */ new Set();
-  const join = (shown, part) => shown === "" || shown.endsWith("/") ? `${shown}${part}` : `${shown}/${part}`;
-  const walk = async (dir, shown, rest) => {
+  const join = (shown2, part) => shown2 === "" || shown2.endsWith("/") ? `${shown2}${part}` : `${shown2}/${part}`;
+  const walk = async (dir, shown2, rest) => {
     const [part, ...after] = rest;
     if (part === void 0) {
-      found.add(shown);
+      found.add(shown2);
       return;
     }
     if (part === "**") {
-      await walk(dir, shown, after);
+      await walk(dir, shown2, after);
       for (const entry of await entriesOf(dir)) {
         if (entry.isDirectory()) {
-          await walk(path.join(dir, entry.name), join(shown, entry.name), rest);
+          await walk(path.join(dir, entry.name), join(shown2, entry.name), rest);
         }
       }
     } else if (hasMagic(part)) {
@@ -15100,13 +22436,13 @@ async function globWritten(pattern, cwd) {
         if (matcher.test(entry.name)) {
           await walk(
             path.join(dir, entry.name),
-            join(shown, entry.name),
+            join(shown2, entry.name),
             after
           );
         }
       }
     } else if (existsSync(path.join(dir, part))) {
-      await walk(path.join(dir, part), join(shown, part), after);
+      await walk(path.join(dir, part), join(shown2, part), after);
     }
   };
   await walk(root ? path.resolve(root) : cwd, root, parts);
@@ -15119,10 +22455,10 @@ async function globWritten(pattern, cwd) {
   }
   return [...found];
 }
-async function filesUnder(dir, shown) {
+async function filesUnder(dir, shown2) {
   const files = [];
   for (const entry of await entriesOf(dir)) {
-    const child = `${shown}/${entry.name}`;
+    const child = `${shown2}/${entry.name}`;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       files.push(...await filesUnder(full, child));
@@ -15136,7 +22472,7 @@ async function filesUnder(dir, shown) {
   }
   return files;
 }
-var isDirectory = async (file2) => (await stat(file2).catch(() => void 0))?.isDirectory() ?? false;
+var isDirectory = async (file3) => (await stat(file3).catch(() => void 0))?.isDirectory() ?? false;
 async function tauriResources(resources, dir) {
   const out = [];
   let entries = [];
@@ -15175,10 +22511,10 @@ async function tauriResources(resources, dir) {
       throw new Error(`bundle.resources: ${pattern} doesn't exist`);
     }
     if (await isDirectory(source)) {
-      for (const file2 of await filesUnder(source, written)) {
+      for (const file3 of await filesUnder(source, written)) {
         out.push({
-          source: path.resolve(dir, file2),
-          target: target === void 0 ? resourceRelpath(file2) : under(target, file2.slice(written.length + 1))
+          source: path.resolve(dir, file3),
+          target: target === void 0 ? resourceRelpath(file3) : under(target, file3.slice(written.length + 1))
         });
       }
     } else {
@@ -15214,9 +22550,9 @@ async function sidecarFile(dir, bin, platform, arch, buildTarget) {
   }
   return path.join(path.dirname(base), other.name);
 }
-async function isBinaryFor(file2, platform) {
+async function isBinaryFor(file3, platform) {
   try {
-    const handle = await open(file2, "r");
+    const handle = await open(file3, "r");
     try {
       const { buffer, bytesRead } = await handle.read(Buffer.alloc(4), 0, 4, 0);
       const magic = buffer.toString("latin1", 0, bytesRead);
@@ -15237,8 +22573,8 @@ function isSet(value) {
   if (isObject2(value)) return Object.keys(value).length > 0;
   return Boolean(value);
 }
-function ignoredTauriSettings(config2, platform) {
-  const bundle = bundleOf(config2);
+function ignoredTauriSettings(config3, platform) {
+  const bundle = bundleOf(config3);
   const at = (value, key) => isObject2(value) ? value[key] : void 0;
   const ignored = [];
   const check2 = (name, value, why) => {
@@ -15251,7 +22587,7 @@ function ignoredTauriSettings(config2, platform) {
   );
   check2(
     "plugins.deep-link.desktop",
-    at(at(config2.plugins, "deep-link"), "desktop"),
+    at(at(config3.plugins, "deep-link"), "desktop"),
     "its URL schemes aren\u2019t registered when the app is installed; register them when the app starts, with the deep-link plugin\u2019s register_all()"
   );
   if (platform === "windows") {
@@ -15312,23 +22648,78 @@ function ignoredTauriSettings(config2, platform) {
   }
   return ignored;
 }
+var multiarchOf = (arch) => arch === "arm64" ? "aarch64-linux-gnu" : "x86_64-linux-gnu";
+var trayLibraries = [
+  "libayatana-appindicator3.so.1",
+  "libappindicator3.so.1"
+];
+var trayFamily = /^lib(?:ayatana-|appindicator|indicator|dbusmenu-)/;
+var libraryDirsOf = (arch) => [
+  `/usr/lib/${multiarchOf(arch)}`,
+  `/lib/${multiarchOf(arch)}`,
+  ...arch === process.arch ? ["/usr/lib64", "/usr/lib"] : []
+];
+async function bundleTrayLibraries(appDir, executable, dirs) {
+  const find = (name) => dirs.map((dir) => path.join(dir, name)).find((file3) => existsSync(file3));
+  const tray = trayLibraries.map(find).find(Boolean);
+  if (!tray) {
+    return "libayatana-appindicator3 isn\u2019t on this machine (apt-get install libayatana-appindicator3-1)";
+  }
+  const needed = async (file3) => {
+    const { stdout } = await run("patchelf", ["--print-needed", file3]);
+    return stdout.split("\n").filter((name) => trayFamily.test(name));
+  };
+  try {
+    const files = /* @__PURE__ */ new Map([[path.basename(tray), tray]]);
+    const queue = [tray];
+    for (let file3 = queue.shift(); file3; file3 = queue.shift()) {
+      for (const name of await needed(file3)) {
+        const found = find(name);
+        if (found && !files.has(name)) {
+          files.set(name, found);
+          queue.push(found);
+        }
+      }
+    }
+    const binary = path.join(appDir, executable);
+    const { stdout } = await run("patchelf", ["--print-rpath", binary]);
+    const rpath = ["$ORIGIN/lib", ...stdout.trim().split(":")].filter(
+      (entry, index, all) => entry && all.indexOf(entry) === index
+    );
+    await run("patchelf", [
+      "--force-rpath",
+      "--set-rpath",
+      rpath.join(":"),
+      binary
+    ]);
+    await Promise.all(
+      [...files].map(
+        ([name, file3]) => copyInto(file3, path.join(appDir, "lib", name))
+      )
+    );
+    return void 0;
+  } catch (error46) {
+    const { code, message, stderr } = error46;
+    return code === "ENOENT" ? "patchelf isn\u2019t on this machine (apt-get install patchelf)" : `patchelf failed: ${(stderr?.trim() || message).split("\n").at(-1)}`;
+  }
+}
 async function assembleTauri(given, context) {
   const { appDir, arch, configDir, platform, source } = context;
   if (platform === "mac") return false;
   const project = await readTauriProject(configDir, given);
-  const config2 = project.platforms[platform];
+  const config3 = project.platforms[platform];
   const ext = platform === "windows" ? ".exe" : "";
   const binary = path.join(source, `${binaryOf(project, platform)}${ext}`);
   if (!await isBinaryFor(binary, platform)) return false;
-  for (const ignored of ignoredTauriSettings(config2, platform)) {
+  for (const ignored of ignoredTauriSettings(config3, platform)) {
     console.warn(`tauriConfig(): ${platform}: ${ignored}`);
   }
   const executable = context.config[platform]?.executable ?? `${binaryOf(project, platform)}${ext}`;
   await copyInto(binary, path.join(appDir, executable));
   if (platform === "linux") await chmod(path.join(appDir, executable), 493);
-  const bundle = bundleOf(config2);
+  const bundle = bundleOf(config3);
   for (const bin of asStrings(bundle.externalBin)) {
-    const file2 = await sidecarFile(
+    const file3 = await sidecarFile(
       project.dir,
       bin,
       platform,
@@ -15336,8 +22727,23 @@ async function assembleTauri(given, context) {
       project.cargo.buildTarget
     );
     const target = path.join(appDir, `${path.basename(bin)}${ext}`);
-    await copyInto(file2, target);
+    await copyInto(file3, target);
     if (platform === "linux") await chmod(target, 493);
+  }
+  const carried = (context.config.linux?.formats ?? []).filter(
+    (format) => format !== "deb"
+  );
+  if (platform === "linux" && project.cargo.trayIcon && carried.length > 0) {
+    const unbundled = await bundleTrayLibraries(
+      appDir,
+      executable,
+      libraryDirsOf(arch)
+    );
+    if (unbundled) {
+      console.warn(
+        `tauriConfig(): linux: the tray's library isn't in the app: ${unbundled}. A ${carried.join(" or ")} install then needs libayatana-appindicator3 on the person's machine, and the app panics at start without it`
+      );
+    }
   }
   let { resources } = bundle;
   const windowsBundle = isObject2(bundle.windows) ? bundle.windows : {};
@@ -15349,16 +22755,16 @@ async function assembleTauri(given, context) {
     resources = [...asStrings(resources), fixedRuntime];
   }
   const files = await tauriResources(resources, project.dir);
-  const resourceDir = platform === "windows" ? appDir : path.join(appDir, "usr", "lib", productNameOf(project, config2));
-  for (const file2 of files) {
+  const resourceDir = platform === "windows" ? appDir : path.join(appDir, "usr", "lib", productNameOf(project, config3));
+  for (const file3 of files) {
     await copyInto(
-      file2.source,
-      path.join(resourceDir, ...file2.target.split("/"))
+      file3.source,
+      path.join(resourceDir, ...file3.target.split("/"))
     );
   }
   if (platform === "linux" && files.length > 0 && context.config.linux?.formats.includes("tar.gz")) {
     console.warn(
-      `tauriConfig(): a tar.gz install can't find bundle.resources (Tauri looks in /usr/lib/${productNameOf(project, config2)}); deb, rpm, pacman and AppImage installs can`
+      `tauriConfig(): a tar.gz install can't find bundle.resources (Tauri looks in /usr/lib/${productNameOf(project, config3)}); deb, rpm, pacman and AppImage installs can`
     );
   }
   return true;
@@ -15378,7 +22784,6 @@ var presets = {
 };
 
 // ../config/src/schema.ts
-var fileName = external_exports.string().regex(/^[\w.-]+$/, "Must be a file name, not a path");
 var appPath = external_exports.string().min(1);
 var nestedCodePath = /^Contents(?:\/(?!\.{1,2}(?:\/|$))[^/\\]+)+$/;
 var linuxFormats = [
@@ -15389,7 +22794,7 @@ var linuxFormats = [
   "appimage"
 ];
 var macFormats = ["dmg", "pkg"];
-var windowsFormats = ["exe"];
+var windowsFormats = ["exe", "msi", "msix", "msix-store"];
 var deprecatedWindowsFormats = { nsis: "exe" };
 var linuxPlatform = external_exports.strictObject({
   /** The built app's directory per arch: x64, arm64 or both. */
@@ -15398,8 +22803,15 @@ var linuxPlatform = external_exports.strictObject({
   }),
   /** Package dependencies, as the package manager names them. */
   depends: external_exports.array(external_exports.string()).default([]),
-  /** The binary inside the app's directory; also linked into /usr/bin. */
-  executable: fileName,
+  /**
+   * The binary inside the app's directory: a file name, or a path in it
+   * (`bin/acme`, as CMake and linuxdeploy lay apps out). Linked into
+   * /usr/bin by its file name.
+   */
+  executable: external_exports.string().regex(
+    /^(?!\.{1,2}(?:\/|$))[\w.-]+(?:\/(?!\.{1,2}(?:\/|$))[\w.-]+)*$/,
+    "Must be a file name, or a path inside the app's folder (bin/acme)"
+  ),
   formats: external_exports.array(external_exports.enum(linuxFormats)).min(1),
   /**
    * A PNG, relative to the config: the AppImage's icon, and for deb, rpm
@@ -15485,21 +22897,28 @@ var macPlatform = external_exports.strictObject({
    * installs it: `dmg` for people, `pkg` for IT teams (installs into
    * /Applications; signed with a Developer ID Installer identity when
    * the build has one). All hold the same signed app. CI builds make
-   * the zip and a DMG only: a pkg needs a Mac, so `v2-runner build` on
-   * one makes it, and the CI path (`todesktop upload`, the edge)
-   * refuses a config asking for one (contracts ci.ts).
+   * all three on Linux (td-builder's mac/pkg.rs); a signed CI build
+   * needs the app's Developer ID Installer certificate for a pkg
+   * (contracts macSigning.ts). `v2-runner build` makes one on a Mac.
    */
   formats: external_exports.array(external_exports.enum(macFormats)).default([])
 });
+var msixIdentityName = external_exports.string().regex(
+  /^[A-Za-z0-9.-]{3,50}$/,
+  "Must be 3 to 50 letters, digits, dots and dashes"
+);
+var msixPublisher = external_exports.string().regex(/^CN=/, "Must be a distinguished name starting with CN=");
 var windowsPlatform = external_exports.strictObject({
   /** The built app's folder for each arch, holding the executable. */
   apps: external_exports.strictObject({ arm64: appPath.optional(), x64: appPath.optional() }).refine((apps) => apps.arm64 || apps.x64, "Add at least one app"),
   /** The app's .exe inside its folder; shortcuts and updates start it. */
   executable: external_exports.string().regex(/^[\w .-]+\.exe$/i, "Must be an .exe file name, not a path"),
   /**
-   * The installer, for first installs: `exe`. Updates come as the
-   * build's tar.gz, which the updater unpacks beside the running version.
-   * `nsis`, its old name, is still read as `exe` (deprecated).
+   * What to build besides `exe`, the installer for first installs, which
+   * is always built: Updates come as the build's tar.gz, which the
+   * updater unpacks beside the running version. `msi` and `msix` are
+   * x64 only and update the way windows.msi and the Store say. `nsis`,
+   * the installer's old name, is still read as `exe` (deprecated).
    */
   formats: external_exports.array(
     external_exports.enum([
@@ -15507,7 +22926,7 @@ var windowsPlatform = external_exports.strictObject({
       ...Object.keys(deprecatedWindowsFormats)
     ])
   ).default(["exe"]).meta({
-    description: 'The installer, for first installs: "exe". "nsis" is its old name, deprecated: it still works and builds an "exe".'
+    description: `What to build. "exe", the installer (always built); "msi" for IT to deploy (see windows.msi); "msix", a signed MSIX package to sideload or deploy; "msix-store", an unsigned MSIX package to upload to the Microsoft Store (needs windows.msix.store). "nsis" is the installer's old name, deprecated: it still works and builds an "exe".`
   }).transform((formats) => [
     ...new Set(
       formats.map(
@@ -15517,6 +22936,64 @@ var windowsPlatform = external_exports.strictObject({
   ]),
   /** An .ico for the installer and shortcuts, relative to the config. */
   icon: external_exports.string().optional(),
+  /** How the `msi` format installs and updates. */
+  msi: external_exports.strictObject({
+    /**
+     * 'per-machine': the app itself into Program Files, for every
+     * user; it doesn't update itself, IT deploys each new MSI.
+     * 'per-user': installs ToDesktop's installer machine-wide, which
+     * installs the app for each user at their next sign-in; each
+     * copy then updates itself, like one installed from the exe.
+     */
+    mode: external_exports.enum(["per-machine", "per-user"]).default("per-machine")
+  }).optional(),
+  /** The `msix` and `msix-store` packages' identity. */
+  msix: external_exports.strictObject({
+    /**
+     * The package's identity name (3 to 50 letters, digits, dots and
+     * dashes). Defaults to appId. Like the app ID, keep it once released.
+     */
+    identityName: msixIdentityName.optional(),
+    /**
+     * The publisher, as Windows writes the signing certificate's subject
+     * (`CN=Acme Inc, O=Acme Inc, L=Dublin, C=IE`). Read from the
+     * certificate when unset; set it only if Windows refuses the package
+     * because they differ.
+     */
+    publisher: msixPublisher.optional(),
+    /** Shown as the publisher. Defaults to windows.publisher, else the certificate's CN, else productName. */
+    publisherDisplayName: external_exports.string().min(1).optional(),
+    /**
+     * For `msix-store`: the package identity from Partner Center
+     * (Product management › Product identity), which the Store signs
+     * the package with.
+     */
+    store: external_exports.strictObject({
+      identityName: msixIdentityName,
+      publisher: msixPublisher,
+      publisherDisplayName: external_exports.string().min(1)
+    }).optional()
+  }).optional(),
+  /**
+   * For an Electron app moving from ToDesktop v1 (or any electron-builder
+   * NSIS install): the app it replaces. The installer takes over that
+   * app's per-user install wherever it finds one, removing it with its
+   * own uninstaller while keeping the user's data and shortcuts, and the
+   * Start menu shortcut keeps its AppUserModelID, so taskbar pins and
+   * notifications carry over. Set it before the first release: like the
+   * app ID, it can't change once released.
+   */
+  migrateFrom: external_exports.strictObject({
+    /**
+     * electron-builder's `appId` (in ToDesktop v1, todesktop.json's
+     * `appId`, like `com.acme.desktop`): its shortcuts' AppUserModelID,
+     * and what its NSIS registry keys are named after.
+     */
+    appId: external_exports.string().regex(
+      /^[A-Za-z0-9][\w.-]{0,127}$/,
+      "Must be electron-builder's appId, like com.acme.desktop"
+    )
+  }).optional(),
   /**
    * Shown as the publisher in Apps & features, and the programs' CompanyName
    * and LegalCopyright. CompanyName and Apps & features default to the
@@ -15554,6 +23031,8 @@ var updatePolicy = external_exports.strictObject({
   urgent: external_exports.enum(["check-daily", "off"]).default("check-daily")
 });
 var reservedAppIds = ["ci", "runtime", "v2"];
+var versionPattern = /^\d+\.\d+\.\d+([-+][\w.-]+)?$/;
+var versionMessage = "Must be three numbers, like 1.2.3 (a pre-release or build may follow: 1.2.3-beta.1, 1.2.3+5). A two-part version such as 2026.24 is 2026.24.0";
 var configSchema = external_exports.strictObject({
   /** For editors; ignored. */
   $schema: external_exports.string().optional(),
@@ -15591,15 +23070,33 @@ var configSchema = external_exports.strictObject({
    * the runner reads, so set it here (read it from your manifest) or
    * pass --version.
    */
-  version: external_exports.string().regex(/^\d+\.\d+\.\d+([-+][\w.-]+)?$/, "Must be a semver version").optional(),
+  version: external_exports.string().regex(versionPattern, versionMessage).optional(),
   windows: windowsPlatform.optional()
-}).refine((config2) => config2.linux || config2.mac || config2.windows, {
+}).refine((config3) => config3.linux || config3.mac || config3.windows, {
   message: "Add mac, linux or windows"
 }).refine(
   ({ linux }) => !linux?.apps.arm64 || linux.formats.some((format) => format !== "appimage"),
   {
     message: "AppImages are x64 only: add another format for linux.apps.arm64, or remove it",
     path: ["linux", "formats"]
+  }
+).refine(
+  ({ windows }) => !windows?.formats.includes("msi") || windows.apps.x64,
+  {
+    message: "MSIs are x64 only: add windows.apps.x64 (Windows on Arm runs it), or remove msi",
+    path: ["windows", "formats"]
+  }
+).refine(
+  ({ windows }) => !windows?.formats.includes("msix-store") || windows.msix?.store,
+  {
+    message: "msix-store needs windows.msix.store: the identity name, publisher and publisher display name from Partner Center",
+    path: ["windows", "msix", "store"]
+  }
+).refine(
+  ({ appId, windows }) => !windows?.formats.includes("msix") || windows.msix?.identityName || /^[A-Za-z0-9.-]{3,50}$/.test(appId),
+  {
+    message: "msix needs windows.msix.identityName: the app ID can't be an MSIX identity name (3 to 50 characters)",
+    path: ["windows", "msix", "identityName"]
   }
 );
 
@@ -15629,15 +23126,15 @@ function findConfigFile(dir) {
   return name ? path2.join(dir, name) : void 0;
 }
 var renameAsked = /* @__PURE__ */ new Set();
-function askToRename(file2) {
-  const base = path2.basename(file2);
-  const key = path2.resolve(file2);
+function askToRename(file3) {
+  const base = path2.basename(file3);
+  const key = path2.resolve(file3);
   if (!legacyConfigFileNames.includes(base) || renameAsked.has(key)) {
     return;
   }
   renameAsked.add(key);
   console.warn(
-    `${base}: rename it to todesktop.config${path2.extname(file2)}. ToDesktop reads ${base} for now, but will stop.`
+    `${base}: rename it to todesktop.config${path2.extname(file3)}. ToDesktop reads ${base} for now, but will stop.`
   );
 }
 var moduleExtensions = /* @__PURE__ */ new Set([
@@ -15655,14 +23152,36 @@ var runtimeModule = [
     (name) => `export const ${name} = (...args) => presets.${name}(...args);`
   )
 ].join("\n");
-async function bundleModule(file2) {
+var loaders = {
+  ".cjs": "js",
+  ".cts": "ts",
+  ".js": "js",
+  ".jsx": "jsx",
+  ".mjs": "js",
+  ".mts": "ts",
+  ".ts": "ts",
+  ".tsx": "tsx"
+};
+async function pinImportMeta(source, file3, loader = "ts") {
+  const { code } = await transform2(source, {
+    define: {
+      "import.meta.dirname": JSON.stringify(path2.dirname(file3)),
+      "import.meta.filename": JSON.stringify(file3),
+      "import.meta.url": JSON.stringify(pathToFileURL(file3).href)
+    },
+    loader,
+    sourcefile: file3
+  });
+  return code;
+}
+async function bundleModule(file3) {
   const result = await build({
     // CommonJS dependencies may require() Node's built-ins.
     banner: {
       js: "import { createRequire as __tdRequire } from 'node:module'; const require = __tdRequire(import.meta.url);"
     },
     bundle: true,
-    entryPoints: [file2],
+    entryPoints: [file3],
     format: "esm",
     logLevel: "silent",
     platform: "node",
@@ -15678,6 +23197,19 @@ async function bundleModule(file2) {
             contents: runtimeModule,
             loader: "js"
           }));
+          context.onLoad(
+            { filter: /\.(?:[cm]?[jt]s|[jt]sx)$/, namespace: "file" },
+            async (args) => {
+              const source = await readFile2(args.path, "utf8");
+              if (!source.includes("import.meta")) return void 0;
+              const loader = loaders[path2.extname(args.path)];
+              return {
+                contents: await pinImportMeta(source, args.path, loader),
+                // Plain JavaScript now: the transform took out types and JSX.
+                loader: "js"
+              };
+            }
+          );
         }
       }
     ],
@@ -15685,68 +23217,83 @@ async function bundleModule(file2) {
     write: false
   });
   const [output] = result.outputFiles;
-  if (!output) throw new Error(`Bundling ${file2} produced nothing`);
+  if (!output) throw new Error(`Bundling ${file3} produced nothing`);
   return output.text;
 }
 async function importBundle(bundle) {
   const dir = await mkdtemp(path2.join(tmpdir(), "todesktop-config-"));
   try {
-    const file2 = path2.join(dir, "todesktop.config.mjs");
-    await writeFile(file2, bundle);
-    const module = await import(pathToFileURL(file2).href);
+    const file3 = path2.join(dir, "todesktop.config.mjs");
+    await writeFile(file3, bundle);
+    const module = await import(pathToFileURL(file3).href);
     return module.default;
   } finally {
     await rm(dir, { force: true, recursive: true });
   }
 }
+function readHint(file3, error46) {
+  const failure = error46;
+  if (failure?.code !== "ENOENT") return failure;
+  return new Error(
+    `${file3} couldn't read ${failure.path ?? "a file"}: ${failure.message}. A path relative to the config resolves against the working directory (${process.cwd()}), not the config's folder: read files beside it with new URL('./FILE', import.meta.url) or path.join(import.meta.dirname, 'FILE').`,
+    { cause: error46 }
+  );
+}
 function isPlainObject3(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
-async function loadConfig(file2, context) {
-  const extension = path2.extname(file2);
+async function loadConfig(file3, context) {
+  const extension = path2.extname(file3);
   let exported;
   let bundle;
   if (extension === ".json") {
-    exported = JSON.parse(await readFile2(file2, "utf8"));
+    exported = JSON.parse(await readFile2(file3, "utf8"));
   } else if (moduleExtensions.has(extension)) {
     try {
-      bundle = await bundleModule(file2);
+      bundle = await bundleModule(file3);
     } catch (error46) {
-      throw new Error(`Couldn't bundle ${file2}: ${error46.message}`);
+      throw new Error(`Couldn't bundle ${file3}: ${error46.message}`);
     }
     globalThis[presetsKey] = presets;
-    exported = await importBundle(bundle);
+    exported = await importBundle(bundle).catch((error46) => {
+      throw readHint(file3, error46);
+    });
   } else {
     throw new Error(
-      `${file2}: use todesktop.config.ts, .mts, .js, .mjs or .json`
+      `${file3}: use todesktop.config.ts, .mts, .js, .mjs or .json`
     );
   }
-  const value = typeof exported === "function" ? await exported(context) : exported;
+  let value;
+  try {
+    value = typeof exported === "function" ? await exported(context) : exported;
+  } catch (error46) {
+    throw readHint(file3, error46);
+  }
   if (!isPlainObject3(value)) {
     throw new Error(
-      `${file2} must export a config object, or a function returning one, as its default export`
+      `${file3} must export a config object, or a function returning one, as its default export`
     );
   }
   if (typeof value.id === "string") {
     throw new Error(
-      `${file2} is a ToDesktop v1 config (it has id). v2 reads todesktop.config.ts, whose appId is your ToDesktop app ID.`
+      `${file3} is a ToDesktop v1 config (it has id). v2 reads todesktop.config.ts, whose appId is your ToDesktop app ID.`
     );
   }
   if (extension === ".json" && "extends" in value) {
     throw new Error(
-      `${file2}: extends takes presets, which are code: use todesktop.config.ts`
+      `${file3}: extends takes presets, which are code: use todesktop.config.ts`
     );
   }
-  const configDir = path2.dirname(file2);
+  const configDir = path2.dirname(file3);
   const { assemble, data, hooks, sources } = await resolveExtends(
     value,
-    path2.basename(file2),
+    path2.basename(file3),
     { ...context, configDir }
   );
   const windowsFormats2 = isPlainObject3(data.windows) ? data.windows.formats : void 0;
   if (Array.isArray(windowsFormats2) && windowsFormats2.includes("nsis")) {
     console.warn(
-      `${file2}: windows.formats "nsis" is deprecated; it's now "exe" (ToDesktop's own installer), which it builds`
+      `${file3}: windows.formats "nsis" is deprecated; it's now "exe" (ToDesktop's own installer), which it builds`
     );
   }
   const parsed = configSchema.safeParse(data);
@@ -15758,23 +23305,23 @@ async function loadConfig(file2, context) {
           const source = Object.entries(sources).find(
             ([leaf]) => leaf === key || leaf.startsWith(`${key}.`)
           )?.[1];
-          return source && source !== path2.basename(file2) ? [`${key} is ${source}'s`] : [];
+          return source && source !== path2.basename(file3) ? [`${key} is ${source}'s`] : [];
         })
       )
     ];
     throw new Error(
-      `${file2} is invalid:
+      `${file3} is invalid:
 ${external_exports.prettifyError(parsed.error)}${fromPresets.map((line) => `
   (${line})`).join("")}`
     );
   }
-  askToRename(file2);
+  askToRename(file3);
   return {
     assemble,
     ...bundle ? { bundle } : {},
     config: parsed.data,
     configDir,
-    file: file2,
+    file: file3,
     hooks,
     sources: sourcesOf(parsed.data, sources)
   };
@@ -15792,8 +23339,8 @@ function appsFor(loaded, platform, overrides = []) {
   }
   for (const override of overrides) {
     const [arch, ...rest] = override.split("=");
-    const file2 = rest.join("=");
-    if (!arch || !file2) {
+    const file3 = rest.join("=");
+    if (!arch || !file3) {
       throw new Error(`--input takes ARCH=PATH, got "${override}"`);
     }
     if (!(arch in apps)) {
@@ -15801,7 +23348,7 @@ function appsFor(loaded, platform, overrides = []) {
         `--input ${arch}: ${loaded.file} has no ${platform}.apps.${arch} (it lists ${Object.keys(apps).join(", ")})`
       );
     }
-    apps[arch] = path2.resolve(file2);
+    apps[arch] = path2.resolve(file3);
   }
   return apps;
 }
@@ -15821,20 +23368,4469 @@ async function assembleApp(loaded, platform, arch, source, appDir) {
 }
 
 // src/cli.ts
-import process4 from "node:process";
+import process11 from "node:process";
 import { parseArgs } from "node:util";
 
-// src/tauriBridge.ts
-import { execFile as execFile2 } from "node:child_process";
-import { existsSync as existsSync3 } from "node:fs";
-import { mkdir as mkdir3, readdir as readdir3, readFile as readFile5, writeFile as writeFile2 } from "node:fs/promises";
-import path4 from "node:path";
+// ../contracts/src/appIcon.ts
+var MAX_ICON_SOURCE_BYTES = 4 * 1024 * 1024;
+var MAX_ICON_BYTES = 1024 * 1024;
+var ICON_TAIL_BYTES = MAX_ICON_SOURCE_BYTES + 512 + 20 * 512;
+var decoder = new TextDecoder();
+
+// ../contracts/src/appTests.ts
+var MAX_IMAGE_CHARS = 8 * 1024 * 1024;
+
+// ../contracts/src/appLab.ts
+var appLabLimits = {
+  /** The commands a lab takes: a test's steps at most. */
+  commands: 50,
+  /** A lab ends this long after it opened, whatever happens. */
+  capMs: 30 * 6e4,
+  /** And this long after its last command, unless someone keeps it open. */
+  idleMs: 10 * 6e4,
+  /** The page warns this long before a lab ends for being idle. */
+  idleWarningMs: 2 * 6e4,
+  /** And this long after its last viewer left. */
+  unwatchedMs: 2 * 6e4
+};
+
+// ../contracts/src/ci.ts
+var pieceKey = (platform, arch) => `${platform}/${arch}`;
+var ciMacFormats = ["dmg", "pkg", "zip"];
+function requestedMacFormats(config3) {
+  const formats = config3?.mac?.formats;
+  return Array.isArray(formats) ? formats.filter((format) => typeof format === "string") : [];
+}
+function unbuiltMessage(formats) {
+  return `mac.formats asks for ${formats.join(" and ")}, which CI builds don't make: they produce ${ciMacFormats.join(", ")}. Remove ${formats.length === 1 ? "it" : "them"} from mac.formats to build in CI.`;
+}
+function ciConfigProblem(config3) {
+  const unbuilt = requestedMacFormats(config3).filter(
+    (format) => !ciMacFormats.includes(format)
+  );
+  return unbuilt.length > 0 ? unbuiltMessage(unbuilt) : null;
+}
+
+// ../contracts/src/identifiers.ts
+var reservedAppIds2 = ["ci", "runtime", "v2"];
+var appIdPattern = new RegExp(
+  `^(?!(?:${reservedAppIds2.join("|")})$)[a-z0-9][a-z0-9-]{1,62}$`
+);
+var labels = {
+  appId: "app ID",
+  macBundleId: "macOS bundle ID (CFBundleIdentifier)",
+  windowsAppId: "Windows app ID (AppUserModelID)"
+};
+var consequences = {
+  appId: "installed copies would refuse its updates as another app's",
+  macBundleId: "installed copies would refuse its updates (their code-signing check names the bundle ID), and macOS would treat it as another app, losing its permissions and keychain items",
+  windowsAppId: "Windows would show it as a second app beside the installed one, with its own shortcuts, notifications and Apps & features entry"
+};
+function identifierChanges(pinned, build2) {
+  const changes = [];
+  for (const field of Object.keys(labels)) {
+    const was = pinned?.[field];
+    const now = build2[field];
+    if (was && now && was !== now) {
+      changes.push({ build: now, field, pinned: was });
+    }
+  }
+  return changes;
+}
+var IdentifierChangeError = class extends Error {
+  /** For API responses: `{ error: message, code }`. */
+  code = "identifier-changed";
+  changes;
+  constructor(appId, changes) {
+    super(
+      [
+        `This build changes ${changes.length === 1 ? "an identifier" : "identifiers"} that ${appId}'s installed copies depend on, so ToDesktop refused it:`,
+        ...changes.map(
+          (change) => change.field === "appId" ? `- Its app ID is ${change.build}, but it was made for ${change.pinned}: ${consequences.appId}.` : `- The ${labels[change.field]} is ${change.build}, but ${appId}'s released builds use ${change.pinned}: ${consequences[change.field]}.`
+        ),
+        `Set ${changes.length === 1 ? "it" : "them"} back, or create a new app for the new ${changes.length === 1 ? "identifier" : "identifiers"}.`
+      ].join("\n")
+    );
+    this.name = "IdentifierChangeError";
+    this.changes = changes;
+  }
+};
+function checkIdentifiers(appId, pinned, build2) {
+  const changes = identifierChanges(pinned, build2);
+  if (changes.length > 0) throw new IdentifierChangeError(appId, changes);
+}
+
+// ../contracts/src/installerTag.ts
+var hexBytes = (hex3) => Uint8Array.from(hex3.match(/../g) ?? [], (pair) => Number.parseInt(pair, 16));
+var placeholderModulus = hexBytes(
+  "00abf78cedeeda4ead1ed8c84d81eb2388c741143575fe509e95d71b4b787790e1e26448863d5ec5b6cfa20f9795364a3e112ee072f532585ab79930c78eca73049cb0e68244f5aa4d13185482ea871f5cedb31b3c132d63cbe47ce0f75761883bcc19150aec951f165c234f83351e456653758408f036057ea7959f63b456cc8e6fcf97f6209d2ca8864b49d12f6d57745a7d4f2f0bde388c96801566f6aaeeb4972a3923d8c24a0c1817bbe61f70493ed6e8c3e4fc2346bed3f269ee8705ac3518a75b4fd362eb8cada72b9a7acccaf9f7ce124862b2f5cd2f967a5deb717f401058ecffa56176ad9a4f191e7c1dd228ba412c4a28064d336f3363693030455b"
+);
+
+// ../contracts/src/keyVaultAccess.ts
+var decoder2 = new TextDecoder();
+var encoder = new TextEncoder();
+
+// ../contracts/src/liveTicket.ts
+var LIVE_SOCKET_GRACE_MS = 10 * 6e4;
+
+// ../contracts/src/stage.ts
+var PRODUCTION_UPDATE_BASE_URL = "https://updates.todesktop.com";
+
+// src/agent/api.ts
+import process3 from "node:process";
+
+// src/agent/output.ts
 import process2 from "node:process";
-import { promisify as promisify2 } from "node:util";
+var exitCodes = {
+  blocked: 4,
+  failed: 1,
+  needsPerson: 3,
+  ok: 0,
+  timedOut: 5,
+  usage: 2
+};
+var CliError = class extends Error {
+  code;
+  exit;
+  fix;
+  constructor(code, message, { exit = exitCodes.failed, fix = [] } = {}) {
+    super(message);
+    this.code = code;
+    this.exit = exit;
+    this.fix = fix;
+  }
+};
+var cli = () => process2.env.npm_command === "exec" ? "npx @todesktop/v2" : "todesktop";
+var usageOf = (usage2) => usage2.replace(/^todesktop(?= )/, cli());
+var wantsJson = (flag) => flag ?? !process2.stdout.isTTY;
+var nextLines = (next, label) => next?.length ? `
+${next.map(
+  ({ command, why }) => `${label}  ${command}${why ? `   (${why})` : ""}`
+).join("\n")}
+` : "";
+function print(outcome, json2) {
+  if (json2) {
+    const envelope = outcome.needs ? {
+      ...outcome.data === void 0 ? {} : { data: outcome.data },
+      needs: outcome.needs,
+      next: outcome.next ?? [],
+      ok: false
+    } : { data: outcome.data ?? null, next: outcome.next ?? [], ok: true };
+    process2.stdout.write(
+      `${JSON.stringify(withProgress(envelope), null, 2)}
+`
+    );
+  } else {
+    let body = `${JSON.stringify(outcome.data, null, 2)}
+`;
+    if (outcome.human !== void 0) {
+      body = `${outcome.human}
+`;
+    } else if (outcome.needs) {
+      body = `${outcome.needs.message}
+  ${outcome.needs.url}
+`;
+    }
+    process2.stdout.write(body + nextLines(outcome.next, "next"));
+  }
+  return outcome.needs ? exitCodes.needsPerson : exitCodes.ok;
+}
+function printError(error46, json2) {
+  const failure = error46 instanceof CliError ? error46 : new CliError("failed", error46?.message ?? String(error46));
+  if (json2) {
+    process2.stdout.write(
+      `${JSON.stringify(
+        withProgress({
+          error: {
+            code: failure.code,
+            fix: failure.fix,
+            message: failure.message
+          },
+          ok: false
+        }),
+        null,
+        2
+      )}
+`
+    );
+  } else {
+    process2.stderr.write(
+      `${failure.message}
+${nextLines(failure.fix, "fix ")}`
+    );
+  }
+  return failure.exit;
+}
+var progressInJson;
+var jsonProgress = (json2) => {
+  progressInJson = json2 ? [] : void 0;
+};
+var withProgress = (envelope) => progressInJson?.length ? { ...envelope, progress: progressInJson } : envelope;
+var progress = (line) => {
+  if (progressInJson) progressInJson.push(line);
+  else process2.stderr.write(`${line}
+`);
+};
+
+// src/agent/api.ts
+var stages = {
+  dev: {
+    api: "https://api-dev.todesktop.cloud",
+    dashboard: "https://todesktop-dev.firebaseapp.com",
+    edge: "https://v2-edge-dev.todesktop.workers.dev",
+    functions: "https://us-central1-todesktop-dev.cloudfunctions.net"
+  },
+  local: {
+    api: "http://localhost:5013",
+    dashboard: "http://localhost:3000",
+    // The local-agent stack's edge (v2/e2e/src/localStack.ts).
+    edge: "http://127.0.0.1:8788",
+    functions: "http://localhost:5001/todesktop-dev/us-central1"
+  },
+  prod: {
+    api: "https://api.todesktop.com",
+    dashboard: "https://app.todesktop.com",
+    edge: PRODUCTION_UPDATE_BASE_URL,
+    functions: "https://us-central1-todesktop-prod1.cloudfunctions.net"
+  }
+};
+function stageOf() {
+  const stage = process3.env.TODESKTOP_STAGE || "prod";
+  if (!(stage in stages)) {
+    throw new CliError(
+      "invalid-stage",
+      `TODESKTOP_STAGE is prod, dev or local, not "${stage}"`,
+      { exit: exitCodes.usage }
+    );
+  }
+  return stage;
+}
+function hosts() {
+  const stage = stages[stageOf()];
+  const trim = (url2) => url2.replace(/\/+$/, "");
+  return {
+    api: trim(process3.env.TODESKTOP_API_URL || stage.api),
+    dashboard: trim(process3.env.TODESKTOP_DASHBOARD_URL || stage.dashboard),
+    edge: trim(process3.env.TODESKTOP_URL || stage.edge),
+    functions: trim(process3.env.TODESKTOP_FUNCTIONS_URL || stage.functions)
+  };
+}
+async function postJson(url2, body, token) {
+  let response;
+  try {
+    response = await fetch(url2, {
+      body: JSON.stringify(body),
+      headers: {
+        "content-type": "application/json",
+        ...token ? { authorization: `Bearer ${token}` } : {}
+      },
+      method: "POST"
+    });
+  } catch (error46) {
+    throw new CliError(
+      "unavailable",
+      `Couldn't reach ${new URL(url2).host}: ${error46.message}`
+    );
+  }
+  const text3 = await response.text();
+  let json2;
+  try {
+    json2 = text3 ? JSON.parse(text3) : null;
+  } catch {
+    json2 = void 0;
+  }
+  return { json: json2, response, text: text3 };
+}
+function apiFailure(reason, message, status2) {
+  if (message === "scope_denied") {
+    return new CliError(
+      "scope-denied",
+      "Your token can't read this app. Sign in again and pick it.",
+      { fix: [{ command: `${cli()} login` }] }
+    );
+  }
+  if (status2 === 401 || /token_(?:revoked|expired)|Invalid bearer/.test(message)) {
+    return new CliError(
+      "not-signed-in",
+      "Your sign-in has expired or was revoked.",
+      { fix: [{ command: `${cli()} login` }] }
+    );
+  }
+  return new CliError(reason || "failed", message);
+}
+async function callApi(name, input, token) {
+  const { json: json2, response, text: text3 } = await postJson(
+    `${hosts().api}/v1/v2/${name}`,
+    input,
+    token
+  );
+  if (!response.ok) {
+    const error46 = json2?.error;
+    throw apiFailure(
+      error46?.reason ?? "",
+      error46?.message ?? (text3.slice(0, 200) || `HTTP ${response.status}`),
+      response.status
+    );
+  }
+  return json2;
+}
+async function callFunction(name, body) {
+  const { json: json2, response, text: text3 } = await postJson(
+    `${hosts().functions}/${name}`,
+    body
+  );
+  if (json2 === void 0) {
+    throw new CliError(
+      "unavailable",
+      `${name} answered ${response.status}: ${text3.slice(0, 200)}`
+    );
+  }
+  return { body: json2, status: response.status };
+}
+
+// ../recipes/src/frameworks.ts
+var frameworkIds = [
+  "other",
+  "electron-builder",
+  "electron-forge",
+  "electron-packager",
+  "node",
+  "tauri",
+  "xcode",
+  "winui",
+  "qt"
+];
+var str = (value) => `'${value.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}'`;
+var fieldOf = (value, placeholder, why) => value ? `${str(value)},` : `${str(placeholder)}, // A placeholder: ${why}`;
+var configPlaceholders = {
+  description: "What your app does",
+  maintainer: "Your Company <support@example.com>"
+};
+var descriptionOf = (app) => fieldOf(
+  app.description,
+  configPlaceholders.description,
+  "your app's one line"
+);
+var maintainerOf = (app) => fieldOf(
+  app.maintainer,
+  configPlaceholders.maintainer,
+  "who publishes it, as Name <email>"
+);
+var slugOf = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "your-app";
+var shellWord = (value) => `'${value.replace(/'/g, "'\\''")}'`;
+var utf8 = new TextEncoder();
+function sanitizeFileName(name) {
+  const cleaned = name.replace(/[/?<>\\:*|"]/g, "").replace(/[\u0000-\u001f\u0080-\u009f]/g, "").replace(/^\.+$/, "").replace(/^(con|prn|aux|nul|com\d|lpt\d)(\..*)?$/i, "").replace(/[. ]+$/, "");
+  let kept = "";
+  for (const char of cleaned) {
+    if (utf8.encode(kept + char).length > 255) break;
+    kept += char;
+  }
+  return kept;
+}
+var productExe = (name) => {
+  const file3 = sanitizeFileName(name);
+  return /^[\w .-]+$/.test(file3) ? `${file3}.exe` : `${slugOf(name)}.exe`;
+};
+var config2 = (app, platforms3, packageJson) => `${packageJson ? "" : "// Types for your editor (optional): npm install --save-dev @todesktop/config\n"}import { defineConfig } from '@todesktop/config';
+
+export default defineConfig({
+  appId: ${str(app.id)},
+  productName: ${str(app.name)},
+  description: ${descriptionOf(app)}
+  maintainer: ${maintainerOf(app)}
+${packageJson ? "  // The version is the workflow's: a tag (v1.2.3), else package.json's." : "  // version: '1.2.3', // for runs without a tag: read it from your manifest"}
+${platforms3}
+});`;
+var typesSnippet = {
+  code: "npm install --save-dev @todesktop/config",
+  label: "Copy install command",
+  language: "bash",
+  title: "Add its types: your editor and tsc read todesktop.config.ts too."
+};
+var configSnippet = (app, platforms3, { packageJson = true } = {}) => ({
+  code: config2(app, platforms3, packageJson),
+  label: "Copy todesktop.config.ts",
+  language: "typescript",
+  path: "todesktop.config.ts"
+});
+var entitlements = {
+  code: `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>com.apple.security.cs.allow-jit</key>
+  <true/>
+  <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+  <true/>
+  <key>com.apple.security.cs.disable-library-validation</key>
+  <true/>
+</dict>
+</plist>`,
+  label: "Copy entitlements.plist",
+  language: "xml",
+  path: "entitlements.plist",
+  title: "entitlements.plist, beside it: Electron needs these to run once it\u2019s signed."
+};
+var v1Entitlements = {
+  ...entitlements,
+  code: `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+  <true/>
+  <key>com.apple.security.device.audio-input</key>
+  <true/>
+  <key>com.apple.security.device.microphone</key>
+  <true/>
+  <key>com.apple.security.device.camera</key>
+  <true/>
+  <key>com.apple.security.cs.disable-library-validation</key>
+  <true/>
+  <key>com.apple.security.cs.allow-dyld-environment-variables</key>
+  <true/>
+  <key>com.apple.security.cs.allow-jit</key>
+  <true/>
+</dict>
+</plist>`,
+  title: "entitlements.plist, beside it: what ToDesktop v1 signed your app with."
+};
+var productionEdgeUrl = "https://updates.todesktop.com";
+var workflowPath = ".github/workflows/release.yml";
+function tagVersion(start, version3, tags) {
+  if (versionAfter(start) !== "1.0.0") return versionAfter(start);
+  const own = version3 && semver.test(version3) ? version3 : void 0;
+  const released = tags.filter((tag) => tag.startsWith(start)).map((tag) => tag.slice(start.length)).filter((rest) => semver.test(rest)).sort(compareVersions2).at(-1);
+  const twoPart = tags.filter((tag) => tag.startsWith(start)).map((tag) => tag.slice(start.length)).filter((rest) => /^\d+\.\d+$/.test(rest)).sort(compareVersions2).at(-1);
+  if (twoPart && (!released || compareVersions2(`${twoPart}.0`, released) > 0) && (!own || compareVersions2(own, `${twoPart}.0`) <= 0)) {
+    const [major, minor] = twoPart.split(".");
+    return `${major}.${Number(minor) + 1}`;
+  }
+  if (released && (!own || compareVersions2(own, released) <= 0)) {
+    const [major, minor, patch] = released.split(/[-+]/)[0].split(".");
+    return `${major}.${minor}.${Number(patch) + 1}`;
+  }
+  return own ?? "1.0.0";
+}
+var semver = /^\d+\.\d+\.\d+(?:[-+][\w.-]+)?$/;
+function compareVersions2(a, b) {
+  const parts = (version3) => {
+    const numbers = version3.split(/[-+]/)[0].split(".").map(Number);
+    while (numbers.length < 3) numbers.push(0);
+    return numbers;
+  };
+  const [x, y] = [parts(a), parts(b)];
+  for (let index = 0; index < 3; index += 1) {
+    if (x[index] !== y[index]) return x[index] - y[index];
+  }
+  return 0;
+}
+function versionAfter(start) {
+  const parts = start.match(/(?:\d+\.)+$/)?.[0].split(".").length;
+  if (!parts) return "1.0.0";
+  return Array.from({ length: Math.max(4 - parts, 1) }, () => "0").join(".");
+}
+function firstTag(ref, pattern, version3, tags) {
+  const classed = /^([\w./-]*)\[([\w.-]+)\]\*$/.exec(pattern);
+  if (classed) {
+    const tag = `${classed[1]}${tagVersion(classed[1], version3, tags)}`;
+    return refMatches(ref, `refs/tags/${tag}`) ? tag : void 0;
+  }
+  if (/[?[\]{}!+@]|\*.*\*/.test(pattern)) return void 0;
+  return pattern.replace(
+    "*",
+    tagVersion(pattern.split("*")[0], version3, tags)
+  );
+}
+function firstPush(refs = [], version3, tags = []) {
+  const ref = refs[0] ?? "refs/tags/v*";
+  if (ref.startsWith("refs/tags/")) {
+    const pattern = ref.slice("refs/tags/".length);
+    const tag = firstTag(ref, pattern, version3, tags);
+    return {
+      command: (
+        // Shell-safe, and what git takes in a tag (1.3.2+build.5 too).
+        tag && /^[\w./+-]+$/.test(tag) ? `git tag ${tag} && git push origin ${tag}` : null
+      ),
+      title: ref === bareVersionTags ? "Push a version tag (1.2.3)" : `Push a ${pattern} tag`
+    };
+  }
+  if (ref.startsWith("refs/heads/")) {
+    const branch = ref.slice("refs/heads/".length);
+    return {
+      command: /^[\w./-]+$/.test(branch) ? `git push origin ${branch}` : null,
+      title: `Push to ${branch}`
+    };
+  }
+  return { command: null, title: "Run your workflow" };
+}
+var tauriBuildFixed = "2.7.0";
+var rustForOldTauriBuild = "1.99.0";
+function oldTauriBuild(version3) {
+  const [major, minor] = (version3 ?? "").split(".").map(Number);
+  const [, fixedMinor = 0] = tauriBuildFixed.split(".").map(Number);
+  return major === 2 && Number.isInteger(minor) && (minor ?? 0) < fixedMinor;
+}
+var oldTauriBuildNote = (version3) => `tauri-build ${version3} (Cargo.lock) can't build the app with the updater's sidecar on Rust 1.100 or later: Rust moved its build folders, tauri-build follows from ${tauriBuildFixed}, and until then \`tauri build\` panics in the app's build script ("Is a directory", in tauri-build's lib.rs). The app built before only because it had no bundle.externalBin. So the workflow builds with Rust ${rustForOldTauriBuild}; build with it on your machine too (\`rustup override set ${rustForOldTauriBuild}\` in src-tauri). Or upgrade Tauri, which is the bigger change: \`cargo update\` in src-tauri takes tauri-build past ${tauriBuildFixed} with the rest of Tauri, and the workflow goes back to \`dtolnay/rust-toolchain@stable\`.`;
+var testBranch = "todesktop-test";
+var testRef = `refs/heads/${testBranch}`;
+var withTestRef = (refs) => refs.includes(testRef) ? refs : [...refs, testRef];
+function testPush(refs = []) {
+  return refs.some((ref) => patternCovers(ref, testRef)) ? {
+    command: `git push origin HEAD:${testRef}`,
+    title: `Push to ${testBranch}`
+  } : null;
+}
+var trustHash = "trust";
+var repositoryPattern = /^[\w.-]+\/[\w.-]+$/;
+var classItem = "(?:[0-9]-[0-9]|[a-z]-[a-z]|[A-Z]-[A-Z]|[A-Za-z0-9._])";
+var trustRefShape = new RegExp(
+  `^refs/(?:heads|tags)/(?:[\\w./-]+|[\\w./-]*\\*|[\\w./-]*\\[(?:-|-?${classItem}+-?)\\]\\*)$`
+);
+function classChars(body) {
+  if (!new RegExp(`^(?:-|-?${classItem}+-?)$`).test(body)) return void 0;
+  const chars = /* @__PURE__ */ new Set();
+  for (let index = 0; index < body.length; index += 1) {
+    const from = body[index];
+    const to = body[index + 2];
+    if (body[index + 1] === "-" && to !== void 0) {
+      if (from > to) return void 0;
+      for (let code = from.charCodeAt(0); code <= to.charCodeAt(0); code += 1) {
+        chars.add(String.fromCharCode(code));
+      }
+      index += 2;
+    } else {
+      chars.add(from);
+    }
+  }
+  return chars;
+}
+function isTrustRef(ref) {
+  if (!trustRefShape.test(ref)) return false;
+  const classed = /\[([^\]]+)\]\*$/.exec(ref);
+  return !classed || classChars(classed[1]) !== void 0;
+}
+function trustLink(appUrl2, target = {}) {
+  const query = new URLSearchParams();
+  if (target.repository && repositoryPattern.test(target.repository)) {
+    query.set("repository", target.repository);
+  }
+  const refs = (target.refs ?? []).filter(isTrustRef);
+  if (refs.length) query.set("refs", refs.join(","));
+  const search = query.toString();
+  return `${appUrl2}${search ? `?${search}` : ""}#${trustHash}`;
+}
+function patternParts(pattern) {
+  if (!isTrustRef(pattern)) return void 0;
+  const classed = /^(.*)\[([^\]]+)\]\*$/.exec(pattern);
+  if (classed) {
+    return {
+      chars: classChars(classed[2]),
+      exact: false,
+      prefix: classed[1]
+    };
+  }
+  return pattern.endsWith("*") ? { exact: false, prefix: pattern.slice(0, -1) } : { exact: true, prefix: pattern };
+}
+var refMatches = (pattern, ref) => {
+  const parts = patternParts(pattern);
+  if (!parts) return false;
+  const { chars, exact, prefix } = parts;
+  if (exact) return ref === pattern;
+  if (!ref.startsWith(prefix)) return false;
+  if (!chars) return true;
+  const next = ref[prefix.length];
+  return next !== void 0 && chars.has(next);
+};
+var patternCovers = (pattern, wanted) => {
+  if (!wanted.endsWith("*")) return refMatches(pattern, wanted);
+  const have = patternParts(pattern);
+  const want = patternParts(wanted);
+  if (!have || !want || have.exact) return false;
+  if (want.prefix.length > have.prefix.length) {
+    return refMatches(pattern, want.prefix);
+  }
+  if (want.chars && !have.chars && have.prefix.length === want.prefix.length + 1 && have.prefix.startsWith(want.prefix)) {
+    return [...want.chars].every((char) => char === have.prefix.at(-1));
+  }
+  if (want.prefix !== have.prefix) return false;
+  if (!have.chars) return true;
+  return Boolean(
+    want.chars && [...want.chars].every((char) => have.chars.has(char))
+  );
+};
+function narrowedRefs(trusted, wanted = []) {
+  if (!wanted.length) return void 0;
+  if (!wanted.every((ref) => trusted.some((have) => patternCovers(have, ref)))) {
+    return void 0;
+  }
+  let narrower = false;
+  const refs = trusted.flatMap((pattern) => {
+    const asked = wanted.filter((ref) => patternCovers(pattern, ref));
+    if (!asked.length || asked.some((ref) => patternCovers(ref, pattern))) {
+      return [pattern];
+    }
+    narrower = true;
+    return asked;
+  });
+  return narrower ? [...new Set(refs)] : void 0;
+}
+function refPatternOf(ref) {
+  if (/^refs\/tags\/\d+(?:\.\d+)+(?:[-+].*)?$/.test(ref)) {
+    return bareVersionTags;
+  }
+  const tag = /^refs\/tags\/(.*[^\d.])\d+(?:\.\d+)*(?:[-+].*)?$/.exec(ref);
+  return tag ? `refs/tags/${tag[1]}*` : ref;
+}
+var bareVersionTags = "refs/tags/[0-9]*";
+function releaseTagRefs(tags = []) {
+  const versions = tags.map((tag) => /^([\w./-]*?)(\d+\.\d+(?:\.\d+)?(?:[-+][\w.-]+)?)$/.exec(tag)).filter((match) => match !== null).sort((a, b) => compareVersions2(a[2], b[2]));
+  const newest = versions.at(-1);
+  if (newest?.[1] === "") return [bareVersionTags];
+  return [`refs/tags/${newest ? newest[1] : "v"}*`];
+}
+function edgeNote(edgeUrl) {
+  let host = "";
+  try {
+    host = new URL(edgeUrl).hostname;
+  } catch {
+  }
+  if (/^(?:localhost|127\.\d+\.\d+\.\d+|\[::1\])$/.test(host)) {
+    return "this machine's local stack only: take this line out before a real release";
+  }
+  if (/-dev\b/.test(host)) {
+    return "ToDesktop's dev stage only: take this line out before a real release";
+  }
+  return "not ToDesktop's production: take this line out before a real release";
+}
+var uploadStep = (edgeUrl, {
+  packageJson = false,
+  refs = []
+} = {}) => `${packageJson ? `      - id: version   # package.json's, for runs without a tag
+        shell: bash
+        run: echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
+` : ""}      - uses: ToDesktop/upload-action@v1   # sends the built app
+        with:
+          # A tag (v1.2.3) names the version; other runs use${packageJson ? "\n          # package.json's" : " the\n          # config's"}, as branch names aren't versions.
+          version: \${{ github.ref_type == 'tag' && github.ref_name || ${packageJson ? "steps.version.outputs.version" : "''"} }}${// As testPush decides it: among the refs, or covered by one
+// (refs/heads/*), which runs on the branch all the same.
+refs.some((ref) => patternCovers(ref, testRef)) ? `
+          # A push to ${testBranch} makes a test build: smoke-tested, never released.
+          test: \${{ github.ref == '${testRef}' }}` : ""}${edgeUrl.replace(/\/+$/, "") === productionEdgeUrl ? "" : `
+          url: ${edgeUrl}   # ${edgeNote(edgeUrl)}`}`;
+var yamlList = (items) => `[${items.map((item) => JSON.stringify(item)).join(", ")}]`;
+var workflowHead = (refs = []) => {
+  const tags = refs.filter((ref) => ref.startsWith("refs/tags/")).map((ref) => ref.slice("refs/tags/".length));
+  const branches = refs.filter((ref) => ref.startsWith("refs/heads/")).map((ref) => ref.slice("refs/heads/".length));
+  const runOn = (tags.length ? tags : ["v*"]).map(
+    (tag) => tag === "*" ? "[0-9]*" : tag
+  );
+  return `name: Release
+on:
+  push:   # the refs step 3 trusts
+${[
+    ...tags.length || !branches.length ? [
+      `    tags: ${yamlList(runOn)}${runOn.includes("[0-9]*") ? "   # version tags, as yours are: 1.2.3" : ""}`
+    ] : [],
+    ...branches.length ? [
+      `    branches: ${yamlList(branches)}${branches.includes(testBranch) ? `   # ${testBranch}: a test build` : ""}`
+    ] : []
+  ].join("\n")}
+  workflow_dispatch:
+`;
+};
+var nodeVersionOf = (app) => {
+  const version3 = app.nodeVersion;
+  if (!version3) return "24";
+  return `${/^\d+$/.test(version3) ? version3 : `'${version3}'`}   # todesktop.json's nodeVersion`;
+};
+var matrixWorkflow = (app, matrix, steps, edgeUrl, { packageJson = true } = {}) => `${workflowHead(app.refs)}jobs:
+  release:
+    strategy:
+      matrix:
+        include:
+${matrix}
+    runs-on: \${{ matrix.os }}
+    permissions:
+      id-token: write   # lets ToDesktop check the job is yours
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${nodeVersionOf(app)}
+${steps}
+${uploadStep(edgeUrl, { packageJson, refs: app.refs })}`;
+var electronWorkflow = {
+  description: `In .github/workflows/release.yml. A job per platform builds the app, unpacked and unsigned, and uploads it.`,
+  title: "Build and upload in GitHub Actions"
+};
+var updatePolicyNote = "With no `updates` in todesktop.config.ts, the updater checks every hour, downloads an update by itself and installs it when the app quits. `updates` changes that: `check` ({ every: '15m' } or 'manual'), `download` ('automatic' or 'manual'), `install` ('on-quit', 'immediately' or 'manual'); `updates: 'manual'` leaves all three to the app's own calls (@todesktop/config's README, \"Updates\"). If the app has its own setting or prompt for updates, wire it to these (`download: 'manual'`, then the updater's download call when the person agrees), or tell the person it no longer decides.";
+var electronUpdates = {
+  description: "The updater follows the update policy in todesktop.config.ts. Commit this with step 1.",
+  via: "Installs update through @todesktop/updater, or apt and dnf on Linux"
+};
+var electronMainCode = `const { app } = require('electron');
+const { requestedHook, startUpdates } = require('@todesktop/updater/electron');
+
+// Started by the installer or uninstaller for a lifecycle hook: do it, exit.
+if (requestedHook()) app.exit(0);
+
+app.whenReady().then(() => {
+  const updates = startToDesktopUpdates();
+  const win = createWindow(); // yours
+  // This launch works: smoke tests and rollout health count on it.
+  win.webContents.once('did-finish-load', () => updates?.healthReady());
+});
+
+// Checks, downloads and installs as todesktop.config.ts's updates say.
+// Only ToDesktop's builds update: run from source (npm start), or packaged
+// by you, the app has no build identity and startUpdates throws.
+function startToDesktopUpdates() {
+  if (!app.isPackaged) return null;
+  try {
+    return startUpdates(app);
+  } catch (error) {
+    console.warn(\`ToDesktop updates are off: \${error.message}\`);
+    return null;
+  }
+}`;
+var electronUpdateSnippets = [
+  {
+    code: "npm install @todesktop/updater",
+    label: "Copy install command",
+    language: "bash",
+    title: "Install the updater"
+  },
+  {
+    code: electronMainCode,
+    label: "Copy main process code",
+    language: "javascript",
+    title: "In your main process, before anything else"
+  }
+];
+var healthReadyRuntime = "0.1.1";
+var serveAfterFetched = "runtime releases after 0.1.1 (the next one; the drafts fetch 0.1.1)";
+var healthWhen = "Once a launch, when your app works: smoke tests fail a launch without it, and rollout health counts it.";
+var electronHealth = {
+  call: "updates?.healthReady()",
+  from: "startToDesktopUpdates(), which calls startUpdates(app) from @todesktop/updater/electron",
+  snippet: {
+    code: `// null unless ToDesktop built this (startToDesktopUpdates, step 2).
+const updates = startToDesktopUpdates();
+
+// Once your first window shows your app:
+win.webContents.once('did-finish-load', () => updates?.healthReady());`,
+    label: "Copy healthReady",
+    language: "javascript",
+    title: "In your main process"
+  },
+  when: healthWhen
+};
+var updaterGlob = "**/node_modules/@todesktop/updater-*/**";
+var linuxRunner = "ubuntu-22.04";
+var linuxArmRunner = "ubuntu-22.04-arm";
+var linuxRunnerNote = `          # The oldest Ubuntu GitHub hosts: what's built here runs on it and on
+          # anything newer. A newer runner raises the oldest Linux your app starts on.`;
+var packagerMatrix = `          - os: macos-15
+            target: --platform=darwin --arch=arm64
+          - os: windows-latest
+            target: --platform=win32 --arch=x64
+${linuxRunnerNote}
+          - os: ${linuxRunner}
+            target: --platform=linux --arch=x64`;
+var tauriHealthSnippet = {
+  code: `import { health } from '@todesktop/tauri';
+
+// Once your page has rendered and works:
+health.ready();`,
+  label: "Copy healthReady",
+  language: "javascript",
+  title: "Report healthReady from your page once it works: smoke tests and rollout health count on it"
+};
+var nodeUpdateSnippets = [
+  {
+    code: "npm install @todesktop/updater",
+    label: "Copy install command",
+    language: "bash",
+    title: "Install the updater"
+  },
+  {
+    code: `const path = require('node:path');
+const { Updates, requestedHook, sidecarPath } = require('@todesktop/updater');
+
+// Started by the installer or uninstaller for a lifecycle hook: do it, exit.
+if (requestedHook(process.argv)) process.exit(0);
+
+// Installing hands off to todesktop-updater: the package's, unless your
+// app ships one beside its executable.
+const sidecar = sidecarPath();
+if (sidecar && path.dirname(sidecar) !== path.dirname(process.execPath)) {
+  process.env.TODESKTOP_UPDATER_HELPER ??= sidecar;
+}
+
+// Checks, downloads and installs as todesktop.config.ts's updates say.
+const updates = Updates.fromCurrentExe();
+updates.quitWith(() => process.exit(0)); // or close your server first
+process.on('exit', () => updates.onQuit()); // installs a ready update
+updates.start();
+
+// Once your app works (a daemon: it's serving requests):
+updates.healthReady();`,
+    label: "Copy startup code",
+    language: "javascript",
+    title: "When your app starts"
+  }
+];
+var assemblyNameOf = (name) => name.split(/[^A-Za-z0-9]+/).filter(Boolean).map((word) => word[0].toUpperCase() + word.slice(1)).join("") || "YourApp";
+var sidecarUrl = (target, extension) => `https://dl.todesktop.com/v2/runtime/${healthReadyRuntime}/todesktop-updater-${healthReadyRuntime}-${target}.${extension}`;
+var qtDepends = [
+  "libegl1",
+  "libgl1",
+  "libx11-6",
+  "libx11-xcb1",
+  "libxcb1",
+  "libfontconfig1",
+  "libfreetype6"
+];
+var installs = {
+  bun: "bun install --frozen-lockfile",
+  pnpm: "pnpm install --frozen-lockfile",
+  yarn: "corepack enable && yarn install --immutable"
+};
+var runs = { bun: "bunx ", pnpm: "pnpm exec ", yarn: "yarn " };
+var setups = (declared, version3) => ({
+  bun: version3 ? `      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '${version3}'   # todesktop.json's bunVersion
+` : "      - uses: oven-sh/setup-bun@v2\n",
+  // pnpm/action-setup needs a version unless package.json's packageManager
+  // names one.
+  pnpm: declared ? "      - uses: pnpm/action-setup@v4   # the pnpm in package.json's packageManager\n" : `      - uses: pnpm/action-setup@v4
+        with:
+          version: ${version3 ? `'${version3}'   # todesktop.json's pnpmVersion` : "10   # or set packageManager in package.json"}
+`
+});
+function fitWorkflow(app, workflow) {
+  let text3 = workflow;
+  const manager = app.packageManager;
+  if (manager && manager !== "npm" && /- run: npm ci\b/.test(text3)) {
+    text3 = text3.replace(/- run: npm ci\b[^\n]*/g, `- run: ${installs[manager]}`).replace(
+      /\bnpx @electron\/packager\b/g,
+      `${runs[manager]}electron-packager`
+    ).replace(/\bnpx (?=\w)/g, runs[manager]).replace(
+      "      - uses: actions/setup-node@v5",
+      `${setups(Boolean(app.packageManagerDeclared), app.packageManagerVersion)[manager] ?? ""}      - uses: actions/setup-node@v5`
+    );
+  }
+  const pattern = app.refs?.find((ref) => ref.startsWith("refs/tags/"))?.slice("refs/tags/".length);
+  const prefix = pattern?.endsWith("*") ? pattern.slice(0, -1).replace(/(?:\d+\.)+$/, "") : void 0;
+  const plainPrefix = prefix && /^[\w./-]+$/.test(prefix) && !/^v?$/.test(prefix);
+  if (plainPrefix && text3.includes("github.ref_type == 'tag' && github.ref_name")) {
+    const step = `      - id: tag   # ${prefix}1.2.3 \u2192 1.2.3
+        if: github.ref_type == 'tag'
+        shell: bash
+        run: echo "version=\${GITHUB_REF_NAME#${prefix}}" >> "$GITHUB_OUTPUT"
+`;
+    text3 = text3.replace(/^( {6}- uses: ToDesktop\/upload-action@v1)/m, `${step}$1`).replaceAll(
+      "github.ref_type == 'tag' && github.ref_name",
+      "github.ref_type == 'tag' && steps.tag.outputs.version"
+    );
+  }
+  const dir = app.appDir?.replace(/^\.\/|\/+$/g, "");
+  if (dir) {
+    text3 = text3.replace(
+      /^( {4}runs-on: [^\n]*\n)/m,
+      `$1    defaults:
+      run:
+        working-directory: ${dir}   # the app's folder
+`
+    ).replace(
+      /(uses: ToDesktop\/upload-action@v1[^\n]*\n {8}with:\n)/,
+      `$1          config: ${dir}/todesktop.config.ts
+`
+    );
+  }
+  return text3;
+}
+var builds = (app, platform) => !app.platforms || app.platforms.includes(platform);
+var shellArg = (value) => /^[\w.-]+$/.test(value) ? value : shellWord(value);
+var linuxExecutableArg = (app) => app.setLinuxExecutable && app.linuxExecutable && builds(app, "linux") ? ` -c.linux.executableName=${shellArg(app.linuxExecutable)}` : "";
+var macArchesOf = (app) => ["arm64", "x64"].filter(
+  (arch) => app.macArches?.length ? app.macArches.includes(arch) : arch === "arm64"
+);
+function electronBuilderPlatforms(app) {
+  const out = app.outputDir ?? "dist";
+  const macApps = macArchesOf(app).map(
+    (arch) => `${arch}: ${str(`${out}/${arch === "x64" ? "mac" : `mac-${arch}`}/${app.macAppName ?? sanitizeFileName(app.name)}.app`)}`
+  ).join(", ");
+  return [
+    `  // What electron-builder --dir makes, unsigned: ToDesktop signs it.`,
+    ...builds(app, "mac") ? [
+      `  mac: {
+    apps: { ${macApps} },
+    entitlements: ${str(app.entitlementsFile ?? "entitlements.plist")},${app.macPkg ? `
+    // v1 built a pkg for IT teams: signed with your Developer ID Installer
+    // certificate (Account \u203A Signing).
+    formats: ['dmg', 'pkg'],` : `
+    formats: ['dmg'],`}
+  },`
+    ] : [],
+    ...builds(app, "windows") ? [
+      `  windows: {
+    apps: { x64: ${str(`${out}/win-unpacked`)} },
+    executable: ${str(app.windowsExecutable ?? productExe(app.name))},${app.migrateFromAppId ? `
+    // The v1 app (electron-builder's appId) whose installs this takes over.
+    migrateFrom: { appId: ${str(app.migrateFromAppId)} },` : ""}${app.windowsMsi ? `
+    // v1 built an MSI for IT teams to deploy. It installs for every user
+    // and doesn't update itself, as v1's didn't: see windows.msi.mode.
+    formats: ['exe', 'msi'],` : ""}
+  },`
+    ] : [],
+    ...builds(app, "linux") ? [
+      `  linux: {
+    apps: { x64: ${str(`${out}/linux-unpacked`)} },
+    executable: ${str(app.linuxExecutable ?? slugOf(app.name))}, // ${linuxExecutableArg(app) ? "the workflow's -c.linux.executableName" : "your package.json name"}${app.appImage ? `
+    // v1's Linux copies are AppImages: they move to v2's AppImage.` : ""}
+    formats: ['appimage', 'deb', 'rpm', 'tar.gz'],
+  },`
+    ] : []
+  ].join("\n");
+}
+var electronBuilderMatrix = (app) => [
+  ...builds(app, "mac") ? [
+    `          - os: macos-15
+            target: --mac ${macArchesOf(app).map((arch) => `--${arch}`).join(" ")}`
+  ] : [],
+  ...builds(app, "windows") ? [
+    `          - os: windows-latest
+            target: --win --x64`
+  ] : [],
+  ...builds(app, "linux") ? [
+    `${linuxRunnerNote}
+          - os: ${linuxRunner}
+            target: --linux --x64`
+  ] : []
+].join("\n");
+var otherRunners = {
+  linux: {
+    arm64: {
+      os: linuxArmRunner,
+      updater: "aarch64-unknown-linux-musl.tar.gz"
+    },
+    x64: { os: linuxRunner, updater: "x86_64-unknown-linux-musl.tar.gz" }
+  },
+  mac: {
+    arm64: { os: "macos-15", updater: "aarch64-apple-darwin.tar.gz" },
+    universal: { os: "macos-15", updater: "universal-apple-darwin.tar.gz" },
+    x64: { os: "macos-15-intel", updater: "x86_64-apple-darwin.tar.gz" }
+  },
+  windows: {
+    arm64: { os: "windows-11-arm", updater: "aarch64-pc-windows-msvc.zip" },
+    x64: { os: "windows-latest", updater: "x86_64-pc-windows-msvc.zip" }
+  }
+};
+var otherPlatformOrder = ["mac", "windows", "linux"];
+var otherTargets = (app) => {
+  const targets = (app.configApps && Object.fromEntries(
+    Object.entries(app.configApps).map(([platform, apps]) => [
+      platform,
+      Object.keys(apps ?? {})
+    ])
+  )) ?? {
+    linux: ["x64"],
+    mac: ["arm64"],
+    windows: ["x64"]
+  };
+  return otherPlatformOrder.map((platform) => [
+    platform,
+    (targets[platform] ?? []).filter(
+      (arch) => otherRunners[platform][arch] !== void 0
+    )
+  ]).filter(([, arches]) => arches.length > 0);
+};
+var otherMatrix = (app) => otherTargets(app).flatMap(
+  ([platform, arches]) => arches.map((arch, index) => {
+    const runner = otherRunners[platform][arch];
+    return `${platform === "linux" && index === 0 ? `${linuxRunnerNote}
+` : ""}          - os: ${runner.os}
+            updater: ${runner.updater}${app.configApps ? `
+            target: ${platform}-${arch}` : ""}`;
+  })
+).join("\n");
+function otherAppPath(app, platform, arch) {
+  const known = app.configApps?.[platform]?.[arch];
+  if (known) return { guess: false, path: known };
+  const dir = `dist/${platform}-${arch}`;
+  return {
+    guess: true,
+    path: platform === "mac" ? `${dir}/Your App.app` : dir
+  };
+}
+function otherPlatforms(app) {
+  const executable = "your-app";
+  const placeholder = " // Fill in: your executable's file name (config check lists the folder's)";
+  const apps = (platform, arches) => {
+    const paths = arches.map((arch) => ({
+      arch,
+      ...otherAppPath(app, platform, arch)
+    }));
+    return `apps: { ${paths.map(({ arch, path: path12 }) => `${arch}: ${str(path12)}`).join(", ")} },${paths.some(({ guess }) => guess) ? " // Fill in: where your build puts it (config check says what is there)" : ""}`;
+  };
+  const blocks = {
+    linux: (arches) => `  linux: {
+    ${apps("linux", arches)}
+    executable: ${str(executable)},${placeholder}
+    formats: ['appimage', 'deb', 'rpm', 'tar.gz'],
+  },`,
+    mac: (arches) => `  mac: {
+    // Your unsigned .app, relative to this file: ToDesktop signs it.${arches.includes("universal") ? `
+    // One universal app (arm64 and x64 in one); or per-arch apps instead.` : ""}
+    ${apps("mac", arches)}
+    formats: ['dmg'],
+  },`,
+    windows: (arches) => `  windows: {
+    ${apps("windows", arches)}
+    executable: ${str(`${executable}.exe`)},${placeholder}
+  },`
+  };
+  return otherTargets(app).map(([platform, arches]) => blocks[platform](arches)).join("\n");
+}
+var otherServe = [
+  {
+    code: "todesktop-updater serve --pid <your PID>",
+    detail: "Keep its stdin and stdout open: it speaks JSON-RPC, one object per line, and runs the update policy.",
+    heading: "Start it when your app starts",
+    label: "Copy serve command",
+    language: "bash",
+    title: "Start it when your app starts and keep its stdin and stdout: it speaks JSON-RPC, one object per line, and runs the update policy. In this order: start its process, send hello and wait for its answer, then send healthReady once your app works (smoke tests require it): a line written before the process runs goes nowhere, and hello\u2019s answer is how you know it runs. Quit when it sends quit, and send shutdown as you quit."
+  },
+  {
+    code: `\u2192 {"jsonrpc":"2.0","id":1,"method":"hello","params":{"protocol":1,"args":[]}}
+\u2190 {"jsonrpc":"2.0","id":1,"result":{"protocol":1,"runtime":"${healthReadyRuntime}","updates":true,"methods":[\u2026]}}
+\u2192 {"jsonrpc":"2.0","id":2,"method":"healthReady"}
+\u2190 {"jsonrpc":"2.0","method":"state","params":{"status":"downloading","progress":0.4}}
+\u2190 {"jsonrpc":"2.0","method":"quit","params":{"reason":"update"}}
+\u2192 {"jsonrpc":"2.0","method":"shutdown"}`,
+    detail: `Send hello first, once the sidecar\u2019s process is running, and wait for its answer before anything else: a healthReady written before the process runs goes nowhere, and the smoke test sees only that it never came. In hello, always send args, your app\u2019s own command-line arguments (an empty list for none): the new version is started with them after an update, and with ${healthReadyRuntime}, the sidecar the workflow fetches, a hello without them has the new version started with the sidecar\u2019s own arguments, which an app doesn\u2019t take. Send healthReady once your app works: smoke tests require it. windowShown (optional) once your first window is on screen: the smoke test times your window from it. Quit when it sends quit, and send shutdown as you quit: the updater starts the new version once your process has gone, so it must outlive your app. Start it so that your app\u2019s exit doesn\u2019t end it (Qt\u2019s QProcess kills its child when destroyed: start it detached, or let go of it before you exit), and don\u2019t write to it after it has stopped. ToDesktop\u2019s smoke test, which quits and relaunches your app unattended, sets TODESKTOP_SMOKE_TEST=1 in its environment (${serveAfterFetched} also say it as hello\u2019s smokeTest): use it only to skip what would block that quit (an exit confirmation, a crash dialog, an unsaved-changes prompt), not as a general test switch. Your app sends the \u2192 lines and gets the \u2190 ones. A script or daemon can instead run todesktop-updater update --after-exit <PID> --relaunch every hour or so.`,
+    heading: "Tell it your app is healthy",
+    label: "Copy example",
+    title: "What your app sends (\u2192) and gets (\u2190). A script or daemon can instead run todesktop-updater update --after-exit <PID> --relaunch every hour or so."
+  }
+];
+var dotnetStarts = {
+  avalonia: {
+    code: `using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
+
+public partial class App : Application
+{
+    public override void OnFrameworkInitializationCompleted()
+    {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            var window = new MainWindow();
+            desktop.MainWindow = window;
+            // Starts todesktop-updater from beside your executable
+            // (Contents/MacOS on macOS); null when it isn't there (dotnet run).
+            var updater = ToDesktop.Updater.Start(desktop.Args);
+            if (updater is not null)
+            {
+                updater.StateChanged += state => Dispatcher.UIThread.Post(() =>
+                {
+                    // checking, available, downloading, ready...: show it if you like.
+                });
+                // An update is in place: quit, and the updater starts the new version.
+                updater.QuitRequested += () => Dispatcher.UIThread.Post(() => desktop.Shutdown());
+                // Once your window shows your app:
+                window.Opened += async (_, _) =>
+                {
+                    await updater.WindowShownAsync();
+                    await updater.HealthReadyAsync();
+                };
+            }
+        }
+        base.OnFrameworkInitializationCompleted();
+    }
+}`,
+    file: "App.axaml.cs"
+  },
+  other: {
+    code: `// Starts todesktop-updater from beside your executable (Contents/MacOS
+// on macOS); null when it isn't there (dotnet run).
+var updater = ToDesktop.Updater.Start(args);
+if (updater is not null)
+{
+    updater.StateChanged += state =>
+    {
+        // checking, available, downloading, ready...: show it if you like.
+    };
+    // An update is in place: quit, and the updater starts the new version.
+    updater.QuitRequested += () => Environment.Exit(0);
+    // Once your app works:
+    await updater.HealthReadyAsync();
+}`,
+    file: "Program.cs"
+  },
+  winforms: {
+    code: `static class Program
+{
+    [STAThread]
+    static void Main(string[] args)
+    {
+        ApplicationConfiguration.Initialize();
+        var form = new MainForm();
+        // Starts todesktop-updater.exe from beside your .exe; null when it
+        // isn't there (dotnet run, Visual Studio).
+        var updater = ToDesktop.Updater.Start(args);
+        if (updater is not null)
+        {
+            updater.StateChanged += state => form.BeginInvoke(() =>
+            {
+                // checking, available, downloading, ready...: show it if you like.
+            });
+            // An update is in place: quit, and the updater starts the new version.
+            updater.QuitRequested += () => form.BeginInvoke(() => Application.Exit());
+            // Once your form shows your app:
+            form.Shown += async (_, _) =>
+            {
+                await updater.WindowShownAsync();
+                await updater.HealthReadyAsync();
+            };
+        }
+        Application.Run(form);
+    }
+}`,
+    file: "Program.cs"
+  },
+  wpf: {
+    code: `using System.Windows;
+
+public partial class App : Application
+{
+    // Starts todesktop-updater.exe from beside your .exe; null when it
+    // isn't there (dotnet run, Visual Studio).
+    public static ToDesktop.Updater? Updater { get; private set; }
+
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        Updater = ToDesktop.Updater.Start(e.Args);
+        if (Updater is not null)
+        {
+            Updater.StateChanged += state => Dispatcher.InvokeAsync(() =>
+            {
+                // checking, available, downloading, ready...: show it if you like.
+            });
+            // An update is in place: quit, and the updater starts the new version.
+            Updater.QuitRequested += () => Dispatcher.InvokeAsync(() => Shutdown());
+        }
+        base.OnStartup(e);
+    }
+}
+
+// In MainWindow's constructor: once it shows your app,
+// ContentRendered += async (_, _) =>
+// {
+//     if (App.Updater is null) return;
+//     await App.Updater.WindowShownAsync();
+//     await App.Updater.HealthReadyAsync();
+// };`,
+    file: "App.xaml.cs"
+  }
+};
+function dotnetStart(ui) {
+  const { code, file: file3 } = dotnetStarts[ui ?? "other"];
+  return {
+    code,
+    detail: "ToDesktopUpdater.cs isn\u2019t on NuGet yet: the CLI\u2019s integrate --write adds it beside your .csproj (it\u2019s v2/updater/clients/dotnet in ToDesktop\u2019s repository). It starts todesktop-updater serve, says hello with your arguments and turns its JSON-RPC into .NET calls and events: HealthReadyAsync once your app works (smoke tests require it), QuitRequested when an update is in place. Updater.IsSmokeTest is true when ToDesktop\u2019s smoke test launched your app, which it quits and relaunches unattended: use it only to skip what would block that quit (an exit confirmation, a crash dialog, an unsaved-changes prompt).",
+    heading: "Add ToDesktopUpdater.cs and start it with your app",
+    label: `Copy ${file3} code`,
+    language: "csharp",
+    title: `Add ToDesktopUpdater.cs, ToDesktop\u2019s .NET client, to your project, then start it when your app starts (${file3}): it runs todesktop-updater serve and speaks to it for you`
+  };
+}
+var goKinds = ["fyne", "go", "wails"];
+var goClientDir = "internal/todesktopupdater";
+function goStart(module) {
+  return {
+    code: `import (
+	"context"
+	"log"
+
+	"${module ?? "<your module>"}/${goClientDir}"
+)
+
+func main() {
+	// Nil in development (no todesktop-updater beside the executable):
+	// every call on a nil updater does nothing, so there's nothing to check.
+	updater, err := todesktopupdater.Start(todesktopupdater.Options{
+		// An update is in place: quit as a user would, within 30 seconds.
+		// The updater starts the new version once this process has gone.
+		OnQuit: func(*todesktopupdater.Updater) { quit() },
+	})
+	if err != nil {
+		log.Print(err) // the app runs without updates
+	}
+	// This exit is clean. os.Exit skips defers: call Shutdown before it too.
+	defer updater.Shutdown()
+
+	// ... your app. Once it works (its first window is up and usable, a
+	// server is listening), from wherever that's known:
+	ctx := context.Background()
+	_ = updater.WindowShown(ctx) // apps with a window
+	_ = updater.HealthReady(ctx) // this launch works
+}`,
+    detail: "todesktop_updater.go isn\u2019t a module of its own yet: the CLI\u2019s integrate --write adds it to yours, in internal/todesktopupdater (it\u2019s v2/updater/clients/go in ToDesktop\u2019s repository; standard library only). It starts todesktop-updater serve without a console window, says hello with your arguments and turns its JSON-RPC into Go calls: HealthReady once your app works (smoke tests require it), OnQuit when an update is in place, Shutdown as you quit so the exit isn\u2019t counted as a crash. The updater checks, downloads and installs by itself, as todesktop.config.ts says: there\u2019s no check to schedule. todesktopupdater.IsSmokeTest() is true when ToDesktop\u2019s smoke test launched your app, which it quits and relaunches unattended: use it only to skip what would block that quit (an exit confirmation, a crash dialog, an unsaved-changes prompt).",
+    heading: "Add todesktop_updater.go and start it with your app",
+    label: "Copy main.go code",
+    language: "go",
+    title: "Add todesktop_updater.go, ToDesktop\u2019s Go client, to your module, then start it when your app starts (main.go): it runs todesktop-updater serve and speaks to it for you"
+  };
+}
+var qtClientDir = "todesktop";
+function qtStart() {
+  return {
+    code: `// CMakeLists.txt: add the two files to your app's target.
+//   target_sources(your_app PRIVATE ${qtClientDir}/todesktopupdater.cpp ${qtClientDir}/todesktopupdater.h)
+//   target_include_directories(your_app PRIVATE ${qtClientDir})
+//   set_target_properties(your_app PROPERTIES AUTOMOC ON) # unless CMAKE_AUTOMOC is on
+
+// main.cpp
+#include "todesktopupdater.h"
+
+int main(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+    // nullptr in development (no todesktop-updater beside the executable).
+    ToDesktop::Updater *updater = ToDesktop::Updater::start();
+    MainWindow window;
+    window.show();
+    if (updater) {
+        // An update is in place: run your real quit path, and exit within
+        // 30 seconds. The updater starts the new version once you've gone.
+        QObject::connect(updater, &ToDesktop::Updater::quitRequested,
+                         &app, &QApplication::quit);
+        updater->windowShown(); // the first window is on screen
+        updater->healthReady(); // this launch works
+    }
+    return app.exec(); // shutdown is sent as the application quits
+}`,
+    detail: "todesktopupdater.h and todesktopupdater.cpp aren\u2019t a package yet: the CLI\u2019s integrate --write adds them to your source tree, in todesktop/ (they\u2019re v2/updater/clients/qt in ToDesktop\u2019s repository; Qt Core only, Qt 5.15 or Qt 6, C++17). The client starts todesktop-updater serve with no console window, says hello with your arguments, sends nothing else until that\u2019s answered, and tells the updater the exit is clean when the application quits (aboutToQuit): there\u2019s no shutdown to call. It never kills the updater, which must outlive your app to finish an update. healthReady once your app works (smoke tests require it); quitRequested when an update is in place. An app that closes to the tray connects quitRequested to its real quit action, not to close(): in Qt 5, QApplication::quit sends no close events. The updater checks, downloads and installs by itself, as todesktop.config.ts says: there\u2019s no check to schedule. ToDesktop::Updater::isSmokeTest() is true when ToDesktop\u2019s smoke test launched your app, which it quits and relaunches unattended: use it only to skip what would block that quit (an exit confirmation, a crash dialog, an unsaved-changes prompt).",
+    heading: "Add todesktopupdater.h and .cpp and start the updater with your app",
+    label: "Copy main.cpp code",
+    language: "cpp",
+    title: "Add todesktopupdater.h and todesktopupdater.cpp, ToDesktop\u2019s Qt client, to your app\u2019s target, then start it in main() (main.cpp): it runs todesktop-updater serve and speaks to it for you"
+  };
+}
+var dartClientPath = "lib/todesktop_updater.dart";
+function dartStart() {
+  return {
+    code: `import 'dart:ui'; // AppExitResponse, AppExitType
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'todesktop_updater.dart';
+
+Future<void> main(List<String> args) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Null in development (no todesktop-updater beside the executable):
+  // write every call as \`updater?.\`, and there's nothing else to check.
+  final updater = await ToDesktopUpdater.start(
+    args: args, // what the new version is started with
+    // An update is in place: quit as a user would, within 30 seconds.
+    onQuit: () =>
+        ServicesBinding.instance.exitApplication(AppExitType.cancelable),
+  );
+  // Every quit tells the updater the exit is clean, not a crash.
+  AppLifecycleListener(onExitRequested: () async {
+    await updater?.shutdown();
+    return AppExitResponse.exit;
+  });
+  runApp(const MyApp());
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    updater?.windowShown(); // the first frame is drawn
+    updater?.healthReady(); // this launch works
+  });
+}`,
+    detail: "todesktop_updater.dart isn\u2019t on pub.dev yet: the CLI\u2019s integrate --write adds it to your app\u2019s lib/ folder (it\u2019s v2/updater/clients/dart in ToDesktop\u2019s repository; dart:io only, no packages). It starts todesktop-updater serve with no console window, says hello with your arguments and has the answer before start() returns, so nothing can be sent to an updater that isn\u2019t running yet. Then healthReady once your app works (smoke tests require it), onQuit when an update is in place, shutdown as you quit so the exit isn\u2019t counted as a crash. The updater checks, downloads and installs by itself, as todesktop.config.ts says: there\u2019s no check to schedule. If your app already handles exit requests or quits by exit(), call shutdown() there instead and exit within 30 seconds of onQuit. ToDesktopUpdater.isSmokeTest is true when ToDesktop\u2019s smoke test launched your app, which it quits and relaunches unattended: use it only to skip what would block that quit (an exit confirmation, a crash dialog, an unsaved-changes prompt).",
+    heading: "Add todesktop_updater.dart and start it with your app",
+    label: "Copy main.dart code",
+    language: "dart",
+    title: "Add todesktop_updater.dart, ToDesktop\u2019s Dart client, to your app\u2019s lib/ folder, then start it in main() (lib/main.dart): it runs todesktop-updater serve and speaks to it for you"
+  };
+}
+function clientStart(app) {
+  if (app.native?.dotnet) return [dotnetStart(app.native.dotnet.ui)];
+  if (app.native?.go) return [goStart(app.native.go.module)];
+  if (app.native?.dart) return [dartStart()];
+  if (app.native?.qt) return [qtStart()];
+  return otherServe;
+}
+var allRecipes = [
+  {
+    caption: "Any app you can build",
+    config: {
+      description: "At the root of the repository. Your App ID is already filled in. Point each app at what your build makes, unsigned: ToDesktop signs it. Commit it.",
+      files: (app) => [
+        configSnippet(app, otherPlatforms(app), { packageJson: false })
+      ]
+    },
+    health: {
+      call: '{"method":"healthReady"}',
+      from: "todesktop-updater serve (JSON-RPC)",
+      snippet: {
+        code: '{"jsonrpc":"2.0","id":2,"method":"healthReady"}',
+        label: "Copy healthReady",
+        title: "On todesktop-updater serve\u2019s stdin, after hello. Rust apps on the todesktop-updater crate call updates.health_ready()."
+      },
+      when: healthWhen
+    },
+    id: "other",
+    label: "Something else",
+    updates: {
+      description: "The ToDesktop updater, run beside your app, follows the update policy in todesktop.config.ts and reports launches for rollout health. Rust apps can use the todesktop-updater crate instead.",
+      snippets: (app) => [
+        {
+          code: `macOS     Your App.app/Contents/MacOS/todesktop-updater
+Windows   todesktop-updater.exe, beside your .exe
+Linux     todesktop-updater, beside your executable`,
+          detail: "Unsigned, from ToDesktop\u2019s runtime release: ToDesktop signs it with your app. Other targets (universal-apple-darwin, \u2026) are at the same address, and the @todesktop/updater-<platform> npm packages hold it too.",
+          heading: "Put todesktop-updater in the app you build",
+          label: "Copy locations",
+          // Each app the config lists: its target's sidecar, where it goes.
+          platforms: otherTargets(app).map(([platform, arches]) => ({
+            code: arches.map((arch) => {
+              const { path: where } = otherAppPath(app, platform, arch);
+              const archive = otherRunners[platform][arch].updater;
+              const target = archive.replace(/\.(?:tar\.gz|zip)$/, "");
+              if (platform === "windows") {
+                return `Invoke-WebRequest ${sidecarUrl(target, "zip")} -OutFile todesktop-updater.zip
+Expand-Archive todesktop-updater.zip -DestinationPath ${shellWord(where)}`;
+              }
+              const into = platform === "mac" ? `${where}/Contents/MacOS` : where;
+              return `curl -fsSL ${sidecarUrl(target, "tar.gz")} \\
+  | tar -xz -C ${shellWord(into)}`;
+            }).join("\n"),
+            ...platform === "windows" ? {} : { language: "bash" },
+            name: { linux: "Linux", mac: "macOS", windows: "Windows" }[platform]
+          })),
+          title: `Put todesktop-updater in the app you build, unsigned: from ToDesktop's runtime release, ${sidecarUrl("<target>", "tar.gz")} (aarch64-apple-darwin, universal-apple-darwin, x86_64-unknown-linux-musl\u2026; .zip for x86_64-pc-windows-msvc), or the @todesktop/updater-<platform> npm packages`
+        },
+        ...clientStart(app),
+        {
+          code: `state, check, download, joinChannel {channel}
+    \u2192 {"status": "idle" | "checking" | "available" | "downloading" | "ready" | "error" | "managed" | "blocked", ...}
+      available, downloading, ready: "update": {"version", "buildNumber", "notes"?, "required", ...}
+      downloading: "progress" 0 to 1 \xB7 error: "message" \xB7 blocked: "message" to show
+restart        \u2192 {"quitting": true}, then quit (an error when nothing is ready)
+installOnQuit  \u2192 null: the ready update goes in when you send shutdown and exit
+info           \u2192 {"version", "buildNumber", "channel", "launch": "first-run" | "updated" | "normal", ...}
+channel        \u2192 the install's channel, or null for stable
+healthReady, windowShown, report {event, data?}, shutdown \u2192 null
+\u2190 state        the same object as state's answer, on every change`,
+          detail: "When it all happens is updates in todesktop.config.ts: check { every: '1h' } or 'manual'; download 'automatic' or 'manual' (send download after available); install 'on-quit' (the default: a ready update goes in once you send shutdown and exit), 'immediately' (it sends quit at once) or 'manual' (only on restart or installOnQuit). Under a smoke test it checks every few seconds and installs at once, whatever install says: quit when it sends quit. The updater\u2019s README has every field.",
+          heading: "What it answers, and when it updates",
+          label: "Copy reference",
+          title: "What the methods answer and the state it sends. When it all happens is updates in todesktop.config.ts (check, download, install: on-quit, immediately or manual); under a smoke test it installs at once, whatever install says."
+        }
+      ],
+      via: "Installs update through the ToDesktop updater, or apt, dnf and pacman on Linux"
+    },
+    workflow: {
+      description: `In .github/workflows/release.yml: your build steps, then the upload. Add a job per platform.`,
+      file: (app, edgeUrl) => `${workflowHead(app.refs)}jobs:
+  release:
+    # A job per platform${app.configApps ? " and arch" : ""} todesktop.config.ts lists, on a matching runner.
+    strategy:
+      matrix:
+        include:
+${otherMatrix(app)}
+    runs-on: \${{ matrix.os }}
+    permissions:
+      id-token: write   # lets ToDesktop check the job is yours
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      # ...your build steps, any toolchain: leave the app unsigned, where
+      # todesktop.config.ts points, with todesktop-updater beside its
+      # executable (Contents/MacOS on macOS), from
+      # ${sidecarUrl(`\${{ matrix.updater }}`, "tar.gz").replace(/\.tar\.gz$/, "")}
+${uploadStep(edgeUrl, { refs: app.refs })}`,
+      title: "Build and upload in GitHub Actions"
+    }
+  },
+  {
+    caption: "electron-builder",
+    config: {
+      description: "At the root of the repository, beside package.json. The paths are where electron-builder --dir puts your app. Commit both files.",
+      files: (app) => [
+        typesSnippet,
+        configSnippet(app, electronBuilderPlatforms(app)),
+        // The app's own file stays as it is.
+        ...builds(app, "mac") && !app.entitlementsFile ? [app.v1Entitlements ? v1Entitlements : entitlements] : []
+      ]
+    },
+    group: "Electron",
+    health: electronHealth,
+    id: "electron-builder",
+    label: "Electron Builder",
+    updates: {
+      ...electronUpdates,
+      note: "Remove electron-updater and the publish settings from your electron-builder config: ToDesktop serves updates now. electron-builder already keeps the updater\u2019s native files outside app.asar.",
+      snippets: () => electronUpdateSnippets
+    },
+    workflow: {
+      ...electronWorkflow,
+      file: (app, edgeUrl) => matrixWorkflow(
+        app,
+        electronBuilderMatrix(app),
+        `      - run: npm ci${(app.buildSteps ?? []).map(
+          (command, index) => `${index === 0 ? "\n      # Your own scripts run this before electron-builder." : ""}
+      - run: ${command}`
+        ).join("")}
+      # Unpacked and unsigned: ToDesktop signs and packages it.${app.electronBuilderAppId ? `
+      # -c.appId is the installed app's bundle ID: macOS takes this as its update.` : ""}${linuxExecutableArg(app) ? `
+      # -c.linux.executableName names the Linux executable as todesktop.config.ts does.` : ""}
+      - run: npx electron-builder \${{ matrix.target }} --dir --publish never${app.electronBuilderAppId ? ` -c.appId=${shellArg(app.electronBuilderAppId)}` : ""}${linuxExecutableArg(app)}${app.electronBuilderAppId || linuxExecutableArg(app) ? `
+        shell: bash   # PowerShell, the Windows runner's, splits -c.x=y at the dot` : ""}
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false`,
+        edgeUrl
+      )
+    }
+  },
+  {
+    caption: "@electron-forge/cli",
+    config: {
+      description: "At the root of the repository, beside package.json. The paths are where electron-forge package puts your app. Commit both files.",
+      files: (app) => [
+        typesSnippet,
+        configSnippet(
+          app,
+          `  // What electron-forge package makes, unsigned: ToDesktop signs it.
+  mac: {
+    apps: { arm64: ${str(`out/${app.name}-darwin-arm64/${app.name}.app`)} },
+    entitlements: 'entitlements.plist',
+    formats: ['dmg'],
+  },
+  windows: {
+    apps: { x64: ${str(`out/${app.name}-win32-x64`)} },
+    executable: ${str(`${slugOf(app.name)}.exe`)}, // packagerConfig.executableName
+  },
+  linux: {
+    apps: { x64: ${str(`out/${app.name}-linux-x64`)} },
+    executable: ${str(slugOf(app.name))},
+    formats: ['appimage', 'deb', 'rpm', 'tar.gz'],
+  },`
+        ),
+        entitlements
+      ]
+    },
+    group: "Electron",
+    health: electronHealth,
+    id: "electron-forge",
+    label: "Electron Forge",
+    updates: {
+      ...electronUpdates,
+      note: "Remove update-electron-app and your publishers: ToDesktop serves updates now. You don\u2019t need makers for ToDesktop either; it makes the DMG, the installer and the Linux packages.",
+      snippets: (app) => [
+        ...electronUpdateSnippets,
+        {
+          code: `module.exports = {
+  packagerConfig: {
+    executableName: ${str(slugOf(app.name))},
+    // The updater's native files must sit outside app.asar.
+    asar: { unpack: '${updaterGlob}' },
+    // No osxSign or osxNotarize: ToDesktop signs and notarizes.
+  },
+};`,
+          label: "Copy forge.config.js",
+          language: "javascript",
+          title: "In forge.config.js"
+        }
+      ]
+    },
+    workflow: {
+      ...electronWorkflow,
+      file: (app, edgeUrl) => matrixWorkflow(
+        app,
+        packagerMatrix,
+        `      - run: npm ci
+      # package, not make: ToDesktop makes the installers.
+      - run: npx electron-forge package \${{ matrix.target }}`,
+        edgeUrl
+      )
+    }
+  },
+  {
+    caption: "@electron/packager",
+    config: {
+      description: "At the root of the repository, beside package.json. The paths are where the packager command in step 4 puts your app. Commit both files.",
+      files: (app) => [
+        typesSnippet,
+        configSnippet(
+          app,
+          `  // What @electron/packager makes, unsigned: ToDesktop signs it.
+  mac: {
+    apps: { arm64: ${str(`dist/${app.name}-darwin-arm64/${app.name}.app`)} },
+    entitlements: 'entitlements.plist',
+    formats: ['dmg'],
+  },
+  windows: {
+    apps: { x64: ${str(`dist/${app.name}-win32-x64`)} },
+    executable: ${str(`${slugOf(app.name)}.exe`)}, // --executable-name
+  },
+  linux: {
+    apps: { x64: ${str(`dist/${app.name}-linux-x64`)} },
+    executable: ${str(slugOf(app.name))},
+    formats: ['appimage', 'deb', 'rpm', 'tar.gz'],
+  },`
+        ),
+        entitlements
+      ]
+    },
+    group: "Electron",
+    health: electronHealth,
+    id: "electron-packager",
+    label: "Electron Packager",
+    updates: {
+      ...electronUpdates,
+      note: "The packager command in step 4 keeps the updater\u2019s native files outside app.asar (--asar.unpack). Remove any other updater: ToDesktop serves updates now.",
+      snippets: () => electronUpdateSnippets
+    },
+    workflow: {
+      ...electronWorkflow,
+      file: (app, edgeUrl) => matrixWorkflow(
+        app,
+        packagerMatrix,
+        `      - run: npm ci
+      # Unsigned (no --osx-sign): ToDesktop signs and packages it.
+      - shell: bash   # Windows too, for the app name's quoting
+        run: >-
+          npx @electron/packager . ${shellWord(app.name)} \${{ matrix.target }}
+          --out=dist --executable-name=${slugOf(app.name)} --asar
+          --asar.unpack="${updaterGlob}"`,
+        edgeUrl
+      )
+    }
+  },
+  {
+    caption: "A Node.js app or daemon",
+    config: {
+      description: "At the root of the repository, beside package.json. Point each app at the folder your packaging makes: Node, your code and node_modules, unsigned. Commit it.",
+      files: (app) => [
+        typesSnippet,
+        configSnippet(
+          app,
+          `  mac: {
+    // Your unsigned .app, relative to this file: ToDesktop signs it.
+    apps: { arm64: ${str(`dist/mac-arm64/${app.name}.app`)} },
+    formats: ['dmg'],
+  },
+  windows: {
+    apps: { x64: 'dist/windows-x64' },
+    executable: ${str(`${slugOf(app.name)}.exe`)},
+  },
+  linux: {
+    apps: { x64: 'dist/linux-x64' },
+    executable: ${str(slugOf(app.name))},
+    formats: ['appimage', 'deb', 'rpm', 'tar.gz'],
+  },`
+        )
+      ]
+    },
+    group: "Other frameworks",
+    health: {
+      call: "updates.healthReady()",
+      from: "Updates.fromCurrentExe(), @todesktop/updater",
+      snippet: {
+        code: `// updates: Updates.fromCurrentExe(), started when your app starts.
+// Once your app works (a daemon: it's serving requests):
+updates.healthReady();`,
+        label: "Copy healthReady",
+        language: "javascript",
+        title: "Once your app works"
+      },
+      when: healthWhen
+    },
+    id: "node",
+    label: "Node.js",
+    updates: {
+      description: "The updater follows the update policy in todesktop.config.ts and reports launches for rollout health. Commit this with step 1.",
+      note: "Ship @todesktop/updater\u2019s native files, its todesktop-updater included, with the app (node_modules/@todesktop/updater-*, outside any single-file bundle): installing an update hands off to it. A single executable (Node SEA, bun build --compile) can run todesktop-updater serve instead: see Something else.",
+      snippets: () => nodeUpdateSnippets,
+      via: "Installs update through @todesktop/updater, or apt, dnf and pacman on Linux"
+    },
+    workflow: {
+      description: `In .github/workflows/release.yml. A job per platform packages the app, unsigned, and uploads it.`,
+      file: (app, edgeUrl) => matrixWorkflow(
+        app,
+        `          - os: macos-15
+          - os: windows-latest
+${linuxRunnerNote}
+          - os: ${linuxRunner}`,
+        `      - run: npm ci
+      # Your packaging: the app and its node_modules, unsigned, where
+      # todesktop.config.ts points (ToDesktop signs and packages it).
+      - run: npm run package`,
+        edgeUrl
+      ),
+      title: "Build and upload in GitHub Actions"
+    }
+  },
+  {
+    caption: "Rust and a webview",
+    config: {
+      description: "At the root of the repository, beside src-tauri. tauriConfig() reads the rest from tauri.conf.json and Cargo.toml when the workflow in step 4 uploads, and makes the Windows and Linux apps from your binary, its sidecars and bundle.resources. Commit it.",
+      files: (app) => [
+        typesSnippet,
+        {
+          code: `import { defineConfig, tauriConfig } from '@todesktop/config';
+
+export default defineConfig({
+  // Names, version, icons and where tauri build leaves your app, from
+  // tauri.conf.json and Cargo.toml. Anything below wins.
+  extends: tauriConfig(),
+  appId: ${str(app.id)},
+  maintainer: ${maintainerOf(app)}
+  linux: { formats: ['appimage', 'deb', 'tar.gz'] },
+});`,
+          label: "Copy todesktop.config.ts",
+          language: "typescript",
+          path: "todesktop.config.ts"
+        }
+      ]
+    },
+    group: "Other frameworks",
+    health: {
+      call: "health.ready()",
+      from: "@todesktop/tauri",
+      snippet: tauriHealthSnippet,
+      when: healthWhen
+    },
+    id: "tauri",
+    label: "Tauri",
+    preview: {
+      platforms: "Linux packages",
+      text: "A tar.gz install can\u2019t find the files in bundle.resources yet (deb and AppImage installs can), and packages are deb only: their dependencies are Debian\u2019s names."
+    },
+    updates: {
+      description: "The plugin follows the update policy in todesktop.config.ts, and your page can show its progress. Commit this with step 1.",
+      note: "Remove tauri-plugin-updater: ToDesktop serves updates now. People on a version that uses Tauri\u2019s updater move over with one bridge release (todesktop tauri-bridge).",
+      snippets: () => [
+        {
+          // Both from the repository's root: the npm package is your page's.
+          code: `cargo add tauri-plugin-todesktop --manifest-path src-tauri/Cargo.toml
+npm install @todesktop/tauri`,
+          label: "Copy install commands",
+          language: "bash",
+          title: "Add the plugin"
+        },
+        {
+          code: `tauri::Builder::default()
+    .plugin(tauri_plugin_todesktop::init())`,
+          label: "Copy plugin registration",
+          language: "rust",
+          title: "Register it, in src-tauri/src/lib.rs"
+        },
+        {
+          code: '{ "permissions": ["core:default", "todesktop:default"] }',
+          label: "Copy permissions",
+          language: "json",
+          title: "Allow its commands, in src-tauri/capabilities/default.json"
+        },
+        {
+          code: '{ "bundle": { "externalBin": ["binaries/todesktop-updater"] } }',
+          label: "Copy externalBin",
+          language: "json",
+          title: `Ship the updater with the app: the workflow in step 4 puts todesktop-updater for its target in src-tauri/binaries/ (todesktop-updater-aarch64-apple-darwin, \u2026). For builds on your machine, put yours there from ${sidecarUrl("<target>", "tar.gz")} and git-ignore the folder. Then in tauri.conf.json`
+        },
+        tauriHealthSnippet
+      ],
+      via: "Installs update through the ToDesktop plugin, or apt on Linux"
+    },
+    workflow: {
+      description: `In .github/workflows/release.yml. A job per platform builds the app, unsigned, and uploads it.`,
+      file: (app, edgeUrl) => matrixWorkflow(
+        app,
+        `          - os: macos-15
+            args: --bundles app --target aarch64-apple-darwin
+            updater: aarch64-apple-darwin
+            target: aarch64-apple-darwin
+          # Windows and Linux: just the binary; tauriConfig() makes the app.
+          - os: windows-latest
+            args: --no-bundle
+${linuxRunnerNote}
+          - os: ${linuxRunner}
+            args: --no-bundle
+            updater: x86_64-unknown-linux-musl   # static, so any glibc
+            target: x86_64-unknown-linux-gnu`,
+        `${app.rustToolchain ? `      # Not stable: your tauri-build can't place the sidecar with Rust 1.100
+      # or later. Upgrade Tauri (tauri-build ${tauriBuildFixed} or later), then use @stable.
+` : ""}      - uses: dtolnay/rust-toolchain@${app.rustToolchain ?? "stable"}
+        with:
+          targets: aarch64-apple-darwin
+      # Tauri's own packages. A tray's library goes into the app from here
+      # (tauriConfig() copies it, with patchelf), for AppImage and tar.gz installs.
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev librsvg2-dev libayatana-appindicator3-dev patchelf
+      - run: npm ci
+      # todesktop-updater beside the app (tauri.conf.json's externalBin), from
+      # ToDesktop's runtime release, named for the target as Tauri expects.
+      - if: runner.os != 'Windows'
+        run: |
+          mkdir -p src-tauri/binaries
+          curl -fsSL ${sidecarUrl(`\${{ matrix.updater }}`, "tar.gz")} | tar -xz -C src-tauri/binaries
+          mv src-tauri/binaries/todesktop-updater "src-tauri/binaries/todesktop-updater-\${{ matrix.target }}"
+      - if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Invoke-WebRequest ${sidecarUrl("x86_64-pc-windows-msvc", "zip")} -OutFile todesktop-updater.zip
+          Expand-Archive todesktop-updater.zip -DestinationPath src-tauri/binaries
+          Move-Item src-tauri/binaries/todesktop-updater.exe src-tauri/binaries/todesktop-updater-x86_64-pc-windows-msvc.exe
+      # Unsigned: leave APPLE_SIGNING_IDENTITY unset, ToDesktop signs it.
+      - run: npx tauri build \${{ matrix.args }}`,
+        edgeUrl,
+        // tauriConfig() reads the version from tauri.conf.json or
+        // Cargo.toml; a tag still names it.
+        { packageJson: false }
+      ),
+      title: "Build and upload in GitHub Actions"
+    }
+  },
+  {
+    caption: "Swift, SwiftUI or AppKit",
+    config: {
+      description: "At the root of the repository. The path is where the workflow in step 4 has xcodebuild put your app, unsigned: ToDesktop signs it. Point entitlements at your target\u2019s .entitlements file as it is: ToDesktop fills in $(PRODUCT_BUNDLE_IDENTIFIER) and the team prefixes as Xcode does. Commit it.",
+      files: (app) => [
+        {
+          code: `// Types for your editor (optional): npm install --save-dev @todesktop/config
+import { defineConfig } from '@todesktop/config';
+
+export default defineConfig({
+  appId: ${str(app.id)},
+  productName: ${str(app.name)},
+  description: ${descriptionOf(app)}
+  maintainer: ${maintainerOf(app)}
+  // The version is a tag's (v1.2.3), else your app's CFBundleShortVersionString.
+  mac: {
+    // What xcodebuild makes in step 4, unsigned: ToDesktop signs it.
+    apps: { universal: ${str(`build/Build/Products/Release/${app.name}.app`)} },
+    formats: ['dmg'],
+    // Your app target's entitlements, as Xcode has them:
+    // entitlements: 'YourApp/YourApp.entitlements',
+    // Extensions, XPC services and login items with their own:
+    // nested: {
+    //   'Contents/PlugIns/Share.appex': {
+    //     entitlements: 'ShareExtension/ShareExtension.entitlements',
+    //   },
+    // },
+    // For iCloud, push, associated domains or Sign in with Apple, a
+    // Developer ID provisioning profile from your Apple Developer account:
+    // provisioningProfile: 'profiles/YourApp.provisionprofile',
+  },
+});`,
+          label: "Copy todesktop.config.ts",
+          language: "typescript",
+          path: "todesktop.config.ts"
+        }
+      ]
+    },
+    group: "Other frameworks",
+    health: {
+      call: "try await updater.healthReady()",
+      from: "ToDesktopUpdater, the Swift package",
+      snippet: {
+        code: `// Once your first window shows your app:
+try? await updater?.windowShown()
+try? await updater?.healthReady()`,
+        label: "Copy healthReady",
+        language: "swift",
+        title: "Where your app has started, on what ToDesktop.Updater.start() returned"
+      },
+      when: healthWhen
+    },
+    id: "xcode",
+    label: "Xcode",
+    makes: "ToDesktop signs and notarizes it with your Developer ID and makes the DMG",
+    preview: {
+      platforms: "Mac builds",
+      text: "The ToDesktopUpdater Swift package isn\u2019t in a public registry yet: the todesktop CLI\u2019s integrate --write puts it beside your project (ToDesktopUpdater/), and Xcode adds it as a local package. Sandboxed apps (com.apple.security.app-sandbox on the app itself) can\u2019t update themselves yet."
+    },
+    updates: {
+      description: "The ToDesktopUpdater package runs the ToDesktop updater beside your app: it follows the update policy in todesktop.config.ts, and your app can show its progress. The workflow in step 4 puts the updater in your app.",
+      note: "Remove Sparkle, or any other updater, and its feed URL from Info.plist: ToDesktop serves updates now.",
+      snippets: () => [
+        {
+          code: `import AppKit
+import ToDesktopUpdater
+
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    // nil when the app has no updater beside it (run from Xcode).
+    let updater = ToDesktop.Updater.start()
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        updater?.onStateChange = { state in
+            // checking, available, downloading, ready...: show it if you like.
+        }
+        // Once your window shows your app:
+        Task { try? await updater?.healthReady() }
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        updater?.shutdown()
+    }
+}`,
+          label: "Copy startup code",
+          language: "swift",
+          title: "Add the ToDesktopUpdater package to your app target (File \u203A Add Package Dependencies\u2026 \u203A Add Local\u2026), then start it when your app starts. SwiftUI apps do the same in an NSApplicationDelegateAdaptor."
+        }
+      ],
+      via: "Installs update through the ToDesktop updater"
+    },
+    workflow: {
+      description: `In .github/workflows/release.yml. It builds your app universal and unsigned, puts the ToDesktop updater in it and uploads it. Set your scheme's name.`,
+      file: (app, edgeUrl) => `${workflowHead(app.refs)}jobs:
+  release:
+    runs-on: macos-15
+    permissions:
+      id-token: write   # lets ToDesktop check the job is yours
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      # Unsigned: ToDesktop signs it with your Developer ID.
+      - run: >-
+          xcodebuild build -scheme ${shellWord(app.name)} -configuration Release
+          -destination 'generic/platform=macOS' -derivedDataPath build
+          ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED=NO
+      # The ToDesktop updater, beside your executable, unsigned.
+      - run: >-
+          curl -fsSL https://dl.todesktop.com/v2/runtime/${healthReadyRuntime}/todesktop-updater-${healthReadyRuntime}-universal-apple-darwin.tar.gz
+          | tar -xz -C ${shellWord(`build/Build/Products/Release/${app.name}.app/Contents/MacOS`)}
+${uploadStep(edgeUrl, { refs: app.refs })}`,
+      title: "Build and upload in GitHub Actions"
+    }
+  },
+  {
+    caption: "C# and the Windows App SDK",
+    config: {
+      description: "At the root of the repository, beside your .csproj. The path is where the workflow in step 4 has dotnet publish put your app, unsigned: ToDesktop signs it. Commit it with the .csproj change below.",
+      files: (app) => [
+        configSnippet(
+          app,
+          `  windows: {
+    // What dotnet publish makes in step 4, unsigned: ToDesktop signs it.
+    apps: { x64: 'dist/windows-x64' },
+    executable: ${str(`${assemblyNameOf(app.name)}.exe`)}, // your AssemblyName
+  },`,
+          { packageJson: false }
+        ),
+        {
+          code: `<PropertyGroup>
+  <!-- ToDesktop installs a folder, not an MSIX package. -->
+  <WindowsPackageType>None</WindowsPackageType>
+  <!-- Unpackaged too: it makes your app's .pri, where WinUI finds your XAML. -->
+  <EnableMsixTooling>true</EnableMsixTooling>
+  <!-- A clean Windows has neither runtime: your app brings both. -->
+  <SelfContained>true</SelfContained>
+  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+</PropertyGroup>`,
+          label: "Copy PropertyGroup",
+          language: "xml",
+          title: "In your app\u2019s .csproj: unpackaged, with .NET and the Windows App SDK runtime inside the app"
+        }
+      ]
+    },
+    group: "Other frameworks",
+    health: {
+      call: "await updater.HealthReadyAsync()",
+      from: "ToDesktopUpdater.cs, the .NET client",
+      snippet: {
+        code: `// Root: your window's content. Once it shows your app:
+Root.Loaded += async (_, _) =>
+{
+    await _updater.WindowShownAsync();
+    await _updater.HealthReadyAsync();
+};`,
+        label: "Copy healthReady",
+        language: "csharp",
+        title: "In your MainWindow, on what ToDesktop.Updater.Start() returned"
+      },
+      when: healthWhen
+    },
+    id: "winui",
+    label: "WinUI 3",
+    makes: "ToDesktop signs it with your certificate and makes the Windows installer",
+    preview: {
+      platforms: "Windows builds",
+      text: "ToDesktopUpdater.cs, the .NET client, isn\u2019t on NuGet yet: the todesktop CLI\u2019s integrate --write adds it beside your .csproj."
+    },
+    updates: {
+      description: "ToDesktopUpdater.cs runs the ToDesktop updater beside your app: it follows the update policy in todesktop.config.ts, and your app can show its progress. The workflow in step 4 puts the updater beside your .exe.",
+      note: "Remove any other updater (Velopack, Squirrel, WinSparkle) and its feed: ToDesktop serves updates now.",
+      snippets: () => [
+        {
+          code: `using Microsoft.UI.Xaml;
+
+public sealed partial class MainWindow : Window
+{
+    // Starts todesktop-updater.exe from beside your .exe; null when it
+    // isn't there (run from Visual Studio).
+    private readonly ToDesktop.Updater? _updater = ToDesktop.Updater.Start();
+
+    public MainWindow()
+    {
+        InitializeComponent();
+        if (_updater is null) return;
+        var ui = DispatcherQueue;
+        _updater.StateChanged += state => ui.TryEnqueue(() =>
+        {
+            // checking, available, downloading, ready...: show it if you like.
+        });
+        // An update is in place: quit, and the updater starts the new version.
+        _updater.QuitRequested += () => ui.TryEnqueue(() =>
+        {
+            _updater.Shutdown();
+            Application.Current.Exit();
+        });
+        // Root: your window's content. Once it shows your app:
+        Root.Loaded += async (_, _) =>
+        {
+            await _updater.WindowShownAsync();
+            await _updater.HealthReadyAsync();
+        };
+    }
+}`,
+          label: "Copy MainWindow code",
+          language: "csharp",
+          title: "Add ToDesktopUpdater.cs to your project, then start it with your main window"
+        }
+      ],
+      via: "Installs update through the ToDesktop updater"
+    },
+    warning: {
+      text: "Most Windows machines don\u2019t have the Windows App SDK runtime your app was built with: without WindowsAppSDKSelfContained (and SelfContained, for .NET), an unpackaged WinUI 3 app doesn\u2019t get past starting there, and its smoke test fails. Without EnableMsixTooling, dotnet publish leaves out your app\u2019s .pri, so it crashes opening its first window (\u201CXAML parsing failed\u201D). APIs that need package identity (ApplicationData.Current, for one) don\u2019t work unpackaged: try the published build before your first release.",
+      title: "Ship the runtimes and your .pri inside your app."
+    },
+    workflow: {
+      description: `In .github/workflows/release.yml. It publishes your app for Windows x64, unpackaged and unsigned, puts the ToDesktop updater beside it and uploads it. Set your .csproj's path.`,
+      file: (app, edgeUrl) => `${workflowHead(app.refs)}jobs:
+  release:
+    runs-on: windows-latest
+    permissions:
+      id-token: write   # lets ToDesktop check the job is yours
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x   # your app's .NET
+      # Unpackaged and self-contained (your .csproj, step 1), unsigned:
+      # ToDesktop signs it.
+      - run: >-
+          dotnet publish ${assemblyNameOf(app.name)}.csproj -c Release -r win-x64
+          -p:Platform=x64 -o dist/windows-x64
+      # The ToDesktop updater, beside your .exe, unsigned.
+      - shell: pwsh
+        run: |
+          Invoke-WebRequest ${sidecarUrl("x86_64-pc-windows-msvc", "zip")} -OutFile todesktop-updater.zip
+          Expand-Archive todesktop-updater.zip -DestinationPath dist/windows-x64
+${uploadStep(edgeUrl, { refs: app.refs })}`,
+      title: "Build and upload in GitHub Actions"
+    }
+  },
+  {
+    caption: "Rust and Qt, with CXX-Qt",
+    config: {
+      description: "At the root of the repository, beside Cargo.toml. The path is where the workflow in step 4 puts your binary with Qt bundled beside it. Commit it.",
+      files: (app) => [
+        configSnippet(
+          app,
+          `  linux: {
+    // What the workflow in step 4 makes: your binary with Qt beside it.
+    apps: { x64: 'dist/linux-x64' },
+    executable: ${str(slugOf(app.name))}, // your binary's name
+    // What the bundle still takes from the system (Debian's names).
+    depends: [
+${qtDepends.map((name) => `      '${name}',`).join("\n")}
+    ],
+    formats: ['appimage', 'deb', 'tar.gz'],
+  },`,
+          { packageJson: false }
+        )
+      ]
+    },
+    group: "Other frameworks",
+    health: {
+      call: "updates.health_ready()",
+      from: "the todesktop-updater crate",
+      snippet: {
+        code: `// In updates.rs: QML calls it on its window's first frame.
+fn window_shown(self: Pin<&mut Self>) {
+    if let Some(updates) = updates() {
+        updates.window_shown();
+        updates.health_ready();
+    }
+}`,
+        label: "Copy healthReady",
+        language: "rust",
+        title: "Once your window shows your app"
+      },
+      when: healthWhen
+    },
+    id: "qt",
+    label: "Qt",
+    makes: "ToDesktop makes the AppImage, the deb and the tarball",
+    preview: {
+      platforms: "Linux builds",
+      text: "Packages are deb only, as their dependencies are Debian\u2019s names, and builds are x64 only."
+    },
+    updates: {
+      description: "The todesktop-updater crate follows the update policy in todesktop.config.ts. One QML object starts it once Qt can hear from it, quits through Qt for an update, and says when your window is up. Commit this with step 1.",
+      note: "The workflow in step 4 puts the todesktop-updater sidecar beside your binary too: it starts the new version once your app has quit.",
+      snippets: () => [
+        {
+          code: "cargo add todesktop-updater",
+          label: "Copy install command",
+          language: "bash",
+          title: "Add the crate"
+        },
+        {
+          code: `// src/updates.rs: add it to your build.rs's CxxQtBuilder (.files).
+use std::{pin::Pin, sync::OnceLock};
+
+use cxx_qt::Threading;
+use todesktop_updater::{Updater, Updates as Todesktop};
+
+static UPDATES: OnceLock<Option<Todesktop>> = OnceLock::new();
+
+/// In main, before QGuiApplication::new(). Builds ToDesktop didn't make
+/// (cargo run) have no identity: no updates.
+pub fn init() {
+    UPDATES.get_or_init(|| Updater::from_current_exe().ok().map(Todesktop::new));
+}
+
+/// In main, after exec(): installs an update set to apply at quit.
+pub fn on_quit() {
+    if let Some(updates) = updates() {
+        updates.on_quit();
+    }
+}
+
+fn updates() -> Option<&'static Todesktop> {
+    UPDATES.get().and_then(Option::as_ref)
+}
+
+#[cxx_qt::bridge]
+pub mod qobject {
+    extern "RustQt" {
+        #[qobject]
+        #[qml_element]
+        type Updates = super::UpdatesRust;
+
+        #[qinvokable]
+        #[cxx_name = "windowShown"]
+        fn window_shown(self: Pin<&mut Updates>);
+
+        #[qsignal]
+        #[cxx_name = "quitRequested"]
+        fn quit_requested(self: Pin<&mut Updates>);
+    }
+
+    impl cxx_qt::Threading for Updates {}
+    impl cxx_qt::Initialize for Updates {}
+}
+
+#[derive(Default)]
+pub struct UpdatesRust;
+
+impl cxx_qt::Initialize for qobject::Updates {
+    fn initialize(self: Pin<&mut Self>) {
+        let Some(updates) = updates() else { return };
+        let qt = self.qt_thread();
+        // An update is in place: quit through Qt, on Qt's thread. The new
+        // version starts once this process has exited.
+        updates.quit_with(move || {
+            let _ = qt.queue(|updates| updates.quit_requested());
+        });
+        // Checks, downloads and installs as todesktop.config.ts's updates say.
+        updates.start();
+    }
+}
+
+impl qobject::Updates {
+    fn window_shown(self: Pin<&mut Self>) {
+        if let Some(updates) = updates() {
+            updates.window_shown();
+            // This launch works: smoke tests and rollout health count on it.
+            updates.health_ready();
+        }
+    }
+}`,
+          label: "Copy updates.rs",
+          language: "rust",
+          title: "A QML object for the updater"
+        },
+        {
+          code: `ApplicationWindow {
+    property bool shown: false
+
+    Updates {
+        id: updates
+        onQuitRequested: Qt.quit()
+    }
+
+    // The first frame on screen: your app works.
+    onFrameSwapped: if (!shown) {
+        shown = true
+        updates.windowShown()
+    }
+}`,
+          label: "Copy QML",
+          language: "qml",
+          title: "In your main window, which imports your QML module"
+        }
+      ],
+      via: "Installs update through the ToDesktop updater, or apt on Linux"
+    },
+    warning: {
+      text: 'People\u2019s machines don\u2019t have the Qt you built with: the workflow in step 4 copies Qt\u2019s libraries, plugins and QML modules beside your binary and points it at them. Leave out its X11 libraries and Qt 6.5 or later can\u2019t start on a stock Ubuntu (\u201CCould not load the Qt platform plugin "xcb"\u201D: libxcb-cursor0 isn\u2019t installed there). It builds on Ubuntu 22.04, so the app runs there and on anything newer.',
+      title: "Bundle Qt with your app."
+    },
+    workflow: {
+      description: `In .github/workflows/release.yml. It builds your app on Ubuntu 22.04, bundles Qt beside it with linuxdeploy's Qt plugin, adds the ToDesktop updater and uploads it, unsigned. Set your Qt version and where your .qml files are.`,
+      file: (app, edgeUrl) => {
+        const binary = slugOf(app.name);
+        return `${workflowHead(app.refs)}jobs:
+  release:
+    # The oldest glibc you support: the app runs there and anywhere newer.
+    runs-on: ${linuxRunner}
+    permissions:
+      id-token: write   # lets ToDesktop check the job is yours
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.*'   # your Qt
+      - uses: dtolnay/rust-toolchain@stable
+      # OpenGL and xkbcommon headers to build, and the X11 libraries Qt's
+      # xcb plugin loads, for the bundle (libxcb-cursor0: Qt 6.5 and later).
+      - run: >-
+          sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev
+          libxkbcommon-dev libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4
+          libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-shape0
+          libfontconfig1 libdbus-1-3 patchelf
+      - run: cargo build --release
+      # Qt's libraries, plugins and QML modules beside your binary.
+      - name: Bundle Qt
+        env:
+          QML_SOURCES_PATHS: qml   # where your .qml files are
+          APPIMAGE_EXTRACT_AND_RUN: 1
+        run: |
+          for tool in linuxdeploy linuxdeploy-plugin-qt; do
+            curl -fsSLO "https://github.com/linuxdeploy/$tool/releases/download/continuous/$tool-x86_64.AppImage"
+            chmod +x "$tool-x86_64.AppImage"
+          done
+          LD_LIBRARY_PATH="$QT_ROOT_DIR/lib" ./linuxdeploy-x86_64.AppImage \\
+            --appdir AppDir --executable target/release/${binary} --plugin qt
+          mkdir -p dist && mv AppDir/usr dist/linux-x64
+          mv dist/linux-x64/bin/* dist/linux-x64/ && rmdir dist/linux-x64/bin
+          patchelf --set-rpath '$ORIGIN/lib' dist/linux-x64/${binary}
+          printf '[Paths]\\nPrefix = .\\n' > dist/linux-x64/qt.conf
+      # The ToDesktop updater, beside your binary, unsigned.
+      - run: >-
+          curl -fsSL ${sidecarUrl("x86_64-unknown-linux-musl", "tar.gz")}
+          | tar -xz -C dist/linux-x64
+${uploadStep(edgeUrl, { refs: app.refs })}`;
+      },
+      title: "Build and upload in GitHub Actions"
+    }
+  }
+];
+var recipes = allRecipes.map((recipe) => ({
+  ...recipe,
+  workflow: {
+    ...recipe.workflow,
+    file: (app, edgeUrl) => fitWorkflow(app, recipe.workflow.file(app, edgeUrl))
+  }
+}));
+
+// ../recipes/src/detect.ts
+var import_yaml3 = __toESM(require_dist(), 1);
+import { existsSync as existsSync4 } from "node:fs";
+import { readdir as readdir3, readFile as readFile4 } from "node:fs/promises";
+import path4 from "node:path";
+
+// ../recipes/src/electronBuilder.ts
+var import_json52 = __toESM(require_lib(), 1);
+var import_yaml = __toESM(require_dist(), 1);
+var isObject3 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+var text = (value) => typeof value === "string" && value.trim() ? value.trim() : void 0;
+var electronBuilderFiles = [
+  "electron-builder.json",
+  "electron-builder.json5",
+  "electron-builder.yml",
+  "electron-builder.yaml"
+];
+function electronBuilderConfig(pkg, files) {
+  if (isObject3(pkg?.build)) {
+    return { settings: pkg.build, source: "package.json build" };
+  }
+  for (const name of electronBuilderFiles) {
+    const source = files[name];
+    if (source == null) continue;
+    try {
+      const value = name.includes(".json") ? import_json52.default.parse(source) : (0, import_yaml.parse)(source);
+      if (isObject3(value)) return { settings: value, source: name };
+    } catch {
+    }
+    return { source: name };
+  }
+  return { source: "package.json build" };
+}
+var fileName = /^[\w.-]+$/;
+function electronBuilderPaths(pkg, { settings, source }) {
+  const found = {};
+  const output = text(settings?.directories?.output);
+  if (output) {
+    found.outputDir = {
+      dir: output.replace(/\/+$/, ""),
+      from: `${source}: directories.output`
+    };
+  }
+  const linux = text(settings?.linux?.executableName);
+  const top = text(settings?.executableName);
+  let named;
+  if (linux ?? top) {
+    named = linux ?? top;
+    found.linuxExecutable = {
+      from: `${source}: ${linux ? "linux.executableName" : "executableName"}`,
+      name: sanitizeFileName(named)
+    };
+  } else if (text(pkg?.name)) {
+    named = text(pkg?.name);
+    found.linuxExecutable = {
+      from: "package.json name, lowercased",
+      name: sanitizeFileName(named).toLowerCase()
+    };
+  }
+  const own = found.linuxExecutable;
+  if (own && named && !fileName.test(own.name)) {
+    found.linuxExecutable = {
+      from: `${own.from} (${own.name} isn\u2019t a file name todesktop.config.ts takes, so the workflow gives electron-builder this one: -c.linux.executableName)`,
+      name: slugOf(named),
+      replaces: own.name
+    };
+  }
+  return found;
+}
+var settingKey = { linux: "linux", mac: "mac", windows: "win" };
+function targetArches(target) {
+  const arches = (Array.isArray(target) ? target : [target]).flatMap(
+    (each) => isObject3(each) ? (Array.isArray(each.arch) ? each.arch : [each.arch]).filter(
+      (arch) => typeof arch === "string"
+    ) : []
+  );
+  return [...new Set(arches)].sort();
+}
+function beforeElectronBuilder(script) {
+  const commands = script.split("&&").map((command) => command.trim());
+  const at = commands.findIndex(
+    (command) => /(^|[\s/])electron-builder(\s|$)/.test(command) && // Rebuilding native modules isn't a build of the app.
+    !/electron-builder\s+install-app-deps\b/.test(command)
+  );
+  return at === -1 ? void 0 : commands.slice(0, at).filter(Boolean);
+}
+function electronBuilderShips(pkg, { settings, source }) {
+  const found = {};
+  const scripts = Object.entries(isObject3(pkg?.scripts) ? pkg.scripts : {}).map(([name, script]) => ({
+    before: typeof script === "string" ? beforeElectronBuilder(script) : void 0,
+    name
+  })).filter(
+    (each) => each.before !== void 0
+  );
+  if (scripts.some(({ before }) => before.length > 0)) {
+    const [first, ...rest] = scripts;
+    found.buildSteps = {
+      common: first.before.filter(
+        (command) => rest.every(({ before }) => before.includes(command))
+      ),
+      scripts
+    };
+  }
+  const entitlements2 = text(settings?.mac?.entitlements);
+  if (entitlements2) {
+    found.entitlements = {
+      file: entitlements2.replace(/^\.\//, ""),
+      from: `${source}: mac.entitlements`
+    };
+  }
+  const others = [];
+  for (const platform of ["mac", "windows", "linux"]) {
+    const key = settingKey[platform];
+    const arches = targetArches(settings?.[key]?.target);
+    const from = `${source}: ${key}.target`;
+    if (platform === "mac") {
+      const drafted = arches.filter(
+        (arch) => arch === "arm64" || arch === "x64"
+      );
+      if (drafted.length) found.macArches = { arches: drafted, from };
+    }
+    others.push(
+      ...arches.filter(
+        (arch) => platform === "mac" ? arch === "universal" : arch !== "x64"
+      ).map((arch) => ({ arch, from, platform }))
+    );
+  }
+  if (others.length) found.otherArches = others;
+  return found;
+}
+
+// ../recipes/src/native.ts
+var import_yaml2 = __toESM(require_dist(), 1);
+import { existsSync as existsSync3 } from "node:fs";
+import { readdir as readdir2, readFile as readFile3 } from "node:fs/promises";
+import path3 from "node:path";
+var readText = (file3) => readFile3(file3, "utf8").catch(() => void 0);
+function parseYamlSafe(source) {
+  try {
+    const value = (0, import_yaml2.parse)(source);
+    return value && typeof value === "object" ? value : void 0;
+  } catch {
+    return void 0;
+  }
+}
+var notTheApp = (file3, project) => /(?:^|[/._-])(?:tests?|benchmarks?|samples?|examples?|demos?)(?:[/._-]|$)/i.test(
+  file3
+) || /Microsoft\.NET\.Test\.Sdk|<IsTestProject>\s*true/i.test(project);
+async function dotnetProjects(dir) {
+  const entries = await readdir2(dir, { withFileTypes: true }).catch(() => []);
+  let files = entries.filter((entry) => entry.isFile() && entry.name.endsWith(".csproj")).map((entry) => entry.name);
+  if (!files.length) {
+    for (const solution of entries.filter((entry) => /\.slnx?$/.test(entry.name)).map((entry) => entry.name).sort()) {
+      const text3 = await readText(path3.join(dir, solution)) ?? "";
+      for (const match of text3.matchAll(/(?:Path=|,\s*)"([^"]+\.csproj)"/g)) {
+        files.push(match[1].replaceAll("\\", "/"));
+      }
+    }
+  }
+  if (!files.length) {
+    for (const folder of entries.filter(
+      (entry) => entry.isDirectory() && !entry.name.startsWith(".")
+    )) {
+      const inside = await readdir2(path3.join(dir, folder.name)).catch(
+        () => []
+      );
+      for (const name of inside.filter((each) => each.endsWith(".csproj"))) {
+        files.push(`${folder.name}/${name}`);
+      }
+    }
+  }
+  files = [...new Set(files)].filter(
+    (file3) => existsSync3(path3.join(dir, file3))
+  );
+  const projects = await Promise.all(
+    files.map(async (file3) => ({
+      file: file3,
+      project: await readText(path3.join(dir, file3)) ?? ""
+    }))
+  );
+  const rank = ({ file: file3, project }) => {
+    if (notTheApp(file3, project)) return 3;
+    if (/<OutputType>\s*(?:WinExe|Exe)\s*<\/OutputType>/i.test(project)) {
+      return 0;
+    }
+    return dotnetUi(project) && !/Library/i.test(project) ? 1 : 2;
+  };
+  return projects.sort(
+    (a, b) => rank(a) - rank(b) || a.file.localeCompare(b.file)
+  );
+}
+function dotnetUi(project) {
+  if (/<PackageReference\s+Include="Avalonia(?:\.Desktop)?"/i.test(project)) {
+    return "avalonia";
+  }
+  if (/<UseWPF>\s*true\s*<\/UseWPF>/i.test(project)) return "wpf";
+  if (/<UseWindowsForms>\s*true\s*<\/UseWindowsForms>/i.test(project)) {
+    return "winforms";
+  }
+  return void 0;
+}
+var usesFlutter = (pubspec) => pubspec?.dependencies?.flutter?.sdk === "flutter";
+async function flutterFolder(dir) {
+  const pubspec = parseYamlSafe(
+    await readText(path3.join(dir, "pubspec.yaml")) ?? ""
+  );
+  if (!pubspec) return void 0;
+  if (usesFlutter(pubspec)) return ".";
+  const members = Array.isArray(pubspec.workspace) ? pubspec.workspace.filter(
+    (member) => typeof member === "string"
+  ) : [];
+  for (const member of members) {
+    const own = parseYamlSafe(
+      // oxlint-disable-next-line no-await-in-loop -- a few members
+      await readText(path3.join(dir, member, "pubspec.yaml")) ?? ""
+    );
+    const desktop = ["linux", "macos", "windows"].some(
+      (folder) => existsSync3(path3.join(dir, member, folder))
+    );
+    if (usesFlutter(own) && desktop) return member.replace(/\/+$/, "");
+  }
+  return void 0;
+}
+async function nativeApp(dir) {
+  const flutter = await flutterFolder(dir);
+  if (flutter) {
+    return {
+      kind: "flutter",
+      label: "Flutter",
+      project: path3.posix.join(flutter, "pubspec.yaml")
+    };
+  }
+  if (existsSync3(path3.join(dir, "go.mod"))) {
+    const named = (await readText(path3.join(dir, "go.mod")))?.match(
+      /^module\s+(\S+)/m
+    )?.[1];
+    const module = named ? { module: named.replace(/^"|"$/g, "") } : {};
+    if (existsSync3(path3.join(dir, "wails.json"))) {
+      return { kind: "wails", label: "Go (Wails)", ...module };
+    }
+    if (existsSync3(path3.join(dir, "FyneApp.toml"))) {
+      return { kind: "fyne", label: "Go (Fyne)", ...module };
+    }
+    return { kind: "go", label: "Go", ...module };
+  }
+  if (existsSync3(path3.join(dir, "Cargo.toml"))) {
+    return { kind: "rust", label: "Rust" };
+  }
+  if (existsSync3(path3.join(dir, "CMakeLists.txt"))) {
+    const sources = await Promise.all(
+      ["CMakeLists.txt", "src/CMakeLists.txt", "app/CMakeLists.txt"].map(
+        (file3) => readText(path3.join(dir, file3))
+      )
+    );
+    const qt = sources.some(
+      (source) => source !== void 0 && /find_package\s*\(\s*Qt[56]?\b|Qt[56]::|qt6?_add_executable/i.test(
+        source
+      )
+    );
+    return qt ? { kind: "qt", label: "Qt (C++, CMake)" } : { kind: "cmake", label: "C++ (CMake)" };
+  }
+  const [csproj] = await dotnetProjects(dir);
+  if (csproj) {
+    const ui = dotnetUi(csproj.project);
+    return {
+      kind: "dotnet",
+      label: ui ? `.NET (${{ avalonia: "Avalonia", winforms: "Windows Forms", wpf: "WPF" }[ui]})` : ".NET",
+      project: csproj.file,
+      ...ui ? { ui } : {}
+    };
+  }
+  return void 0;
+}
+
+// ../recipes/src/detect.ts
+var lockfileManagers = [
+  ["package-lock.json", "npm"],
+  ["pnpm-lock.yaml", "pnpm"],
+  ["yarn.lock", "yarn"],
+  ["bun.lock", "bun"],
+  ["bun.lockb", "bun"]
+];
+var configNames2 = [
+  "todesktop.config.ts",
+  "todesktop.config.mts",
+  "todesktop.config.js",
+  "todesktop.config.mjs",
+  "todesktop.config.json",
+  "todesktop.ts",
+  "todesktop.mts",
+  "todesktop.js",
+  "todesktop.mjs",
+  "todesktop.json"
+];
+var tauriConfigNames = ["tauri.conf.json", "tauri.conf.json5", "Tauri.toml"];
+var sourceExtensions = /* @__PURE__ */ new Set([".cjs", ".js", ".mjs", ".ts", ".tsx"]);
+var rustExtensions = /* @__PURE__ */ new Set([".rs"]);
+var skipDirs = /* @__PURE__ */ new Set([
+  ".git",
+  "build",
+  "dist",
+  "node_modules",
+  "out",
+  "release",
+  "target"
+]);
+async function readJson(file3) {
+  try {
+    const value = JSON.parse(await readFile4(file3, "utf8"));
+    return value && typeof value === "object" && !Array.isArray(value) ? value : void 0;
+  } catch {
+    return void 0;
+  }
+}
+var readText2 = (file3) => readFile4(file3, "utf8").catch(() => void 0);
+var text2 = (value) => typeof value === "string" && value.trim() ? value.trim() : void 0;
+var cargoDepends = (toml, crate) => new RegExp(`^${crate}\\s*=`, "m").test(toml);
+async function gitDir(dir) {
+  const dotGit = path4.join(dir, ".git");
+  const pointer = (await readText2(dotGit))?.match(/^gitdir:\s*(.+)$/m)?.[1];
+  if (!pointer) return dotGit;
+  const worktree = path4.resolve(dir, pointer.trim());
+  const common = (await readText2(path4.join(worktree, "commondir")))?.trim();
+  return common ? path4.resolve(worktree, common) : worktree;
+}
+function gitRoot(dir) {
+  let current = path4.resolve(dir);
+  for (; ; ) {
+    if (existsSync4(path4.join(current, ".git"))) return current;
+    const parent = path4.dirname(current);
+    if (parent === current) return void 0;
+    current = parent;
+  }
+}
+async function gitTags(root) {
+  const git = await gitDir(root);
+  const tags = /* @__PURE__ */ new Set();
+  const packed = await readText2(path4.join(git, "packed-refs")) ?? "";
+  for (const match of packed.matchAll(/^[0-9a-f]+ refs\/tags\/(\S+)$/gm)) {
+    tags.add(match[1]);
+  }
+  const walk = async (folder, prefix) => {
+    const entries = await readdir3(folder, { withFileTypes: true }).catch(
+      () => []
+    );
+    for (const entry of entries) {
+      const name = `${prefix}${entry.name}`;
+      if (entry.isDirectory()) {
+        await walk(path4.join(folder, entry.name), `${name}/`);
+      } else {
+        tags.add(name);
+      }
+    }
+  };
+  await walk(path4.join(git, "refs", "tags"), "");
+  return [...tags].sort();
+}
+async function publishingWorkflows(root, workflows) {
+  const publishes = /softprops\/action-gh-release|tauri-apps\/tauri-action|actions\/create-release|goreleaser|gh release (?:create|upload)|electron-builder[^\n]*--publish[ =](?:always|onTag)|electron-forge publish|run publish\b|APPLE_CERTIFICATE|CSC_LINK|TAURI_SIGNING_PRIVATE_KEY|APPLE_ID\b/;
+  const found = [];
+  for (const workflow of workflows) {
+    const source = await readText2(path4.join(root, workflow)) ?? "";
+    if (/ToDesktop\/upload-action@/.test(source)) continue;
+    const onTags = /^\s+tags:|^\s+release:|^on:\s*\[?[^\n]*\brelease\b/m.test(
+      source
+    );
+    if (onTags && publishes.test(source)) found.push(workflow);
+  }
+  return found;
+}
+var globsOf = (value) => {
+  if (typeof value === "string") return [value];
+  if (!Array.isArray(value)) return void 0;
+  return value.filter((item) => typeof item === "string");
+};
+function workflowRefs(source) {
+  let workflow;
+  try {
+    workflow = (0, import_yaml3.parse)(source);
+  } catch {
+    return void 0;
+  }
+  const on = workflow?.on ?? workflow?.true;
+  if (!on || typeof on !== "object" || Array.isArray(on)) return void 0;
+  const push = on.push;
+  if (!push || typeof push !== "object") return void 0;
+  const pattern = (prefix, glob) => {
+    const wild = glob.search(/[*?[+!]/);
+    if (wild === -1) return `${prefix}${glob}`;
+    const classed = /^\[([\w.-]+)\]/.exec(glob.slice(wild));
+    return classed ? `${prefix}${glob.slice(0, wild)}[${classed[1]}]*` : `${prefix}${glob.slice(0, wild)}*`;
+  };
+  const refs = [
+    ...(globsOf(push.tags) ?? []).filter((glob) => !glob.startsWith("!")).map((glob) => pattern("refs/tags/", glob)),
+    ...(globsOf(push.branches) ?? []).filter((glob) => !glob.startsWith("!")).map((glob) => pattern("refs/heads/", glob))
+  ];
+  return refs.length ? [...new Set(refs)] : void 0;
+}
+async function releaseRefsOf(root, workflows, appDir) {
+  for (const workflow of workflows) {
+    const source = await readText2(path4.join(root, workflow)) ?? "";
+    if (!/ToDesktop\/upload-action@|todesktop upload\b/.test(source)) continue;
+    const thisApp = appDir ? source.includes(`${appDir}/todesktop.config`) : !/\bconfig:\s*\S+\/todesktop\.config/.test(source);
+    if (!thisApp) continue;
+    const refs = workflowRefs(source);
+    if (refs) return { from: workflow, refs };
+  }
+  return void 0;
+}
+function electronFramework(deps) {
+  if (deps["electron-builder"]) return "electron-builder";
+  if (deps["@electron-forge/cli"]) return "electron-forge";
+  if (deps["@electron/packager"] || deps["electron-packager"]) {
+    return "electron-packager";
+  }
+  return deps.electron ? "electron-builder" : void 0;
+}
+async function workspaceApps(dir, pkg) {
+  const workspaces = pkg?.workspaces;
+  const patterns = Array.isArray(workspaces) ? workspaces.filter((item) => typeof item === "string") : workspaces?.packages ?? [];
+  const pnpm = await readText2(path4.join(dir, "pnpm-workspace.yaml"));
+  if (pnpm) {
+    const listed = (0, import_yaml3.parse)(pnpm)?.packages;
+    if (Array.isArray(listed)) {
+      patterns.push(...listed.filter((item) => typeof item === "string"));
+    }
+  }
+  const folders = [];
+  for (const pattern of patterns) {
+    const clean = pattern.replace(/^\.\//, "").replace(/\/+$/, "");
+    if (clean.endsWith("/*") || clean.endsWith("/**")) {
+      const parent = clean.replace(/\/\*\*?$/, "");
+      const entries = await readdir3(path4.join(dir, parent), {
+        withFileTypes: true
+      }).catch(() => []);
+      for (const entry of entries) {
+        if (entry.isDirectory()) folders.push(`${parent}/${entry.name}`);
+      }
+    } else if (!clean.includes("*")) {
+      folders.push(clean);
+    }
+  }
+  const apps = [];
+  for (const folder of [...new Set(folders)].sort()) {
+    const full = path4.join(dir, folder);
+    if (tauriConfigNames.some(
+      (name) => existsSync4(path4.join(full, "src-tauri", name))
+    )) {
+      apps.push({
+        dir: folder,
+        evidence: `${folder}/src-tauri`,
+        framework: "tauri"
+      });
+      continue;
+    }
+    const json2 = await readJson(path4.join(full, "package.json"));
+    const all = {
+      ...json2?.dependencies,
+      ...json2?.devDependencies
+    };
+    const framework = electronFramework(all);
+    if (framework) {
+      apps.push({
+        dir: folder,
+        evidence: `${folder}/package.json`,
+        framework
+      });
+    }
+  }
+  return apps;
+}
+async function githubRepository(dir) {
+  const gitConfig = await readText2(path4.join(await gitDir(dir), "config"));
+  const origin = gitConfig?.match(
+    /\[remote "origin"\][^[]*?url\s*=\s*(\S+)/
+  )?.[1];
+  return origin?.match(/github\.com[:/]([\w.-]+\/[\w.-]+?)(?:\.git)?\/?$/)?.[1];
+}
+async function filesMentioning(dir, needle, depth = 4, extensions = sourceExtensions) {
+  const found = [];
+  const walk = async (current, level) => {
+    const entries = await readdir3(current, { withFileTypes: true }).catch(
+      () => []
+    );
+    for (const entry of entries) {
+      const full = path4.join(current, entry.name);
+      if (entry.isDirectory()) {
+        if (level < depth && !skipDirs.has(entry.name)) {
+          await walk(full, level + 1);
+        }
+      } else if (extensions.has(path4.extname(entry.name)) && // oxlint-disable-next-line no-await-in-loop -- one file at a time
+      (await readText2(full))?.includes(needle)) {
+        found.push(path4.relative(dir, full));
+      }
+    }
+  };
+  await walk(dir, 0);
+  return found.sort();
+}
+function tauriFields(file3, source) {
+  if (file3.endsWith(".json")) {
+    try {
+      const json2 = JSON.parse(source);
+      return {
+        productName: text2(json2.productName)
+      };
+    } catch {
+    }
+  }
+  const field = (names) => source.match(
+    new RegExp(
+      `^\\s*["']?(?:${names})["']?\\s*[:=]\\s*["']([^"'\\n]+)["']`,
+      "m"
+    )
+  )?.[1];
+  return {
+    productName: field("productName|product-name")
+  };
+}
+async function filesEndingWith(dir, suffix) {
+  const entries = await readdir3(dir).catch(() => []);
+  return entries.filter((name) => name.endsWith(suffix)).sort();
+}
+async function dotnetClient(dir, csprojs) {
+  for (const folder of /* @__PURE__ */ new Set([
+    ".",
+    ...csprojs.map((file3) => path4.dirname(file3))
+  ])) {
+    const file3 = path4.posix.join(folder, "ToDesktopUpdater.cs");
+    if (existsSync4(path4.join(dir, file3))) return file3;
+  }
+  for (const csproj of csprojs) {
+    const project = await readText2(path4.join(dir, csproj)) ?? "";
+    if (/Include="[^"]*ToDesktopUpdater\.cs"/.test(project)) {
+      return `${csproj}: ToDesktopUpdater.cs`;
+    }
+  }
+  return "";
+}
+var isClientSource = (file3) => path4.basename(file3) === "ToDesktopUpdater.cs" || /(?:^|[/\\])ToDesktopUpdater[/\\]Sources[/\\]/.test(file3) || file3.startsWith(`${qtClientDir}/`);
+async function swiftClient(dir, xcodeProjects) {
+  for (const project of xcodeProjects) {
+    const pbxproj = await readText2(path4.join(dir, project, "project.pbxproj"));
+    if (pbxproj?.includes("ToDesktopUpdater")) {
+      return `${project}: ToDesktopUpdater (Swift)`;
+    }
+  }
+  return "";
+}
+var goClient = (dir) => {
+  const file3 = path4.posix.join(goClientDir, "todesktop_updater.go");
+  return existsSync4(path4.join(dir, file3)) ? file3 : "";
+};
+var dartClient = (dir, flutter) => {
+  if (flutter === void 0) return "";
+  const file3 = path4.posix.join(flutter, dartClientPath);
+  return existsSync4(path4.join(dir, file3)) ? file3 : "";
+};
+var qtClient = (dir) => {
+  const file3 = path4.posix.join(qtClientDir, "todesktopupdater.h");
+  return existsSync4(path4.join(dir, file3)) ? file3 : "";
+};
+var nativeExtensions = /* @__PURE__ */ new Set([
+  ".c",
+  ".cc",
+  ".cpp",
+  ".cs",
+  ".dart",
+  ".go",
+  ".h",
+  ".hpp",
+  ".java",
+  ".js",
+  ".kt",
+  ".mjs",
+  ".py",
+  ".rs",
+  ".swift",
+  ".ts"
+]);
+function updaterUse(updater) {
+  if (updater.includes("ToDesktopUpdater.cs")) {
+    return ["ToDesktop.Updater", /* @__PURE__ */ new Set([".cs"])];
+  }
+  if (updater.includes("ToDesktopUpdater (Swift)")) {
+    return ["import ToDesktopUpdater", /* @__PURE__ */ new Set([".swift"])];
+  }
+  if (updater.endsWith("todesktopupdater.h")) {
+    return [
+      "todesktopupdater.h",
+      /* @__PURE__ */ new Set([".cc", ".cpp", ".cxx", ".h", ".hpp"])
+    ];
+  }
+  if (updater.endsWith("todesktop_updater.dart")) {
+    return ["todesktop_updater.dart'", /* @__PURE__ */ new Set([".dart"])];
+  }
+  if (updater.endsWith("todesktop_updater.go")) {
+    return [`/${goClientDir}"`, /* @__PURE__ */ new Set([".go"])];
+  }
+  if (updater.includes("@todesktop/updater")) {
+    return ["@todesktop/updater", sourceExtensions];
+  }
+  if (updater.includes("tauri")) {
+    return ["tauri_plugin_todesktop", rustExtensions];
+  }
+  return ["todesktop_updater", rustExtensions];
+}
+async function electronBuilderFilesIn(dir) {
+  return Object.fromEntries(
+    await Promise.all(
+      electronBuilderFiles.map(
+        async (name) => [name, await readText2(path4.join(dir, name))]
+      )
+    )
+  );
+}
+async function detect(dir) {
+  const evidence = [];
+  const remove = [];
+  const result = {};
+  const pkg = await readJson(path4.join(dir, "package.json"));
+  const deps = {
+    ...pkg?.dependencies,
+    ...pkg?.devDependencies
+  };
+  const dep = (name) => typeof deps[name] === "string" ? `${name} ${String(deps[name])}` : void 0;
+  if (pkg) {
+    const build2 = pkg.build;
+    const named = [
+      [build2?.productName, "package.json build.productName"],
+      [pkg.productName, "package.json productName"],
+      [pkg.name, "package.json name"]
+    ];
+    const [productName] = named.find(([value]) => text2(value)) ?? [];
+    if (productName) result.productName = text2(productName);
+    const main2 = text2(pkg.main);
+    if (main2) result.entry = path4.normalize(main2);
+  }
+  const tauriFile = tauriConfigNames.map((name) => path4.join("src-tauri", name)).find((file3) => existsSync4(path4.join(dir, file3)));
+  const cargo = await readText2(path4.join(dir, "Cargo.toml"));
+  const csprojs = (await dotnetProjects(dir)).map(({ file: file3 }) => file3);
+  const xcodeProjects = await filesEndingWith(dir, ".xcodeproj");
+  const flutter = await flutterFolder(dir);
+  let framework = "other";
+  let confidence = "low";
+  const pick2 = (id, level, why) => {
+    framework = id;
+    confidence = level;
+    evidence.push(why);
+  };
+  if (tauriFile) {
+    pick2("tauri", "high", tauriFile);
+    const fields = tauriFields(
+      tauriFile,
+      await readText2(path4.join(dir, tauriFile)) ?? ""
+    );
+    if (fields.productName) result.productName = fields.productName;
+    const lib = path4.join("src-tauri", "src", "lib.rs");
+    result.entry = existsSync4(path4.join(dir, lib)) ? lib : path4.join("src-tauri", "src", "main.rs");
+    const tauriCargo = await readText2(
+      path4.join(dir, "src-tauri", "Cargo.toml")
+    );
+    for (const lock of [path4.join("src-tauri", "Cargo.lock"), "Cargo.lock"]) {
+      const locked = (await readText2(path4.join(dir, lock)))?.match(
+        /\[\[package\]\]\s*\nname = "tauri-build"\s*\nversion = "([^"]+)"/
+      )?.[1];
+      if (locked) {
+        result.tauriBuild = locked;
+        break;
+      }
+    }
+    if (tauriCargo && cargoDepends(tauriCargo, "tauri-plugin-updater")) {
+      remove.push({
+        what: "tauri-plugin-updater",
+        where: ["src-tauri/Cargo.toml"]
+      });
+    }
+    const tauriSource = await readText2(path4.join(dir, tauriFile)) ?? "";
+    if (/"?createUpdaterArtifacts"?\s*[:=]/.test(tauriSource)) {
+      remove.push({
+        what: "bundle.createUpdaterArtifacts (it signs updater bundles with your Tauri key)",
+        where: [tauriFile]
+      });
+    }
+    if (/"?plugins"?\s*[:=]\s*\{[\s\S]*?"?updater"?\s*[:=]|\[plugins\.updater\]/.test(
+      tauriSource
+    )) {
+      remove.push({
+        what: "plugins.updater (Tauri's updater endpoints and key)",
+        where: [tauriFile]
+      });
+    }
+    if (dep("@tauri-apps/plugin-updater")) {
+      remove.push({
+        what: "@tauri-apps/plugin-updater",
+        where: [
+          "package.json",
+          ...await filesMentioning(dir, "@tauri-apps/plugin-updater")
+        ]
+      });
+    }
+  } else if (dep("electron-builder")) {
+    pick2(
+      "electron-builder",
+      "high",
+      `package.json: ${dep("electron-builder")}`
+    );
+  } else if (dep("@electron-forge/cli")) {
+    pick2(
+      "electron-forge",
+      "high",
+      `package.json: ${dep("@electron-forge/cli")}`
+    );
+  } else if (dep("@electron/packager") ?? dep("electron-packager")) {
+    pick2(
+      "electron-packager",
+      "high",
+      `package.json: ${dep("@electron/packager") ?? dep("electron-packager")}`
+    );
+  } else if (dep("electron")) {
+    pick2(
+      "electron-builder",
+      "low",
+      `package.json: ${dep("electron")}, with no packager named: Electron Builder's recipe is the usual fit`
+    );
+  } else if (xcodeProjects.length) {
+    pick2("xcode", "high", xcodeProjects[0]);
+  } else if (csprojs.length) {
+    result.project = csprojs[0];
+    const project = await readText2(path4.join(dir, csprojs[0])) ?? "";
+    if (/<UseWinUI>\s*true\s*<\/UseWinUI>|Microsoft\.WindowsAppSDK/.test(project)) {
+      pick2("winui", "high", `${csprojs[0]}: WinUI (Windows App SDK)`);
+    } else {
+      evidence.push(`${csprojs[0]}: a .NET app, which "Something else" fits`);
+    }
+  } else if (flutter) {
+    evidence.push(
+      `${path4.posix.join(flutter, "pubspec.yaml")}: a Flutter app, which "Something else" fits`
+    );
+  } else if (cargo && cargoDepends(cargo, "cxx-qt")) {
+    pick2("qt", "high", "Cargo.toml: cxx-qt");
+  } else if (pkg && (dep("pkg") ?? dep("@yao-pkg/pkg") ?? dep("postject") ?? pkg.bin)) {
+    pick2(
+      "node",
+      "medium",
+      `package.json: ${dep("pkg") ?? dep("@yao-pkg/pkg") ?? dep("postject") ?? "bin"}, a Node.js app packaged as an executable`
+    );
+  } else if (cargo) {
+    evidence.push('Cargo.toml: a Rust app, which "Something else" fits');
+  } else if (existsSync4(path4.join(dir, "go.mod"))) {
+    evidence.push('go.mod: a Go app, which "Something else" fits');
+  } else if (existsSync4(path4.join(dir, "CMakeLists.txt"))) {
+    evidence.push('CMakeLists.txt: a C++ app, which "Something else" fits');
+  } else {
+    evidence.push('No build tool recognized: "Something else" fits any app');
+  }
+  if (dep("electron-updater")) {
+    remove.push({
+      what: "electron-updater",
+      where: [
+        "package.json",
+        ...await filesMentioning(dir, "electron-updater")
+      ]
+    });
+  }
+  if (pkg && pkg.build?.publish !== void 0) {
+    remove.push({
+      what: "build.publish: set it to null, as electron-builder otherwise publishes to your GitHub remote",
+      where: ["package.json"]
+    });
+  }
+  const scripts = pkg?.scripts ?? {};
+  for (const [name, script] of Object.entries(scripts)) {
+    const publishing2 = typeof script === "string" && /electron-builder\b.*(?:--publish|-p)[ =](?:always|onTag|onTagOrDraft)\b/.test(
+      script
+    );
+    if (publishing2) {
+      remove.push({
+        what: `the publishing in scripts.${name} (use --publish never)`,
+        where: ["package.json"]
+      });
+    }
+  }
+  const root = gitRoot(dir);
+  const appDir = root ? path4.relative(root, path4.resolve(dir)) : "";
+  if (appDir) result.appDir = appDir.split(path4.sep).join("/");
+  const lockfile = [dir, ...root && appDir ? [root] : []].flatMap(
+    (folder) => lockfileManagers.filter(([name]) => existsSync4(path4.join(folder, name))).map(([name, manager]) => ({
+      manager,
+      name: folder === dir ? name : path4.relative(dir, path4.join(folder, name))
+    }))
+  )[0];
+  if (pkg) {
+    result.lockfile = lockfile?.name ?? null;
+    const rootPkg = root && appDir ? await readJson(path4.join(root, "package.json")) : void 0;
+    const declared = text2(pkg.packageManager)?.match(
+      /^(npm|pnpm|yarn|bun)@/
+    )?.[1];
+    const setupReads = appDir ? rootPkg : pkg;
+    if (text2(setupReads?.packageManager)?.startsWith("pnpm@")) {
+      result.packageManagerDeclared = true;
+    }
+    result.packageManager = lockfile?.manager ?? declared ?? "npm";
+  }
+  if (pkg) {
+    const config4 = electronBuilderConfig(
+      pkg,
+      await electronBuilderFilesIn(dir)
+    );
+    Object.assign(result, electronBuilderPaths(pkg, config4));
+    const ships = electronBuilderShips(pkg, config4);
+    if (ships.entitlements && !existsSync4(path4.join(dir, ships.entitlements.file))) {
+      delete ships.entitlements;
+    }
+    if (Object.keys(ships).length) result.electronBuilder = ships;
+  }
+  const tauriManifest = tauriFile ? await readText2(path4.join(dir, "src-tauri", "Cargo.toml")) : void 0;
+  const updater = (dep("@todesktop/updater") ? "package.json: @todesktop/updater" : "") || (dep("@todesktop/tauri") ? "package.json: @todesktop/tauri" : "") || (tauriManifest && cargoDepends(tauriManifest, "tauri-plugin-todesktop") ? "src-tauri/Cargo.toml: tauri-plugin-todesktop" : "") || (cargo && cargoDepends(cargo, "todesktop-updater") ? "Cargo.toml: todesktop-updater" : "") || await dotnetClient(dir, csprojs) || (xcodeProjects.length ? await swiftClient(dir, xcodeProjects) : "") || goClient(dir) || dartClient(dir, flutter) || qtClient(dir);
+  if (updater) {
+    result.updater = updater;
+    const [needle, extensions] = updaterUse(updater);
+    const usedIn = (await filesMentioning(dir, needle, 5, extensions)).filter(
+      (file3) => !isClientSource(file3)
+    );
+    if (usedIn.length) result.updaterUsedIn = usedIn;
+  } else if (framework === "other") {
+    const usedIn = (await filesMentioning(dir, "todesktop-updater", 5, nativeExtensions)).filter((file3) => !/(?:^|\/)\.github\//.test(file3));
+    if (usedIn.length) {
+      result.updater = `${usedIn[0]}: todesktop-updater serve`;
+      result.updaterUsedIn = usedIn;
+    }
+  }
+  let config3;
+  for (const name of configNames2) {
+    if (!existsSync4(path4.join(dir, name))) continue;
+    const source = await readText2(path4.join(dir, name)) ?? "";
+    const v1 = !/\bappId\b/.test(source) && /["']?\bid["']?\s*:/.test(source);
+    if (v1) result.v1Config ??= name;
+    else {
+      config3 = name;
+      break;
+    }
+  }
+  const repoRoot = root ?? dir;
+  const workflowsDir = path4.join(repoRoot, ".github", "workflows");
+  const workflows = (await readdir3(workflowsDir).catch(() => [])).filter((name) => /\.ya?ml$/.test(name)).map((name) => `.github/workflows/${name}`).sort();
+  const publishing = await publishingWorkflows(repoRoot, workflows);
+  if (publishing.length) result.publishing = publishing;
+  result.releaseRefs = await releaseRefsOf(repoRoot, workflows, result.appDir);
+  const repository = await githubRepository(repoRoot);
+  if (root) {
+    const tags = await gitTags(root);
+    if (tags.length) result.tags = tags;
+  }
+  if (framework === "other" && pkg) {
+    const apps = await workspaceApps(dir, pkg);
+    if (apps.length) result.workspaceApps = apps;
+  }
+  const native = framework === "other" && !result.workspaceApps ? await nativeApp(dir) : void 0;
+  if (native) {
+    result.native = native;
+    confidence = "medium";
+    const marker = native.project ?? {
+      cmake: "CMakeLists.txt",
+      dotnet: ".csproj",
+      flutter: "pubspec.yaml",
+      fyne: "FyneApp.toml",
+      go: "go.mod",
+      qt: "CMakeLists.txt",
+      rust: "Cargo.toml",
+      wails: "wails.json"
+    }[native.kind];
+    evidence.splice(
+      0,
+      evidence.length,
+      `${marker}: a ${native.label} app, which "Something else" fits`
+    );
+  }
+  return {
+    confidence,
+    evidence,
+    framework,
+    remove,
+    workflows,
+    ...config3 ? { config: config3 } : {},
+    ...repository ? { repository } : {},
+    ...Object.fromEntries(
+      Object.entries(result).filter(([, value]) => value !== void 0)
+    )
+  };
+}
+
+// src/agent/commands.ts
+import { execFile as execFile2 } from "node:child_process";
+import { readFileSync } from "node:fs";
+import os2 from "node:os";
+import process6 from "node:process";
+import { setTimeout as sleep } from "node:timers/promises";
+
+// src/agent/appRef.ts
+import { readFile as readFile5 } from "node:fs/promises";
+import path5 from "node:path";
+import process4 from "node:process";
+var appIdPattern2 = /^[a-z0-9][a-z0-9-]{1,62}$/;
+async function folderApp(dir) {
+  const found = findConfigFile(dir);
+  const file3 = found && path5.relative(".", found);
+  const text3 = file3 ? await readFile5(file3, "utf8").catch(() => "") : "";
+  const appId = text3.match(
+    /["']?appId["']?\s*:\s*["']([a-z0-9][a-z0-9-]{1,62})["']/
+  )?.[1];
+  return { ...appId ? { appId } : {}, ...file3 ? { file: file3 } : {} };
+}
+async function isFolderOf(appId, dir = ".") {
+  return (await folderApp(dir)).appId === appId;
+}
+async function appIdOf(flag, dir = ".") {
+  const given = flag ?? process4.env.TODESKTOP_APP;
+  if (given) {
+    if (!appIdPattern2.test(given)) {
+      throw new CliError("invalid-app", `"${given}" isn't an app ID.`, {
+        exit: exitCodes.usage
+      });
+    }
+    return given;
+  }
+  const { appId, file: file3 } = await folderApp(dir);
+  if (appId) return appId;
+  throw new CliError(
+    "no-app",
+    file3 ? `${file3} doesn't name its appId as a plain string: pass --app.` : "No todesktop.config.ts here: pass --app, or run this in your app's folder.",
+    {
+      exit: exitCodes.usage,
+      fix: [{ command: `${cli()} apps list`, why: "your apps and their IDs" }]
+    }
+  );
+}
+
+// src/agent/credentials.ts
+import { existsSync as existsSync5 } from "node:fs";
+import { chmod as chmod2, mkdir as mkdir3, readFile as readFile6, rm as rm2, writeFile as writeFile2 } from "node:fs/promises";
+import os from "node:os";
+import path6 from "node:path";
+import process5 from "node:process";
+var file2 = () => path6.join(
+  process5.env.TODESKTOP_CONFIG_DIR ?? path6.join(
+    process5.env.XDG_CONFIG_HOME ?? path6.join(os.homedir(), ".config"),
+    "todesktop"
+  ),
+  "v2.json"
+);
+async function readAll() {
+  if (!existsSync5(file2())) return {};
+  try {
+    return JSON.parse(await readFile6(file2(), "utf8"));
+  } catch {
+    return {};
+  }
+}
+async function readSignIn() {
+  return (await readAll())[stageOf()] ?? {};
+}
+async function writeSignIn(signIn) {
+  const all = await readAll();
+  if (signIn) all[stageOf()] = signIn;
+  else delete all[stageOf()];
+  if (Object.keys(all).length === 0) {
+    await rm2(file2(), { force: true });
+    return;
+  }
+  await mkdir3(path6.dirname(file2()), { mode: 448, recursive: true });
+  await chmod2(path6.dirname(file2()), 448);
+  await writeFile2(file2(), `${JSON.stringify(all, null, 2)}
+`, {
+    mode: 384
+  });
+  await chmod2(file2(), 384);
+}
+async function tokenOf() {
+  const fromEnv = process5.env.TODESKTOP_TOKEN?.trim();
+  if (fromEnv) return { from: "TODESKTOP_TOKEN", signIn: {}, token: fromEnv };
+  const signIn = await readSignIn();
+  if (signIn.token) {
+    return { from: "todesktop login", signIn, token: signIn.token };
+  }
+  throw new CliError("not-signed-in", "Sign in first.", {
+    fix: [
+      { command: `${cli()} login`, why: "approve in the browser" },
+      {
+        command: `TODESKTOP_TOKEN=tdp_\u2026 ${cli()} \u2026`,
+        why: "a token from the dashboard, for machines"
+      }
+    ]
+  });
+}
+
+// src/agent/smoke.ts
+var journeyOrder = ["update", "fresh", "next"];
+function runnerLogEnd(log, keep = 60) {
+  const all = log.trimEnd().split("\n");
+  if (all.length <= keep) return log;
+  return [
+    `(Its last ${keep} of ${all.length} lines: smoke show --full, or runnerLogUrl, has the whole.)`,
+    ...all.slice(-keep)
+  ].join("\n");
+}
+async function readFile7(url2) {
+  try {
+    const response = await fetch(url2, { signal: AbortSignal.timeout(3e4) });
+    if (!response.ok) return { error: `HTTP ${response.status}` };
+    return { text: await response.text() };
+  } catch (error46) {
+    return { error: error46.message };
+  }
+}
+function journeyLines(log, id) {
+  const lines = log.split("\n");
+  const start = lines.findIndex((line) => line.includes(`] == ${id}: `));
+  if (start === -1) return "";
+  const after = lines.slice(start + 1).findIndex((line) => /\] (?:== \w+: |done$)/.test(line));
+  return lines.slice(start, after === -1 ? void 0 : start + 1 + after).join("\n");
+}
+var releasedSteps = /* @__PURE__ */ new Set([
+  "downloaded",
+  "install",
+  "installed",
+  "launch",
+  "offer",
+  "quit"
+]);
+function ranOf(journey, failure, run4) {
+  if (failure.ran) return failure.ran;
+  if (journey !== "update") {
+    return run4.build ? { ...run4.build, released: false } : void 0;
+  }
+  if (run4.baseline && releasedSteps.has(failure.step)) {
+    return { ...run4.baseline, released: true };
+  }
+  return void 0;
+}
+async function journeyReports(run4, filesUrl, { full = false } = {}) {
+  const fileUrl = (machine, name) => `${filesUrl}/${encodeURIComponent(machine)}/${encodeURIComponent(name)}`;
+  const reports = await Promise.all(
+    run4.machines.map(async (result) => {
+      const { id, name } = result.machine;
+      let machineLog;
+      const wholeLog = () => {
+        machineLog ??= readFile7(fileUrl(id, result.log));
+        return machineLog;
+      };
+      return Promise.all(
+        journeyOrder.map(async (journeyId) => {
+          const journey = result.journeys[journeyId];
+          if (!journey) return void 0;
+          const ran = journey.failure ? ranOf(journeyId, journey.failure, run4) : void 0;
+          const report = {
+            ...journey.failure ? { failure: { ...journey.failure, ...ran ? { ran } : {} } } : {},
+            journey: journeyId,
+            machine: id,
+            machineName: name,
+            ...journey.skipped ? { skipped: journey.skipped } : {},
+            status: journey.status,
+            steps: journey.steps.map((each) => ({
+              at: each.at,
+              ...each.detail ? { detail: each.detail } : {},
+              id: each.id,
+              title: each.title
+            }))
+          };
+          const unread = [];
+          if (filesUrl && journey.output) {
+            report.outputUrl = fileUrl(id, journey.output);
+            const read = await readFile7(report.outputUrl);
+            if ("text" in read) {
+              report.output = read.text;
+              report.outputEnd = outputEnd(read.text);
+            } else unread.push(`${journey.output}: ${read.error}`);
+          }
+          if (filesUrl && journey.status === "failed") {
+            if (journey.log) {
+              report.runnerLogUrl = fileUrl(id, journey.log);
+              const read = await readFile7(report.runnerLogUrl);
+              if ("text" in read) {
+                report.runnerLog = full ? read.text : runnerLogEnd(read.text);
+              } else unread.push(`${journey.log}: ${read.error}`);
+            } else if (result.log) {
+              const read = await wholeLog();
+              if ("text" in read) {
+                const lines = journeyLines(read.text, journeyId);
+                if (lines) report.runnerLog = lines;
+              } else {
+                unread.push(`${result.log}: ${read.error}`);
+              }
+            }
+          }
+          if (unread.length > 0) report.unread = unread;
+          return report;
+        })
+      );
+    })
+  );
+  return reports.flat().filter((report) => report !== void 0);
+}
+var indent = (text3, by) => text3.trimEnd().split("\n").map((line) => `${by}${line}`).join("\n");
+function ranText(ran) {
+  const which = `${ran.version} (build ${ran.buildNumber})`;
+  return ran.released ? `Ran ${which}, the release users have now, not the build under test: the fault is in released code. A fix shows only once a version with it is released and a later build updates from it.` : `Ran ${which}, the build under test.`;
+}
+var secs = (ms) => `${(ms / 1e3).toFixed(1)} s`;
+var timeline = (steps) => steps.map(
+  ({ at, detail, id }) => `${id} ${secs(at)}${detail && id === "quit" ? ` (${detail})` : ""}`
+).join(" \xB7 ");
+function journeyLine(journey, report) {
+  const label = report.journey.padEnd(7);
+  const pad = "           ";
+  if (report.status === "failed" && report.failure) {
+    const { ran } = report.failure;
+    const lines = [
+      `  ${label}  failed at ${report.failure.step}: ${report.failure.message}`
+    ];
+    if (ran) lines.push(`${pad}${ranText(ran)}`);
+    else if (report.failure.step === "relaunch") {
+      lines.push(
+        `${pad}Whose code was running isn't known: it failed as the new version started, before it said so.`
+      );
+    }
+    if (report.steps.length) {
+      lines.push(`${pad}Steps: ${timeline(report.steps)}`);
+    }
+    if (report.failure.detail && !report.outputEnd) {
+      lines.push(indent(report.failure.detail, pad));
+    }
+    return lines.join("\n");
+  }
+  if (report.skipped) return `  ${label}  ${report.status}: ${report.skipped}`;
+  const healthy = journey?.after?.healthyMs;
+  return `  ${label}  ${report.status}${healthy === void 0 ? "" : ` (healthy in ${secs(healthy)})`}`;
+}
+function withFileUrls(run4, filesUrl) {
+  if (!filesUrl) return run4;
+  const url2 = (machine, name) => name && !/^https?:/.test(name) ? `${filesUrl}/${encodeURIComponent(machine)}/${encodeURIComponent(name)}` : name;
+  return {
+    ...run4,
+    machines: run4.machines.map((result) => {
+      const { id } = result.machine;
+      const journeys = Object.fromEntries(
+        Object.entries(result.journeys).map(([key, journey]) => [
+          key,
+          {
+            ...journey,
+            ...journey.output ? { output: url2(id, journey.output) } : {},
+            ...journey.log ? { log: url2(id, journey.log) } : {}
+          }
+        ])
+      );
+      return {
+        ...result,
+        journeys,
+        ...result.log ? { log: url2(id, result.log) } : {}
+      };
+    })
+  };
+}
+function briefRun(run4) {
+  return {
+    ...run4,
+    machines: run4.machines.map((result) => ({
+      ...result,
+      journeys: Object.fromEntries(
+        Object.entries(result.journeys).map(([key, journey]) => {
+          const { memory: _memory, ...rest } = journey;
+          if (rest.failure) {
+            const { detail: _detail, ...failure } = rest.failure;
+            rest.failure = failure;
+          }
+          return [key, rest];
+        })
+      )
+    }))
+  };
+}
+function forJson(reports, full) {
+  return full ? reports : reports.map(({ output: _whole, ...report }) => report);
+}
+function smokeText(buildId, run4, reports, { again = "", full = false } = {}) {
+  const out = [`${buildId} smoke test: ${run4.status}`];
+  for (const result of run4.machines) {
+    const { arch, id, method, name } = result.machine;
+    out.push("", `${name} ${arch}, ${method}: ${result.status}`);
+    if (result.error) out.push(`  ${result.error}`);
+    for (const report of reports.filter((each) => each.machine === id)) {
+      out.push(journeyLine(result.journeys[report.journey], report));
+    }
+    for (const warning of result.warnings ?? []) {
+      out.push(
+        `  warning: ${warning.metric} +${warning.percent}% (${warning.before} \u2192 ${warning.after}, over ${warning.limitPercent}%)`
+      );
+    }
+  }
+  const quiet = [];
+  for (const report of reports) {
+    const where = `${report.machineName}, ${report.journey} journey`;
+    if (report.status === "failed") {
+      const end = report.outputEnd;
+      if (full || !end) {
+        out.push(
+          "",
+          `\u2500\u2500 The app's output: ${where} \u2500\u2500`,
+          report.output?.trimEnd() || "(none)"
+        );
+      } else {
+        out.push(
+          "",
+          `\u2500\u2500 The app's output: ${where}: its end, as written (${end.total} ${end.total === 1 ? "line" : "lines"} in all) \u2500\u2500`,
+          ...end.lines,
+          `(All of it: ${again ? `${again} --full, or ` : ""}${report.outputUrl ?? "the JSON"})`
+        );
+      }
+      if (report.runnerLog) {
+        out.push(
+          "",
+          `\u2500\u2500 The smoke machine's log: ${where} \u2500\u2500`,
+          report.runnerLog.trimEnd()
+        );
+      }
+    } else if (report.output ?? report.outputEnd) {
+      quiet.push(`${report.machineName} ${report.journey}`);
+    }
+    for (const unread of report.unread ?? []) {
+      out.push(`(couldn't read ${unread})`);
+    }
+  }
+  if (reports.some((report) => report.failure?.health)) {
+    out.push(
+      "",
+      "Each framework's call to start the updater and report healthReady: todesktop integrate --step updates."
+    );
+  }
+  if (quiet.length > 0) {
+    out.push(
+      "",
+      `The app's output from journeys that didn't fail (${quiet.join(", ")}): its end in --json, all of it with --full.`
+    );
+  }
+  return out.join("\n");
+}
+var unstamped = (line) => line.replace(/^\[\s*[\d.]+ s\] /, "");
+function outputEnd(output, keep = 40) {
+  const all = output.trimEnd().split("\n");
+  const collapsed = [];
+  let previous;
+  let repeats = 0;
+  const flush = () => {
+    if (repeats > 0) {
+      collapsed.push(
+        `  (the line above, ${repeats} more time${repeats === 1 ? "" : "s"})`
+      );
+    }
+    repeats = 0;
+  };
+  for (const line of all) {
+    const text3 = unstamped(line);
+    if (previous !== void 0 && text3 === previous) {
+      repeats += 1;
+      continue;
+    }
+    flush();
+    collapsed.push(line);
+    previous = text3;
+  }
+  flush();
+  return {
+    lines: output.trim() ? collapsed.slice(-keep) : [],
+    total: output.trim() ? all.length : 0
+  };
+}
+
+// src/agent/commands.ts
+var appOption = { app: { type: "string" } };
+var version2 = () => {
+  for (const relative of ["../../package.json", "../package.json"]) {
+    try {
+      const pkg = JSON.parse(
+        readFileSync(new URL(relative, import.meta.url), "utf8")
+      );
+      if (pkg.name === "@todesktop/v2" && pkg.version) return pkg.version;
+    } catch {
+    }
+  }
+  return "0.0.0";
+};
+async function api(name, input = {}) {
+  const { token } = await tokenOf();
+  return callApi(name, input, token);
+}
+var appArgOf = (values, appId) => values.app ? ` --app ${appId}` : "";
+var appUrl = (appId) => `${hosts().dashboard}/apps/${appId}`;
+var trustUrl = (appId, target) => trustLink(appUrl(appId), target);
+var refsOf = (here) => (
+  // A workflow that's there says what it runs on; a drafted one also
+  // runs on the test branch, for test builds.
+  here?.releaseRefs?.refs ?? withTestRef(releaseTagRefs(here?.tags))
+);
+var trustedOf = (app) => app.ci?.github?.[0];
+async function trustTargetHere(appId) {
+  if (!await isFolderOf(appId)) return {};
+  const here = await detect(".").catch(() => void 0);
+  return {
+    refs: refsOf(here),
+    ...here?.repository ? { repository: here.repository } : {}
+  };
+}
+function describeTarget({ refs, repository }) {
+  const short = (refs ?? []).map((ref) => {
+    if (ref === "refs/tags/*") return "any tag";
+    if (ref === bareVersionTags) return "tags that start with a digit (1.2.3)";
+    if (ref === testRef) return `the ${testBranch} branch (test builds)`;
+    return ref.startsWith("refs/tags/") ? `${ref.slice("refs/tags/".length)} tags` : ref.replace(/^refs\/heads\//, "");
+  });
+  const listed = short.length > 1 && refs?.at(-1) === testRef ? `${short.slice(0, -1).join(", ")} and ${short.at(-1)}` : short.join(", ");
+  return `${repository ?? "your GitHub repository"}${listed ? ` on ${listed}` : ""}`;
+}
+var untrustedRefs = (trusted, runsOn = []) => runsOn.filter((ref) => !trusted.some((have) => patternCovers(have, ref)));
+function widenNeeds(appId, trusted, releaseRefs) {
+  const missing = untrustedRefs(trusted.refs, releaseRefs?.refs);
+  if (!releaseRefs || !missing.length) return void 0;
+  const listed = describeTarget({ refs: missing }).replace(
+    /^your GitHub repository on /,
+    ""
+  );
+  return {
+    kind: "dashboard",
+    message: `${releaseRefs.from} also runs on ${listed}, which ${trusted.repository} isn't trusted for yet (it's trusted for ${trusted.refs.join(", ")}): an upload from there is refused. Ask a person on the account to add it at this link (the dashboard's Overview, step 3, filled in). It takes their security key.`,
+    url: trustUrl(appId, {
+      refs: [...trusted.refs, ...missing],
+      repository: trusted.repository
+    })
+  };
+}
+var trustNeedsMessage = (target) => `Ask a person on the account to trust ${describeTarget(target)} at this link (the dashboard's Overview, step 3, filled in). It takes their security key. If GitHub isn't connected yet, the account's owner connects it there first, and an organisation's repository shows up once its owners approve ToDesktop on GitHub.`;
+function refusalOf(app, latestBuild, ours) {
+  const refused = app.ci?.refused;
+  if (!refused?.repository || !refused.ref || !refused.at) return void 0;
+  if (ours && !ours.includes(refused.repository.toLowerCase())) {
+    return void 0;
+  }
+  const rules = app.ci?.github ?? [];
+  const covered = rules.some(
+    (rule) => rule.repository.toLowerCase() === refused.repository.toLowerCase() && rule.refs.some((pattern) => refMatches(pattern, refused.ref))
+  );
+  const built = timeOf(latestBuild?.createdAt);
+  const builtSince = built !== void 0 && built >= Date.parse(refused.at);
+  return covered || builtSince ? void 0 : refused;
+}
+async function oursOf(appId, app) {
+  const here = await trustTargetHere(appId);
+  const trusted = app.ci?.github ?? [];
+  return [here.repository, ...trusted.map((rule) => rule.repository)].filter((repository) => Boolean(repository)).map((repository) => repository.toLowerCase());
+}
+function timeOf(value) {
+  if (typeof value === "string") {
+    const time3 = Date.parse(value);
+    return Number.isNaN(time3) ? void 0 : time3;
+  }
+  const seconds = value?.seconds ?? value?._seconds;
+  return typeof seconds === "number" ? seconds * 1e3 : void 0;
+}
+async function refusalNeeds(appId, app, refused) {
+  const trusted = trustedOf(app);
+  const sameRepository = trusted?.repository.toLowerCase() === refused.repository.toLowerCase();
+  const target = {
+    refs: [
+      .../* @__PURE__ */ new Set([
+        ...sameRepository ? trusted.refs : (await trustTargetHere(appId)).refs ?? [],
+        refPatternOf(refused.ref)
+      ])
+    ],
+    repository: refused.repository
+  };
+  return {
+    kind: "dashboard",
+    message: `${refusalLine(app, refused)} ${trustNeedsMessage(target)}`,
+    refused,
+    url: trustUrl(appId, target)
+  };
+}
+function refusalLine(app, refused) {
+  const trusted = trustedOf(app);
+  return `ToDesktop refused an upload from ${refused.repository} on ${refused.ref}${refused.workflow ? ` (${refused.workflow.replace(/@.*$/, "").split("/").slice(2).join("/")})` : ""} at ${refused.at}: ${trusted ? `it trusts ${describeTarget(trusted)} only` : "no workflow is trusted yet"}.`;
+}
+var smokeOf = (build2) => typeof build2.smokeTest === "string" ? build2.smokeTest : build2.smokeTest?.status;
+var uploadOverdueMs = 5 * 6e4;
+function awaitedUploads(build2) {
+  const { expected = [], received = [], updatedAt } = build2.uploads ?? {};
+  const missing = expected.filter((key) => !received.includes(key));
+  if (build2.status !== "building" || missing.length === 0) return void 0;
+  const source = build2.source;
+  const run4 = source?.provider === "github" && source.repository && source.runId ? `https://github.com/${source.repository}/actions/runs/${source.runId}` : void 0;
+  const waited = Date.now() - Date.parse(updatedAt ?? "");
+  return {
+    missing,
+    ...waited >= uploadOverdueMs ? { overdue: `${Math.round(waited / 6e4)} min` } : {},
+    ...run4 ? { run: run4 } : {}
+  };
+}
+var overdueUploads = ({
+  missing,
+  overdue,
+  run: run4
+}) => `Nothing has uploaded for ${overdue}, and ${missing.join(" and ")} ${missing.length > 1 ? "haven't" : "hasn't"}. A job that failed or was cancelled never uploads, and this build can't finish without ${missing.length > 1 ? "them" : "it"}${run4 ? `: look at ${run4}` : ""}. Re-run the failed job to finish this build, or push again for a new one.`;
+function buildLine(build2) {
+  const smoke = smokeOf(build2);
+  const awaited = awaitedUploads(build2);
+  return [
+    build2.buildId.padEnd(12),
+    String(build2.version ?? "").padEnd(10),
+    build2.status.padEnd(9),
+    smoke ? `smoke ${smoke}` : "",
+    isTestBuild(build2) ? "\xB7 test build" : "",
+    awaited ? `\xB7 waiting for ${awaited.missing.join(", ")} to upload` : "",
+    build2.error ? `\xB7 ${build2.error}` : ""
+  ].join(" ").trimEnd();
+}
+function buildNext(build2, appArg) {
+  const { buildId, status: status2 } = build2;
+  if (status2 === "failed") {
+    return [
+      {
+        command: `${cli()} builds logs ${buildId}${appArg}`,
+        why: "why it failed"
+      }
+    ];
+  }
+  if (status2 === "building") {
+    const awaited = awaitedUploads(build2);
+    return [
+      {
+        command: `${cli()} builds wait ${buildId}${appArg}`,
+        ...awaited?.overdue ? { why: overdueUploads(awaited) } : {}
+      }
+    ];
+  }
+  return [];
+}
+async function pushedHead(appId) {
+  if (!await isFolderOf(appId)) return void 0;
+  const git = (...args) => new Promise((resolve) => {
+    execFile2(
+      "git",
+      args,
+      (error46, stdout) => resolve(error46 ? "" : stdout.trim())
+    );
+  });
+  const [sha, tags, tested] = await Promise.all([
+    git("rev-parse", "HEAD"),
+    git("tag", "--points-at", "HEAD"),
+    git(
+      "rev-parse",
+      "--verify",
+      "--quiet",
+      `refs/remotes/origin/${testBranch}`
+    )
+  ]);
+  const tag = tags.split("\n").find(Boolean);
+  if (sha && tag) return { name: tag, sha, test: false };
+  return sha && tested === sha ? { name: testBranch, sha, test: true } : void 0;
+}
+var isTestBuild = (build2) => build2.source?.test === true;
+var shaOf = (build2) => build2.source?.sha;
+async function firstBuildId(appId, deadline, every, appArg) {
+  let told = false;
+  let toldHead = false;
+  const head2 = await pushedHead(appId);
+  while (Date.now() < deadline) {
+    const { app, latestBuild } = await api("getApp", { appId });
+    const refused = refusalOf(app, latestBuild, await oursOf(appId, app));
+    if (refused) {
+      return {
+        refused: {
+          data: { refused },
+          // oxlint-disable-next-line no-await-in-loop -- once, then return
+          needs: await refusalNeeds(appId, app, refused),
+          next: [
+            {
+              command: `${cli()} status --wait-for trust${appArg}`,
+              why: "once they say it is trusted"
+            },
+            {
+              command: `${cli()} builds wait latest${appArg}`,
+              why: "after re-running the workflow"
+            }
+          ]
+        }
+      };
+    }
+    const { builds: builds2 } = await api("listBuilds", {
+      appId,
+      limit: head2 ? 10 : 1
+    });
+    const newest = builds2[0];
+    if (newest && (!head2 || !shaOf(newest))) return { buildId: newest.buildId };
+    const ofHead = builds2.find(
+      (build2) => shaOf(build2) === head2?.sha && isTestBuild(build2) === head2?.test
+    );
+    if (ofHead) return { buildId: ofHead.buildId };
+    if (newest && head2 && !toldHead) {
+      progress(
+        `${newest.buildId} is ${shaOf(newest) === head2.sha ? `this commit's ${isTestBuild(newest) ? "test build" : "release build"}` : `of ${shaOf(newest).slice(0, 7)}`}, not ${head2.name} (${head2.sha.slice(0, 7)}): waiting for ${head2.name}'s build. Pass a build ID to wait for another.`
+      );
+      toldHead = true;
+    } else if (!newest && !told) {
+      progress(
+        `${appId} has no builds yet: waiting for your release workflow's first upload\u2026`
+      );
+      told = true;
+    }
+    await sleep(Math.min(every, Math.max(deadline - Date.now(), 0)));
+  }
+  throw new CliError(
+    "timed-out",
+    `No build of ${appId} arrived in time: check that the release workflow ran (GitHub Actions), and that its upload step succeeded.`,
+    {
+      exit: exitCodes.timedOut,
+      fix: [
+        { command: `${cli()} status${appArg}`, why: "what setup is left" },
+        {
+          command: `${cli()} builds wait latest${appArg}`,
+          why: "wait again"
+        }
+      ]
+    }
+  );
+}
+async function buildIdOf(appId, given, appArg) {
+  const number4 = /^#?(\d+)$/.exec(given ?? "")?.[1];
+  if (number4) {
+    const { builds: builds3 } = await api("listBuilds", {
+      appId,
+      limit: 100
+    });
+    const found = builds3.find((build2) => build2.number === Number(number4));
+    if (found) return found.buildId;
+    throw new CliError(
+      "not-found",
+      `${appId} has no build ${number4} among its newest ${builds3.length}: give its ID instead (builds list shows them).`,
+      { fix: [{ command: `${cli()} builds list${appArg}` }] }
+    );
+  }
+  if (given && given !== "latest") return given;
+  const { builds: builds2 } = await api("listBuilds", {
+    appId,
+    limit: 1
+  });
+  if (!builds2[0]) {
+    throw new CliError("no-builds", `${appId} has no builds yet.`, {
+      fix: [{ command: `${cli()} status${appArg}`, why: "what setup is left" }]
+    });
+  }
+  return builds2[0].buildId;
+}
+async function forgetPending() {
+  const { pending: _pending, ...rest } = await readSignIn();
+  await writeSignIn(rest.token ? rest : void 0);
+}
+async function waitForApproval(pending) {
+  let { interval } = pending;
+  while (Date.now() < Date.parse(pending.expiresAt)) {
+    await sleep(interval * 1e3);
+    const { body } = await callFunction("pollCliLogin", {
+      deviceCode: pending.deviceCode
+    });
+    if (body.accessToken) {
+      await writeSignIn({
+        appScopes: body.appScopes ?? [],
+        email: body.email ?? null,
+        expiresAt: body.expiresAt ?? null,
+        token: body.accessToken,
+        ...body.tokenId ? { tokenId: body.tokenId } : {}
+      });
+      const apps = body.appScopes?.length ?? 0;
+      return {
+        data: {
+          apps,
+          email: body.email ?? null,
+          expiresAt: body.expiresAt ?? null
+        },
+        human: `Signed in${body.email ? ` as ${body.email}` : ""}: ${apps} app${apps === 1 ? "" : "s"}${body.expiresAt ? `, until ${body.expiresAt.slice(0, 10)}` : ""}.`,
+        next: [{ command: `${cli()} apps list` }]
+      };
+    }
+    if (body.error === "slow_down") interval += 5;
+    else if (body.error === "access_denied") {
+      await forgetPending();
+      throw new CliError("access-denied", "The sign-in was denied.", {
+        fix: [{ command: `${cli()} login` }]
+      });
+    } else if (
+      // Making the token failed on the server: the next poll tries again.
+      body.error !== "authorization_pending" && body.error !== "temporarily_unavailable"
+    ) {
+      break;
+    }
+  }
+  await forgetPending();
+  throw new CliError("expired", "The sign-in code expired.", {
+    exit: exitCodes.timedOut,
+    fix: [{ command: `${cli()} login` }]
+  });
+}
+var login = {
+  name: "login",
+  options: { "no-wait": { type: "boolean" }, "wait": { type: "boolean" } },
+  async run({ json: json2, values }) {
+    const saved = await readSignIn();
+    if (values.wait) {
+      if (saved.pending) return waitForApproval(saved.pending);
+      throw new CliError(
+        "no-sign-in-started",
+        "No sign-in is waiting for approval here.",
+        { exit: exitCodes.usage, fix: [{ command: `${cli()} login` }] }
+      );
+    }
+    const { body } = await callFunction("startCliLogin", {
+      client: {
+        hostname: os2.hostname(),
+        name: "todesktop",
+        platform: process6.platform,
+        version: version2()
+      }
+    });
+    const pending = {
+      deviceCode: body.deviceCode,
+      expiresAt: new Date(Date.now() + body.expiresIn * 1e3).toISOString(),
+      interval: body.interval,
+      url: body.verificationUriComplete,
+      userCode: body.userCode
+    };
+    const noWait = values["no-wait"] ?? (json2 && !values.wait);
+    if (noWait) {
+      await writeSignIn({ ...saved, pending });
+      return {
+        needs: {
+          expiresAt: pending.expiresAt,
+          kind: "browser",
+          message: `Open this link, check the code is ${pending.userCode}, and approve:`,
+          url: pending.url,
+          userCode: pending.userCode
+        },
+        next: [{ command: `${cli()} login --wait`, why: "once approved" }]
+      };
+    }
+    progress(
+      `Open ${pending.url}
+and check the code is ${pending.userCode}. Waiting for approval\u2026`
+    );
+    return waitForApproval(pending);
+  },
+  summary: "Sign in through the dashboard, in a browser",
+  usage: "todesktop login [--no-wait | --wait]"
+};
+var logout = {
+  name: "logout",
+  async run() {
+    const { tokenId } = await readSignIn();
+    await writeSignIn(void 0);
+    return {
+      data: { signedOut: true },
+      human: `Signed out. The token${tokenId ? ` (${tokenId})` : ""} still works until you revoke it in the dashboard's Access tokens.`,
+      next: []
+    };
+  },
+  summary: "Forget the sign-in on this machine",
+  usage: "todesktop logout"
+};
+var whoami = {
+  name: "whoami",
+  options: appOption,
+  async run({ values }) {
+    const { from, signIn } = await tokenOf();
+    const { apps } = await api("listApps");
+    const here = await appIdOf(values.app).catch(
+      () => void 0
+    );
+    return {
+      data: {
+        app: here ?? null,
+        apps: apps.length,
+        email: signIn.email ?? null,
+        expiresAt: signIn.expiresAt ?? null,
+        token: from
+      },
+      human: [
+        `Signed in${signIn.email ? ` as ${signIn.email}` : ""} (${from})${signIn.expiresAt ? `, until ${signIn.expiresAt.slice(0, 10)}` : ""}`,
+        `Can read ${apps.length} v2 app${apps.length === 1 ? "" : "s"}`,
+        here ? `This folder's app: ${here}` : ""
+      ].filter(Boolean).join("\n"),
+      next: here ? [{ command: `${cli()} status` }] : [{ command: `${cli()} apps list` }]
+    };
+  },
+  summary: "Who is signed in, and the app this folder is for",
+  usage: "todesktop whoami"
+};
+var appsList = {
+  name: "apps list",
+  async run() {
+    const { apps } = await api("listApps");
+    return {
+      data: apps,
+      human: apps.length ? apps.map(
+        (app) => `${String(app.id).padEnd(16)} ${String(app.name)}${app.owned ? "" : "  (invited)"}`
+      ).join("\n") : "No v2 apps this sign-in can read.",
+      next: apps.length ? [{ command: `${cli()} status --app ${String(apps[0].id)}` }] : [{ command: `${cli()} login`, why: "pick apps when you approve" }]
+    };
+  },
+  summary: "The v2 apps you can read",
+  usage: "todesktop apps list"
+};
+var appsShow = {
+  name: "apps show",
+  options: appOption,
+  async run({ values }) {
+    const appId = await appIdOf(values.app);
+    const result = await api("getApp", { appId });
+    return { data: { ...result, url: appUrl(appId) } };
+  },
+  summary: "An app: its settings, setup and newest build",
+  usage: "todesktop apps show [--app ID]"
+};
+async function widenNeedsHere(appId, app) {
+  const trusted = trustedOf(app);
+  if (!trusted?.refs || !await isFolderOf(appId)) return void 0;
+  const here = await detect(".").catch(() => void 0);
+  return widenNeeds(appId, trusted, here?.releaseRefs);
+}
+async function pushRefs(appId, app) {
+  const trusted = trustedOf(app);
+  if (trusted?.refs) return trusted.refs;
+  return refsOf(
+    await isFolderOf(appId) ? await detect(".").catch(() => void 0) : void 0
+  );
+}
+async function statusOf(values) {
+  const appId = await appIdOf(values.app);
+  const appArg = appArgOf(values, appId);
+  const { app, latestBuild, setup } = await api("getApp", {
+    appId
+  });
+  const steps = [
+    ["config", "Config"],
+    ["trust", "Trusted workflow"],
+    ["upload", "Upload step"],
+    ["build", "First build"],
+    ["release", "First release"]
+  ];
+  const next = [];
+  let needs;
+  const anyRefused = refusalOf(app, latestBuild);
+  const refused = refusalOf(app, latestBuild, await oursOf(appId, app));
+  const stranger = refused ? void 0 : anyRefused;
+  if (latestBuild) next.push(...buildNext(latestBuild, appArg));
+  const widen = !refused && setup.trust ? await widenNeedsHere(appId, app) : void 0;
+  if (refused) {
+    needs = await refusalNeeds(appId, app, refused);
+    next.push({
+      command: `${cli()} status --wait-for trust${appArg}`,
+      why: "once they say it is trusted"
+    });
+  } else if (!setup.trust) {
+    const target = await trustTargetHere(appId);
+    needs = {
+      kind: "dashboard",
+      message: trustNeedsMessage(target),
+      url: trustUrl(appId, target)
+    };
+    next.push({
+      command: `${cli()} status --wait-for trust${appArg}`,
+      why: "returns once it is trusted"
+    });
+  } else if (widen) {
+    needs = widen;
+    next.push({
+      command: `${cli()} status${appArg}`,
+      why: "once they say it is added"
+    });
+  } else if (!setup.upload) {
+    const refs = await pushRefs(appId, app);
+    const test = await isFolderOf(appId) ? testPush(refs) : null;
+    if (test) {
+      next.push({
+        command: test.command,
+        why: "a test build of this commit: built and smoke-tested on every platform, never released"
+      });
+    }
+    next.push(
+      test ? {
+        command: `${cli()} builds wait latest --until smoke${appArg}`,
+        why: `follows the test build; once it passes, ${firstPush(refs).title.toLowerCase()} (one for the version you release) for a build that can be released`
+      } : {
+        command: `${cli()} builds wait latest${appArg}`,
+        why: `${firstPush(refs).title} (one for the version you release) to run your release workflow, then follow the first build`
+      }
+    );
+  } else if (setup.build && !setup.release && latestBuild?.status === "ready") {
+    if (isTestBuild(latestBuild)) {
+      next.push({
+        command: `${cli()} builds wait latest --until smoke${appArg}`,
+        why: `${latestBuild.buildId} is a test build, which can't be released: ${firstPush(await pushRefs(appId, app)).title.toLowerCase()} (one for the version you release), then follow its build`
+      });
+    } else {
+      needs = {
+        kind: "dashboard",
+        message: `Release ${latestBuild.buildId} in the dashboard (it takes a security key):`,
+        url: `${appUrl(appId)}/builds/${latestBuild.buildId}`
+      };
+    }
+  }
+  const localConfig = setup.config || !await isFolderOf(appId) ? void 0 : findConfigFile(".");
+  const lines = steps.map(([key, label]) => {
+    if (key === "config" && localConfig) {
+      return `  \u2713 ${label}  ${localConfig} here, not uploaded yet`;
+    }
+    return `  ${setup[key] ? "\u2713" : "\xB7"} ${label}`;
+  });
+  return {
+    data: {
+      app,
+      latestBuild,
+      ...localConfig ? { localConfig } : {},
+      ...refused ? { refused } : {},
+      ...stranger ? { strangerRefused: stranger } : {},
+      // config: here or uploaded; configUploaded: a build has used one.
+      setup: {
+        ...setup,
+        config: setup.config || Boolean(localConfig),
+        configUploaded: setup.config
+      },
+      url: appUrl(appId)
+    },
+    ...needs ? { needs } : {},
+    human: [
+      `${app.name ?? appId}  ${appId}${app.framework ? ` \xB7 ${app.framework}` : ""}`,
+      "",
+      ...lines,
+      latestBuild ? `
+Newest build  ${buildLine(latestBuild)}` : "",
+      stranger ? `
+${refusalLine(app, stranger)} That isn't this app's repository, so there's nothing to do here unless it should be.` : "",
+      needs ? `
+${needs.message}
+  ${needs.url}` : ""
+    ].join("\n"),
+    next
+  };
+}
+var setupKeys = ["config", "trust", "upload", "build", "release"];
+var waitingFor = {
+  build: "the first build to be ready",
+  config: "the first upload of a config",
+  release: "the first release",
+  trust: "the release workflow to be trusted (step 3)",
+  upload: "the first upload"
+};
+async function linkCanTrust(appId, appArg) {
+  const target = await trustTargetHere(appId);
+  if (target.repository) return;
+  const ours = await isFolderOf(appId);
+  throw new CliError(
+    "trust-link-incomplete",
+    ours ? `The step-3 link from this folder names no repository: its origin remote isn't on GitHub, and ToDesktop trusts GitHub Actions workflows. Add the GitHub remote (git remote add origin \u2026), then hand over the link status gives, then wait.` : `The step-3 link from here names no repository: this folder has no todesktop.config.ts naming ${appId}, so the CLI can't tell it's the app's. Add the config (integrate --step config), then hand over the link status gives, then wait. A person could still pick the repository in the form by hand.`,
+    {
+      exit: exitCodes.blocked,
+      fix: [
+        ...ours ? [] : [
+          {
+            command: `${cli()} integrate --step config --write${appArg}`,
+            why: "add the config"
+          }
+        ],
+        { command: `${cli()} status${appArg}`, why: "the link, filled in" }
+      ]
+    }
+  );
+}
+async function waitForStep(values, key) {
+  if (!setupKeys.includes(key)) {
+    throw new CliError(
+      "invalid-wait-for",
+      `--wait-for is one of ${setupKeys.join(", ")}, not "${key}".`,
+      { exit: exitCodes.usage }
+    );
+  }
+  const step = key;
+  const appId = await appIdOf(values.app);
+  const appArg = appArgOf(values, appId);
+  const timeout = values.timeout ?? (process6.stdout.isTTY ? "30m" : "110s");
+  const deadline = Date.now() + duration4(timeout);
+  const every = Number(process6.env.TODESKTOP_POLL_MS ?? 1e4);
+  const again = `${cli()} status --wait-for ${step}${appArg}`;
+  let told = false;
+  let checkedLink = false;
+  while (Date.now() < deadline) {
+    const { app, latestBuild, setup } = await api("getApp", {
+      appId
+    });
+    if (step === "trust" && !setup.trust && !checkedLink) {
+      checkedLink = true;
+      await linkCanTrust(appId, appArg);
+    }
+    const ours = (
+      // oxlint-disable-next-line no-await-in-loop -- this folder and the trust
+      step === "trust" && setup.trust ? await oursOf(appId, app) : []
+    );
+    if (setup[step] && (step !== "trust" || !refusalOf(app, latestBuild, ours))) {
+      return;
+    }
+    if (!told) {
+      progress(
+        `Waiting for ${waitingFor[step]}, for up to ${timeout.replace(/^(\d+)s$/, "$1 s")}. If it isn't done by then, \`${again}\` picks up where this left off.`
+      );
+      told = true;
+    }
+    await sleep(Math.min(every, Math.max(0, deadline - Date.now())));
+  }
+  throw new CliError(
+    "timed-out",
+    `Still waiting for ${waitingFor[step]}. Nothing is wrong: run it again to keep waiting from here, as often as it takes.`,
+    {
+      exit: exitCodes.timedOut,
+      fix: [
+        { command: again, why: "keep waiting" },
+        { command: `${cli()} status${appArg}`, why: "what's left, and where" }
+      ]
+    }
+  );
+}
+var status = {
+  name: "status",
+  options: {
+    ...appOption,
+    "timeout": { type: "string" },
+    "wait-for": { type: "string" }
+  },
+  async run({ values }) {
+    const waitFor = values["wait-for"];
+    if (waitFor !== void 0) await waitForStep(values, waitFor);
+    return statusOf(values);
+  },
+  summary: "Setup steps done and left, and what's next (--wait-for one)",
+  usage: "todesktop status [--wait-for trust|upload|build|release|config] [--timeout 30m] [--app ID]"
+};
+var buildsList = {
+  name: "builds list",
+  options: {
+    ...appOption,
+    limit: { type: "string" },
+    status: { type: "string" }
+  },
+  async run({ values }) {
+    const appId = await appIdOf(values.app);
+    const { builds: builds2 } = await api("listBuilds", {
+      appId,
+      ...values.limit ? { limit: Number(values.limit) } : {},
+      ...values.status ? { status: values.status } : {}
+    });
+    const failed = builds2.find((build2) => build2.status === "failed");
+    return {
+      data: builds2,
+      human: builds2.length ? builds2.map(buildLine).join("\n") : "No builds.",
+      next: failed ? buildNext(failed, appArgOf(values, appId)) : []
+    };
+  },
+  summary: "Builds, newest first",
+  usage: "todesktop builds list [--status building|failed|ready] [--limit N] [--app ID]"
+};
+var buildsShow = {
+  name: "builds show",
+  options: appOption,
+  async run({ args, values }) {
+    const appId = await appIdOf(values.app);
+    const appArg = appArgOf(values, appId);
+    const buildId = await buildIdOf(appId, args[0], appArg);
+    const { build: build2 } = await api("getBuild", {
+      appId,
+      buildId
+    });
+    return {
+      data: { ...build2, url: `${appUrl(appId)}/builds/${buildId}` },
+      next: buildNext(build2, appArg)
+    };
+  },
+  summary: "One build, whole: pipeline, signing, files, smoke test",
+  usage: "todesktop builds show [BUILD | latest] [--app ID]"
+};
+var buildsLogs = {
+  name: "builds logs",
+  options: { ...appOption, platform: { type: "string" } },
+  async run({ args, values }) {
+    const appId = await appIdOf(values.app);
+    const appArg = appArgOf(values, appId);
+    const buildId = await buildIdOf(appId, args[0], appArg);
+    const { build: build2 } = await api("getBuild", {
+      appId,
+      buildId
+    });
+    const all = Object.keys({ ...build2.logs, ...build2.platforms });
+    const failed = all.filter(
+      (platform) => build2.progress?.[platform] === "failed"
+    );
+    let platforms3 = failed.length ? failed : all;
+    if (values.platform) platforms3 = [String(values.platform)];
+    if (!platforms3.length) {
+      throw new CliError("no-logs", `${buildId} has no logs yet.`);
+    }
+    const logs = await Promise.all(
+      platforms3.map(async (platform) => ({
+        log: (await api("getBuildLog", {
+          appId,
+          buildId,
+          platform
+        })).log,
+        platform
+      }))
+    );
+    return {
+      data: logs,
+      human: logs.map(({ log, platform }) => `== ${platform}
+${log}`).join("\n\n")
+    };
+  },
+  summary: "A build's logs: the failed platforms', else all",
+  usage: "todesktop builds logs [BUILD | latest] [--platform mac|windows|linux] [--app ID]"
+};
+function duration4(text3) {
+  const match = /^(\d+)(s|m|h)?$/.exec(text3);
+  if (!match) {
+    throw new CliError(
+      "invalid-timeout",
+      `--timeout is like 90s, 30m or 2h, not "${text3}"`,
+      {
+        exit: exitCodes.usage
+      }
+    );
+  }
+  return Number(match[1]) * { h: 36e5, m: 6e4, s: 1e3 }[match[2] ?? "s"];
+}
+async function smokeReasons(appId, buildId) {
+  const found = await api("getSmokeTest", {
+    appId,
+    buildId
+  }).catch(() => null);
+  const machines = found?.run?.machines ?? [];
+  const reasons = /* @__PURE__ */ new Set();
+  for (const { journeys, machine } of machines) {
+    for (const journey of Object.values(journeys ?? {})) {
+      if (journey.skipped) {
+        reasons.add(
+          `${machine?.name ? `${machine.name}: ` : ""}${journey.skipped}`
+        );
+      }
+    }
+  }
+  return [...reasons];
+}
+function smokeSettled(build2, smokeOn) {
+  const start = build2.smokeStart;
+  if (start?.failedAt) {
+    throw new CliError(
+      "smoke-not-started",
+      `${build2.buildId}'s smoke test couldn't start${start.error ? `: ${start.error}` : ""}.`,
+      { exit: exitCodes.blocked }
+    );
+  }
+  if (start) return false;
+  const smoke = smokeOf(build2);
+  if (smoke) return smoke !== "queued" && smoke !== "running";
+  const finished = Date.parse(String(build2.completedAt ?? ""));
+  return !smokeOn || Date.now() - finished > 5 * 6e4;
+}
+var buildsWait = {
+  name: "builds wait",
+  options: {
+    ...appOption,
+    timeout: { type: "string" },
+    until: { type: "string" }
+  },
+  async run({ args, values }) {
+    const appId = await appIdOf(values.app);
+    const until = values.until ?? "ready";
+    if (until !== "ready" && until !== "smoke") {
+      throw new CliError("invalid-until", "--until is ready or smoke", {
+        exit: exitCodes.usage
+      });
+    }
+    const timeout = values.timeout ?? (process6.stdout.isTTY ? "30m" : "110s");
+    const deadline = Date.now() + duration4(timeout);
+    const every = Number(process6.env.TODESKTOP_POLL_MS ?? 1e4);
+    const appArg = appArgOf(values, appId);
+    let buildId = args[0] && /^#?\d+$/.test(args[0]) ? await buildIdOf(appId, args[0], appArgOf(values, appId)) : args[0];
+    if (!buildId || buildId === "latest") {
+      const first = await firstBuildId(appId, deadline, every, appArg);
+      if ("refused" in first) return first.refused;
+      buildId = first.buildId;
+    }
+    const smokeOn = until === "smoke" && (await api("getApp", { appId })).app.smokeTests?.enabled === true;
+    const again = `${cli()} builds wait ${buildId}${until === "smoke" ? " --until smoke" : ""}${appArg}`;
+    progress(
+      `Waiting for ${buildId} for up to ${timeout.replace(/^(\d+)s$/, "$1 s")}${until === "smoke" ? " (its build, then its smoke test)" : ""}. If it isn't done by then, \`${again}\` picks up where this left off.`
+    );
+    let said = "";
+    let overdue = "";
+    while (Date.now() < deadline) {
+      const { build: build2 } = await api("getBuild", {
+        appId,
+        buildId
+      });
+      const steps = Object.entries(build2.progress ?? {}).map(([platform, step]) => `${platform} ${step}`).join(", ");
+      const smoke = smokeOf(build2);
+      const awaited = awaitedUploads(build2);
+      const line = `${buildId} ${build2.status}${steps ? ` \xB7 ${steps}` : ""}${awaited ? ` \xB7 waiting for ${awaited.missing.join(", ")} to upload` : ""}${smoke ? ` \xB7 smoke ${smoke}` : ""}`;
+      if (line !== said) progress(line);
+      said = line;
+      if (awaited?.overdue && !overdue) progress(overdueUploads(awaited));
+      overdue = awaited?.overdue ? overdueUploads(awaited) : "";
+      if (build2.status === "failed") {
+        throw new CliError(
+          "build-failed",
+          `${buildId} failed${build2.error ? `: ${build2.error}` : ""}.`,
+          {
+            exit: exitCodes.blocked,
+            fix: [{ command: `${cli()} builds logs ${buildId}${appArg}` }]
+          }
+        );
+      }
+      if (build2.status === "ready" && (until === "ready" || smokeSettled(build2, smokeOn))) {
+        if (until === "smoke" && smoke === "failed") {
+          throw new CliError(
+            "smoke-failed",
+            `${buildId} failed its smoke test.`,
+            {
+              exit: exitCodes.blocked,
+              fix: [{ command: `${cli()} smoke show ${buildId}${appArg}` }]
+            }
+          );
+        }
+        if (until === "smoke" && !smoke) {
+          throw new CliError(
+            "smoke-not-run",
+            smokeOn ? `${buildId} is ready, but no smoke test started in the 5 minutes after it was ready, so nothing shows it launches.` : `${buildId} is ready, but smoke tests are off for ${appId}, so nothing shows it launches. A person turns them on in the app's Settings \u203A Smoke tests.`,
+            {
+              exit: exitCodes.blocked,
+              fix: [
+                {
+                  command: `${cli()} smoke show ${buildId}${appArg}`,
+                  why: "whether a run exists"
+                }
+              ]
+            }
+          );
+        }
+        if (until === "smoke" && (smoke === "skipped" || smoke === "inconclusive")) {
+          const reasons = await smokeReasons(appId, buildId);
+          throw new CliError(
+            `smoke-${smoke}`,
+            `${buildId} is ready, but its smoke test was ${smoke}, so nothing shows it launches${reasons.length ? `: ${reasons.join(" ")}` : "."}`,
+            {
+              exit: exitCodes.blocked,
+              fix: [
+                {
+                  command: `${cli()} smoke show ${buildId}${appArg}`,
+                  why: "each machine's journeys, and why any was skipped"
+                }
+              ]
+            }
+          );
+        }
+        return {
+          data: build2,
+          human: buildLine(build2),
+          next: [{ command: `${cli()} status${appArg}`, why: "what's next" }]
+        };
+      }
+      await sleep(Math.min(every, Math.max(0, deadline - Date.now())));
+    }
+    throw new CliError(
+      "timed-out",
+      overdue ? `${buildId} isn't done yet (${said || buildId}). ${overdue}` : `${buildId} isn't done yet (${said || buildId}). Nothing is wrong: run it again to keep waiting from here, as often as it takes.`,
+      {
+        exit: exitCodes.timedOut,
+        fix: [
+          {
+            command: again,
+            why: overdue ? "once the job has been re-run" : "keep waiting"
+          }
+        ]
+      }
+    );
+  },
+  summary: "Wait for a build to be ready, or its smoke test to finish",
+  usage: "todesktop builds wait [BUILD | latest] [--until ready|smoke] [--timeout 30m] [--app ID]"
+};
+var smokeShow = {
+  name: "smoke show",
+  options: { ...appOption, full: { type: "boolean" } },
+  async run({ args, values }) {
+    const appId = await appIdOf(values.app);
+    const appArg = appArgOf(values, appId);
+    const buildId = await buildIdOf(appId, args[0], appArg);
+    const [{ build: build2 }, found] = await Promise.all([
+      api("getBuild", { appId, buildId }),
+      api("getSmokeTest", {
+        appId,
+        buildId
+      })
+    ]);
+    const smoke = typeof build2.smokeTest === "object" ? build2.smokeTest : void 0;
+    const run4 = found?.run;
+    const full = values.full === true;
+    const journeys = run4?.machines ? await journeyReports(run4, found?.filesUrl, { full }) : [];
+    let human = `${buildId} has no smoke test.`;
+    if (run4?.machines) {
+      human = smokeText(buildId, run4, journeys, {
+        again: `${cli()} smoke show ${buildId}${appArg}`,
+        full
+      });
+    } else if (smoke) {
+      human = `${buildId} smoke test: ${smoke.status ?? "unknown"}
+${JSON.stringify(smoke, null, 2)}`;
+    }
+    return {
+      data: {
+        journeys: forJson(journeys, full),
+        run: run4 ? withFileUrls(full ? run4 : briefRun(run4), found?.filesUrl) : null,
+        smokeTest: smoke ?? null
+      },
+      human,
+      ...!full && journeys.some((each) => each.output) ? {
+        next: [
+          {
+            command: `${cli()} smoke show ${buildId}${appArg} --full`,
+            why: "each journey's whole app output"
+          }
+        ]
+      } : {}
+    };
+  },
+  summary: "A build's smoke test: each machine's journeys; for a failed one, the step, what was seen and whose code ran, the end of the app's output as written and the machine's log; --full for all of the output",
+  usage: "todesktop smoke show [BUILD | latest] [--full] [--app ID]"
+};
+var agentCommands = [
+  login,
+  logout,
+  whoami,
+  appsList,
+  appsShow,
+  status,
+  buildsList,
+  buildsShow,
+  buildsLogs,
+  buildsWait,
+  smokeShow
+];
 
 // ../config/src/mac.ts
-import { copyFile as copyFile2, readdir as readdir2, readFile as readFile3, stat as stat2 } from "node:fs/promises";
-import path3 from "node:path";
+import { copyFile as copyFile2, readdir as readdir4, readFile as readFile8, stat as stat2 } from "node:fs/promises";
+import path7 from "node:path";
 var isDict = (value) => typeof value === "object" && value !== null && !Array.isArray(value) && !(value instanceof Date) && !(value instanceof Uint8Array);
 function parsePlist(bytes) {
   const buffer = Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength);
@@ -15997,8 +27993,8 @@ var xmlEntities = {
   lt: "<",
   quot: '"'
 };
-function decodeXml(text) {
-  return text.replaceAll(
+function decodeXml(text3) {
+  return text3.replaceAll(
     /&(#x[\da-f]+|#\d+|\w+);/gi,
     (entity, name) => {
       if (name.startsWith("#x") || name.startsWith("#X")) {
@@ -16011,8 +28007,8 @@ function decodeXml(text) {
     }
   );
 }
-function parseXmlPlist(text) {
-  const tokens = text.replaceAll(/<!--[\s\S]*?-->/g, "").replaceAll(/<\?[\s\S]*?\?>/g, "").replaceAll(/<!DOCTYPE[^>]*>/gi, "").split(/(<[^>]+>)/);
+function parseXmlPlist(text3) {
+  const tokens = text3.replaceAll(/<!--[\s\S]*?-->/g, "").replaceAll(/<\?[\s\S]*?\?>/g, "").replaceAll(/<!DOCTYPE[^>]*>/gi, "").split(/(<[^>]+>)/);
   let at = 0;
   const next = () => {
     while (tokens[at] !== void 0 && tokens[at].trim() === "") at += 1;
@@ -16084,13 +28080,13 @@ function parseXmlPlist(text) {
   return value(first);
 }
 function readProvisioningProfile(bytes) {
-  const text = Buffer.from(
+  const text3 = Buffer.from(
     bytes.buffer,
     bytes.byteOffset,
     bytes.byteLength
   ).toString("latin1");
-  const start = text.indexOf("<?xml");
-  const end = text.indexOf("</plist>", start);
+  const start = text3.indexOf("<?xml");
+  const end = text3.indexOf("</plist>", start);
   if (start === -1 || end === -1) {
     throw new Error("isn't a provisioning profile (no property list inside)");
   }
@@ -16101,12 +28097,12 @@ function readProvisioningProfile(bytes) {
     )
   );
   if (!isDict(plist)) throw new Error("isn't a provisioning profile");
-  const entitlements = isDict(plist.Entitlements) ? plist.Entitlements : {};
+  const entitlements2 = isDict(plist.Entitlements) ? plist.Entitlements : {};
   const strings = (value) => Array.isArray(value) ? value.filter((item) => typeof item === "string") : [];
-  const applicationIdentifier = entitlements["com.apple.application-identifier"] ?? entitlements["application-identifier"];
+  const applicationIdentifier = entitlements2["com.apple.application-identifier"] ?? entitlements2["application-identifier"];
   return {
     applicationIdentifier: typeof applicationIdentifier === "string" ? applicationIdentifier : "",
-    entitlements,
+    entitlements: entitlements2,
     expires: plist.ExpirationDate instanceof Date ? plist.ExpirationDate : void 0,
     kind: profileKind(plist),
     name: typeof plist.Name === "string" ? plist.Name : "",
@@ -16127,33 +28123,33 @@ function needsProfile(entitlement) {
   return entitlement.startsWith("com.apple.developer.") || entitlement === "aps-environment" || entitlement === "com.apple.application-identifier";
 }
 var signingVariables = ["TeamIdentifierPrefix", "AppIdentifierPrefix"];
-function expandEntitlements(text, { bundleId, file: file2 }) {
-  return text.replaceAll(/\$\((\w+)\)|\$\{(\w+)\}/g, (variable, ...names) => {
+function expandEntitlements(text3, { bundleId, file: file3 }) {
+  return text3.replaceAll(/\$\((\w+)\)|\$\{(\w+)\}/g, (variable, ...names) => {
     const name = names[0] ?? names[1];
     if (signingVariables.includes(name)) return `$(${name})`;
     if (name === "PRODUCT_BUNDLE_IDENTIFIER") {
       if (!bundleId) {
         throw new Error(
-          `${file2} uses ${variable}, but the code it signs isn't a bundle with a CFBundleIdentifier: write the identifier out`
+          `${file3} uses ${variable}, but the code it signs isn't a bundle with a CFBundleIdentifier: write the identifier out`
         );
       }
       return bundleId;
     }
     throw new Error(
-      `${file2} uses ${variable}, an Xcode build setting ToDesktop can't know: write its value out (only $(PRODUCT_BUNDLE_IDENTIFIER), $(TeamIdentifierPrefix) and $(AppIdentifierPrefix) are filled in)`
+      `${file3} uses ${variable}, an Xcode build setting ToDesktop can't know: write its value out (only $(PRODUCT_BUNDLE_IDENTIFIER), $(TeamIdentifierPrefix) and $(AppIdentifierPrefix) are filled in)`
     );
   });
 }
-function fillTeam(text, teamId) {
+function fillTeam(text3, teamId) {
   const prefix = teamId ? `${teamId}.` : "";
-  return text.replaceAll("$(TeamIdentifierPrefix)", prefix).replaceAll("$(AppIdentifierPrefix)", prefix);
+  return text3.replaceAll("$(TeamIdentifierPrefix)", prefix).replaceAll("$(AppIdentifierPrefix)", prefix);
 }
 var bundleExtension = /\.(app|appex|xpc|bundle|plugin|framework)$/;
-async function readIfFile(file2) {
-  return (await stat2(file2).catch(() => null))?.isFile() ? readFile3(file2) : void 0;
+async function readIfFile(file3) {
+  return (await stat2(file3).catch(() => null))?.isFile() ? readFile8(file3) : void 0;
 }
 async function bundleIdOf(bundle) {
-  const plist = await readIfFile(path3.join(bundle, "Contents", "Info.plist"));
+  const plist = await readIfFile(path7.join(bundle, "Contents", "Info.plist"));
   return plist ? plistStringsOf(plist).CFBundleIdentifier : void 0;
 }
 async function embedProvisioningProfiles(loaded, app) {
@@ -16172,65 +28168,83 @@ async function embedProvisioningProfiles(loaded, app) {
     }
   }
   for (const [at, profile] of profiles) {
-    const source = path3.resolve(loaded.configDir, profile);
+    const source = path7.resolve(loaded.configDir, profile);
     if (!await readIfFile(source)) {
       throw new Error(
         `The provisioning profile ${profile} isn't a file (${source})`
       );
     }
-    const bundle = path3.join(app, at);
-    if (!(await stat2(path3.join(bundle, "Contents")).catch(() => null))?.isDirectory()) {
+    const bundle = path7.join(app, at);
+    if (!(await stat2(path7.join(bundle, "Contents")).catch(() => null))?.isDirectory()) {
       throw new Error(
-        `${at ? `mac.nested["${at}"]` : "mac"}.provisioningProfile: ${path3.basename(app)} has no bundle at ${at || "."}`
+        `${at ? `mac.nested["${at}"]` : "mac"}.provisioningProfile: ${path7.basename(app)} has no bundle at ${at || "."}`
       );
     }
     await copyFile2(
       source,
-      path3.join(bundle, "Contents", "embedded.provisionprofile")
+      path7.join(bundle, "Contents", "embedded.provisionprofile")
     );
   }
 }
 async function macEntitlements(loaded, app, now = /* @__PURE__ */ new Date()) {
   const { mac } = loaded.config;
-  const entitlements = { nested: {} };
-  if (!mac) return { entitlements, warnings: [] };
-  const read = async (file2, bundleId) => {
-    const source = path3.resolve(loaded.configDir, file2);
+  const entitlements2 = { nested: {} };
+  if (!mac) return { entitlements: entitlements2, warnings: [] };
+  const read = async (file3, bundleId) => {
+    const source = path7.resolve(loaded.configDir, file3);
     const bytes = await readIfFile(source);
     if (!bytes) {
-      throw new Error(`The entitlements file ${file2} isn't a file (${source})`);
+      throw new Error(`The entitlements file ${file3} isn't a file (${source})`);
     }
-    const text = expandEntitlements(bytes.toString("utf8"), { bundleId, file: file2 });
+    const text3 = expandEntitlements(bytes.toString("utf8"), { bundleId, file: file3 });
     try {
-      if (!isDict(parsePlist(Buffer.from(fillTeam(text, "TEAMID"))))) {
+      if (!isDict(parsePlist(Buffer.from(fillTeam(text3, "TEAMID"))))) {
         throw new Error("not a dictionary");
       }
     } catch (error46) {
       throw new Error(
-        `${file2} isn't an entitlements plist: ${error46.message}`
+        `${file3} isn't an entitlements plist: ${error46.message}`
       );
     }
-    return text;
+    return text3;
   };
   const appBundleId = await bundleIdOf(app);
   if (mac.entitlements) {
-    entitlements.app = await read(mac.entitlements, appBundleId);
+    entitlements2.app = await read(mac.entitlements, appBundleId);
   }
   for (const [at, nested] of Object.entries(mac.nested ?? {})) {
-    const target = path3.join(app, at);
+    const target = path7.join(app, at);
     const found = await stat2(target).catch(() => null);
     if (!found) {
       throw new Error(
-        `mac.nested lists ${at}, but ${path3.basename(app)} has nothing there`
+        `mac.nested lists ${at}, but ${path7.basename(app)} has nothing there`
       );
     }
     if (nested.entitlements) {
       const bundleId = found.isDirectory() ? await bundleIdOf(target) : void 0;
-      entitlements.nested[at] = await read(nested.entitlements, bundleId);
+      entitlements2.nested[at] = await read(nested.entitlements, bundleId);
     }
   }
-  const warnings = await checkSigning(app, entitlements, now);
-  return { entitlements, warnings };
+  const warnings = await checkSigning(app, entitlements2, now);
+  const sandboxed = await sandboxProblem(loaded);
+  if (sandboxed) warnings.push(sandboxed);
+  return { entitlements: entitlements2, warnings };
+}
+async function sandboxProblem(loaded) {
+  const file3 = loaded.config.mac?.entitlements;
+  if (!file3) return void 0;
+  const bytes = await readIfFile(path7.resolve(loaded.configDir, file3));
+  if (!bytes) return void 0;
+  let parsed;
+  try {
+    parsed = parsePlist(bytes);
+  } catch {
+    return void 0;
+  }
+  if (!isDict(parsed) || parsed["com.apple.security.app-sandbox"] !== true) {
+    return void 0;
+  }
+  return `mac.entitlements (${file3}) turns the App Sandbox on, and a sandboxed app can't update itself: ToDesktop's updater runs inside the app's sandbox, where it never sees an update and can't replace the app. Sign with a copy of the file without com.apple.security.app-sandbox (an extension in mac.nested can stay sandboxed)`;
 }
 function granted(want, have) {
   if (have === void 0) return false;
@@ -16247,30 +28261,30 @@ function granted(want, have) {
   }
   return JSON.stringify(want) === JSON.stringify(have);
 }
-async function checkSigning(app, entitlements, now = /* @__PURE__ */ new Date()) {
+async function checkSigning(app, entitlements2, now = /* @__PURE__ */ new Date()) {
   const warnings = [];
-  const name = path3.basename(app);
+  const name = path7.basename(app);
   const targets = /* @__PURE__ */ new Set(["."]);
   for (const bundle of await nestedBundles(app)) {
-    if (bundle.endsWith(".app") || bundle in entitlements.nested) {
+    if (bundle.endsWith(".app") || bundle in entitlements2.nested) {
       targets.add(bundle);
     }
   }
   for (const at of await bundlesWithProfiles(app)) targets.add(at);
-  for (const at of Object.keys(entitlements.nested)) targets.add(at);
+  for (const at of Object.keys(entitlements2.nested)) targets.add(at);
   for (const at of [...targets].sort()) {
-    const target = at === "." ? app : path3.join(app, at);
+    const target = at === "." ? app : path7.join(app, at);
     const found = await stat2(target).catch(() => null);
     if (!found) {
       throw new Error(`mac.nested lists ${at}, but ${name} has nothing there`);
     }
     const where = at === "." ? name : `${at} in ${name}`;
-    const text = entitlements.nested[at] ?? (at === "." || at.endsWith(".app") ? entitlements.app : void 0);
+    const text3 = entitlements2.nested[at] ?? (at === "." || at.endsWith(".app") ? entitlements2.app : void 0);
     const profileBytes = found.isDirectory() ? await readIfFile(
-      path3.join(target, "Contents", "embedded.provisionprofile")
+      path7.join(target, "Contents", "embedded.provisionprofile")
     ) : void 0;
     if (!profileBytes) {
-      const requested2 = text ? parsePlist(Buffer.from(fillTeam(text, "TEAMID"))) : {};
+      const requested2 = text3 ? parsePlist(Buffer.from(fillTeam(text3, "TEAMID"))) : {};
       const restricted = Object.keys(isDict(requested2) ? requested2 : {}).filter(
         needsProfile
       );
@@ -16278,7 +28292,7 @@ async function checkSigning(app, entitlements, now = /* @__PURE__ */ new Date())
       let fix = `set ${at === "." ? "mac.provisioningProfile" : `mac.nested["${at}"].provisioningProfile`} to a Developer ID profile from your Apple Developer account`;
       if (!found.isDirectory()) {
         fix = "only bundles can hold a profile: drop them from its entitlements, or move the code into a bundle (an XPC service or app)";
-      } else if (at !== "." && !(at in entitlements.nested)) {
+      } else if (at !== "." && !(at in entitlements2.nested)) {
         fix = `it takes mac.entitlements as a nested app: give it its own in mac.nested["${at}"], or ${fix}`;
       }
       throw new Error(
@@ -16323,7 +28337,7 @@ async function checkSigning(app, entitlements, now = /* @__PURE__ */ new Date())
         );
       }
     }
-    const requested = text ? parsePlist(Buffer.from(fillTeam(text, team ?? "TEAMID"))) : {};
+    const requested = text3 ? parsePlist(Buffer.from(fillTeam(text3, team ?? "TEAMID"))) : {};
     const notGranted = Object.entries(isDict(requested) ? requested : {}).filter(
       ([key, value]) => needsProfile(key) && !granted(value, profile.entitlements[key])
     ).map(([key]) => key);
@@ -16338,13 +28352,13 @@ async function checkSigning(app, entitlements, now = /* @__PURE__ */ new Date())
 var isBundleDir = (name) => bundleExtension.test(name);
 async function nestedBundles(app) {
   const found = [];
-  for (const entry of await readdir2(app, {
+  for (const entry of await readdir4(app, {
     recursive: true,
     withFileTypes: true
   })) {
     if (entry.isDirectory() && isBundleDir(entry.name)) {
-      const bundle = path3.join(entry.parentPath, entry.name);
-      found.push(path3.relative(app, bundle).split(path3.sep).join("/"));
+      const bundle = path7.join(entry.parentPath, entry.name);
+      found.push(path7.relative(app, bundle).split(path7.sep).join("/"));
     }
   }
   return found.sort();
@@ -16353,7 +28367,7 @@ async function bundlesWithProfiles(app) {
   const found = [];
   for (const at of [".", ...await nestedBundles(app)]) {
     if (await readIfFile(
-      path3.join(app, at, "Contents", "embedded.provisionprofile")
+      path7.join(app, at, "Contents", "embedded.provisionprofile")
     )) {
       found.push(at);
     }
@@ -16361,10 +28375,110 @@ async function bundlesWithProfiles(app) {
   return found;
 }
 
+// src/agent/integrate.ts
+import { existsSync as existsSync9 } from "node:fs";
+import { mkdir as mkdir4, mkdtemp as mkdtemp3, readFile as readFile11, rm as rm4, writeFile as writeFile3 } from "node:fs/promises";
+import { tmpdir as tmpdir3 } from "node:os";
+import path10 from "node:path";
+import process9 from "node:process";
+
+// src/upload.ts
+import { execFile as execFile3 } from "node:child_process";
+import { createHash } from "node:crypto";
+import { createReadStream, existsSync as existsSync7, openAsBlob, statSync as statSync2 } from "node:fs";
+import { copyFile as copyFile3, cp, lstat, mkdtemp as mkdtemp2, rm as rm3, stat as stat3 } from "node:fs/promises";
+import { tmpdir as tmpdir2 } from "node:os";
+import path9 from "node:path";
+import process8 from "node:process";
+import { promisify as promisify2 } from "node:util";
+
+// src/agent/found.ts
+import { existsSync as existsSync6, readdirSync, statSync } from "node:fs";
+import path8 from "node:path";
+import process7 from "node:process";
+var shown = (file3) => path8.relative(process7.cwd(), file3) || ".";
+var isExecutable = (file3) => {
+  try {
+    const stat4 = statSync(file3);
+    return stat4.isFile() && (stat4.mode & 73) !== 0;
+  } catch {
+    return false;
+  }
+};
+function executablesIn(dir, depth = 3, max = 20) {
+  const found = [];
+  const walk = (at, level) => {
+    let names;
+    try {
+      names = readdirSync(at).sort();
+    } catch {
+      return;
+    }
+    for (const name of names) {
+      if (found.length >= max) return;
+      const file3 = path8.join(at, name);
+      if (isExecutable(file3)) found.push(path8.relative(dir, file3));
+    }
+    if (level >= depth) return;
+    for (const name of names) {
+      const file3 = path8.join(at, name);
+      try {
+        if (statSync(file3).isDirectory()) walk(file3, level + 1);
+      } catch {
+      }
+    }
+  };
+  walk(dir, 1);
+  return found;
+}
+function filesIn(dir, max = 200) {
+  const found = [];
+  const walk = (at, level) => {
+    let names = [];
+    try {
+      names = readdirSync(at).sort();
+    } catch {
+      return;
+    }
+    for (const name of names) {
+      if (found.length >= max) return;
+      const file3 = path8.join(at, name);
+      try {
+        if (statSync(file3).isDirectory()) {
+          if (level < 2) walk(file3, level + 1);
+        } else found.push(path8.relative(dir, file3));
+      } catch {
+      }
+    }
+  };
+  walk(dir, 1);
+  return found;
+}
+function missingPath(file3) {
+  let dir = path8.dirname(path8.resolve(file3));
+  while (!existsSync6(dir) && path8.dirname(dir) !== dir) {
+    dir = path8.dirname(dir);
+  }
+  return `${shown(file3)} doesn't exist; ${shown(dir)} is the nearest folder that does, and it holds: ${holds(dir)}`;
+}
+function holds(dir) {
+  let entries = [];
+  try {
+    entries = readdirSync(dir).sort();
+  } catch {
+  }
+  return entries.length ? `${entries.slice(0, 15).join(", ")}${entries.length > 15 ? `, \u2026 (${entries.length})` : ""}` : "nothing";
+}
+function executableProblem(appDir, executable, key, { platform = "linux" } = {}) {
+  if (existsSync6(path8.join(appDir, executable))) return void 0;
+  const found = platform === "linux" ? executablesIn(appDir) : filesIn(appDir).filter((name) => /\.exe$/i.test(name));
+  return `${key} is ${executable}, and ${shown(appDir)} has no such file. ${platform === "linux" ? "Executable files" : ".exe files"} in it: ${found.length ? found.join(", ") : "none"}`;
+}
+
 // src/inspect.ts
-import { open as open2, readFile as readFile4 } from "node:fs/promises";
-async function head(file2, length) {
-  const handle = await open2(file2, "r");
+import { open as open2, readFile as readFile9 } from "node:fs/promises";
+async function head(file3, length) {
+  const handle = await open2(file3, "r");
   try {
     const { buffer, bytesRead } = await handle.read(
       Buffer.alloc(length),
@@ -16384,14 +28498,14 @@ var xmlEntities2 = {
   lt: "<",
   quot: '"'
 };
-async function plistStrings(file2) {
-  const bytes = await readFile4(file2);
+async function plistStrings(file3) {
+  const bytes = await readFile9(file3);
   if (bytes.toString("latin1", 0, 6) === "bplist") {
     return plistStringsOf(bytes);
   }
-  const text = bytes.toString("utf8");
+  const text3 = bytes.toString("utf8");
   const values = {};
-  for (const [, key, value] of text.matchAll(
+  for (const [, key, value] of text3.matchAll(
     /<key>([^<]+)<\/key>\s*<string>([^<]*)<\/string>/g
   )) {
     if (key) {
@@ -16405,8 +28519,8 @@ async function plistStrings(file2) {
 }
 var CPU_TYPE_X86_64 = 16777223;
 var CPU_TYPE_ARM64 = 16777228;
-async function machOArch(file2) {
-  const bytes = await head(file2, 4096);
+async function machOArch(file3) {
+  const bytes = await head(file3, 4096);
   const magic = bytes.readUInt32BE(0);
   const cpuTypes = [];
   if (magic === 3405691582 || magic === 3405691583) {
@@ -16418,32 +28532,32 @@ async function machOArch(file2) {
   } else if (magic === 3489328638) {
     cpuTypes.push(bytes.readUInt32LE(4));
   } else {
-    throw new Error(`${file2} isn't a 64-bit Mach-O executable`);
+    throw new Error(`${file3} isn't a 64-bit Mach-O executable`);
   }
   const arm = cpuTypes.includes(CPU_TYPE_ARM64);
   const intel = cpuTypes.includes(CPU_TYPE_X86_64);
   if (arm && intel) return "universal";
   if (arm) return "arm64";
   if (intel) return "x64";
-  throw new Error(`${file2} has no arm64 or x86_64 slice`);
+  throw new Error(`${file3} has no arm64 or x86_64 slice`);
 }
 var peMachines = { 34404: "x64", 43620: "arm64" };
-async function peArch(file2) {
-  const handle = await open2(file2, "r");
+async function peArch(file3) {
+  const handle = await open2(file3, "r");
   try {
     const read = async (length, position) => (await handle.read(Buffer.alloc(length), 0, length, position)).buffer;
     const dos = await read(64, 0);
     if (dos.toString("latin1", 0, 2) !== "MZ") {
-      throw new Error(`${file2} isn't a Windows executable`);
+      throw new Error(`${file3} isn't a Windows executable`);
     }
     const header = await read(6, dos.readUInt32LE(60));
     if (header.toString("latin1", 0, 4) !== "PE\0\0") {
-      throw new Error(`${file2} isn't a PE executable`);
+      throw new Error(`${file3} isn't a PE executable`);
     }
     const machine = header.readUInt16LE(4);
     const arch = peMachines[machine];
     if (!arch) {
-      throw new Error(`${file2} is for PE machine 0x${machine.toString(16)}`);
+      throw new Error(`${file3} is for PE machine 0x${machine.toString(16)}`);
     }
     return arch;
   } finally {
@@ -16451,233 +28565,42 @@ async function peArch(file2) {
   }
 }
 var elfMachines = { 183: "arm64", 62: "x64" };
-async function elfArch(file2) {
-  const bytes = await head(file2, 20);
+async function elfArch(file3) {
+  const bytes = await head(file3, 20);
   if (bytes.toString("latin1", 0, 4) !== "\x7FELF") {
-    throw new Error(`${file2} isn't an ELF executable`);
+    throw new Error(`${file3} isn't an ELF executable`);
   }
   const machine = bytes.readUInt16LE(18);
   const arch = elfMachines[machine];
   if (!arch) {
-    throw new Error(`${file2} is for ELF machine 0x${machine.toString(16)}`);
+    throw new Error(`${file3} is for ELF machine 0x${machine.toString(16)}`);
   }
   return arch;
 }
 
-// src/tauriBridge.ts
-var run2 = promisify2(execFile2);
-var tauriPlatform = {
-  arm64: ["darwin-aarch64"],
-  universal: ["darwin-aarch64", "darwin-x86_64"],
-  x64: ["darwin-x86_64"]
-};
-async function tauriSign(file2, keyFile) {
-  const cli = (process2.env.TAURI_CLI ?? "npx --yes @tauri-apps/cli@2.12.1").split(" ");
-  const [command, ...prefix] = cli;
-  if (!command) throw new Error("TAURI_CLI is empty");
-  const key = keyFile ? ["--private-key-path", keyFile] : ["--private-key", process2.env.TAURI_SIGNING_PRIVATE_KEY ?? ""];
-  if (!keyFile && !process2.env.TAURI_SIGNING_PRIVATE_KEY) {
-    throw new Error("Pass --key-file, or set TAURI_SIGNING_PRIVATE_KEY");
-  }
-  await run2(command, [
-    ...prefix,
-    "signer",
-    "sign",
-    ...key,
-    "--password",
-    process2.env.TAURI_SIGNING_PRIVATE_KEY_PASSWORD ?? "",
-    file2
-  ]);
-  return (await readFile5(`${file2}.sig`, "utf8")).trim();
-}
-async function tauriBridge(options) {
-  await mkdir3(options.out, { recursive: true });
-  const response = await fetch(options.from);
-  if (!response.ok) {
-    throw new Error(`${options.from}: ${response.status}`);
-  }
-  const zip = path4.join(options.out, "build.zip");
-  await writeFile2(zip, new Uint8Array(await response.arrayBuffer()));
-  const unpacked = path4.join(options.out, "unpacked");
-  await run2("ditto", ["-x", "-k", zip, unpacked]);
-  const appName = (await readdir3(unpacked)).find(
-    (name2) => name2.endsWith(".app")
-  );
-  if (!appName) throw new Error(`${options.from} holds no .app`);
-  const app = path4.join(unpacked, appName);
-  const plist = await plistStrings(path4.join(app, "Contents", "Info.plist"));
-  const version2 = plist.CFBundleShortVersionString;
-  const executable = plist.CFBundleExecutable;
-  if (!version2 || !executable) {
-    throw new Error(`${appName}'s Info.plist lacks a version or executable`);
-  }
-  if (!existsSync3(path4.join(app, "Contents", "Resources", "todesktop-build.json"))) {
-    throw new Error(
-      `${appName} isn't a ToDesktop build (no todesktop-build.json)`
-    );
-  }
-  const arch = await machOArch(path4.join(app, "Contents", "MacOS", executable));
-  const base = appName.replace(/\.app$/, "").replaceAll(/[^\w.-]+/g, "-");
-  const name = `${base}-${version2}-mac-${arch}.app.tar.gz`;
-  const tarball = path4.join(options.out, name);
-  await run2(
-    "tar",
-    ["--no-mac-metadata", "-czf", tarball, "-C", unpacked, appName],
-    {
-      env: { ...process2.env, COPYFILE_DISABLE: "1" }
-    }
-  );
-  const signature = await tauriSign(tarball, options.keyFile);
-  const url2 = `${options.baseUrl.replace(/\/$/, "")}/${name}`;
-  const manifest = {
-    notes: options.notes ?? `From ${version2}, updates come from ToDesktop.`,
-    platforms: Object.fromEntries(
-      (tauriPlatform[arch] ?? []).map((platform) => [
-        platform,
-        { signature, url: url2 }
-      ])
-    ),
-    pub_date: (/* @__PURE__ */ new Date()).toISOString(),
-    version: version2
-  };
-  const latest = path4.join(options.out, "latest.json");
-  await writeFile2(latest, `${JSON.stringify(manifest, null, 2)}
-`);
-  process2.stdout.write(
-    `Bridge to ${version2} (${arch}):
-  ${tarball}
-  ${tarball}.sig
-  ${latest}
-Publish them where your current installs look for updates, or redirect that URL to ${options.baseUrl}.
-`
-  );
-}
-
-// ../contracts/src/appIcon.ts
-var MAX_ICON_SOURCE_BYTES = 4 * 1024 * 1024;
-var MAX_ICON_BYTES = 1024 * 1024;
-var ICON_TAIL_BYTES = MAX_ICON_SOURCE_BYTES + 512 + 20 * 512;
-var decoder = new TextDecoder();
-
-// ../contracts/src/appTests.ts
-var MAX_IMAGE_CHARS = 8 * 1024 * 1024;
-
-// ../contracts/src/appLab.ts
-var appLabLimits = {
-  /** The commands a lab takes: a test's steps at most. */
-  commands: 50,
-  /** A lab ends this long after it opened, whatever happens. */
-  capMs: 30 * 6e4,
-  /** And this long after its last command, unless someone keeps it open. */
-  idleMs: 10 * 6e4,
-  /** The page warns this long before a lab ends for being idle. */
-  idleWarningMs: 2 * 6e4,
-  /** And this long after its last viewer left. */
-  unwatchedMs: 2 * 6e4
-};
-
-// ../contracts/src/ci.ts
-var pieceKey = (platform, arch) => `${platform}/${arch}`;
-var ciMacFormats = ["dmg", "zip"];
-function requestedMacFormats(config2) {
-  const formats = config2?.mac?.formats;
-  return Array.isArray(formats) ? formats.filter((format) => typeof format === "string") : [];
-}
-function unbuiltMessage(formats) {
-  return `mac.formats asks for ${formats.join(" and ")}, which CI builds don't make: they produce a dmg and a zip. A pkg is currently built by \`v2-runner build\` on a Mac. Remove ${formats.length === 1 ? "it" : "them"} from mac.formats to build in CI.`;
-}
-function ciConfigProblem(config2) {
-  const unbuilt = requestedMacFormats(config2).filter(
-    (format) => !ciMacFormats.includes(format)
-  );
-  return unbuilt.length > 0 ? unbuiltMessage(unbuilt) : null;
-}
-
-// ../contracts/src/identifiers.ts
-var reservedAppIds2 = ["ci", "runtime", "v2"];
-var appIdPattern = new RegExp(
-  `^(?!(?:${reservedAppIds2.join("|")})$)[a-z0-9][a-z0-9-]{1,62}$`
-);
-var labels = {
-  appId: "app ID",
-  macBundleId: "macOS bundle ID (CFBundleIdentifier)",
-  windowsAppId: "Windows app ID (AppUserModelID and uninstall key)"
-};
-var consequences = {
-  appId: "installed copies would refuse its updates as another app's",
-  macBundleId: "installed copies would refuse its updates (their code-signing check names the bundle ID), and macOS would treat it as another app, losing its permissions and keychain items",
-  windowsAppId: "Windows would show it as a second app beside the installed one, with its own shortcuts, notifications and Apps & features entry"
-};
-function identifierChanges(pinned, build2) {
-  const changes = [];
-  for (const field of Object.keys(labels)) {
-    const was = pinned?.[field];
-    const now = build2[field];
-    if (was && now && was !== now) {
-      changes.push({ build: now, field, pinned: was });
-    }
-  }
-  return changes;
-}
-var IdentifierChangeError = class extends Error {
-  /** For API responses: `{ error: message, code }`. */
-  code = "identifier-changed";
-  changes;
-  constructor(appId, changes) {
-    super(
-      [
-        `This build changes ${changes.length === 1 ? "an identifier" : "identifiers"} that ${appId}'s installed copies depend on, so ToDesktop refused it:`,
-        ...changes.map(
-          (change) => change.field === "appId" ? `- Its app ID is ${change.build}, but it was made for ${change.pinned}: ${consequences.appId}.` : `- The ${labels[change.field]} is ${change.build}, but ${appId}'s released builds use ${change.pinned}: ${consequences[change.field]}.`
-        ),
-        `Set ${changes.length === 1 ? "it" : "them"} back, or create a new app for the new ${changes.length === 1 ? "identifier" : "identifiers"}.`
-      ].join("\n")
-    );
-    this.name = "IdentifierChangeError";
-    this.changes = changes;
-  }
-};
-function checkIdentifiers(appId, pinned, build2) {
-  const changes = identifierChanges(pinned, build2);
-  if (changes.length > 0) throw new IdentifierChangeError(appId, changes);
-}
-
-// ../contracts/src/installerTag.ts
-var hexBytes = (hex3) => Uint8Array.from(hex3.match(/../g) ?? [], (pair) => Number.parseInt(pair, 16));
-var placeholderModulus = hexBytes(
-  "00abf78cedeeda4ead1ed8c84d81eb2388c741143575fe509e95d71b4b787790e1e26448863d5ec5b6cfa20f9795364a3e112ee072f532585ab79930c78eca73049cb0e68244f5aa4d13185482ea871f5cedb31b3c132d63cbe47ce0f75761883bcc19150aec951f165c234f83351e456653758408f036057ea7959f63b456cc8e6fcf97f6209d2ca8864b49d12f6d57745a7d4f2f0bde388c96801566f6aaeeb4972a3923d8c24a0c1817bbe61f70493ed6e8c3e4fc2346bed3f269ee8705ac3518a75b4fd362eb8cada72b9a7acccaf9f7ce124862b2f5cd2f967a5deb717f401058ecffa56176ad9a4f191e7c1dd228ba412c4a28064d336f3363693030455b"
-);
-
-// ../contracts/src/keyVaultAccess.ts
-var decoder2 = new TextDecoder();
-var encoder = new TextEncoder();
-
-// ../contracts/src/liveTicket.ts
-var LIVE_SOCKET_GRACE_MS = 10 * 6e4;
-
 // src/upload.ts
-import { execFile as execFile3 } from "node:child_process";
-import { createHash } from "node:crypto";
-import { createReadStream, existsSync as existsSync4, openAsBlob, statSync } from "node:fs";
-import { copyFile as copyFile3, cp, lstat, mkdtemp as mkdtemp2, rm as rm2, stat as stat3 } from "node:fs/promises";
-import { tmpdir as tmpdir2 } from "node:os";
-import path5 from "node:path";
-import process3 from "node:process";
-import { promisify as promisify3 } from "node:util";
-var run3 = promisify3(execFile3);
+var run2 = promisify2(execFile3);
 var platforms = ["linux", "mac", "windows"];
+var testVersion = "0.0.0-test";
 function overridesFor(platform, inputs) {
   return inputs.filter((input) => input.startsWith(`${platform}/`)).map((input) => input.slice(platform.length + 1));
 }
-async function inspect(config2, platform, arch, appPath2) {
+function platformMismatch(file3, loadedByPlatform) {
+  const json2 = configJson(loadedByPlatform.mac.config);
+  const platform = platforms.find(
+    (each) => configJson(loadedByPlatform[each].config) !== json2
+  );
+  return platform ? `${file3} resolves differently for mac and ${platform}, which isn't supported yet: return the same config for every platform` : void 0;
+}
+async function inspect(config3, platform, arch, appPath2) {
   if (platform === "mac") {
     const plist = await plistStrings(
-      path5.join(appPath2, "Contents", "Info.plist")
+      path9.join(appPath2, "Contents", "Info.plist")
     );
     const executable2 = plist.CFBundleExecutable;
     if (!executable2) throw new Error(`${appPath2} has no CFBundleExecutable`);
     const actual2 = await machOArch(
-      path5.join(appPath2, "Contents", "MacOS", executable2)
+      path9.join(appPath2, "Contents", "MacOS", executable2)
     );
     if (actual2 !== arch) {
       throw new Error(`mac.apps.${arch} is ${appPath2}, but it's ${actual2}`);
@@ -16690,9 +28613,16 @@ async function inspect(config2, platform, arch, appPath2) {
       platform
     };
   }
-  const executable = config2[platform]?.executable ?? "";
+  const executable = config3[platform]?.executable ?? "";
+  const missing = executableProblem(
+    appPath2,
+    executable,
+    `${platform}.executable`,
+    { platform }
+  );
+  if (missing) throw new Error(missing);
   const actual = await (platform === "windows" ? peArch : elfArch)(
-    path5.join(appPath2, executable)
+    path9.join(appPath2, executable)
   );
   if (actual !== arch) {
     throw new Error(
@@ -16702,8 +28632,8 @@ async function inspect(config2, platform, arch, appPath2) {
   return { arch, path: appPath2, platform };
 }
 async function githubOidcToken(audience) {
-  const requestUrl = process3.env.ACTIONS_ID_TOKEN_REQUEST_URL;
-  const requestToken = process3.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+  const requestUrl = process8.env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  const requestToken = process8.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
   if (!requestUrl || !requestToken) {
     throw new Error(
       "No CI identity: run in GitHub Actions with `permissions: id-token: write` (other CI and laptops come later)"
@@ -16738,16 +28668,28 @@ function printSources(loaded) {
     );
   }
 }
-async function uploadToken(url2, appId) {
+async function uploadToken(url2, appId, dashboard) {
   const response = await fetch(`${url2}/v2/ci/${appId}/token`, {
     headers: { authorization: `Bearer ${await githubOidcToken("todesktop")}` },
     method: "POST"
   });
   const body = await response.json();
   if (!response.ok) {
-    throw new Error(`ToDesktop refused this CI job: ${body.error}`);
+    throw new Error(
+      `ToDesktop refused this CI job: ${body.error}${notTrustedFix(appId, body, dashboard)}`
+    );
   }
   return body;
+}
+function notTrustedFix(appId, refusal, dashboard) {
+  if (refusal.code !== "not-trusted" || !dashboard) return "";
+  const link = trustLink(`${dashboard}/apps/${appId}`, {
+    ...refusal.ref ? { refs: [refPatternOf(refusal.ref)] } : {},
+    ...refusal.repository ? { repository: refusal.repository } : {}
+  });
+  return `.
+Trust this repository and ref in the dashboard's Overview, step 3 (it takes a security key), then run the workflow again:
+  ${link}`;
 }
 async function pinnedIdentifiers(url2, appId, token) {
   const response = await fetch(`${url2}/v2/ci/${appId}/identifiers`, {
@@ -16756,13 +28698,13 @@ async function pinnedIdentifiers(url2, appId, token) {
   if (!response.ok) return null;
   return (await response.json()).pinned ?? null;
 }
-function checkAppIdentifiers(appId, pinned, apps) {
+function checkAppIdentifiers(appId, pinned, apps, windowsAppId = appId) {
   if (!pinned) return;
   for (const app of apps) {
     checkIdentifiers(appId, pinned, {
       appId,
       ...app.platform === "mac" && app.bundleId ? { macBundleId: app.bundleId } : {},
-      ...app.platform === "windows" ? { windowsAppId: appId } : {}
+      ...app.platform === "windows" ? { windowsAppId } : {}
     });
   }
 }
@@ -16772,35 +28714,35 @@ var iconNames = {
   windows: "icon.ico"
 };
 async function macIconFile(app) {
-  const named = (await plistStrings(path5.join(app, "Contents", "Info.plist"))).CFBundleIconFile;
+  const named = (await plistStrings(path9.join(app, "Contents", "Info.plist"))).CFBundleIconFile;
   if (!named || named.includes("/") || named.startsWith(".")) return void 0;
-  const file2 = path5.join(
+  const file3 = path9.join(
     app,
     "Contents",
     "Resources",
-    path5.extname(named) ? named : `${named}.icns`
+    path9.extname(named) ? named : `${named}.icns`
   );
-  const info = await lstat(file2).catch(() => null);
-  return info?.isFile() && info.size <= MAX_ICON_SOURCE_BYTES ? file2 : void 0;
+  const info = await lstat(file3).catch(() => null);
+  return info?.isFile() && info.size <= MAX_ICON_SOURCE_BYTES ? file3 : void 0;
 }
 function iconFor(loaded, platform) {
   const icon = platform === "mac" ? void 0 : loaded.config[platform]?.icon;
   if (!icon) return void 0;
-  const file2 = path5.resolve(loaded.configDir, icon);
-  if (!statSync(file2, { throwIfNoEntry: false })?.isFile()) {
+  const file3 = path9.resolve(loaded.configDir, icon);
+  if (!statSync2(file3, { throwIfNoEntry: false })?.isFile()) {
     throw new Error(
-      `${platform}.icon is ${icon}, but there's no such file (${file2}): ToDesktop's builders need it to brand the app`
+      `${platform}.icon is ${icon}, but there's no such file (${file3}): ToDesktop's builders need it to brand the app`
     );
   }
-  return file2;
+  return file3;
 }
-async function preparedTar(loaded, app, version2, work, icon) {
-  const name = app.platform === "mac" ? path5.basename(app.path) : "app";
-  const staging = path5.join(work, `${app.platform}-${app.arch}`);
-  const copy = path5.join(staging, name);
+async function preparedTar(loaded, app, version3, work, icon) {
+  const name = app.platform === "mac" ? path9.basename(app.path) : "app";
+  const staging = path9.join(work, `${app.platform}-${app.arch}`);
+  const copy = path9.join(staging, name);
   await cp(app.path, copy, { recursive: true, verbatimSymlinks: true });
   let iconName = icon && app.platform !== "mac" ? iconNames[app.platform] : void 0;
-  if (icon && iconName) await copyFile3(icon, path5.join(staging, iconName));
+  if (icon && iconName) await copyFile3(icon, path9.join(staging, iconName));
   if (app.platform === "mac") await embedProvisioningProfiles(loaded, copy);
   const hook = loaded.hooks.prepareApp;
   if (hook) {
@@ -16809,27 +28751,27 @@ async function preparedTar(loaded, app, version2, work, icon) {
       arch: app.arch,
       config: loaded.config,
       platform: app.platform,
-      version: version2
+      version: version3
     });
     console.info(`  ${app.platform}/${app.arch}: prepareApp hook ran`);
   }
-  let entitlements;
+  let entitlements2;
   if (app.platform === "mac") {
     const read = await macEntitlements(loaded, copy);
     for (const warning of read.warnings) {
       console.warn(`  ${app.platform}/${app.arch}: ${warning}`);
     }
-    entitlements = read.entitlements;
+    entitlements2 = read.entitlements;
     const macIcon = await macIconFile(copy);
     if (macIcon) {
       iconName = iconNames.mac;
-      await copyFile3(macIcon, path5.join(staging, iconNames.mac));
+      await copyFile3(macIcon, path9.join(staging, iconNames.mac));
     }
   }
   const tar = `${staging}.tar`;
-  const macTar = process3.platform === "darwin" ? ["--no-mac-metadata"] : [];
-  const stagingName = path5.basename(staging);
-  await run3(
+  const macTar = process8.platform === "darwin" ? ["--no-mac-metadata"] : [];
+  const stagingName = path9.basename(staging);
+  await run2(
     "tar",
     [
       ...macTar,
@@ -16840,19 +28782,19 @@ async function preparedTar(loaded, app, version2, work, icon) {
       name,
       ...iconName ? [iconName] : []
     ],
-    { cwd: work, env: { ...process3.env, COPYFILE_DISABLE: "1" } }
+    { cwd: work, env: { ...process8.env, COPYFILE_DISABLE: "1" } }
   );
   const hash2 = createHash("sha256");
   for await (const chunk of createReadStream(tar)) hash2.update(chunk);
   return {
-    ...entitlements ? { entitlements } : {},
+    ...entitlements2 ? { entitlements: entitlements2 } : {},
     ...iconName ? { iconName } : {},
     sha256: hash2.digest("hex"),
     size: (await stat3(tar)).size,
     tar
   };
 }
-var partBytes = Math.max(5, Number(process3.env.TODESKTOP_UPLOAD_PART_MB ?? 64)) * 1024 * 1024;
+var partBytes = Math.max(5, Number(process8.env.TODESKTOP_UPLOAD_PART_MB ?? 64)) * 1024 * 1024;
 async function uploadPiece(base, headers, tar, size) {
   const call = async (method, pathname, body) => {
     const response = await fetch(`${base}/uploads${pathname}`, {
@@ -16884,23 +28826,23 @@ async function uploadPiece(base, headers, tar, size) {
     JSON.stringify({ parts })
   );
 }
-function describe(status) {
-  const { build: build2 } = status;
-  if (build2 && status.missing.length === 0) {
-    return `all ${status.received.length} apps are in: build ${build2.buildNumber} (${build2.buildId}) is being made`;
+function describe(status2) {
+  const { build: build2 } = status2;
+  if (build2 && status2.missing.length === 0) {
+    return `all ${status2.received.length} apps are in: build ${build2.buildNumber} (${build2.buildId}) is being made`;
   }
-  const waiting = `${status.received.length} of ${status.received.length + status.missing.length} apps are in; waiting for ${status.missing.join(", ")}`;
+  const waiting = `${status2.received.length} of ${status2.received.length + status2.missing.length} apps are in; waiting for ${status2.missing.join(", ")}`;
   const started = Object.entries(build2?.platforms ?? {}).filter(([, state]) => state !== "uploading").map(([platform]) => platform);
   return build2 && started.length > 0 ? `${waiting}. Build ${build2.buildNumber} (${build2.buildId}) has started ${started.join(" and ")}` : waiting;
 }
 async function upload(options) {
-  const file2 = path5.resolve(options.configFile);
+  const file3 = path9.resolve(options.configFile);
   const loadedByPlatform = Object.fromEntries(
     await Promise.all(
       platforms.map(
         async (platform) => [
           platform,
-          await loadConfig(file2, {
+          await loadConfig(file3, {
             platform,
             ...options.version ? { version: options.version } : {}
           })
@@ -16908,24 +28850,19 @@ async function upload(options) {
       )
     )
   );
-  const json2 = configJson(loadedByPlatform.mac.config);
-  for (const platform of platforms) {
-    if (json2 !== configJson(loadedByPlatform[platform].config)) {
-      throw new Error(
-        `${file2} resolves differently for mac and ${platform}, which isn't supported yet: return the same config for every platform`
-      );
-    }
-  }
+  const differs = platformMismatch(file3, loadedByPlatform);
+  if (differs) throw new Error(differs);
   const loaded = loadedByPlatform.mac;
-  const { config: config2 } = loaded;
-  const unbuildable = ciConfigProblem(config2);
+  const { config: config3 } = loaded;
+  const json2 = configJson(config3);
+  const unbuildable = ciConfigProblem(config3);
   if (unbuildable) throw new Error(unbuildable);
-  const work = await mkdtemp2(path5.join(tmpdir2(), "todesktop-upload-"));
+  const work = await mkdtemp2(path9.join(tmpdir2(), "todesktop-upload-"));
   try {
     const expected = [];
     const found = [];
     for (const platform of platforms) {
-      if (!config2[platform]) continue;
+      if (!config3[platform]) continue;
       const loadedHere = loadedByPlatform[platform];
       const apps = appsFor(
         loadedHere,
@@ -16934,22 +28871,22 @@ async function upload(options) {
       );
       for (const [arch, appPath2] of Object.entries(apps)) {
         expected.push(pieceKey(platform, arch));
-        if (!existsSync4(appPath2)) continue;
+        if (!existsSync7(appPath2)) continue;
         if (loadedHere.assemble[platform]) {
-          const appDir = path5.join(work, "assembled", `${platform}-${arch}`);
+          const appDir = path9.join(work, "assembled", `${platform}-${arch}`);
           if (await assembleApp(loadedHere, platform, arch, appPath2, appDir)) {
             console.info(`  ${platform}/${arch}: made from ${appPath2}`);
-            found.push(await inspect(config2, platform, arch, appDir));
+            found.push(await inspect(config3, platform, arch, appDir));
           }
         } else {
-          found.push(await inspect(config2, platform, arch, appPath2));
+          found.push(await inspect(config3, platform, arch, appPath2));
         }
       }
     }
     expected.sort();
     if (found.length === 0) {
       throw new Error(
-        `None of ${file2}'s apps are on this machine (it lists ${expected.join(", ")})`
+        `None of ${file3}'s apps are on this machine (it lists ${expected.join(", ")})`
       );
     }
     const icons = /* @__PURE__ */ new Map();
@@ -16957,38 +28894,40 @@ async function upload(options) {
       const icon = iconFor(loadedByPlatform[platform], platform);
       if (icon) icons.set(platform, icon);
     }
-    const version2 = options.version ?? config2.version ?? found.find((app) => app.ownVersion)?.ownVersion;
-    if (!version2) {
+    const macOnly = expected.every((key) => key.startsWith("mac/"));
+    const version3 = options.version ?? config3.version ?? (options.test && !macOnly ? void 0 : found.find((app) => app.ownVersion)?.ownVersion) ?? (options.test ? testVersion : void 0);
+    if (!version3) {
       throw new Error(
         "No version: pass --version or set version in the config (Linux apps don\u2019t state one)"
       );
     }
     console.info(
-      `${config2.appId} ${version2}: ${found.map((app) => `${app.platform}/${app.arch}`).join(", ")} here, of ${expected.join(", ")}`
+      `${config3.appId} ${version3}${options.test ? " (a test build: smoke-tested, never released)" : ""}: ${found.map((app) => `${app.platform}/${app.arch}`).join(", ")} here, of ${expected.join(", ")}`
     );
     if (options.dryRun) printSources(loaded);
-    const auth = options.dryRun ? void 0 : await uploadToken(options.url, config2.appId);
+    const auth = options.dryRun ? void 0 : await uploadToken(options.url, config3.appId, options.dashboard);
     if (auth) {
       console.info(`  CI run ${auth.group}`);
       checkAppIdentifiers(
-        config2.appId,
-        await pinnedIdentifiers(options.url, config2.appId, auth.token),
-        found
+        config3.appId,
+        await pinnedIdentifiers(options.url, config3.appId, auth.token),
+        found,
+        config3.windows?.migrateFrom?.appId
       );
     }
-    let status;
+    let status2;
     for (const app of found) {
       const tar = await preparedTar(
         loadedByPlatform[app.platform],
         app,
-        version2,
+        version3,
         work,
         icons.get(app.platform)
       );
       const manifest = {
         arch: app.arch,
         ...app.bundleId ? { bundleId: app.bundleId } : {},
-        config: config2,
+        config: config3,
         configSha256: createHash("sha256").update(json2).digest("hex"),
         // The config holds the entitlements' paths; builders get the plists.
         ...tar.entitlements?.app ? { entitlements: tar.entitlements.app } : {},
@@ -16998,7 +28937,8 @@ async function upload(options) {
         platform: app.platform,
         sha256: tar.sha256,
         size: tar.size,
-        version: version2
+        ...options.test ? { test: true } : {},
+        version: version3
       };
       if (!auth) {
         console.info(
@@ -17008,8 +28948,8 @@ async function upload(options) {
       }
       const started = Date.now();
       try {
-        status = await uploadPiece(
-          `${options.url}/v2/ci/${config2.appId}/pieces/${app.platform}/${app.arch}`,
+        status2 = await uploadPiece(
+          `${options.url}/v2/ci/${config3.appId}/pieces/${app.platform}/${app.arch}`,
           {
             "authorization": `Bearer ${auth.token}`,
             "x-td-piece": Buffer.from(JSON.stringify(manifest)).toString(
@@ -17028,25 +28968,1282 @@ async function upload(options) {
         `  ${app.platform}/${app.arch}: uploaded ${Math.round(tar.size / 1024)} KiB in ${Math.ceil(tar.size / partBytes)} part(s), ${Date.now() - started} ms`
       );
     }
-    if (status) console.info(describe(status));
-    if (status?.build && status.missing.length === 0) {
-      console.info(`BUILD_ID=${status.build.buildId}`);
+    if (status2) console.info(describe(status2));
+    if (status2?.build && status2.missing.length === 0) {
+      console.info(`BUILD_ID=${status2.build.buildId}`);
     }
   } finally {
-    await rm2(work, { force: true, recursive: true });
+    await rm3(work, { force: true, recursive: true });
   }
+}
+
+// src/agent/clients.ts
+import { existsSync as existsSync8 } from "node:fs";
+import { readFile as readFile10 } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+var clientSources = {
+  dart: [
+    {
+      from: "dart/todesktop_updater.dart",
+      language: "dart",
+      // In the Flutter app's folder, beside main.dart.
+      path: "lib/todesktop_updater.dart"
+    }
+  ],
+  dotnet: [
+    {
+      from: "dotnet/ToDesktopUpdater.cs",
+      language: "csharp",
+      path: "ToDesktopUpdater.cs"
+    }
+  ],
+  go: [
+    {
+      from: "go/todesktop_updater.go",
+      language: "go",
+      // In the app's own module, where only it can import it.
+      path: "internal/todesktopupdater/todesktop_updater.go"
+    }
+  ],
+  qt: [
+    {
+      from: "qt/todesktopupdater.h",
+      language: "cpp",
+      // A folder of their own, for the app's target to add.
+      path: "todesktop/todesktopupdater.h"
+    },
+    {
+      from: "qt/todesktopupdater.cpp",
+      language: "cpp",
+      path: "todesktop/todesktopupdater.cpp"
+    }
+  ],
+  swift: [
+    {
+      from: "swift/Package.swift",
+      language: "swift",
+      path: "ToDesktopUpdater/Package.swift"
+    },
+    {
+      from: "swift/Sources/ToDesktopUpdater/Types.swift",
+      language: "swift",
+      path: "ToDesktopUpdater/Sources/ToDesktopUpdater/Types.swift"
+    },
+    {
+      from: "swift/Sources/ToDesktopUpdater/Updater.swift",
+      language: "swift",
+      path: "ToDesktopUpdater/Sources/ToDesktopUpdater/Updater.swift"
+    }
+  ]
+};
+function clientsDir() {
+  return [
+    new URL("clients/", import.meta.url),
+    new URL("../../../updater/clients/", import.meta.url)
+  ].map((url2) => fileURLToPath(url2)).find((dir) => existsSync8(dir));
+}
+function withoutTests(manifest) {
+  return manifest.replace(/,\s*\.testTarget\([\s\S]*?\n\s*\)(?=,?\s*\n\s*\])/, "").replace(
+    "It builds on Linux too, for its tests.",
+    "It builds on Linux too."
+  );
+}
+async function clientFiles(kind) {
+  const dir = clientsDir();
+  if (!dir) return [];
+  const files = await Promise.all(
+    clientSources[kind].map(async ({ from, language, path: path12 }) => {
+      const content = await readFile10(`${dir}${from}`, "utf8").catch(
+        () => void 0
+      );
+      if (content === void 0) return void 0;
+      return {
+        content: from.endsWith("Package.swift") ? withoutTests(content) : content,
+        language,
+        path: path12
+      };
+    })
+  );
+  return files.every(Boolean) ? files : [];
+}
+
+// src/agent/integrate.ts
+var stepKeys = ["config", "updates", "trust", "workflow", "push"];
+var dirOptions = {
+  ...appOption,
+  dir: { type: "string" },
+  framework: { type: "string" }
+};
+var isFramework = (value) => frameworkIds.includes(value);
+var recipeOf = (id) => recipes.find((recipe) => recipe.id === id) ?? recipes[0];
+function frameworkOf(flag, detection, saved) {
+  if (flag !== void 0) {
+    if (!isFramework(flag)) {
+      throw new CliError(
+        "invalid-framework",
+        `--framework is one of ${frameworkIds.join(", ")}, not "${flag}".`,
+        { exit: exitCodes.usage }
+      );
+    }
+    return {
+      evidence: [],
+      from: "--framework",
+      id: flag,
+      label: recipeOf(flag).label
+    };
+  }
+  if (detection.confidence === "high" || !isFramework(saved)) {
+    return {
+      confidence: detection.confidence,
+      evidence: detection.evidence,
+      from: "repository",
+      id: detection.framework,
+      label: recipeOf(detection.framework).label
+    };
+  }
+  return {
+    evidence: [],
+    from: "dashboard",
+    id: saved,
+    label: recipeOf(saved).label
+  };
+}
+function clientOf(framework, detection) {
+  if (framework === "winui") return "dotnet";
+  if (framework === "xcode") return "swift";
+  if (framework === "other" && detection.native?.kind === "dotnet") {
+    return "dotnet";
+  }
+  if (framework === "other" && detection.native && goKinds.includes(detection.native.kind)) {
+    return "go";
+  }
+  if (framework === "other" && detection.native?.kind === "flutter") {
+    return "dart";
+  }
+  if (framework === "other" && detection.native?.kind === "qt") return "qt";
+  return void 0;
+}
+var clientNames = {
+  dart: "Dart client (todesktop_updater.dart)",
+  dotnet: ".NET client (ToDesktopUpdater.cs)",
+  go: "Go client (todesktop_updater.go)",
+  qt: "Qt client (todesktopupdater.h and .cpp)",
+  swift: "Swift package (ToDesktopUpdater)"
+};
+function clientNote(client, carried) {
+  if (!carried) {
+    return `This CLI doesn't carry ToDesktop's ${clientNames[client]}: it's v2/updater/clients/${client} in ToDesktop's repository.`;
+  }
+  return {
+    dart: `todesktop_updater.dart is ToDesktop's Dart client, not on pub.dev yet: integrate --write adds it to your app's lib/ folder (${dartClientPath}), dart:io only, so pubspec.yaml doesn't change. Write no JSON-RPC of your own, and keep the file as it is: a later CLI hands over its next version. Take out any other updater the app has.`,
+    dotnet: "ToDesktopUpdater.cs is ToDesktop's .NET client, not on NuGet yet: integrate --write adds it beside your .csproj, which compiles it with the rest of your code. Keep it as it is: a later CLI hands over its next version.",
+    go: `todesktop_updater.go is ToDesktop's Go client, not a module of its own yet: integrate --write adds it to your module in ${goClientDir}, standard library only, so go.mod doesn't change. Write no JSON-RPC of your own, and keep the file as it is: a later CLI hands over its next version. Take out any other updater the app has.`,
+    qt: `todesktopupdater.h and todesktopupdater.cpp are ToDesktop's Qt client, not a package yet: integrate --write adds them in ${qtClientDir}/, Qt Core only (Qt 5.15 or Qt 6), for your app's CMake target to compile (the code below has the lines). Write no JSON-RPC and no QProcess of your own, and keep the files as they are: a later CLI hands over their next version. Take out any other updater the app has.`,
+    swift: "ToDesktopUpdater/ is ToDesktop's Swift package, not in a registry yet: integrate --write adds it beside your Xcode project. Then add it to your app target as a local package (File \u203A Add Package Dependencies\u2026 \u203A Add Local\u2026): nothing here edits the .xcodeproj."
+  }[client];
+}
+function sortSnippets(snippets) {
+  const files = [];
+  const run4 = [];
+  const code = [];
+  for (const snippet of snippets) {
+    if (snippet.path) {
+      files.push({
+        content: `${snippet.code}
+`,
+        path: snippet.path,
+        ...snippet.language ? { language: snippet.language } : {},
+        ...snippet.title ? { title: snippet.title } : {}
+      });
+    } else if (snippet.language === "bash" && !snippet.code.includes("<")) {
+      run4.push(...snippet.code.split("\n").filter(Boolean));
+    } else {
+      code.push({
+        code: snippet.code,
+        ...snippet.language ? { language: snippet.language } : {},
+        ...snippet.title ? { title: snippet.title } : {}
+      });
+      for (const each of snippet.platforms ?? []) {
+        code.push({
+          code: each.code,
+          ...each.language ? { language: each.language } : {},
+          title: `${each.name}: ${snippet.heading ?? snippet.label}`
+        });
+      }
+    }
+  }
+  return { code, files, run: run4 };
+}
+var trustDescription = "Only runs from this repository can upload builds, signed in with GitHub\u2019s own token. No secrets to store.";
+async function planOf(values, { withoutApp = false } = {}) {
+  const dir = path10.resolve(values.dir ?? ".");
+  if (!existsSync9(dir)) {
+    throw new CliError("no-dir", `${dir} doesn't exist.`, {
+      exit: exitCodes.usage
+    });
+  }
+  const detection = await detect(dir);
+  const appId = await appIdOf(values.app, dir).catch(
+    (error46) => {
+      if (withoutApp && error46 instanceof CliError && error46.code === "no-app") {
+        return void 0;
+      }
+      throw error46;
+    }
+  );
+  const appArg = appId ? appArgOf(values, appId) : "";
+  const unknown2 = {
+    app: { id: "" },
+    setup: {
+      build: false,
+      config: false,
+      release: false,
+      trust: false,
+      upload: false
+    }
+  };
+  const { app, setup } = appId ? await api("getApp", { appId }).catch((error46) => {
+    if (withoutApp && error46 instanceof CliError && error46.code === "not-signed-in") {
+      return unknown2;
+    }
+    throw error46;
+  }) : unknown2;
+  const trusted = app.ci?.github?.[0];
+  const framework = frameworkOf(
+    values.framework,
+    detection,
+    app.framework
+  );
+  const recipe = recipeOf(framework.id);
+  const id = appId ?? "your-app-id";
+  const name = app.name ?? appId ?? "Your App";
+  const root = detection.appDir ? path10.resolve(dir, ...detection.appDir.split("/").map(() => "..")) : dir;
+  const configApps = framework.id === "other" && detection.config ? await configAppsOf(path10.join(dir, detection.config)) : void 0;
+  const ships = framework.id === "electron-builder" ? detection.electronBuilder : void 0;
+  const recipeApp = {
+    ...configApps ? { configApps } : {},
+    id,
+    // The build tool's own name where a recipe reads it exactly (package.json,
+    // tauri.conf.json); ToDesktop's for anything else.
+    name: framework.id !== "other" && detection.productName || name,
+    ...detection.appDir ? { appDir: detection.appDir } : {},
+    ...detection.packageManager ? { packageManager: detection.packageManager } : {},
+    ...detection.packageManagerDeclared ? { packageManagerDeclared: true } : {},
+    // The workflow runs on what's trusted, else on the repository's own tags.
+    refs: trusted?.refs ?? refsOf(detection),
+    ...detection.outputDir ? { outputDir: detection.outputDir.dir } : {},
+    ...framework.id === "tauri" && oldTauriBuild(detection.tauriBuild) ? { rustToolchain: rustForOldTauriBuild } : {},
+    // What an electron-builder app ships today, where its files say:
+    // its Mac arches, its own entitlements file, and the steps every
+    // one of its scripts runs before electron-builder.
+    ...ships?.macArches ? { macArches: ships.macArches.arches } : {},
+    ...ships?.entitlements ? { entitlementsFile: ships.entitlements.file } : {},
+    ...ships?.buildSteps?.common.length ? { buildSteps: ships.buildSteps.common } : {},
+    ...detection.linuxExecutable ? { linuxExecutable: detection.linuxExecutable.name } : {},
+    ...detection.linuxExecutable?.replaces ? { setLinuxExecutable: true } : {},
+    // "Something else" for a native app: its kind, and .NET's client.
+    ...framework.id === "other" && detection.native ? {
+      native: {
+        label: detection.native.label,
+        ...detection.native.kind === "dotnet" ? {
+          dotnet: detection.native.ui ? { ui: detection.native.ui } : {}
+        } : {},
+        ...detection.native.kind === "flutter" ? { dart: {} } : {},
+        ...detection.native.kind === "qt" ? { qt: {} } : {},
+        ...goKinds.includes(detection.native.kind) ? {
+          go: detection.native.module ? { module: detection.native.module } : {}
+        } : {}
+      }
+    } : {}
+  };
+  const repository = trusted?.repository ?? detection.repository;
+  const notes = [];
+  if (app.framework !== void 0 && app.framework !== framework.id) {
+    notes.push(
+      `The dashboard's Overview shows ${isFramework(app.framework) ? recipeOf(app.framework).label : String(app.framework)}: pick ${framework.label} under "Built with" there (this CLI can't change the app), so both show the same steps.`
+    );
+  } else if (app.framework === void 0 && framework.id !== "other") {
+    notes.push(
+      `Pick ${framework.label} under "Built with" on the dashboard's Overview, so it shows these steps too.`
+    );
+  }
+  for (const workspaceApp of detection.workspaceApps ?? []) {
+    notes.push(
+      `No desktop app here, but this workspace has one: ${workspaceApp.dir} (${recipeOf(workspaceApp.framework).label}, from ${workspaceApp.evidence}). Run integrate with --dir ${workspaceApp.dir}: the config goes in that folder, and the workflow at the repository's root.`
+    );
+  }
+  const config3 = sortSnippets(recipe.config.files(recipeApp));
+  const configNotes = [];
+  if (detection.config) {
+    configNotes.push(
+      legacyConfigFileNames.includes(detection.config) ? `${detection.config} is here already, under the old name: rename it to todesktop.config${path10.extname(detection.config)}.` : `${detection.config} is here already: compare it with this one. integrate --write leaves it as it is.`
+    );
+  }
+  if (detection.v1Config && !detection.config) {
+    configNotes.push(
+      `${detection.v1Config} is ToDesktop v1's config: keep it for v1's builds. v2 reads todesktop.config.ts, beside it.`
+    );
+  }
+  if (ships?.macArches) {
+    configNotes.push(
+      `mac.apps lists ${ships.macArches.arches.join(" and ")}, the Mac arches your electron-builder config builds (${ships.macArches.from}).`
+    );
+  }
+  if (ships?.otherArches?.length) {
+    configNotes.push(
+      `Your electron-builder config also builds ${ships.otherArches.map(({ arch, platform }) => `${platform} ${arch}`).join(", ")} (${[...new Set(ships.otherArches.map(({ from }) => from))].join(", ")}), which this draft leaves out: it lists x64 for Windows and Linux, and one app per Mac arch. Add each you still ship to its platform's apps (electron-builder puts it in ${ships.otherArches.map(({ arch, platform }) => platform === "mac" ? "mac-universal" : `${platform === "windows" ? "win" : "linux"}-${arch}-unpacked`).join(", ")}) and to the workflow's matrix, or tell the person it's dropped.`
+    );
+  }
+  if (ships?.entitlements) {
+    configNotes.push(
+      `mac.entitlements is your own ${ships.entitlements.file} (${ships.entitlements.from}); no second file is added. ToDesktop signs with exactly what it grants: Electron needs com.apple.security.cs.allow-jit, allow-unsigned-executable-memory and disable-library-validation, so add any it lacks.`
+    );
+  }
+  if (recipe.warning) {
+    configNotes.push(`${recipe.warning.title} ${recipe.warning.text}`);
+  }
+  if (recipe.preview) {
+    configNotes.push(
+      `${recipe.preview.platforms} are in preview for ${recipe.label} apps. ${recipe.preview.text}`
+    );
+  }
+  const updates = sortSnippets(recipe.updates.snippets(recipeApp));
+  const updateNotes = [];
+  if (detection.entry) {
+    updateNotes.push(`Your app's entry point is ${detection.entry}.`);
+  }
+  for (const { what, where } of detection.remove) {
+    updateNotes.push(`Take out ${what} (in ${where.join(", ")}).`);
+  }
+  if (recipe.updates.note) updateNotes.push(recipe.updates.note);
+  updateNotes.push(updatePolicyNote);
+  const client = clientOf(framework.id, detection);
+  if (client && !detection.updater) {
+    const files = await clientFiles(client);
+    const project = client === "dotnet" ? detection.native?.project ?? detection.project : detection.native?.project;
+    const folder = (client === "dotnet" || client === "dart") && project ? path10.posix.dirname(project) : ".";
+    updates.files.push(
+      ...files.map(({ content, language, path: file3 }) => ({
+        client: true,
+        content,
+        language,
+        path: path10.posix.join(folder, file3)
+      }))
+    );
+    updateNotes.push(clientNote(client, files.length > 0));
+  }
+  updateNotes.push(
+    `healthReady: ${recipe.health.call} (${recipe.health.from}). ${recipe.health.when}`
+  );
+  if (detection.updater) {
+    updateNotes.push(
+      detection.updaterUsedIn ? `Started: ${detection.updater}, used in ${detection.updaterUsedIn.join(", ")}.` : `Started: ${detection.updater}, but no code uses it yet: add the start-up code above.`
+    );
+  }
+  const trustNotes = [];
+  let needs;
+  if (trusted) {
+    trustNotes.push(
+      `Trusted: ${trusted.repository}${trusted.refs.length ? ` \xB7 ${trusted.refs.join(", ")}` : ""}.`
+    );
+    const narrower = detection.releaseRefs && narrowedRefs(trusted.refs, detection.releaseRefs.refs);
+    needs = widenNeeds(id, trusted, detection.releaseRefs);
+    if (needs) trustNotes.push(`${needs.message}
+  ${needs.url}`);
+    if (narrower) {
+      const target = { refs: narrower, repository: trusted.repository };
+      trustNotes.push(
+        `${detection.releaseRefs.from} runs on ${describeTarget({ refs: detection.releaseRefs.refs }).replace(/^your GitHub repository on /, "")}, and trust allows more (${trusted.refs.join(", ")}): any other matching ref can upload builds too. Optional: a person can narrow it to ${narrower.join(", ")} at ${trustUrl(id, target)}.`
+      );
+    }
+  } else {
+    const target = {
+      refs: refsOf(detection),
+      ...repository ? { repository } : {}
+    };
+    needs = {
+      kind: "dashboard",
+      message: trustNeedsMessage(target),
+      url: trustUrl(id, target)
+    };
+    trustNotes.push(
+      repository ? `Your origin remote is github.com/${repository}: the repository to trust.` : "This repository's origin isn't on GitHub: ToDesktop trusts GitHub Actions workflows.",
+      detection.releaseRefs ? `${detection.releaseRefs.from} runs on ${describeTarget({ refs: detection.releaseRefs.refs }).replace(/^your GitHub repository on /, "")}: the link asks to trust those.` : `The workflow below runs on ${describeTarget({ refs: target.refs.filter((ref) => ref !== testRef) }).replace(/^your GitHub repository on /, "")}${detection.tags?.length ? ", as this repository's version tags are named" : ""}${target.refs.includes(testRef) ? `, and on the ${testBranch} branch, for test builds (smoke-tested, never released)` : ""}: the link asks to trust those. If you change its trigger, run integrate again for a link that matches.`,
+      "Hand this link over as soon as you've signed in: trusting doesn't wait for your code, and the person can do it while you work. Then `status --wait-for trust` returns once it's done."
+    );
+  }
+  const workflowNotes = [];
+  const uploading = await uploadingWorkflow(
+    root,
+    detection.workflows,
+    detection.appDir
+  );
+  if (uploading) {
+    workflowNotes.push(
+      `${uploading} uploads to ToDesktop already: compare it with this one. integrate --write adds no second workflow, which would upload every release twice.`
+    );
+  } else if (detection.workflows.includes(workflowPath)) {
+    workflowNotes.push(
+      `${workflowPath} is here already: add this job to it, or keep both (integrate --write puts this one beside it).`
+    );
+  }
+  const publishing = detection.publishing ?? [];
+  for (const workflow of publishing) {
+    workflowNotes.push(
+      `${workflow} publishes or signs releases on tags: take it out (or its publishing and signing), or every release tag runs it beside ToDesktop's.`
+    );
+  }
+  const others = detection.workflows.filter(
+    (workflow) => workflow !== uploading && workflow !== workflowPath && !publishing.includes(workflow)
+  );
+  if (others.length) {
+    workflowNotes.push(
+      `This draft doesn't touch your other workflows (${others.join(", ")}). Read each: one that builds installers, signs or publishes the app (a publish script, a release upload) goes, or loses those steps, as ToDesktop does that now.`
+    );
+  }
+  if (framework.id === "tauri" && detection.tauriBuild && oldTauriBuild(detection.tauriBuild)) {
+    workflowNotes.push(oldTauriBuildNote(detection.tauriBuild));
+  }
+  const own = ships?.buildSteps;
+  if (own) {
+    const named = own.scripts.map((script) => script.name).join(", ");
+    const extra = own.scripts.map((script) => ({
+      only: script.before.filter((command) => !own.common.includes(command)),
+      script: script.name
+    })).filter(({ only }) => only.length > 0);
+    workflowNotes.push(
+      `${own.common.length ? `The workflow runs ${own.common.map((command) => `\`${command}\``).join(", ")} before electron-builder, as every package.json script that calls electron-builder does (${named}).` : `Your package.json scripts that call electron-builder (${named}) don't all run the same steps before it, so the workflow has none of them.`}${extra.length ? ` Some run more, which the workflow doesn't: ${extra.map(({ only, script }) => `${script} runs ${only.map((command) => `\`${command}\``).join(", ")}`).join("; ")}. Add what each platform's job needs.` : ""}`
+    );
+  }
+  if (detection.appDir) {
+    workflowNotes.push(
+      `It goes in the repository's root (${workflowPath}), and its jobs work in ${detection.appDir}, where todesktop.config.ts is.`
+    );
+  }
+  const workflowFile = recipe.workflow.file(recipeApp, hosts().edge);
+  const manager = detection.packageManager ?? "npm";
+  if (/install --frozen-lockfile|install --immutable|npm ci/.test(workflowFile)) {
+    if (detection.lockfile === null) {
+      workflowNotes.push(
+        `The workflow installs from a lockfile, and there's none here: run ${manager} install and commit the lockfile it writes.`
+      );
+    }
+    if (manager === "pnpm" && framework.id.startsWith("electron")) {
+      workflowNotes.push(
+        "Electron's packagers read node_modules as npm lays it out: with pnpm, set nodeLinker: hoisted in pnpm-workspace.yaml (or node-linker=hoisted in .npmrc), and inject workspace packages the app uses (injectWorkspacePackages: true)."
+      );
+    }
+  }
+  const pushRefs2 = trusted?.refs ?? refsOf(detection);
+  const push = firstPush(pushRefs2);
+  const test = testPush(pushRefs2);
+  const steps = [
+    {
+      check: `${cli()} config check${dirArgOf(values)}`,
+      code: config3.code,
+      description: recipe.config.description,
+      // Done when it's true of this checkout: the server's setup says what
+      // some other checkout uploaded (an untouched clone of an app with builds).
+      done: Boolean(detection.config),
+      files: config3.files,
+      key: "config",
+      notes: configNotes,
+      number: 1,
+      run: config3.run,
+      title: "Add todesktop.config.ts",
+      who: "you"
+    },
+    {
+      code: updates.code,
+      description: recipe.updates.description,
+      // Done once code uses the updater, not when it's merely installed.
+      done: Boolean(detection.updaterUsedIn),
+      files: updates.files,
+      key: "updates",
+      notes: updateNotes,
+      number: 2,
+      run: updates.run,
+      title: "Add ToDesktop updates",
+      who: "you"
+    },
+    {
+      check: `${cli()} status --wait-for trust${appArg}`,
+      code: [],
+      description: trustDescription,
+      done: setup.trust,
+      files: [],
+      key: "trust",
+      ...needs ? { needs } : {},
+      notes: trustNotes,
+      number: 3,
+      run: [],
+      title: "Trust your release workflow",
+      who: "a person"
+    },
+    {
+      code: [],
+      description: recipe.workflow.description,
+      done: Boolean(uploading),
+      files: [
+        {
+          content: workflowFile,
+          language: "yaml",
+          path: workflowPath
+        }
+      ],
+      key: "workflow",
+      notes: workflowNotes,
+      number: 4,
+      run: [],
+      title: recipe.workflow.title,
+      who: "you"
+    },
+    {
+      check: `${cli()} builds wait latest${appArg}`,
+      code: [],
+      description: "Commit steps 1, 2 and 4 first. The workflow\u2019s upload step sends the built app to ToDesktop, which signs it, packages it and smoke tests it.",
+      // Not said from here: an upload of some other checkout isn't this one's.
+      done: false,
+      files: [],
+      key: "push",
+      notes: [
+        ...test ? [
+          `First, a test build: \`${test.command}\` runs the workflow on this commit, whatever branch you're on. ToDesktop builds, signs and smoke-tests it on every platform the config lists, and never releases it. Push again after each fix, until its smoke test passes.`
+        ] : [],
+        `${test ? "Then name" : "Name"} the tag yourself, for the version you release: the workflow runs on ${pushRefs2.join(", ")}.`
+      ],
+      number: 5,
+      run: [],
+      title: push.title,
+      who: "you"
+    }
+  ];
+  const fillIn = fillInOf(framework.id, steps, test?.command);
+  return {
+    app: { id, name },
+    appArg,
+    detection,
+    dir,
+    fillIn,
+    framework,
+    notes,
+    ...repository ? { repository } : {},
+    root,
+    steps,
+    ...uploading ? { uploading } : {}
+  };
+}
+async function uploadingWorkflow(root, workflows, appDir) {
+  for (const workflow of workflows) {
+    const text3 = await readFile11(path10.join(root, workflow), "utf8").catch(
+      () => ""
+    );
+    const uploads = /ToDesktop\/upload-action@|todesktop upload\b/.test(text3);
+    const thisApp = appDir ? text3.includes(`${appDir}/todesktop.config`) : !/\bconfig:\s*\S+\/todesktop\.config/.test(text3);
+    if (uploads && thisApp) return workflow;
+  }
+  return void 0;
+}
+function fillInOf(framework, steps, testPushCommand) {
+  const done = (key) => steps.find((step) => step.key === key)?.done;
+  const items = [];
+  if (!done("config")) {
+    items.push({
+      check: `${cli()} config check: it fails while either is still the draft's placeholder`,
+      what: "description and maintainer",
+      where: "todesktop.config.ts"
+    });
+    if (framework === "other") {
+      items.push(
+        {
+          check: `${cli()} config check: it says what it finds at each path built here, and lists those it couldn't check`,
+          what: "the platforms and arches the app ships, and where the build puts each app",
+          where: "todesktop.config.ts, each apps entry"
+        },
+        {
+          check: `${cli()} config check: it lists the executable files in the folder when the name isn't one`,
+          what: "the executable's file name",
+          where: "todesktop.config.ts, windows.executable and linux.executable"
+        }
+      );
+    }
+  }
+  if (!done("updates")) {
+    items.push({
+      check: `${testPushCommand ? `a test build (${testPushCommand}), then ` : ""}${cli()} builds wait latest --until smoke: the updater starts, healthReady arrives, the app quits for an update and comes back, on every platform`,
+      what: "where the app starts the updater and says healthReady",
+      where: "the app's start-up code"
+    });
+  }
+  if (!done("workflow")) {
+    items.push({
+      check: `${cli()} config check after building as the workflow does; then the first upload`,
+      what: "the build steps, into the paths the config names",
+      where: workflowPath
+    });
+  }
+  if (!done("push")) {
+    items.push({
+      check: `${cli()} builds wait latest --until smoke`,
+      what: "the tag to push",
+      where: "git"
+    });
+  }
+  return items;
+}
+function stepsOf(plan, step) {
+  if (step === void 0) return plan.steps;
+  if (!stepKeys.includes(step)) {
+    throw new CliError(
+      "invalid-step",
+      `--step is one of ${stepKeys.join(", ")}, not "${step}".`,
+      { exit: exitCodes.usage }
+    );
+  }
+  return plan.steps.filter(({ key }) => key === step);
+}
+async function configAppsOf(file3) {
+  try {
+    const platforms3 = ["mac", "windows", "linux"];
+    const loaded = await Promise.all(
+      platforms3.map((platform) => loadConfig(path10.resolve(file3), { platform }))
+    );
+    const apps = Object.fromEntries(
+      platforms3.map((platform, index) => [
+        platform,
+        loaded[index].config[platform]?.apps
+      ]).filter(([, each]) => each && Object.keys(each).length)
+    );
+    return apps && Object.keys(apps).length ? apps : void 0;
+  } catch {
+    return void 0;
+  }
+}
+async function writeFiles(appDir, files, {
+  configExists,
+  root = appDir,
+  uploading
+}) {
+  const written = [];
+  for (const file3 of files) {
+    const dir = file3.path.startsWith(".github/") ? root : appDir;
+    const target = path10.join(dir, file3.path);
+    if (file3.path === workflowPath && uploading) {
+      written.push({ action: "exists", path: uploading });
+      continue;
+    }
+    const taken = existsSync9(target) || file3.path === "todesktop.config.ts" && configExists;
+    if (taken && file3.path === workflowPath) {
+      const beside = path10.join(
+        path10.dirname(file3.path),
+        "release.todesktop.yml"
+      );
+      if (existsSync9(path10.join(dir, beside))) {
+        written.push({ action: "exists", path: beside });
+        continue;
+      }
+      await writeFile3(path10.join(dir, beside), file3.content, { flag: "wx" });
+      written.push({ action: "created", beside, path: file3.path });
+      continue;
+    }
+    if (taken) {
+      written.push({ action: "exists", path: file3.path });
+      continue;
+    }
+    await mkdir4(path10.dirname(target), { recursive: true });
+    await writeFile3(target, file3.content, { flag: "wx" });
+    written.push({ action: "created", path: file3.path });
+  }
+  return written;
+}
+var shellWord2 = (value) => /^[\w./:@=-]+$/.test(value) ? value : `'${value.replace(/'/g, "'\\''")}'`;
+var dirArgOf = (values) => values.dir ? ` --dir ${shellWord2(String(values.dir))}` : "";
+var flagsOf = (values, plan) => `${plan.appArg}${values.framework ? ` --framework ${shellWord2(String(values.framework))}` : ""}${dirArgOf(values)}`;
+var fence = (code, language = "") => `\`\`\`${language}
+${code.replace(/\n$/, "")}
+\`\`\``;
+function stepMarkdown(step, full) {
+  const head2 = `## ${step.number}. ${step.title}  [${step.who}]${step.done ? " (done)" : ""}`;
+  if (step.done && !full) return head2;
+  const lines = [head2, "", step.description];
+  for (const file3 of step.files) {
+    if (file3.client) {
+      lines.push(
+        "",
+        `File \`${file3.path}\`: ToDesktop's client as it is, ${file3.content.split("\n").length - 1} lines (integrate --write adds it; --json has its text).`
+      );
+      continue;
+    }
+    lines.push(
+      "",
+      `${file3.title ? `${file3.title}
+` : ""}File \`${file3.path}\`:`,
+      fence(file3.content, file3.language)
+    );
+  }
+  if (step.run.length) {
+    lines.push("", "Run:", fence(step.run.join("\n"), "bash"));
+  }
+  for (const code of step.code) {
+    lines.push(
+      "",
+      code.title ? `${code.title}:` : "",
+      fence(code.code, code.language)
+    );
+  }
+  if (step.needs) lines.push("", `${step.needs.message}
+${step.needs.url}`);
+  for (const note of step.notes) lines.push("", note);
+  if (step.check) lines.push("", `Check: \`${step.check}\``);
+  return lines.filter((line, index) => line || lines[index - 1]).join("\n");
+}
+function briefOf(plan, steps, full) {
+  const done = plan.steps.filter((step) => step.done).length;
+  let why = "";
+  if (plan.framework.evidence.length) {
+    why = ` (${plan.framework.evidence.join("; ")})`;
+  } else if (plan.framework.from === "dashboard") {
+    why = " (saved on the dashboard)";
+  }
+  return [
+    `# Integrate ${plan.app.name} with ToDesktop`,
+    "",
+    `App \`${plan.app.id}\` \xB7 Built with **${plan.framework.label}**${why}`,
+    `${plan.repository ? `Repository \`${plan.repository}\` \xB7 ` : ""}${done} of ${plan.steps.length} steps done`,
+    ...plan.notes.map((note) => `
+${note}`),
+    // One step asked for: just it. Otherwise, what to check first.
+    ...full ? [] : [
+      "\n## Fill in",
+      "",
+      "The draft fills in what only ToDesktop knows. These it leaves to you, read from the code, each with the check that proves it:",
+      "",
+      ...plan.fillIn.map(
+        ({ check: check2, what, where }) => `- **${what}** (${where}). Check: ${check2}.`
+      )
+    ],
+    ...steps.map((step) => `
+${stepMarkdown(step, full)}`)
+  ].join("\n");
+}
+var integrate = {
+  name: "integrate",
+  options: {
+    ...dirOptions,
+    step: { type: "string" },
+    write: { type: "boolean" }
+  },
+  async run({ values }) {
+    const plan = await planOf(values);
+    const step = values.step;
+    const steps = stepsOf(plan, step);
+    const brief = briefOf(plan, steps, step !== void 0);
+    const flags = flagsOf(values, plan);
+    const left = steps.filter((each) => !each.done);
+    let written;
+    if (values.write) {
+      const config3 = plan.detection.config ? await readFile11(
+        path10.join(plan.dir, plan.detection.config),
+        "utf8"
+      ).catch(() => "") : "";
+      const named = steps.filter((each) => each.done && each.key === "config").flatMap((each) => each.files).filter(
+        (file3) => file3.path !== "todesktop.config.ts" && config3.includes(`'${file3.path}'`) && !existsSync9(path10.join(plan.dir, file3.path))
+      );
+      written = await writeFiles(
+        plan.dir,
+        [...left.flatMap((each) => each.files), ...named],
+        {
+          configExists: Boolean(plan.detection.config),
+          root: plan.root,
+          ...plan.uploading ? { uploading: plan.uploading } : {}
+        }
+      );
+    }
+    const next = [];
+    for (const workspaceApp of plan.detection.workspaceApps ?? []) {
+      next.push({
+        command: `${cli()} integrate --dir ${workspaceApp.dir}${plan.appArg}`,
+        why: `${recipeOf(workspaceApp.framework).label} app in ${workspaceApp.dir}`
+      });
+    }
+    const firstLeft = left.find((each) => each.who === "you");
+    if (!values.write && left.some((each) => each.files.length)) {
+      next.push({
+        command: `${cli()} integrate --write${flags}`,
+        why: "add the files these steps add"
+      });
+    }
+    if (written?.some(({ path: file3 }) => file3 === "todesktop.config.ts")) {
+      next.push({
+        command: `${cli()} config check${dirArgOf(values)}`,
+        why: "prove step 1"
+      });
+    }
+    const current = steps[0]?.number ?? 0;
+    const following = step === void 0 ? firstLeft : plan.steps.find((each) => each.number > current && !each.done);
+    if (following?.who === "you") {
+      next.push({
+        command: `${cli()} integrate --step ${following.key}${flags}`,
+        why: following.title
+      });
+    }
+    const person = (step === void 0 ? left : [following]).find(
+      (each) => each?.who === "a person" && !each.done
+    );
+    if (person) {
+      next.push({
+        command: `${cli()} status --wait-for ${person.key}${plan.appArg}`,
+        why: `${person.number}. ${person.title}: a person does it in the dashboard${person.needs ? `, ${person.needs.url}` : ""}. Send them the link, carry on with your steps, and run this before you push`
+      });
+    }
+    if (!following && !person) {
+      next.push({ command: `${cli()} status${plan.appArg}` });
+    }
+    const data = {
+      app: plan.app,
+      brief,
+      done: plan.steps.filter((each) => each.done).length,
+      fillIn: plan.fillIn,
+      framework: plan.framework,
+      notes: plan.notes,
+      ...plan.repository ? { repository: plan.repository } : {},
+      steps,
+      total: plan.steps.length,
+      ...written ? { written } : {}
+    };
+    if (!written) return { data, human: brief, next };
+    const report = written.map(
+      ({ action, beside, path: file3 }) => beside ? `created  ${beside}   (${file3} is yours: merge its job into it, or keep both)` : `${action.padEnd(7)}  ${file3}${action === "exists" ? "   (left as it is)" : ""}`
+    );
+    const forYou = left.filter((each) => each.who === "you");
+    const forPerson = left.filter((each) => each.who === "a person");
+    return {
+      data,
+      human: [
+        ...report.length ? report : ["Nothing to add: those files are here."],
+        ...forYou.length ? [
+          "",
+          "Left for you:",
+          ...forYou.map(
+            (each) => `  ${each.number}. ${each.title}   ${cli()} integrate --step ${each.key}${flags}`
+          )
+        ] : [],
+        ...forPerson.length ? [
+          "",
+          "Left for a person:",
+          ...forPerson.map(
+            (each) => `  ${each.number}. ${each.title}   ${each.needs?.url ?? ""}`
+          )
+        ] : []
+      ].join("\n"),
+      next
+    };
+  },
+  summary: "Read this repository and say how to set its app up: the dashboard Overview's steps, filled in",
+  usage: "todesktop integrate [--step config|updates|trust|workflow|push] [--write] [--framework ID] [--dir DIR] [--app ID]"
+};
+var ciWorkflow = {
+  name: "ci workflow",
+  options: { ...dirOptions, write: { type: "boolean" } },
+  async run({ values }) {
+    const plan = await planOf(values, { withoutApp: true });
+    const [file3] = plan.steps.find(({ key }) => key === "workflow").files;
+    const written = values.write ? await writeFiles(plan.dir, [file3], {
+      configExists: false,
+      root: plan.root,
+      ...plan.uploading ? { uploading: plan.uploading } : {}
+    }) : void 0;
+    const [result] = written ?? [];
+    return {
+      data: {
+        content: file3.content,
+        framework: plan.framework,
+        path: file3.path,
+        ...result ? { written: result } : {}
+      },
+      human: result ? `${result.action === "created" ? "created" : "exists "}  ${result.beside ?? result.path}` : file3.content,
+      next: written ? [] : [
+        {
+          command: `${cli()} ci workflow --write${flagsOf(values, plan)}`,
+          why: `add it as ${file3.path}`
+        }
+      ]
+    };
+  },
+  summary: "The GitHub Actions workflow that builds this repository's app and uploads it",
+  usage: "todesktop ci workflow [--write] [--framework ID] [--dir DIR] [--app ID]"
+};
+var platforms2 = ["mac", "windows", "linux"];
+var hostPlatform = () => ({ darwin: "mac", linux: "linux", win32: "windows" })[process9.platform];
+function placeholderChecks(config3) {
+  return ["description", "maintainer"].filter((field) => config3[field] === configPlaceholders[field]).map((field) => ({
+    detail: `${field} is still the draft's placeholder (${configPlaceholders[field]}): put the app's own in todesktop.config.ts`,
+    name: field,
+    ok: false
+  }));
+}
+function whyUnbuilt(platform, arch, shown2, { noBuildIn = false } = {}) {
+  const host = hostPlatform();
+  const job = `its workflow job builds it, and its first upload is the first check of its path, executable and contents`;
+  if (host !== platform) {
+    return `a ${platform} app, and this machine runs ${host ?? process9.platform}: ${job}`;
+  }
+  if (arch !== "universal" && arch !== process9.arch) {
+    return `an ${arch} app, and this machine is ${process9.arch}: ${job}`;
+  }
+  const found = noBuildIn ? `${shown2} is there, but has no ${platform} build to make the app from; it holds: ${holds(shown2)}` : missingPath(shown2);
+  return `${found}. Build it as the workflow does, then run config check again`;
+}
+async function appChecks(loaded, unchecked) {
+  const checks = [];
+  const { config: config3 } = loaded.mac;
+  for (const platform of platforms2) {
+    if (!config3[platform]) continue;
+    const here = loaded[platform];
+    try {
+      iconFor(here, platform);
+    } catch (error46) {
+      checks.push({
+        detail: error46.message,
+        name: `${platform}.icon`,
+        ok: false
+      });
+    }
+    let apps2;
+    try {
+      apps2 = appsFor(here, platform);
+    } catch (error46) {
+      checks.push({
+        detail: error46.message,
+        name: `${platform}.apps`,
+        ok: false
+      });
+      continue;
+    }
+    for (const [arch, appPath2] of Object.entries(apps2)) {
+      const name = `${platform}/${arch}`;
+      const shown2 = path10.relative(process9.cwd(), appPath2) || ".";
+      if (!existsSync9(appPath2)) {
+        const why = whyUnbuilt(platform, arch, shown2);
+        unchecked.push({ arch, path: shown2, platform, why });
+        checks.push({
+          detail: `${shown2}: not checked here (below)`,
+          name,
+          ok: null
+        });
+      } else if (here.assemble[platform]) {
+        const check2 = await assembledCheck(here, platform, arch, appPath2, name);
+        if (check2.ok === null) {
+          unchecked.push({
+            arch,
+            path: shown2,
+            platform,
+            // The folder exists (this branch): it has no build in it.
+            why: whyUnbuilt(platform, arch, shown2, { noBuildIn: true })
+          });
+        }
+        checks.push(check2);
+      } else {
+        try {
+          const found = await inspect(config3, platform, arch, appPath2);
+          checks.push({
+            detail: `${shown2}${found.bundleId ? ` \xB7 ${found.bundleId}` : ""}${found.ownVersion ? ` \xB7 ${found.ownVersion}` : ""}`,
+            name,
+            ok: true
+          });
+        } catch (error46) {
+          checks.push({ detail: error46.message, name, ok: false });
+        }
+      }
+    }
+  }
+  const apps = checks.filter(({ name }) => name.includes("/"));
+  if (apps.length && apps.every(({ ok }) => ok === null)) {
+    checks.push({
+      detail: "none of its apps is built on this machine, so their paths aren't proven: build one the way the workflow does, then run config check again",
+      name: "apps",
+      ok: null
+    });
+  }
+  return checks;
+}
+async function assembledCheck(loaded, platform, arch, source, name) {
+  const shown2 = path10.relative(process9.cwd(), source) || ".";
+  const scratch = await mkdtemp3(path10.join(tmpdir3(), "todesktop-check-"));
+  try {
+    const appDir = path10.join(scratch, "app");
+    if (!await assembleApp(loaded, platform, arch, source, appDir)) {
+      return {
+        detail: `${shown2}: no ${platform} build in it on this machine (skipped)`,
+        name,
+        ok: null
+      };
+    }
+    const found = await inspect(loaded.config, platform, arch, appDir);
+    return {
+      detail: `${shown2}: the config's preset makes the app from it${found.ownVersion ? ` \xB7 ${found.ownVersion}` : ""}`,
+      name,
+      ok: true
+    };
+  } catch (error46) {
+    return { detail: error46.message, name, ok: false };
+  } finally {
+    await rm4(scratch, { force: true, recursive: true });
+  }
+}
+async function appIdCheck(appId, flag) {
+  const name = "appId";
+  if (typeof flag === "string" && flag !== appId) {
+    return {
+      detail: `the config's appId is ${appId}, not --app ${flag}`,
+      name,
+      ok: false
+    };
+  }
+  try {
+    await tokenOf();
+  } catch {
+    return {
+      detail: `${appId}: not checked against your apps (${cli()} login)`,
+      name,
+      ok: null
+    };
+  }
+  try {
+    const { app } = await api("getApp", { appId });
+    return {
+      detail: `${appId}: ${app.name ?? "your app"}, a v2 app you can read`,
+      name,
+      ok: true
+    };
+  } catch (error46) {
+    return {
+      detail: `${appId}: ${error46.message}`,
+      name,
+      ok: false
+    };
+  }
+}
+var mark = (ok) => {
+  if (ok === null) return "\xB7";
+  return ok ? "\u2713" : "\u2717";
+};
+var configCheck = {
+  name: "config check",
+  options: {
+    app: { type: "string" },
+    config: { type: "string" },
+    dir: { type: "string" }
+  },
+  async run({ values }) {
+    const dir = values.dir ?? ".";
+    const file3 = values.config ?? findConfigFile(dir);
+    if (!file3 || !existsSync9(file3)) {
+      throw new CliError(
+        "no-config",
+        `No todesktop.config.ts ${file3 ? `at ${file3}` : `in ${path10.resolve(dir)}`}.`,
+        {
+          exit: exitCodes.usage,
+          fix: [
+            {
+              command: `${cli()} integrate --write${dirArgOf(values)}`,
+              why: "add one"
+            }
+          ]
+        }
+      );
+    }
+    const checks = [];
+    const unchecked = [];
+    let loaded;
+    try {
+      loaded = Object.fromEntries(
+        await Promise.all(
+          platforms2.map(
+            async (platform) => [
+              platform,
+              await loadConfig(path10.resolve(file3), { platform })
+            ]
+          )
+        )
+      );
+      checks.push({ detail: `${file3} loads`, name: "config", ok: true });
+    } catch (error46) {
+      checks.push({
+        detail: error46.message,
+        name: "config",
+        ok: false
+      });
+    }
+    const differs = loaded && platformMismatch(file3, loaded);
+    if (differs) {
+      checks.push({ detail: differs, name: "platforms", ok: false });
+    } else if (loaded) {
+      const { config: config3 } = loaded.mac;
+      const unbuildable = ciConfigProblem(config3);
+      if (unbuildable) {
+        checks.push({ detail: unbuildable, name: "formats", ok: false });
+      }
+      checks.push(await appIdCheck(config3.appId, values.app));
+      checks.push(...placeholderChecks(config3));
+      checks.push(...await appChecks(loaded, unchecked));
+      const sandboxed = await sandboxProblem(loaded.mac);
+      if (sandboxed) {
+        checks.push({ detail: sandboxed, name: "mac.sandbox", ok: false });
+      }
+    }
+    const failed = checks.filter(({ ok }) => ok === false);
+    const lines = checks.map(
+      ({ detail, name, ok }) => `${mark(ok)} ${name.padEnd(14)} ${detail}`
+    );
+    const notChecked = unchecked.length ? [
+      "",
+      `Not checked here (${unchecked.length} of ${unchecked.length + checks.filter(({ name, ok }) => name.includes("/") && ok !== null).length} apps): their paths are claims until a build of each uploads.`,
+      ...unchecked.map(
+        ({ arch, path: at, platform, why }) => `  ${platform}/${arch} ${at}: ${why}`
+      )
+    ] : [];
+    if (failed.length) {
+      throw new CliError(
+        "config-check-failed",
+        `${file3} needs fixing:
+${[...lines, ...notChecked].join("\n")}`,
+        { exit: exitCodes.blocked }
+      );
+    }
+    const { appId } = loaded.mac.config;
+    const appArg = values.app ? ` --app ${appId}` : "";
+    const here = await detect(dir).catch(() => void 0);
+    return {
+      data: { checks, file: file3, unchecked },
+      human: [...lines, ...notChecked].join("\n"),
+      next: [
+        here?.updaterUsedIn ? {
+          command: `${cli()} integrate${appArg}${dirArgOf(values)}`,
+          why: "what's left"
+        } : {
+          command: `${cli()} integrate --step updates${appArg}${dirArgOf(values)}`,
+          why: "step 2"
+        }
+      ]
+    };
+  },
+  summary: "Load todesktop.config.ts as upload does, check the apps it lists that are built here, and list those it couldn't check",
+  usage: "todesktop config check [--config FILE] [--dir DIR] [--app ID]"
+};
+var integrateCommands = [
+  integrate,
+  ciWorkflow,
+  configCheck
+];
+
+// src/tauriBridge.ts
+import { execFile as execFile4 } from "node:child_process";
+import { existsSync as existsSync10 } from "node:fs";
+import { mkdir as mkdir5, readdir as readdir5, readFile as readFile12, writeFile as writeFile4 } from "node:fs/promises";
+import path11 from "node:path";
+import process10 from "node:process";
+import { promisify as promisify3 } from "node:util";
+var run3 = promisify3(execFile4);
+var tauriPlatform = {
+  arm64: ["darwin-aarch64"],
+  universal: ["darwin-aarch64", "darwin-x86_64"],
+  x64: ["darwin-x86_64"]
+};
+async function tauriSign(file3, keyFile) {
+  const cli2 = (process10.env.TAURI_CLI ?? "npx --yes @tauri-apps/cli@2.12.1").split(" ");
+  const [command, ...prefix] = cli2;
+  if (!command) throw new Error("TAURI_CLI is empty");
+  const key = keyFile ? ["--private-key-path", keyFile] : ["--private-key", process10.env.TAURI_SIGNING_PRIVATE_KEY ?? ""];
+  if (!keyFile && !process10.env.TAURI_SIGNING_PRIVATE_KEY) {
+    throw new Error("Pass --key-file, or set TAURI_SIGNING_PRIVATE_KEY");
+  }
+  await run3(command, [
+    ...prefix,
+    "signer",
+    "sign",
+    ...key,
+    "--password",
+    process10.env.TAURI_SIGNING_PRIVATE_KEY_PASSWORD ?? "",
+    file3
+  ]);
+  return (await readFile12(`${file3}.sig`, "utf8")).trim();
+}
+async function tauriBridge(options) {
+  await mkdir5(options.out, { recursive: true });
+  const response = await fetch(options.from);
+  if (!response.ok) {
+    throw new Error(`${options.from}: ${response.status}`);
+  }
+  const zip = path11.join(options.out, "build.zip");
+  await writeFile4(zip, new Uint8Array(await response.arrayBuffer()));
+  const unpacked = path11.join(options.out, "unpacked");
+  await run3("ditto", ["-x", "-k", zip, unpacked]);
+  const appName = (await readdir5(unpacked)).find(
+    (name2) => name2.endsWith(".app")
+  );
+  if (!appName) throw new Error(`${options.from} holds no .app`);
+  const app = path11.join(unpacked, appName);
+  const plist = await plistStrings(path11.join(app, "Contents", "Info.plist"));
+  const version3 = plist.CFBundleShortVersionString;
+  const executable = plist.CFBundleExecutable;
+  if (!version3 || !executable) {
+    throw new Error(`${appName}'s Info.plist lacks a version or executable`);
+  }
+  if (!existsSync10(path11.join(app, "Contents", "Resources", "todesktop-build.json"))) {
+    throw new Error(
+      `${appName} isn't a ToDesktop build (no todesktop-build.json)`
+    );
+  }
+  const arch = await machOArch(path11.join(app, "Contents", "MacOS", executable));
+  const base = appName.replace(/\.app$/, "").replaceAll(/[^\w.-]+/g, "-");
+  const name = `${base}-${version3}-mac-${arch}.app.tar.gz`;
+  const tarball = path11.join(options.out, name);
+  await run3(
+    "tar",
+    ["--no-mac-metadata", "-czf", tarball, "-C", unpacked, appName],
+    {
+      env: { ...process10.env, COPYFILE_DISABLE: "1" }
+    }
+  );
+  const signature = await tauriSign(tarball, options.keyFile);
+  const url2 = `${options.baseUrl.replace(/\/$/, "")}/${name}`;
+  const manifest = {
+    notes: options.notes ?? `From ${version3}, updates come from ToDesktop.`,
+    platforms: Object.fromEntries(
+      (tauriPlatform[arch] ?? []).map((platform) => [
+        platform,
+        { signature, url: url2 }
+      ])
+    ),
+    pub_date: (/* @__PURE__ */ new Date()).toISOString(),
+    version: version3
+  };
+  const latest = path11.join(options.out, "latest.json");
+  await writeFile4(latest, `${JSON.stringify(manifest, null, 2)}
+`);
+  process10.stdout.write(
+    `Bridge to ${version3} (${arch}):
+  ${tarball}
+  ${tarball}.sig
+  ${latest}
+Publish them where your current installs look for updates, or redirect that URL to ${options.baseUrl}.
+`
+  );
 }
 
 // src/cli.ts
 var usage = `todesktop: ToDesktop v2 CLI
 
-  upload [--config todesktop.config.ts] [--version X.Y.Z]
+  upload [--config todesktop.config.ts] [--version X.Y.Z] [--test]
          [--input PLATFORM/ARCH=PATH]... [--dry-run]
       Checks the built apps the config lists that are on this machine,
       runs the config's prepareApp hook on a copy of each, and uploads
       them. In GitHub Actions (permissions: id-token: write), every job of
       a workflow run adds to the same build, which starts once all the
-      config's apps are in. --input replaces an app's path for this run;
+      config's apps are in. --test makes a test build: built, signed and
+      smoke-tested like any other, and never released (every job of the
+      run passes it). --input replaces an app's path for this run;
       --dry-run checks and prepares without uploading.
 
   tauri-bridge --from DOWNLOAD_URL --base-url URL [--key-file KEY]
@@ -17059,8 +30256,102 @@ var usage = `todesktop: ToDesktop v2 CLI
       The key comes from --key-file or TAURI_SIGNING_PRIVATE_KEY, its
       password from TAURI_SIGNING_PRIVATE_KEY_PASSWORD. Mac only for now.
 
-Environment: TODESKTOP_URL (default http://127.0.0.1:8787)`;
+Environment: TODESKTOP_URL, where upload sends the apps (default: the stage's
+update host, https://updates.todesktop.com in production; TODESKTOP_STAGE).`;
+var builtIns = [
+  {
+    name: "upload",
+    summary: "Check, prepare and upload the built apps on this machine (CI's)",
+    usage: "todesktop upload [--config FILE] [--version X.Y.Z] [--test] [--input PLATFORM/ARCH=PATH]... [--dry-run]"
+  },
+  {
+    name: "tauri-bridge",
+    summary: "Move installs on Tauri's updater over to ToDesktop's",
+    usage: "todesktop tauri-bridge --from DOWNLOAD_URL --base-url URL [--key-file KEY]"
+  }
+];
+var commandsCommand = {
+  name: "commands",
+  async run() {
+    const all = [...agentCommands, ...integrateCommands, ...builtIns].map(
+      (command) => ({
+        name: command.name,
+        summary: command.summary,
+        usage: usageOf(command.usage)
+      })
+    );
+    return {
+      data: {
+        commands: all,
+        exitCodes,
+        output: "With --json, or when stdout is not a terminal: one JSON object, { ok, data, next } or { ok: false, needs | error }."
+      },
+      human: all.map((command) => `${usageOf(command.usage)}
+    ${command.summary}`).join("\n")
+    };
+  },
+  summary: "Every command, its flags, and the output and exit codes",
+  usage: "todesktop commands [--json]"
+};
+var agentUsage = `${[...agentCommands, ...integrateCommands, commandsCommand].map(
+  (command) => `  ${usageOf(command.usage)}
+      ${command.summary}`
+).join("\n")}
+
+  Answers are JSON ({ ok, data, next }) with --json or when stdout isn't a
+  terminal. Exit codes: 0 done, 1 failed, 2 wrong usage, 3 a person must
+  act (the answer says where), 4 blocked by a failed build or check, 5
+  timed out. Sign in with todesktop login, or TODESKTOP_TOKEN.
+  TODESKTOP_STAGE=dev|local points at dev or the local-agent stack.`;
+async function runAgentCommand(argv) {
+  const commands = [...agentCommands, ...integrateCommands, commandsCommand];
+  const [first = "", second = ""] = argv;
+  const command = commands.find(({ name }) => name === `${first} ${second}`) ?? commands.find(({ name }) => name === first);
+  if (!command) return false;
+  const rest = argv.slice(command.name.split(" ").length);
+  let json2 = wantsJson(rest.includes("--json") ? true : void 0);
+  try {
+    const { positionals, values } = parseArgs({
+      allowPositionals: true,
+      args: rest,
+      options: {
+        ...command.options,
+        help: { type: "boolean" },
+        json: { type: "boolean" }
+      }
+    });
+    json2 = wantsJson(values.json);
+    jsonProgress(json2);
+    if (values.help) {
+      process11.stdout.write(
+        `${usageOf(command.usage)}
+    ${command.summary}
+`
+      );
+      return true;
+    }
+    process11.exitCode = print(
+      await command.run({ args: positionals, json: json2, values }),
+      json2
+    );
+  } catch (error46) {
+    const usageError = error46.code?.startsWith("ERR_PARSE_ARGS") === true;
+    process11.exitCode = printError(
+      usageError ? new CliError(
+        "usage",
+        `${error46.message}
+${usageOf(command.usage)}`,
+        {
+          exit: exitCodes.usage
+        }
+      ) : error46,
+      json2
+    );
+  }
+  return true;
+}
 async function main() {
+  if (await runAgentCommand(process11.argv.slice(2))) return;
   const { positionals, values } = parseArgs({
     allowPositionals: true,
     options: {
@@ -17073,6 +30364,7 @@ async function main() {
       "key-file": { type: "string" },
       "notes": { type: "string" },
       "out": { type: "string" },
+      "test": { type: "boolean" },
       "version": { type: "string" }
     }
   });
@@ -17093,9 +30385,11 @@ ${usage}`);
     return;
   }
   if (values.help || command !== "upload") {
-    process4.stdout.write(`${usage}
+    process11.stdout.write(`${usage}
+
+${agentUsage}
 `);
-    if (!values.help) process4.exitCode = 1;
+    if (!values.help) process11.exitCode = 1;
     return;
   }
   const configFile = values.config ?? findConfigFile(".");
@@ -17104,19 +30398,26 @@ ${usage}`);
   }
   await upload({
     configFile,
+    dashboard: hosts().dashboard,
     dryRun: values["dry-run"] ?? false,
     inputs: values.input ?? [],
-    url: (process4.env.TODESKTOP_URL ?? "http://127.0.0.1:8787").replace(
-      /\/$/,
-      ""
-    ),
+    ...values.test ? { test: true } : {},
+    url: hosts().edge,
     ...values.version ? { version: values.version } : {}
   });
 }
 main().catch((error46) => {
-  process4.stderr.write(`${error46.message}
-`);
-  process4.exitCode = 1;
+  const { code, message } = error46;
+  const usageError = code?.startsWith("ERR_PARSE_ARGS_") ?? false;
+  process11.stderr.write(
+    `${message}${usageError ? `
+
+upload and tauri-bridge print plain text; they take no --json.
+
+${usage}` : ""}
+`
+  );
+  process11.exitCode = usageError ? exitCodes.usage : 1;
 });
 /*! Bundled license information:
 

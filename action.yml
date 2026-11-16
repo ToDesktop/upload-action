@@ -11,6 +11,12 @@ inputs:
       Version to release; a leading v is dropped, so github.ref_name works.
       Defaults to the config's, or the Mac app's own.
     required: false
+  test:
+    description:
+      'true makes a test build: ToDesktop builds, signs and smoke-tests it like
+      any other, and never releases it. Every job of the run passes the same
+      value.'
+    required: false
   config:
     description:
       Path to todesktop.config.ts (found in the working directory by default).
@@ -24,7 +30,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@v5
       with:
         node-version: 24
     # esbuild loads todesktop.config.ts; it ships a native binary per platform,
@@ -38,8 +44,10 @@ runs:
         TODESKTOP_URL: ${{ inputs.url }}
         INPUT_VERSION: ${{ inputs.version }}
         INPUT_CONFIG: ${{ inputs.config }}
+        INPUT_TEST: ${{ inputs.test }}
       run: |
         args=(upload)
         if [ -n "$INPUT_VERSION" ]; then args+=(--version "${INPUT_VERSION#v}"); fi
         if [ -n "$INPUT_CONFIG" ]; then args+=(--config "$INPUT_CONFIG"); fi
+        if [ "$INPUT_TEST" = "true" ]; then args+=(--test); fi
         node "$GITHUB_ACTION_PATH/dist/todesktop.mjs" "${args[@]}"
