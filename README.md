@@ -42,6 +42,7 @@ report: # waits for ToDesktop's result of a test build, and fails with the reaso
   runs-on: ubuntu-latest
   permissions:
     id-token: write
+    pull-requests: write # lets this job write the result on the pull request
   steps:
     - uses: ToDesktop/upload-action@v1
       with:
@@ -74,6 +75,35 @@ printed only when the repository is private (`details`).
 `wait: true` does the same at the end of an upload step, in a workflow whose one
 job uploads everything.
 
+### The result on the pull request
+
+When the result is final, the job also writes it as a comment on the open pull
+request whose head is the run's commit: whether the build passed, failed or
+wasn't smoke-tested, each test machine's journeys, the reason for a failure, and
+links to the build in ToDesktop and to the workflow run. There is one comment
+per app, and later runs update it instead of adding more. A run whose commit is
+no open pull request's head (a test branch that is ahead of the pull request's,
+say) writes none.
+
+The comment is written with the job's own token (`github-token`), so the job
+needs one more permission:
+
+```yaml
+permissions:
+  id-token: write
+  pull-requests: write
+```
+
+The comment never changes how the job ends. Without the permission, with no open
+pull request for the commit, or for a pull request from a fork, the log has one
+line saying why there is no comment, and the job passes or fails on the build's
+result as before. A wait that runs out of time writes no comment.
+`comment: false` turns it off.
+
+What your app said (a failure's message, the end of its output) is shown only
+inside code blocks, where GitHub notifies nobody and links nothing, and the end
+of its output is there only when the log has it (`details`).
+
 ## Inputs
 
 | Input          | Default                                | What                                                                                                                                                        |
@@ -85,6 +115,8 @@ job uploads everything.
 | `wait-timeout` | `90`                                   | Minutes to wait. Running out fails the job without a verdict; re-running it waits again.                                                                    |
 | `app`          | read from the config                   | The app's ID, for `wait: only` in a job with no checkout.                                                                                                   |
 | `details`      | `auto`                                 | Whether a failed smoke test prints the end of the app's output: `auto` (only in a private repository), `true` or `false`.                                   |
+| `comment`      | `true`                                 | With `wait`: `false` stops the job writing the result as a comment on the commit's open pull request. Needs `pull-requests: write`.                         |
+| `github-token` | the job's token (`github.token`)       | The token that writes the comment. Used for nothing else, and not at all without `wait`.                                                                    |
 | `url`          | `https://updates.todesktop.com`        | Where to upload. Leave it unset unless ToDesktop gives you another URL.                                                                                     |
 
 `v1` follows the latest 1.x release; pin a full tag (`v1.2.3`) or a commit SHA

@@ -5,7 +5,7 @@ description: >-
   copies, and uploads them, authenticated by the job's GitHub OIDC token (needs
   permissions: id-token: write). Every job of a workflow run adds to one build,
   which ToDesktop signs, notarizes, packages and smoke tests. With wait, the job
-  then reports how that build went.
+  then reports how that build went, in its log and on the pull request.
 inputs:
   version:
     description:
@@ -48,6 +48,21 @@ inputs:
       true or false."
     required: false
     default: auto
+  comment:
+    description:
+      "With wait: 'false' stops the job writing the build's result as a comment
+      on the open pull request whose head is the run's commit. It writes one
+      comment and updates it on later runs, and needs permissions:
+      pull-requests: write; without that the log says why there is no comment
+      and the job ends as it would have."
+    required: false
+    default: 'true'
+  github-token:
+    description:
+      The GitHub token that writes the comment. The job's own unless you give
+      another.
+    required: false
+    default: ${{ github.token }}
   url:
     description:
       The ToDesktop edge to upload to. Production's by default; only ToDesktop's
@@ -77,7 +92,13 @@ runs:
         INPUT_WAIT_TIMEOUT: ${{ inputs.wait-timeout }}
         INPUT_APP: ${{ inputs.app }}
         INPUT_DETAILS: ${{ inputs.details }}
+        INPUT_COMMENT: ${{ inputs.comment }}
+        INPUT_GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
+        # The token is for the comment alone: an upload, and the config's
+        # prepareApp hook it runs, never have it in their environment.
+        comment_token="$INPUT_GITHUB_TOKEN"
+        unset INPUT_GITHUB_TOKEN
         case "$INPUT_WAIT" in
           ''|false|true|only) ;;
           *) echo "wait is 'false', 'true' or 'only', not '$INPUT_WAIT'" >&2; exit 2 ;;
@@ -96,5 +117,11 @@ runs:
         if [ "$INPUT_WAIT" = "true" ] || [ "$INPUT_WAIT" = "only" ]; then
           if [ -n "$INPUT_WAIT_TIMEOUT" ]; then args+=(--wait-timeout "$INPUT_WAIT_TIMEOUT"); fi
           if [ -n "$INPUT_DETAILS" ]; then args+=(--details "$INPUT_DETAILS"); fi
+          if [ "$INPUT_COMMENT" = "false" ]; then
+            args+=(--no-comment)
+          else
+            # The CLI takes it out of its environment as it starts.
+            export TODESKTOP_GITHUB_TOKEN="$comment_token"
+          fi
         fi
         node "$GITHUB_ACTION_PATH/dist/todesktop.mjs" "${args[@]}"

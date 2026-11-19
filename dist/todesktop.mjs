@@ -23368,7 +23368,7 @@ async function assembleApp(loaded, platform, arch, source, appDir) {
 }
 
 // src/cli.ts
-import process12 from "node:process";
+import process13 from "node:process";
 import { parseArgs } from "node:util";
 
 // ../contracts/src/appIcon.ts
@@ -23396,6 +23396,16 @@ var appLabLimits = {
 
 // ../contracts/src/smoke.ts
 var smokeJourneys = ["update", "fresh", "next"];
+var smokeJourneyNames = {
+  fresh: "Fresh install",
+  next: "Next update from this build",
+  update: "Update from your live release"
+};
+var smokeJourneysToRead = [
+  "fresh",
+  "update",
+  "next"
+];
 
 // ../contracts/src/ci.ts
 var NOTHING_SHOWS = "so nothing shows this build launches";
@@ -24088,7 +24098,8 @@ var reportJob = (app, edgeUrl) => {
     if: \${{ github.ref == '${testRefFor(app)}' }}
     runs-on: ubuntu-latest
     permissions:
-      id-token: write${named ? "" : `
+      id-token: write
+      pull-requests: write   # lets this job write the result on the pull request${named ? "" : `
       contents: read`}
     steps:${named ? "" : `
       - uses: actions/checkout@v5   # todesktop.config.ts names the app`}
@@ -26719,9 +26730,12 @@ var secs = (ms) => `${(ms / 1e3).toFixed(1)} s`;
 var timeline = (steps) => steps.map(
   ({ at, detail, id }) => `${id} ${secs(at)}${detail && id === "quit" ? ` (${detail})` : ""}`
 ).join(" \xB7 ");
+var nameWidth = Math.max(
+  ...Object.values(smokeJourneyNames).map((name) => name.length)
+);
 function journeyLine(journey, report2) {
-  const label = report2.journey.padEnd(7);
-  const pad = "           ";
+  const label = smokeJourneyNames[report2.journey].padEnd(nameWidth);
+  const pad = "      ";
   if (report2.status === "failed" && report2.failure) {
     const { ran } = report2.failure;
     const lines = [
@@ -26799,7 +26813,10 @@ function machineLines(result, reports) {
     `${name} ${arch}${method ? `, ${method}` : ""}: ${result.status}`
   ];
   if (result.error) out.push(`  ${result.error}`);
-  for (const report2 of reports) {
+  const inReadingOrder = reports.toSorted(
+    (a, b) => smokeJourneysToRead.indexOf(a.journey) - smokeJourneysToRead.indexOf(b.journey)
+  );
+  for (const report2 of inReadingOrder) {
     out.push(journeyLine(result.journeys[report2.journey], report2));
   }
   for (const warning of result.warnings ?? []) {
@@ -26815,7 +26832,7 @@ function smokeText(buildId, run4, reports, { again = "", full = false } = {}) {
   }
   const quiet = [];
   for (const report2 of reports) {
-    const where = `${report2.machineName}, ${report2.journey} journey`;
+    const where = `${report2.machineName}, ${smokeJourneyNames[report2.journey]}`;
     if (report2.status === "failed") {
       const end = report2.outputEnd;
       if (full || !end) {
@@ -26840,7 +26857,9 @@ function smokeText(buildId, run4, reports, { again = "", full = false } = {}) {
         );
       }
     } else if (report2.output ?? report2.outputEnd) {
-      quiet.push(`${report2.machineName} ${report2.journey}`);
+      quiet.push(
+        `${smokeJourneyNames[report2.journey]} on ${report2.machineName}`
+      );
     }
     for (const unread of report2.unread ?? []) {
       out.push(`(couldn't read ${unread})`);
@@ -30187,6 +30206,9 @@ var integrateCommands = [
 // src/report.ts
 import { readFileSync as readFileSync2 } from "node:fs";
 import { appendFile } from "node:fs/promises";
+import process11 from "node:process";
+
+// src/pullRequestComment.ts
 import process10 from "node:process";
 
 // src/workflowCommands.ts
@@ -30218,6 +30240,248 @@ function fenced(text3) {
   return `${fence2}text
 ${body}
 ${fence2}`;
+}
+function codeSpan(text3) {
+  const body = line(text3).replaceAll("|", "\\|");
+  if (!body) return "";
+  const longest = Math.max(
+    0,
+    ...(body.match(/`+/g) ?? []).map((run4) => run4.length)
+  );
+  const fence2 = "`".repeat(longest + 1);
+  const pad = body.startsWith("`") || body.endsWith("`") ? " " : "";
+  return `${fence2}${pad}${body}${pad}${fence2}`;
+}
+
+// src/pullRequestComment.ts
+function runPlace(env = process10.env) {
+  const repository = env.GITHUB_REPOSITORY ?? "";
+  const sha = env.GITHUB_SHA ?? "";
+  if (!/^[\w.-]+\/[\w.-]+$/.test(repository)) return void 0;
+  if (!/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/.test(sha)) return void 0;
+  const server = (env.GITHUB_SERVER_URL ?? "").replace(/\/+$/, "");
+  const runId = env.GITHUB_RUN_ID ?? "";
+  return {
+    api: (env.GITHUB_API_URL || "https://api.github.com").replace(/\/+$/, ""),
+    repository,
+    .../^https?:\/\/[^\s/]+$/.test(server) && /^\d+$/.test(runId) ? { runUrl: `${server}/${repository}/actions/runs/${runId}` } : {},
+    sha
+  };
+}
+var commentMarker = (appId) => `<!-- todesktop-build-result ${appId.replaceAll(/[^\w.-]|-(?=-)/g, "_")} -->`;
+var statuses = [
+  "failed",
+  "inconclusive",
+  "passed",
+  "queued",
+  "running",
+  "skipped",
+  "warning"
+];
+var MAX_BODY = 3e4;
+var FOLD_AT = 100;
+function folded(text3, width = FOLD_AT) {
+  return text3.split("\n").flatMap((whole) => {
+    const indent2 = /^ */.exec(whole)[0];
+    const under = indent2 ? `${indent2}    ` : "";
+    const lines = [];
+    let rest = whole;
+    while (rest.length > width) {
+      const at = rest.lastIndexOf(" ", width);
+      if (at <= under.length) break;
+      lines.push(rest.slice(0, at));
+      rest = `${under}${rest.slice(at + 1)}`;
+    }
+    return [...lines, rest];
+  }).join("\n");
+}
+var statusWord = (status2) => statuses.includes(status2) ? status2 : "unknown";
+function machinesTable(result) {
+  const machines = result.smoke?.machines ?? [];
+  if (machines.length === 0) return void 0;
+  const row = (cells) => `| ${cells.join(" | ")} |`;
+  const journeys = smokeJourneysToRead.map((id) => smokeJourneyNames[id]);
+  return [
+    row(["Machine", "Result", ...journeys]),
+    row(["---", "---", ...journeys.map(() => "---")]),
+    ...machines.map(
+      (machine) => row([
+        codeSpan(`${machine.name} ${machine.arch}`.slice(0, 80)),
+        statusWord(machine.status),
+        ...smokeJourneysToRead.map(
+          (id) => statusWord(machine.journeys?.[id]?.status)
+        )
+      ])
+    )
+  ].join("\n");
+}
+function commentText(told, result, {
+  appId,
+  runUrl,
+  sha
+}) {
+  const table = machinesTable(result);
+  const plainPass = result.state === "passed" && !result.reason && (result.smoke?.machines ?? []).every(
+    (machine) => machine.warnings.length === 0
+  );
+  const body = told.body.length > MAX_BODY ? `${told.body.slice(0, MAX_BODY)}
+(Cut here: the workflow run's log has the rest.)` : told.body;
+  return [
+    commentMarker(appId),
+    `### ${told.title}`,
+    ...table ? [table] : [],
+    ...body && !(plainPass && table) ? [fenced(folded(body))] : [],
+    ...told.notes,
+    `Commit ${sha}.${runUrl ? ` [The workflow run](${runUrl}) has the whole log.` : ""}`,
+    "This workflow's ToDesktop step wrote this, and replaces it each time it reports a build of this pull request's head commit."
+  ].join("\n\n");
+}
+var NoComment = class extends Error {
+};
+async function refusalOf2(response) {
+  const said = await response.json().catch(() => null);
+  return typeof said?.message === "string" ? `: ${line(said.message).slice(0, 200)}` : "";
+}
+async function github(place, token, doing, method, path12, body) {
+  let response;
+  try {
+    response = await fetch(`${place.api}${path12}`, {
+      ...body === void 0 ? {} : { body: JSON.stringify(body) },
+      headers: {
+        "accept": "application/vnd.github+json",
+        "authorization": `Bearer ${token}`,
+        ...body === void 0 ? {} : { "content-type": "application/json" },
+        "user-agent": "todesktop-cli",
+        "x-github-api-version": "2022-11-28"
+      },
+      method,
+      signal: AbortSignal.timeout(2e4)
+    });
+  } catch (error46) {
+    throw new NoComment(
+      `GitHub didn't answer (${line(error46.message)}).`
+    );
+  }
+  if (response.status === 403 || response.status === 404) {
+    throw new NoComment(
+      `this job's token may not ${doing} (GitHub answered ${response.status}${await refusalOf2(response)}). To get the result on the pull request, give the job \`pull-requests: write\` under \`permissions\`.`
+    );
+  }
+  if (!response.ok) {
+    throw new NoComment(
+      `GitHub answered ${response.status}${await refusalOf2(response)}.`
+    );
+  }
+  try {
+    return await response.json();
+  } catch {
+    throw new NoComment("GitHub's answer wasn't JSON.");
+  }
+}
+async function commentsOf(place, token, number4) {
+  const all = [];
+  for (let page = 1; page <= 10; page += 1) {
+    const some = await github(
+      place,
+      token,
+      "read its comments",
+      "GET",
+      `/repos/${place.repository}/issues/${number4}/comments?per_page=100&page=${page}`
+    );
+    if (!Array.isArray(some)) break;
+    all.push(...some);
+    if (some.length < 100) break;
+  }
+  return all;
+}
+async function ownComment(place, token, comments, marker) {
+  const marked = comments.filter(
+    ({ body, id }) => typeof body === "string" && body.startsWith(marker) && Number.isSafeInteger(id)
+  );
+  const byBot = marked.find(({ user }) => user?.type === "Bot");
+  if (byBot || marked.length === 0) return byBot;
+  const me = await github(
+    place,
+    token,
+    "say whose it is",
+    "GET",
+    "/user"
+  ).catch(() => null);
+  return typeof me?.login === "string" ? marked.find(({ user }) => user?.login === me.login) : void 0;
+}
+async function commentOnPullRequests({
+  body,
+  marker,
+  place,
+  token
+}) {
+  const none = (why) => [
+    `ToDesktop: no comment on the pull request: ${why}`
+  ];
+  if (!place) {
+    return none(
+      "this isn't a GitHub Actions run (no GITHUB_REPOSITORY and GITHUB_SHA)."
+    );
+  }
+  if (!token) {
+    return none(
+      "the job gave no GitHub token (the upload action passes its `github-token` input; the CLI reads TODESKTOP_GITHUB_TOKEN)."
+    );
+  }
+  const short = place.sha.slice(0, 7);
+  try {
+    const found = await github(
+      place,
+      token,
+      "read the commit's pull requests",
+      "GET",
+      `/repos/${place.repository}/commits/${place.sha}/pulls?per_page=100`
+    );
+    const heads = (Array.isArray(found) ? found : []).filter(
+      (pull) => pull.state === "open" && pull.head?.sha === place.sha && Number.isSafeInteger(pull.number)
+    );
+    if (heads.length === 0) {
+      return none(`no open pull request has commit ${short} as its head.`);
+    }
+    const own = heads.filter(
+      (pull) => String(pull.head?.repo?.full_name).toLowerCase() === place.repository.toLowerCase()
+    );
+    if (own.length === 0) {
+      return none(
+        `the open pull request with commit ${short} as its head (#${heads.map((pull) => Number(pull.number)).join(", #")}) comes from a fork.`
+      );
+    }
+    const lines = [];
+    for (const pull of own) {
+      const number4 = Number(pull.number);
+      try {
+        const comments = await commentsOf(place, token, number4);
+        const mine = await ownComment(place, token, comments, marker);
+        const written = await github(
+          place,
+          token,
+          "write comments",
+          mine ? "PATCH" : "POST",
+          mine ? `/repos/${place.repository}/issues/comments/${Number(mine.id)}` : `/repos/${place.repository}/issues/${number4}/comments`,
+          { body }
+        );
+        const url2 = typeof written?.html_url === "string" && /^https?:\/\/\S+$/.test(written.html_url) ? `: ${line(written.html_url)}` : ".";
+        lines.push(
+          `ToDesktop: ${mine ? "updated its comment" : "wrote the result"} on pull request #${number4}${url2}`
+        );
+      } catch (error46) {
+        if (!(error46 instanceof NoComment)) throw error46;
+        lines.push(
+          `ToDesktop: no comment on pull request #${number4}: ${error46.message}`
+        );
+      }
+    }
+    return lines;
+  } catch (error46) {
+    return none(
+      error46 instanceof NoComment ? error46.message : `it couldn't be written (${line(error46.message)}).`
+    );
+  }
 }
 
 // src/report.ts
@@ -30358,7 +30622,7 @@ async function waitForResult({
     await sleep2(Math.min(pollMs ?? pollMsAfter(Date.now() - started), left));
   }
 }
-function repositoryIsPrivate(eventPath = process10.env.GITHUB_EVENT_PATH) {
+function repositoryIsPrivate(eventPath = process11.env.GITHUB_EVENT_PATH) {
   if (!eventPath) return void 0;
   try {
     const event = JSON.parse(readFileSync2(eventPath, "utf8"));
@@ -30462,7 +30726,7 @@ function reportOf(waited, {
       annotations.push(
         annotation(
           "error",
-          `ToDesktop smoke test failed: ${machine.name}, ${journey} journey`,
+          `ToDesktop smoke test failed: ${machine.name}, ${smokeJourneyNames[journey]}`,
           `Failed at ${failure.step}: ${failure.message}`
         )
       );
@@ -30552,7 +30816,7 @@ function summaryText(told) {
 async function report(options) {
   const { appId, dashboard, timeoutMinutes, url: url2 } = options;
   const say = (text3) => {
-    process10.stdout.write(`${text3}
+    process11.stdout.write(`${text3}
 `);
   };
   let first = true;
@@ -30566,7 +30830,7 @@ async function report(options) {
     first = false;
     return auth;
   };
-  const poll = Number(process10.env.TODESKTOP_POLL_MS);
+  const poll = Number(process11.env.TODESKTOP_POLL_MS);
   let waited;
   try {
     waited = await waitForResult({
@@ -30578,7 +30842,7 @@ async function report(options) {
       url: url2
     });
   } catch (error46) {
-    if (process10.env.GITHUB_ACTIONS === "true") {
+    if (process11.env.GITHUB_ACTIONS === "true") {
       say(
         annotation(
           "error",
@@ -30595,7 +30859,7 @@ async function report(options) {
   });
   say(`
 ${logText(told)}`);
-  const summary = process10.env.GITHUB_STEP_SUMMARY;
+  const summary = process11.env.GITHUB_STEP_SUMMARY;
   if (summary) {
     await appendFile(summary, `${summaryText(told)}
 
@@ -30607,6 +30871,27 @@ ${logText(told)}`);
       }
     );
   }
+  if (waited.kind === "result" && options.comment !== false) {
+    const place = runPlace();
+    let lines;
+    try {
+      lines = await commentOnPullRequests({
+        body: commentText(told, waited.result, {
+          appId,
+          runUrl: place?.runUrl,
+          sha: place?.sha ?? ""
+        }),
+        marker: commentMarker(appId),
+        place,
+        token: options.githubToken
+      });
+    } catch (error46) {
+      lines = [
+        `ToDesktop: no comment on the pull request: it couldn't be made (${line(error46.message)}).`
+      ];
+    }
+    for (const text3 of lines) say(text3);
+  }
   return told.exit;
 }
 
@@ -30615,7 +30900,7 @@ import { execFile as execFile4 } from "node:child_process";
 import { existsSync as existsSync10 } from "node:fs";
 import { mkdir as mkdir5, readdir as readdir5, readFile as readFile12, writeFile as writeFile4 } from "node:fs/promises";
 import path11 from "node:path";
-import process11 from "node:process";
+import process12 from "node:process";
 import { promisify as promisify3 } from "node:util";
 var run3 = promisify3(execFile4);
 var tauriPlatform = {
@@ -30624,11 +30909,11 @@ var tauriPlatform = {
   x64: ["darwin-x86_64"]
 };
 async function tauriSign(file3, keyFile) {
-  const cli2 = (process11.env.TAURI_CLI ?? "npx --yes @tauri-apps/cli@2.12.1").split(" ");
+  const cli2 = (process12.env.TAURI_CLI ?? "npx --yes @tauri-apps/cli@2.12.1").split(" ");
   const [command, ...prefix] = cli2;
   if (!command) throw new Error("TAURI_CLI is empty");
-  const key = keyFile ? ["--private-key-path", keyFile] : ["--private-key", process11.env.TAURI_SIGNING_PRIVATE_KEY ?? ""];
-  if (!keyFile && !process11.env.TAURI_SIGNING_PRIVATE_KEY) {
+  const key = keyFile ? ["--private-key-path", keyFile] : ["--private-key", process12.env.TAURI_SIGNING_PRIVATE_KEY ?? ""];
+  if (!keyFile && !process12.env.TAURI_SIGNING_PRIVATE_KEY) {
     throw new Error("Pass --key-file, or set TAURI_SIGNING_PRIVATE_KEY");
   }
   await run3(command, [
@@ -30637,7 +30922,7 @@ async function tauriSign(file3, keyFile) {
     "sign",
     ...key,
     "--password",
-    process11.env.TAURI_SIGNING_PRIVATE_KEY_PASSWORD ?? "",
+    process12.env.TAURI_SIGNING_PRIVATE_KEY_PASSWORD ?? "",
     file3
   ]);
   return (await readFile12(`${file3}.sig`, "utf8")).trim();
@@ -30676,7 +30961,7 @@ async function tauriBridge(options) {
     "tar",
     ["--no-mac-metadata", "-czf", tarball, "-C", unpacked, appName],
     {
-      env: { ...process11.env, COPYFILE_DISABLE: "1" }
+      env: { ...process12.env, COPYFILE_DISABLE: "1" }
     }
   );
   const signature = await tauriSign(tarball, options.keyFile);
@@ -30695,7 +30980,7 @@ async function tauriBridge(options) {
   const latest = path11.join(options.out, "latest.json");
   await writeFile4(latest, `${JSON.stringify(manifest, null, 2)}
 `);
-  process11.stdout.write(
+  process12.stdout.write(
     `Bridge to ${version3} (${arch}):
   ${tarball}
   ${tarball}.sig
@@ -30710,7 +30995,8 @@ var usage = `todesktop: ToDesktop v2 CLI
 
   upload [--config todesktop.config.ts] [--version X.Y.Z] [--test]
          [--input PLATFORM/ARCH=PATH]... [--dry-run]
-         [--wait [--wait-timeout MINUTES] [--details auto|true|false]]
+         [--wait [--wait-timeout MINUTES] [--details auto|true|false]
+          [--no-comment]]
       Checks the built apps the config lists that are on this machine,
       runs the config's prepareApp hook on a copy of each, and uploads
       them. In GitHub Actions (permissions: id-token: write), every job of
@@ -30722,7 +31008,7 @@ var usage = `todesktop: ToDesktop v2 CLI
       for the build's result, as report does.
 
   report [--app ID | --config FILE] [--wait-timeout MINUTES]
-         [--details auto|true|false]
+         [--details auto|true|false] [--no-comment]
       In GitHub Actions (permissions: id-token: write), with no ToDesktop
       sign-in: waits for the result of this workflow run's build and says
       it in the job's log and summary. Uploads nothing, so a last job
@@ -30734,6 +31020,12 @@ var usage = `todesktop: ToDesktop v2 CLI
       again. --details prints the end of the app's output from a failed
       launch: auto (the default) only when the repository is private, as
       a public repository's logs are public.
+      A final result is also written as one comment on the open pull
+      request whose head is the run's commit, and that comment is updated
+      by later runs: with the job's GitHub token in TODESKTOP_GITHUB_TOKEN
+      (permissions: pull-requests: write). Without the token or the
+      permission the log says in a line why there's no comment, and the
+      exit code is the same. --no-comment writes none.
 
   tauri-bridge --from DOWNLOAD_URL --base-url URL [--key-file KEY]
                [--notes TEXT] [--out DIR]
@@ -30756,7 +31048,7 @@ var builtIns = [
   {
     name: "report",
     summary: "In a CI job, with no sign-in: wait for the result of this workflow run's build and its smoke test, and say it in the job's log",
-    usage: "todesktop report [--app ID | --config FILE] [--wait-timeout MINUTES] [--details auto|true|false]"
+    usage: "todesktop report [--app ID | --config FILE] [--wait-timeout MINUTES] [--details auto|true|false] [--no-comment]"
   },
   {
     name: "tauri-bridge",
@@ -30817,20 +31109,20 @@ async function runAgentCommand(argv) {
     json2 = wantsJson(values.json);
     jsonProgress(json2);
     if (values.help) {
-      process12.stdout.write(
+      process13.stdout.write(
         `${usageOf(command.usage)}
     ${command.summary}
 `
       );
       return true;
     }
-    process12.exitCode = print(
+    process13.exitCode = print(
       await command.run({ args: positionals, json: json2, values }),
       json2
     );
   } catch (error46) {
     const usageError = error46.code?.startsWith("ERR_PARSE_ARGS") === true;
-    process12.exitCode = printError(
+    process13.exitCode = printError(
       usageError ? new CliError(
         "usage",
         `${error46.message}
@@ -30844,7 +31136,12 @@ ${usageOf(command.usage)}`,
   }
   return true;
 }
-function waitOptions(values) {
+function takeGithubToken() {
+  const token = process13.env.TODESKTOP_GITHUB_TOKEN;
+  delete process13.env.TODESKTOP_GITHUB_TOKEN;
+  return token || void 0;
+}
+function waitOptions(values, githubToken) {
   const details = values.details ?? "auto";
   if (!detailsValues.includes(details)) {
     throw new Error(`--details is auto, true or false, not "${details}"`);
@@ -30858,14 +31155,17 @@ function waitOptions(values) {
   const { edge } = hosts();
   const dashboard = dashboardOf(edge);
   return {
+    comment: !values["no-comment"],
     ...dashboard ? { dashboard } : {},
     details,
+    ...githubToken ? { githubToken } : {},
     timeoutMinutes,
     url: edge
   };
 }
 async function main() {
-  if (await runAgentCommand(process12.argv.slice(2))) return;
+  const githubToken = takeGithubToken();
+  if (await runAgentCommand(process13.argv.slice(2))) return;
   const { positionals, values } = parseArgs({
     allowPositionals: true,
     options: {
@@ -30878,6 +31178,7 @@ async function main() {
       "help": { type: "boolean" },
       "input": { multiple: true, type: "string" },
       "key-file": { type: "string" },
+      "no-comment": { type: "boolean" },
       "notes": { type: "string" },
       "out": { type: "string" },
       "test": { type: "boolean" },
@@ -30888,8 +31189,8 @@ async function main() {
   });
   const [command] = positionals;
   if (command === "report" && !values.help) {
-    const waiting2 = waitOptions(values);
-    process12.exitCode = await report({
+    const waiting2 = waitOptions(values, githubToken);
+    process13.exitCode = await report({
       appId: await appIdOf(values.app, ".", values.config),
       ...waiting2
     });
@@ -30911,18 +31212,18 @@ ${usage}`);
     return;
   }
   if (values.help || command !== "upload") {
-    process12.stdout.write(`${usage}
+    process13.stdout.write(`${usage}
 
 ${agentUsage}
 `);
-    if (!values.help) process12.exitCode = 1;
+    if (!values.help) process13.exitCode = 1;
     return;
   }
   const configFile = values.config ?? findConfigFile(".");
   if (!configFile) {
     throw new Error(`No ${configFileNames.join(", ")} here; pass --config`);
   }
-  const waiting = values.wait ? waitOptions(values) : void 0;
+  const waiting = values.wait ? waitOptions(values, githubToken) : void 0;
   const { appId } = await upload({
     configFile,
     dashboard: hosts().dashboard,
@@ -30933,13 +31234,13 @@ ${agentUsage}
     ...values.version ? { version: values.version } : {}
   });
   if (waiting && !values["dry-run"]) {
-    process12.exitCode = await report({ appId, ...waiting });
+    process13.exitCode = await report({ appId, ...waiting });
   }
 }
 main().catch((error46) => {
   const { code, message } = error46;
   const usageError = code?.startsWith("ERR_PARSE_ARGS_") ?? false;
-  process12.stderr.write(
+  process13.stderr.write(
     `${message}${usageError ? `
 
 upload, report and tauri-bridge print plain text; they take no --json.
@@ -30947,7 +31248,7 @@ upload, report and tauri-bridge print plain text; they take no --json.
 ${usage}` : ""}
 `
   );
-  process12.exitCode = usageError ? exitCodes.usage : 1;
+  process13.exitCode = usageError ? exitCodes.usage : 1;
 });
 /*! Bundled license information:
 
