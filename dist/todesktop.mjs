@@ -23395,15 +23395,22 @@ var appLabLimits = {
 };
 
 // ../contracts/src/smoke.ts
-var smokeJourneys = ["update", "fresh", "next"];
+var smokeJourneys = [
+  "update",
+  "fresh",
+  "next",
+  "v1"
+];
 var smokeJourneyNames = {
   fresh: "Fresh install",
   next: "Next update from this build",
-  update: "Update from your live release"
+  update: "Update from your live release",
+  v1: "Update from your v1 app"
 };
 var smokeJourneysToRead = [
   "fresh",
   "update",
+  "v1",
   "next"
 ];
 
@@ -26615,7 +26622,7 @@ async function tokenOf() {
 }
 
 // src/agent/smoke.ts
-var journeyOrder = ["update", "fresh", "next"];
+var journeyOrder = smokeJourneys;
 function runnerLogEnd(log, keep = 60) {
   const all = log.trimEnd().split("\n");
   if (all.length <= keep) return log;
@@ -26650,6 +26657,7 @@ var releasedSteps = /* @__PURE__ */ new Set([
 ]);
 function ranOf(journey, failure, run4) {
   if (failure.ran) return failure.ran;
+  if (journey === "v1") return void 0;
   if (journey !== "update") {
     return run4.build ? { ...run4.build, released: false } : void 0;
   }
@@ -26723,6 +26731,9 @@ async function journeyReports(run4, filesUrl, { full = false } = {}) {
 }
 var indent = (text3, by) => text3.trimEnd().split("\n").map((line2) => `${by}${line2}`).join("\n");
 function ranText(ran) {
+  if (ran.v1) {
+    return `Ran v1 ${ran.version}, the v1 app's release its users have now, not the build under test: the fault is in v1's released code, and its users' copies would meet it too.`;
+  }
   const which = `${ran.version} (build ${ran.buildNumber})`;
   return ran.released ? `Ran ${which}, the release users have now, not the build under test: the fault is in released code. A fix shows only once a version with it is released and a later build updates from it.` : `Ran ${which}, the build under test.`;
 }
@@ -30642,7 +30653,8 @@ var withoutDetail = ({
 }) => failure;
 function machinesText(smoke, withDetails) {
   return smoke.machines.map((machine, index) => {
-    const reports = smokeJourneys.map((journey) => {
+    const sent = smokeJourneys.filter((journey) => machine.journeys[journey]);
+    const reports = sent.map((journey) => {
       const { failure, skipped, status: status2 } = machine.journeys[journey];
       return {
         ...failure ? { failure: withDetails ? failure : withoutDetail(failure) } : {},
@@ -30668,7 +30680,7 @@ function machinesText(smoke, withDetails) {
 }
 var failedJourneys = (smoke) => (smoke?.machines ?? []).flatMap(
   (machine) => smokeJourneys.flatMap((journey) => {
-    const { failure } = machine.journeys[journey];
+    const failure = machine.journeys[journey]?.failure;
     return failure ? [{ failure, journey, machine }] : [];
   })
 );
