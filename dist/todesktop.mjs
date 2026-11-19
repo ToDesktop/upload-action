@@ -81,7 +81,7 @@ var require_parse = __commonJS({
     var parseState;
     var stack;
     var pos;
-    var line;
+    var line2;
     var column;
     var token;
     var key;
@@ -91,7 +91,7 @@ var require_parse = __commonJS({
       parseState = "start";
       stack = [];
       pos = 0;
-      line = 1;
+      line2 = 1;
       column = 0;
       token = void 0;
       key = void 0;
@@ -167,7 +167,7 @@ var require_parse = __commonJS({
     function read() {
       const c2 = peek();
       if (c2 === "\n") {
-        line++;
+        line2++;
         column = 0;
       } else if (c2) {
         column += c2.length;
@@ -639,7 +639,7 @@ var require_parse = __commonJS({
       return {
         type,
         value,
-        line,
+        line: line2,
         column
       };
     }
@@ -873,16 +873,16 @@ var require_parse = __commonJS({
     }
     function invalidChar(c2) {
       if (c2 === void 0) {
-        return syntaxError(`JSON5: invalid end of input at ${line}:${column}`);
+        return syntaxError(`JSON5: invalid end of input at ${line2}:${column}`);
       }
-      return syntaxError(`JSON5: invalid character '${formatChar(c2)}' at ${line}:${column}`);
+      return syntaxError(`JSON5: invalid character '${formatChar(c2)}' at ${line2}:${column}`);
     }
     function invalidEOF() {
-      return syntaxError(`JSON5: invalid end of input at ${line}:${column}`);
+      return syntaxError(`JSON5: invalid end of input at ${line2}:${column}`);
     }
     function invalidIdentifier() {
       column -= 5;
-      return syntaxError(`JSON5: invalid identifier character at ${line}:${column}`);
+      return syntaxError(`JSON5: invalid identifier character at ${line2}:${column}`);
     }
     function separatorChar(c2) {
       console.warn(`JSON5: '${formatChar(c2)}' in strings is not valid ECMAScript; consider escaping`);
@@ -913,7 +913,7 @@ var require_parse = __commonJS({
     }
     function syntaxError(message) {
       const err = new SyntaxError(message);
-      err.lineNumber = line;
+      err.lineNumber = line2;
       err.columnNumber = column;
       return err;
     }
@@ -1419,13 +1419,13 @@ var require_directives = __commonJS({
        * @param onError - May be called even if the action was successful
        * @returns `true` on success
        */
-      add(line, onError) {
+      add(line2, onError) {
         if (this.atNextDocument) {
           this.yaml = { explicit: _Directives.defaultYaml.explicit, version: "1.1" };
           this.tags = Object.assign({}, _Directives.defaultTags);
           this.atNextDocument = false;
         }
-        const parts = line.trim().split(/[ \t]+/);
+        const parts = line2.trim().split(/[ \t]+/);
         const name = parts.shift();
         switch (name) {
           case "%TAG": {
@@ -3022,9 +3022,9 @@ var require_stringifyCollection = __commonJS({
       } else {
         str2 = lines[0];
         for (let i = 1; i < lines.length; ++i) {
-          const line = lines[i];
-          str2 += line ? `
-${indent2}${line}` : "\n";
+          const line2 = lines[i];
+          str2 += line2 ? `
+${indent2}${line2}` : "\n";
         }
       }
       if (comment) {
@@ -3082,7 +3082,7 @@ ${indent2}${line}` : "\n";
           str2 += ",";
         } else if (ctx.options.trailingComma) {
           if (ctx.options.lineWidth > 0) {
-            reqNewline || (reqNewline = lines.reduce((sum, line) => sum + line.length + 2, 2) + (str2.length + 2) > ctx.options.lineWidth);
+            reqNewline || (reqNewline = lines.reduce((sum, line2) => sum + line2.length + 2, 2) + (str2.length + 2) > ctx.options.lineWidth);
           }
           if (reqNewline) {
             str2 += ",";
@@ -3098,14 +3098,14 @@ ${indent2}${line}` : "\n";
         return start + end;
       } else {
         if (!reqNewline) {
-          const len = lines.reduce((sum, line) => sum + line.length + 2, 2);
+          const len = lines.reduce((sum, line2) => sum + line2.length + 2, 2);
           reqNewline = ctx.options.lineWidth > 0 && len > ctx.options.lineWidth;
         }
         if (reqNewline) {
           let str2 = start;
-          for (const line of lines)
-            str2 += line ? `
-${indentStep}${indent2}${line}` : "\n";
+          for (const line2 of lines)
+            str2 += line2 ? `
+${indentStep}${indent2}${line2}` : "\n";
           return `${str2}
 ${indent2}${end}`;
         } else {
@@ -4848,10 +4848,10 @@ var require_errors = __commonJS({
       if (error46.pos[0] === -1)
         return;
       error46.linePos = error46.pos.map((pos) => lc.linePos(pos));
-      const { line, col } = error46.linePos[0];
-      error46.message += ` at line ${line}, column ${col}`;
+      const { line: line2, col } = error46.linePos[0];
+      error46.message += ` at line ${line2}, column ${col}`;
       let ci = col - 1;
-      let lineStr = src.substring(lc.lineStarts[line - 1], lc.lineStarts[line]).replace(/[\n\r]+$/, "");
+      let lineStr = src.substring(lc.lineStarts[line2 - 1], lc.lineStarts[line2]).replace(/[\n\r]+$/, "");
       if (ci >= 60 && lineStr.length > 80) {
         const trimStart = Math.min(ci - 39, lineStr.length - 79);
         lineStr = "\u2026" + lineStr.substring(trimStart);
@@ -4859,8 +4859,8 @@ var require_errors = __commonJS({
       }
       if (lineStr.length > 80)
         lineStr = lineStr.substring(0, 79) + "\u2026";
-      if (line > 1 && /^ *$/.test(lineStr.substring(0, ci))) {
-        let prev = src.substring(lc.lineStarts[line - 2], lc.lineStarts[line - 1]);
+      if (line2 > 1 && /^ *$/.test(lineStr.substring(0, ci))) {
+        let prev = src.substring(lc.lineStarts[line2 - 2], lc.lineStarts[line2 - 1]);
         if (prev.length > 80)
           prev = prev.substring(0, 79) + "\u2026\n";
         lineStr = prev + lineStr;
@@ -4868,7 +4868,7 @@ var require_errors = __commonJS({
       if (/[^ ]/.test(lineStr)) {
         let count = 1;
         const end = error46.linePos[1];
-        if (end?.line === line && end.col > col) {
+        if (end?.line === line2 && end.col > col) {
           count = Math.max(1, Math.min(end.col - col, 80 - ci));
         }
         const pointer = " ".repeat(ci) + "^".repeat(count);
@@ -5817,8 +5817,8 @@ var require_resolve_flow_scalar = __commonJS({
       return unfoldLines(source.slice(1, -1)).replace(/''/g, "'");
     }
     function unfoldLines(source) {
-      const line = /(.*?)\r?\n/sy;
-      let match = line.exec(source);
+      const line2 = /(.*?)\r?\n/sy;
+      let match = line2.exec(source);
       if (!match)
         return source;
       let trimEnd, trimBoth;
@@ -5831,8 +5831,8 @@ var require_resolve_flow_scalar = __commonJS({
       }
       let res = match[1].replace(trimEnd, "");
       let sep = " ";
-      let pos = line.lastIndex;
-      while (match = line.exec(source)) {
+      let pos = line2.lastIndex;
+      while (match = line2.exec(source)) {
         const lm = match[1].replace(trimBoth, "");
         if (lm === "") {
           if (sep === "\n")
@@ -5843,7 +5843,7 @@ var require_resolve_flow_scalar = __commonJS({
           res += sep + lm;
           sep = " ";
         }
-        pos = line.lastIndex;
+        pos = line2.lastIndex;
       }
       const last = /[ \t]*(.*)/sy;
       last.lastIndex = pos;
@@ -6973,40 +6973,40 @@ var require_lexer = __commonJS({
         }
       }
       *parseStream() {
-        let line = this.getLine();
-        if (line === null)
+        let line2 = this.getLine();
+        if (line2 === null)
           return this.setNext("stream");
-        if (line[0] === cst.BOM) {
+        if (line2[0] === cst.BOM) {
           yield* this.pushCount(1);
-          line = line.substring(1);
+          line2 = line2.substring(1);
         }
-        if (line[0] === "%") {
-          let dirEnd = line.length;
-          let cs = line.indexOf("#");
+        if (line2[0] === "%") {
+          let dirEnd = line2.length;
+          let cs = line2.indexOf("#");
           while (cs !== -1) {
-            const ch = line[cs - 1];
+            const ch = line2[cs - 1];
             if (ch === " " || ch === "	") {
               dirEnd = cs - 1;
               break;
             } else {
-              cs = line.indexOf("#", cs + 1);
+              cs = line2.indexOf("#", cs + 1);
             }
           }
           while (true) {
-            const ch = line[dirEnd - 1];
+            const ch = line2[dirEnd - 1];
             if (ch === " " || ch === "	")
               dirEnd -= 1;
             else
               break;
           }
           const n = (yield* this.pushCount(dirEnd)) + (yield* this.pushSpaces(true));
-          yield* this.pushCount(line.length - n);
+          yield* this.pushCount(line2.length - n);
           this.pushNewline();
           return "stream";
         }
         if (this.atLineEnd()) {
           const sp = yield* this.pushSpaces(true);
-          yield* this.pushCount(line.length - sp);
+          yield* this.pushCount(line2.length - sp);
           yield* this.pushNewline();
           return "stream";
         }
@@ -7047,13 +7047,13 @@ var require_lexer = __commonJS({
       }
       *parseDocument() {
         yield* this.pushSpaces(true);
-        const line = this.getLine();
-        if (line === null)
+        const line2 = this.getLine();
+        if (line2 === null)
           return this.setNext("doc");
         let n = yield* this.pushIndicators();
-        switch (line[n]) {
+        switch (line2[n]) {
           case "#":
-            yield* this.pushCount(line.length - n);
+            yield* this.pushCount(line2.length - n);
           // fallthrough
           case void 0:
             yield* this.pushNewline();
@@ -7078,7 +7078,7 @@ var require_lexer = __commonJS({
           case ">":
             n += yield* this.parseBlockScalarHeader();
             n += yield* this.pushSpaces(true);
-            yield* this.pushCount(line.length - n);
+            yield* this.pushCount(line2.length - n);
             yield* this.pushNewline();
             return yield* this.parseBlockScalar();
           default:
@@ -7098,11 +7098,11 @@ var require_lexer = __commonJS({
           }
           sp += yield* this.pushSpaces(true);
         } while (nl + sp > 0);
-        const line = this.getLine();
-        if (line === null)
+        const line2 = this.getLine();
+        if (line2 === null)
           return this.setNext("flow");
-        if (indent2 !== -1 && indent2 < this.indentNext && line[0] !== "#" || indent2 === 0 && (line.startsWith("---") || line.startsWith("...")) && isEmpty(line[3])) {
-          const atFlowEndMarker = indent2 === this.indentNext - 1 && this.flowLevel === 1 && (line[0] === "]" || line[0] === "}");
+        if (indent2 !== -1 && indent2 < this.indentNext && line2[0] !== "#" || indent2 === 0 && (line2.startsWith("---") || line2.startsWith("...")) && isEmpty(line2[3])) {
+          const atFlowEndMarker = indent2 === this.indentNext - 1 && this.flowLevel === 1 && (line2[0] === "]" || line2[0] === "}");
           if (!atFlowEndMarker) {
             this.flowLevel = 0;
             yield cst.FLOW_END;
@@ -7110,17 +7110,17 @@ var require_lexer = __commonJS({
           }
         }
         let n = 0;
-        while (line[n] === ",") {
+        while (line2[n] === ",") {
           n += yield* this.pushCount(1);
           n += yield* this.pushSpaces(true);
           this.flowKey = false;
         }
         n += yield* this.pushIndicators();
-        switch (line[n]) {
+        switch (line2[n]) {
           case void 0:
             return "flow";
           case "#":
-            yield* this.pushCount(line.length - n);
+            yield* this.pushCount(line2.length - n);
             return "flow";
           case "{":
           case "[":
@@ -10625,8 +10625,8 @@ var Doc = class {
     const lines = content.split("\n").filter((x) => x);
     const minIndent = Math.min(...lines.map((x) => x.length - x.trimStart().length));
     const dedented = lines.map((x) => x.slice(minIndent)).map((x) => " ".repeat(this.indent * 2) + x);
-    for (const line of dedented) {
-      this.content.push(line);
+    for (const line2 of dedented) {
+      this.content.push(line2);
     }
   }
   compile() {
@@ -21208,11 +21208,11 @@ function getLineColFromPtr(string4, ptr) {
   let lines = string4.slice(0, ptr).split(/\r?\n/);
   return [lines.length, lines.pop().length + 1];
 }
-function makeCodeBlock(string4, line, column) {
+function makeCodeBlock(string4, line2, column) {
   let lines = string4.split(/\r?\n/);
   let codeblock = "";
-  let numberLen = (Math.log10(line + 1) | 0) + 1;
-  for (let i = line - 1; i <= line + 1; i++) {
+  let numberLen = (Math.log10(line2 + 1) | 0) + 1;
+  for (let i = line2 - 1; i <= line2 + 1; i++) {
     let l = lines[i - 1];
     if (!l)
       continue;
@@ -21220,7 +21220,7 @@ function makeCodeBlock(string4, line, column) {
     codeblock += ":  ";
     codeblock += l;
     codeblock += "\n";
-    if (i === line) {
+    if (i === line2) {
       codeblock += " ".repeat(numberLen + column + 2);
       codeblock += "^\n";
     }
@@ -21232,12 +21232,12 @@ var TomlError = class _TomlError extends Error {
   column;
   codeblock;
   constructor(message, options) {
-    const [line, column] = getLineColFromPtr(options.toml, options.ptr);
-    const codeblock = makeCodeBlock(options.toml, line, column);
+    const [line2, column] = getLineColFromPtr(options.toml, options.ptr);
+    const codeblock = makeCodeBlock(options.toml, line2, column);
     super(`Invalid TOML document: ${message}
 
 ${codeblock}`, options);
-    this.line = line;
+    this.line = line2;
     this.column = column;
     this.codeblock = codeblock;
   }
@@ -23311,8 +23311,8 @@ async function loadConfig(file3, context) {
     ];
     throw new Error(
       `${file3} is invalid:
-${external_exports.prettifyError(parsed.error)}${fromPresets.map((line) => `
-  (${line})`).join("")}`
+${external_exports.prettifyError(parsed.error)}${fromPresets.map((line2) => `
+  (${line2})`).join("")}`
     );
   }
   askToRename(file3);
@@ -23368,7 +23368,7 @@ async function assembleApp(loaded, platform, arch, source, appDir) {
 }
 
 // src/cli.ts
-import process11 from "node:process";
+import process12 from "node:process";
 import { parseArgs } from "node:util";
 
 // ../contracts/src/appIcon.ts
@@ -23394,7 +23394,16 @@ var appLabLimits = {
   unwatchedMs: 2 * 6e4
 };
 
+// ../contracts/src/smoke.ts
+var smokeJourneys = ["update", "fresh", "next"];
+
 // ../contracts/src/ci.ts
+var NOTHING_SHOWS = "so nothing shows this build launches";
+var noRunReasons = {
+  "not-started": `ToDesktop couldn't start this build's smoke test, ${NOTHING_SHOWS}. The fault is ToDesktop's, not the app's: run it from the build's page in the ToDesktop dashboard (Run smoke test), or push again.`,
+  "off": `Smoke tests are off for this app, ${NOTHING_SHOWS}. Turn on "Smoke test every build" in the app's Settings \u203A Smoke tests in the ToDesktop dashboard, then push again.`,
+  "unavailable": `Smoke tests aren't available for this app yet, ${NOTHING_SHOWS}. ToDesktop turns them on for an account: ask ToDesktop for them, then push again.`
+};
 var pieceKey = (platform, arch) => `${platform}/${arch}`;
 var ciMacFormats = ["dmg", "pkg", "zip"];
 function requestedMacFormats(config3) {
@@ -23566,9 +23575,9 @@ var jsonProgress = (json2) => {
   progressInJson = json2 ? [] : void 0;
 };
 var withProgress = (envelope) => progressInJson?.length ? { ...envelope, progress: progressInJson } : envelope;
-var progress = (line) => {
-  if (progressInJson) progressInJson.push(line);
-  else process2.stderr.write(`${line}
+var progress = (line2) => {
+  if (progressInJson) progressInJson.push(line2);
+  else process2.stderr.write(`${line2}
 `);
 };
 
@@ -23614,6 +23623,13 @@ function hosts() {
     edge: trim(process3.env.TODESKTOP_URL || stage.edge),
     functions: trim(process3.env.TODESKTOP_FUNCTIONS_URL || stage.functions)
   };
+}
+function dashboardOf(edge) {
+  const trim = (url2) => url2.replace(/\/+$/, "");
+  if (process3.env.TODESKTOP_DASHBOARD_URL) {
+    return trim(process3.env.TODESKTOP_DASHBOARD_URL);
+  }
+  return Object.values(stages).find((stage) => stage.edge === trim(edge))?.dashboard;
 }
 async function postJson(url2, body, token) {
   let response;
@@ -23686,6 +23702,45 @@ async function callFunction(name, body) {
     );
   }
   return { body: json2, status: response.status };
+}
+
+// src/agent/appRef.ts
+import { readFile as readFile3 } from "node:fs/promises";
+import path3 from "node:path";
+import process4 from "node:process";
+var appIdPattern2 = /^[a-z0-9][a-z0-9-]{1,62}$/;
+async function folderApp(dir, config3) {
+  const found = config3 ?? findConfigFile(dir);
+  const file3 = found && path3.relative(".", found);
+  const text3 = file3 ? await readFile3(file3, "utf8").catch(() => "") : "";
+  const appId = text3.match(
+    /["']?appId["']?\s*:\s*["']([a-z0-9][a-z0-9-]{1,62})["']/
+  )?.[1];
+  return { ...appId ? { appId } : {}, ...file3 ? { file: file3 } : {} };
+}
+async function isFolderOf(appId, dir = ".") {
+  return (await folderApp(dir)).appId === appId;
+}
+async function appIdOf(flag, dir = ".", config3) {
+  const given = flag ?? process4.env.TODESKTOP_APP;
+  if (given) {
+    if (!appIdPattern2.test(given)) {
+      throw new CliError("invalid-app", `"${given}" isn't an app ID.`, {
+        exit: exitCodes.usage
+      });
+    }
+    return given;
+  }
+  const { appId, file: file3 } = await folderApp(dir, config3);
+  if (appId) return appId;
+  throw new CliError(
+    "no-app",
+    file3 ? `${file3} doesn't name its appId as a plain string: pass --app.` : "No todesktop.config.ts here: pass --app, or run this in your app's folder.",
+    {
+      exit: exitCodes.usage,
+      fix: [{ command: `${cli()} apps list`, why: "your apps and their IDs" }]
+    }
+  );
 }
 
 // ../recipes/src/frameworks.ts
@@ -23875,12 +23930,14 @@ function oldTauriBuild(version3) {
 var oldTauriBuildNote = (version3) => `tauri-build ${version3} (Cargo.lock) can't build the app with the updater's sidecar on Rust 1.100 or later: Rust moved its build folders, tauri-build follows from ${tauriBuildFixed}, and until then \`tauri build\` panics in the app's build script ("Is a directory", in tauri-build's lib.rs). The app built before only because it had no bundle.externalBin. So the workflow builds with Rust ${rustForOldTauriBuild}; build with it on your machine too (\`rustup override set ${rustForOldTauriBuild}\` in src-tauri). Or upgrade Tauri, which is the bigger change: \`cargo update\` in src-tauri takes tauri-build past ${tauriBuildFixed} with the rest of Tauri, and the workflow goes back to \`dtolnay/rust-toolchain@stable\`.`;
 var testBranch = "todesktop-test";
 var testRef = `refs/heads/${testBranch}`;
-var withTestRef = (refs) => refs.includes(testRef) ? refs : [...refs, testRef];
-function testPush(refs = []) {
-  return refs.some((ref) => patternCovers(ref, testRef)) ? {
-    command: `git push origin HEAD:${testRef}`,
-    title: `Push to ${testBranch}`
-  } : null;
+var testRefOf = (branch = testBranch) => `refs/heads/${branch}`;
+var withTestRef = (refs, branch = testBranch) => {
+  const ref = testRefOf(branch);
+  return refs.includes(ref) ? refs : [...refs, ref];
+};
+function testPush(refs = [], branch = testBranch) {
+  const ref = testRefOf(branch);
+  return /^[\w./-]+$/.test(branch) && refs.some((trusted) => patternCovers(trusted, ref)) ? { command: `git push origin HEAD:${ref}`, title: `Push to ${branch}` } : null;
 }
 var trustHash = "trust";
 var repositoryPattern = /^[\w.-]+\/[\w.-]+$/;
@@ -24004,23 +24061,46 @@ function edgeNote(edgeUrl) {
   }
   return "not ToDesktop's production: take this line out before a real release";
 }
-var uploadStep = (edgeUrl, {
-  packageJson = false,
-  refs = []
-} = {}) => `${packageJson ? `      - id: version   # package.json's, for runs without a tag
+var testRefFor = (app) => testRefOf(app.testBranch);
+var makesTestBuilds = (app) => (app.refs ?? []).some((ref) => patternCovers(ref, testRefFor(app)));
+var edgeLine = (edgeUrl) => edgeUrl.replace(/\/+$/, "") === productionEdgeUrl ? "" : `
+          url: ${edgeUrl}   # ${edgeNote(edgeUrl)}`;
+var uploadStep = (app, edgeUrl, { packageJson = false } = {}) => `${packageJson ? `      - id: version   # package.json's, for runs without a tag
         shell: bash
         run: echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
 ` : ""}      - uses: ToDesktop/upload-action@v1   # sends the built app
         with:
           # A tag (v1.2.3) names the version; other runs use${packageJson ? "\n          # package.json's" : " the\n          # config's"}, as branch names aren't versions.
-          version: \${{ github.ref_type == 'tag' && github.ref_name || ${packageJson ? "steps.version.outputs.version" : "''"} }}${// As testPush decides it: among the refs, or covered by one
-// (refs/heads/*), which runs on the branch all the same.
-refs.some((ref) => patternCovers(ref, testRef)) ? `
-          # A push to ${testBranch} makes a test build: smoke-tested, never released.
-          test: \${{ github.ref == '${testRef}' }}` : ""}${edgeUrl.replace(/\/+$/, "") === productionEdgeUrl ? "" : `
-          url: ${edgeUrl}   # ${edgeNote(edgeUrl)}`}`;
+          version: \${{ github.ref_type == 'tag' && github.ref_name || ${packageJson ? "steps.version.outputs.version" : "''"} }}${makesTestBuilds(app) ? `
+          # A push to ${app.testBranch ?? testBranch} makes a test build: smoke-tested, never released.
+          test: \${{ github.ref == '${testRefFor(app)}' }}` : ""}${edgeLine(edgeUrl)}`;
+var appIdPlaceholder = "your-app-id";
+var yamlString = (value) => `'${value.replace(/'/g, "''")}'`;
+var reportJob = (app, edgeUrl) => {
+  if (!makesTestBuilds(app)) return "";
+  const named = Boolean(app.id) && app.id !== appIdPlaceholder;
+  const dir = app.appDir?.replace(/^\.\/|\/+$/g, "");
+  const configLine = dir ? `
+          config: ${dir}/todesktop.config.ts` : "";
+  return `
+  report:   # waits for ToDesktop's result of a test build, and fails with the reason
+    needs: release
+    if: \${{ github.ref == '${testRefFor(app)}' }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write${named ? "" : `
+      contents: read`}
+    steps:${named ? "" : `
+      - uses: actions/checkout@v5   # todesktop.config.ts names the app`}
+      - uses: ToDesktop/upload-action@v1
+        with:
+          wait: only${named ? `
+          app: ${yamlString(app.id)}` : configLine}${edgeLine(edgeUrl)}`;
+};
 var yamlList = (items) => `[${items.map((item) => JSON.stringify(item)).join(", ")}]`;
-var workflowHead = (refs = []) => {
+var workflowHead = (app) => {
+  const refs = app.refs ?? [];
+  const test = app.testBranch ?? testBranch;
   const tags = refs.filter((ref) => ref.startsWith("refs/tags/")).map((ref) => ref.slice("refs/tags/".length));
   const branches = refs.filter((ref) => ref.startsWith("refs/heads/")).map((ref) => ref.slice("refs/heads/".length));
   const runOn = (tags.length ? tags : ["v*"]).map(
@@ -24028,13 +24108,13 @@ var workflowHead = (refs = []) => {
   );
   return `name: Release
 on:
-  push:   # the refs step 3 trusts
+  push:   # the refs ToDesktop accepts uploads from
 ${[
     ...tags.length || !branches.length ? [
       `    tags: ${yamlList(runOn)}${runOn.includes("[0-9]*") ? "   # version tags, as yours are: 1.2.3" : ""}`
     ] : [],
     ...branches.length ? [
-      `    branches: ${yamlList(branches)}${branches.includes(testBranch) ? `   # ${testBranch}: a test build` : ""}`
+      `    branches: ${yamlList(branches)}${branches.includes(test) ? `   # ${test}: a test build` : ""}`
     ] : []
   ].join("\n")}
   workflow_dispatch:
@@ -24045,7 +24125,7 @@ var nodeVersionOf = (app) => {
   if (!version3) return "24";
   return `${/^\d+$/.test(version3) ? version3 : `'${version3}'`}   # todesktop.json's nodeVersion`;
 };
-var matrixWorkflow = (app, matrix, steps, edgeUrl, { packageJson = true } = {}) => `${workflowHead(app.refs)}jobs:
+var matrixWorkflow = (app, matrix, steps, edgeUrl, { packageJson = true } = {}) => `${workflowHead(app)}jobs:
   release:
     strategy:
       matrix:
@@ -24061,7 +24141,7 @@ ${matrix}
         with:
           node-version: ${nodeVersionOf(app)}
 ${steps}
-${uploadStep(edgeUrl, { packageJson, refs: app.refs })}`;
+${uploadStep(app, edgeUrl, { packageJson })}${reportJob(app, edgeUrl)}`;
 var electronWorkflow = {
   description: `In .github/workflows/release.yml. A job per platform builds the app, unpacked and unsigned, and uploads it.`,
   title: "Build and upload in GitHub Actions"
@@ -24739,7 +24819,7 @@ healthReady, windowShown, report {event, data?}, shutdown \u2192 null
     },
     workflow: {
       description: `In .github/workflows/release.yml: your build steps, then the upload. Add a job per platform.`,
-      file: (app, edgeUrl) => `${workflowHead(app.refs)}jobs:
+      file: (app, edgeUrl) => `${workflowHead(app)}jobs:
   release:
     # A job per platform${app.configApps ? " and arch" : ""} todesktop.config.ts lists, on a matching runner.
     strategy:
@@ -24756,7 +24836,7 @@ ${otherMatrix(app)}
       # todesktop.config.ts points, with todesktop-updater beside its
       # executable (Contents/MacOS on macOS), from
       # ${sidecarUrl(`\${{ matrix.updater }}`, "tar.gz").replace(/\.tar\.gz$/, "")}
-${uploadStep(edgeUrl, { refs: app.refs })}`,
+${uploadStep(app, edgeUrl)}${reportJob(app, edgeUrl)}`,
       title: "Build and upload in GitHub Actions"
     }
   },
@@ -25191,7 +25271,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     },
     workflow: {
       description: `In .github/workflows/release.yml. It builds your app universal and unsigned, puts the ToDesktop updater in it and uploads it. Set your scheme's name.`,
-      file: (app, edgeUrl) => `${workflowHead(app.refs)}jobs:
+      file: (app, edgeUrl) => `${workflowHead(app)}jobs:
   release:
     runs-on: macos-15
     permissions:
@@ -25211,7 +25291,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
       - run: >-
           curl -fsSL https://dl.todesktop.com/v2/runtime/${healthReadyRuntime}/todesktop-updater-${healthReadyRuntime}-universal-apple-darwin.tar.gz
           | tar -xz -C ${shellWord(`build/Build/Products/Release/${app.name}.app/Contents/MacOS`)}
-${uploadStep(edgeUrl, { refs: app.refs })}`,
+${uploadStep(app, edgeUrl)}${reportJob(app, edgeUrl)}`,
       title: "Build and upload in GitHub Actions"
     }
   },
@@ -25318,7 +25398,7 @@ public sealed partial class MainWindow : Window
     },
     workflow: {
       description: `In .github/workflows/release.yml. It publishes your app for Windows x64, unpackaged and unsigned, puts the ToDesktop updater beside it and uploads it. Set your .csproj's path.`,
-      file: (app, edgeUrl) => `${workflowHead(app.refs)}jobs:
+      file: (app, edgeUrl) => `${workflowHead(app)}jobs:
   release:
     runs-on: windows-latest
     permissions:
@@ -25342,7 +25422,7 @@ public sealed partial class MainWindow : Window
         run: |
           Invoke-WebRequest ${sidecarUrl("x86_64-pc-windows-msvc", "zip")} -OutFile todesktop-updater.zip
           Expand-Archive todesktop-updater.zip -DestinationPath dist/windows-x64
-${uploadStep(edgeUrl, { refs: app.refs })}`,
+${uploadStep(app, edgeUrl)}${reportJob(app, edgeUrl)}`,
       title: "Build and upload in GitHub Actions"
     }
   },
@@ -25508,7 +25588,7 @@ impl qobject::Updates {
       description: `In .github/workflows/release.yml. It builds your app on Ubuntu 22.04, bundles Qt beside it with linuxdeploy's Qt plugin, adds the ToDesktop updater and uploads it, unsigned. Set your Qt version and where your .qml files are.`,
       file: (app, edgeUrl) => {
         const binary = slugOf(app.name);
-        return `${workflowHead(app.refs)}jobs:
+        return `${workflowHead(app)}jobs:
   release:
     # The oldest glibc you support: the app runs there and anywhere newer.
     runs-on: ${linuxRunner}
@@ -25552,7 +25632,7 @@ impl qobject::Updates {
       - run: >-
           curl -fsSL ${sidecarUrl("x86_64-unknown-linux-musl", "tar.gz")}
           | tar -xz -C dist/linux-x64
-${uploadStep(edgeUrl, { refs: app.refs })}`;
+${uploadStep(app, edgeUrl)}${reportJob(app, edgeUrl)}`;
       },
       title: "Build and upload in GitHub Actions"
     }
@@ -25569,8 +25649,8 @@ var recipes = allRecipes.map((recipe) => ({
 // ../recipes/src/detect.ts
 var import_yaml3 = __toESM(require_dist(), 1);
 import { existsSync as existsSync4 } from "node:fs";
-import { readdir as readdir3, readFile as readFile4 } from "node:fs/promises";
-import path4 from "node:path";
+import { readdir as readdir3, readFile as readFile5 } from "node:fs/promises";
+import path5 from "node:path";
 
 // ../recipes/src/electronBuilder.ts
 var import_json52 = __toESM(require_lib(), 1);
@@ -25700,9 +25780,9 @@ function electronBuilderShips(pkg, { settings, source }) {
 // ../recipes/src/native.ts
 var import_yaml2 = __toESM(require_dist(), 1);
 import { existsSync as existsSync3 } from "node:fs";
-import { readdir as readdir2, readFile as readFile3 } from "node:fs/promises";
-import path3 from "node:path";
-var readText = (file3) => readFile3(file3, "utf8").catch(() => void 0);
+import { readdir as readdir2, readFile as readFile4 } from "node:fs/promises";
+import path4 from "node:path";
+var readText = (file3) => readFile4(file3, "utf8").catch(() => void 0);
 function parseYamlSafe(source) {
   try {
     const value = (0, import_yaml2.parse)(source);
@@ -25719,7 +25799,7 @@ async function dotnetProjects(dir) {
   let files = entries.filter((entry) => entry.isFile() && entry.name.endsWith(".csproj")).map((entry) => entry.name);
   if (!files.length) {
     for (const solution of entries.filter((entry) => /\.slnx?$/.test(entry.name)).map((entry) => entry.name).sort()) {
-      const text3 = await readText(path3.join(dir, solution)) ?? "";
+      const text3 = await readText(path4.join(dir, solution)) ?? "";
       for (const match of text3.matchAll(/(?:Path=|,\s*)"([^"]+\.csproj)"/g)) {
         files.push(match[1].replaceAll("\\", "/"));
       }
@@ -25729,7 +25809,7 @@ async function dotnetProjects(dir) {
     for (const folder of entries.filter(
       (entry) => entry.isDirectory() && !entry.name.startsWith(".")
     )) {
-      const inside = await readdir2(path3.join(dir, folder.name)).catch(
+      const inside = await readdir2(path4.join(dir, folder.name)).catch(
         () => []
       );
       for (const name of inside.filter((each) => each.endsWith(".csproj"))) {
@@ -25738,12 +25818,12 @@ async function dotnetProjects(dir) {
     }
   }
   files = [...new Set(files)].filter(
-    (file3) => existsSync3(path3.join(dir, file3))
+    (file3) => existsSync3(path4.join(dir, file3))
   );
   const projects = await Promise.all(
     files.map(async (file3) => ({
       file: file3,
-      project: await readText(path3.join(dir, file3)) ?? ""
+      project: await readText(path4.join(dir, file3)) ?? ""
     }))
   );
   const rank = ({ file: file3, project }) => {
@@ -25770,7 +25850,7 @@ function dotnetUi(project) {
 var usesFlutter = (pubspec) => pubspec?.dependencies?.flutter?.sdk === "flutter";
 async function flutterFolder(dir) {
   const pubspec = parseYamlSafe(
-    await readText(path3.join(dir, "pubspec.yaml")) ?? ""
+    await readText(path4.join(dir, "pubspec.yaml")) ?? ""
   );
   if (!pubspec) return void 0;
   if (usesFlutter(pubspec)) return ".";
@@ -25780,10 +25860,10 @@ async function flutterFolder(dir) {
   for (const member of members) {
     const own = parseYamlSafe(
       // oxlint-disable-next-line no-await-in-loop -- a few members
-      await readText(path3.join(dir, member, "pubspec.yaml")) ?? ""
+      await readText(path4.join(dir, member, "pubspec.yaml")) ?? ""
     );
     const desktop = ["linux", "macos", "windows"].some(
-      (folder) => existsSync3(path3.join(dir, member, folder))
+      (folder) => existsSync3(path4.join(dir, member, folder))
     );
     if (usesFlutter(own) && desktop) return member.replace(/\/+$/, "");
   }
@@ -25795,29 +25875,29 @@ async function nativeApp(dir) {
     return {
       kind: "flutter",
       label: "Flutter",
-      project: path3.posix.join(flutter, "pubspec.yaml")
+      project: path4.posix.join(flutter, "pubspec.yaml")
     };
   }
-  if (existsSync3(path3.join(dir, "go.mod"))) {
-    const named = (await readText(path3.join(dir, "go.mod")))?.match(
+  if (existsSync3(path4.join(dir, "go.mod"))) {
+    const named = (await readText(path4.join(dir, "go.mod")))?.match(
       /^module\s+(\S+)/m
     )?.[1];
     const module = named ? { module: named.replace(/^"|"$/g, "") } : {};
-    if (existsSync3(path3.join(dir, "wails.json"))) {
+    if (existsSync3(path4.join(dir, "wails.json"))) {
       return { kind: "wails", label: "Go (Wails)", ...module };
     }
-    if (existsSync3(path3.join(dir, "FyneApp.toml"))) {
+    if (existsSync3(path4.join(dir, "FyneApp.toml"))) {
       return { kind: "fyne", label: "Go (Fyne)", ...module };
     }
     return { kind: "go", label: "Go", ...module };
   }
-  if (existsSync3(path3.join(dir, "Cargo.toml"))) {
+  if (existsSync3(path4.join(dir, "Cargo.toml"))) {
     return { kind: "rust", label: "Rust" };
   }
-  if (existsSync3(path3.join(dir, "CMakeLists.txt"))) {
+  if (existsSync3(path4.join(dir, "CMakeLists.txt"))) {
     const sources = await Promise.all(
       ["CMakeLists.txt", "src/CMakeLists.txt", "app/CMakeLists.txt"].map(
-        (file3) => readText(path3.join(dir, file3))
+        (file3) => readText(path4.join(dir, file3))
       )
     );
     const qt = sources.some(
@@ -25874,28 +25954,28 @@ var skipDirs = /* @__PURE__ */ new Set([
 ]);
 async function readJson(file3) {
   try {
-    const value = JSON.parse(await readFile4(file3, "utf8"));
+    const value = JSON.parse(await readFile5(file3, "utf8"));
     return value && typeof value === "object" && !Array.isArray(value) ? value : void 0;
   } catch {
     return void 0;
   }
 }
-var readText2 = (file3) => readFile4(file3, "utf8").catch(() => void 0);
+var readText2 = (file3) => readFile5(file3, "utf8").catch(() => void 0);
 var text2 = (value) => typeof value === "string" && value.trim() ? value.trim() : void 0;
 var cargoDepends = (toml, crate) => new RegExp(`^${crate}\\s*=`, "m").test(toml);
 async function gitDir(dir) {
-  const dotGit = path4.join(dir, ".git");
+  const dotGit = path5.join(dir, ".git");
   const pointer = (await readText2(dotGit))?.match(/^gitdir:\s*(.+)$/m)?.[1];
   if (!pointer) return dotGit;
-  const worktree = path4.resolve(dir, pointer.trim());
-  const common = (await readText2(path4.join(worktree, "commondir")))?.trim();
-  return common ? path4.resolve(worktree, common) : worktree;
+  const worktree = path5.resolve(dir, pointer.trim());
+  const common = (await readText2(path5.join(worktree, "commondir")))?.trim();
+  return common ? path5.resolve(worktree, common) : worktree;
 }
 function gitRoot(dir) {
-  let current = path4.resolve(dir);
+  let current = path5.resolve(dir);
   for (; ; ) {
-    if (existsSync4(path4.join(current, ".git"))) return current;
-    const parent = path4.dirname(current);
+    if (existsSync4(path5.join(current, ".git"))) return current;
+    const parent = path5.dirname(current);
     if (parent === current) return void 0;
     current = parent;
   }
@@ -25903,7 +25983,7 @@ function gitRoot(dir) {
 async function gitTags(root) {
   const git = await gitDir(root);
   const tags = /* @__PURE__ */ new Set();
-  const packed = await readText2(path4.join(git, "packed-refs")) ?? "";
+  const packed = await readText2(path5.join(git, "packed-refs")) ?? "";
   for (const match of packed.matchAll(/^[0-9a-f]+ refs\/tags\/(\S+)$/gm)) {
     tags.add(match[1]);
   }
@@ -25914,20 +25994,20 @@ async function gitTags(root) {
     for (const entry of entries) {
       const name = `${prefix}${entry.name}`;
       if (entry.isDirectory()) {
-        await walk(path4.join(folder, entry.name), `${name}/`);
+        await walk(path5.join(folder, entry.name), `${name}/`);
       } else {
         tags.add(name);
       }
     }
   };
-  await walk(path4.join(git, "refs", "tags"), "");
+  await walk(path5.join(git, "refs", "tags"), "");
   return [...tags].sort();
 }
 async function publishingWorkflows(root, workflows) {
   const publishes = /softprops\/action-gh-release|tauri-apps\/tauri-action|actions\/create-release|goreleaser|gh release (?:create|upload)|electron-builder[^\n]*--publish[ =](?:always|onTag)|electron-forge publish|run publish\b|APPLE_CERTIFICATE|CSC_LINK|TAURI_SIGNING_PRIVATE_KEY|APPLE_ID\b/;
   const found = [];
   for (const workflow of workflows) {
-    const source = await readText2(path4.join(root, workflow)) ?? "";
+    const source = await readText2(path5.join(root, workflow)) ?? "";
     if (/ToDesktop\/upload-action@/.test(source)) continue;
     const onTags = /^\s+tags:|^\s+release:|^on:\s*\[?[^\n]*\brelease\b/m.test(
       source
@@ -25966,7 +26046,7 @@ function workflowRefs(source) {
 }
 async function releaseRefsOf(root, workflows, appDir) {
   for (const workflow of workflows) {
-    const source = await readText2(path4.join(root, workflow)) ?? "";
+    const source = await readText2(path5.join(root, workflow)) ?? "";
     if (!/ToDesktop\/upload-action@|todesktop upload\b/.test(source)) continue;
     const thisApp = appDir ? source.includes(`${appDir}/todesktop.config`) : !/\bconfig:\s*\S+\/todesktop\.config/.test(source);
     if (!thisApp) continue;
@@ -25986,7 +26066,7 @@ function electronFramework(deps) {
 async function workspaceApps(dir, pkg) {
   const workspaces = pkg?.workspaces;
   const patterns = Array.isArray(workspaces) ? workspaces.filter((item) => typeof item === "string") : workspaces?.packages ?? [];
-  const pnpm = await readText2(path4.join(dir, "pnpm-workspace.yaml"));
+  const pnpm = await readText2(path5.join(dir, "pnpm-workspace.yaml"));
   if (pnpm) {
     const listed = (0, import_yaml3.parse)(pnpm)?.packages;
     if (Array.isArray(listed)) {
@@ -25998,7 +26078,7 @@ async function workspaceApps(dir, pkg) {
     const clean = pattern.replace(/^\.\//, "").replace(/\/+$/, "");
     if (clean.endsWith("/*") || clean.endsWith("/**")) {
       const parent = clean.replace(/\/\*\*?$/, "");
-      const entries = await readdir3(path4.join(dir, parent), {
+      const entries = await readdir3(path5.join(dir, parent), {
         withFileTypes: true
       }).catch(() => []);
       for (const entry of entries) {
@@ -26010,9 +26090,9 @@ async function workspaceApps(dir, pkg) {
   }
   const apps = [];
   for (const folder of [...new Set(folders)].sort()) {
-    const full = path4.join(dir, folder);
+    const full = path5.join(dir, folder);
     if (tauriConfigNames.some(
-      (name) => existsSync4(path4.join(full, "src-tauri", name))
+      (name) => existsSync4(path5.join(full, "src-tauri", name))
     )) {
       apps.push({
         dir: folder,
@@ -26021,7 +26101,7 @@ async function workspaceApps(dir, pkg) {
       });
       continue;
     }
-    const json2 = await readJson(path4.join(full, "package.json"));
+    const json2 = await readJson(path5.join(full, "package.json"));
     const all = {
       ...json2?.dependencies,
       ...json2?.devDependencies
@@ -26038,7 +26118,7 @@ async function workspaceApps(dir, pkg) {
   return apps;
 }
 async function githubRepository(dir) {
-  const gitConfig = await readText2(path4.join(await gitDir(dir), "config"));
+  const gitConfig = await readText2(path5.join(await gitDir(dir), "config"));
   const origin = gitConfig?.match(
     /\[remote "origin"\][^[]*?url\s*=\s*(\S+)/
   )?.[1];
@@ -26051,14 +26131,14 @@ async function filesMentioning(dir, needle, depth = 4, extensions = sourceExtens
       () => []
     );
     for (const entry of entries) {
-      const full = path4.join(current, entry.name);
+      const full = path5.join(current, entry.name);
       if (entry.isDirectory()) {
         if (level < depth && !skipDirs.has(entry.name)) {
           await walk(full, level + 1);
         }
-      } else if (extensions.has(path4.extname(entry.name)) && // oxlint-disable-next-line no-await-in-loop -- one file at a time
+      } else if (extensions.has(path5.extname(entry.name)) && // oxlint-disable-next-line no-await-in-loop -- one file at a time
       (await readText2(full))?.includes(needle)) {
-        found.push(path4.relative(dir, full));
+        found.push(path5.relative(dir, full));
       }
     }
   };
@@ -26092,23 +26172,23 @@ async function filesEndingWith(dir, suffix) {
 async function dotnetClient(dir, csprojs) {
   for (const folder of /* @__PURE__ */ new Set([
     ".",
-    ...csprojs.map((file3) => path4.dirname(file3))
+    ...csprojs.map((file3) => path5.dirname(file3))
   ])) {
-    const file3 = path4.posix.join(folder, "ToDesktopUpdater.cs");
-    if (existsSync4(path4.join(dir, file3))) return file3;
+    const file3 = path5.posix.join(folder, "ToDesktopUpdater.cs");
+    if (existsSync4(path5.join(dir, file3))) return file3;
   }
   for (const csproj of csprojs) {
-    const project = await readText2(path4.join(dir, csproj)) ?? "";
+    const project = await readText2(path5.join(dir, csproj)) ?? "";
     if (/Include="[^"]*ToDesktopUpdater\.cs"/.test(project)) {
       return `${csproj}: ToDesktopUpdater.cs`;
     }
   }
   return "";
 }
-var isClientSource = (file3) => path4.basename(file3) === "ToDesktopUpdater.cs" || /(?:^|[/\\])ToDesktopUpdater[/\\]Sources[/\\]/.test(file3) || file3.startsWith(`${qtClientDir}/`);
+var isClientSource = (file3) => path5.basename(file3) === "ToDesktopUpdater.cs" || /(?:^|[/\\])ToDesktopUpdater[/\\]Sources[/\\]/.test(file3) || file3.startsWith(`${qtClientDir}/`);
 async function swiftClient(dir, xcodeProjects) {
   for (const project of xcodeProjects) {
-    const pbxproj = await readText2(path4.join(dir, project, "project.pbxproj"));
+    const pbxproj = await readText2(path5.join(dir, project, "project.pbxproj"));
     if (pbxproj?.includes("ToDesktopUpdater")) {
       return `${project}: ToDesktopUpdater (Swift)`;
     }
@@ -26116,17 +26196,17 @@ async function swiftClient(dir, xcodeProjects) {
   return "";
 }
 var goClient = (dir) => {
-  const file3 = path4.posix.join(goClientDir, "todesktop_updater.go");
-  return existsSync4(path4.join(dir, file3)) ? file3 : "";
+  const file3 = path5.posix.join(goClientDir, "todesktop_updater.go");
+  return existsSync4(path5.join(dir, file3)) ? file3 : "";
 };
 var dartClient = (dir, flutter) => {
   if (flutter === void 0) return "";
-  const file3 = path4.posix.join(flutter, dartClientPath);
-  return existsSync4(path4.join(dir, file3)) ? file3 : "";
+  const file3 = path5.posix.join(flutter, dartClientPath);
+  return existsSync4(path5.join(dir, file3)) ? file3 : "";
 };
 var qtClient = (dir) => {
-  const file3 = path4.posix.join(qtClientDir, "todesktopupdater.h");
-  return existsSync4(path4.join(dir, file3)) ? file3 : "";
+  const file3 = path5.posix.join(qtClientDir, "todesktopupdater.h");
+  return existsSync4(path5.join(dir, file3)) ? file3 : "";
 };
 var nativeExtensions = /* @__PURE__ */ new Set([
   ".c",
@@ -26177,7 +26257,7 @@ async function electronBuilderFilesIn(dir) {
   return Object.fromEntries(
     await Promise.all(
       electronBuilderFiles.map(
-        async (name) => [name, await readText2(path4.join(dir, name))]
+        async (name) => [name, await readText2(path5.join(dir, name))]
       )
     )
   );
@@ -26186,7 +26266,7 @@ async function detect(dir) {
   const evidence = [];
   const remove = [];
   const result = {};
-  const pkg = await readJson(path4.join(dir, "package.json"));
+  const pkg = await readJson(path5.join(dir, "package.json"));
   const deps = {
     ...pkg?.dependencies,
     ...pkg?.devDependencies
@@ -26202,10 +26282,10 @@ async function detect(dir) {
     const [productName] = named.find(([value]) => text2(value)) ?? [];
     if (productName) result.productName = text2(productName);
     const main2 = text2(pkg.main);
-    if (main2) result.entry = path4.normalize(main2);
+    if (main2) result.entry = path5.normalize(main2);
   }
-  const tauriFile = tauriConfigNames.map((name) => path4.join("src-tauri", name)).find((file3) => existsSync4(path4.join(dir, file3)));
-  const cargo = await readText2(path4.join(dir, "Cargo.toml"));
+  const tauriFile = tauriConfigNames.map((name) => path5.join("src-tauri", name)).find((file3) => existsSync4(path5.join(dir, file3)));
+  const cargo = await readText2(path5.join(dir, "Cargo.toml"));
   const csprojs = (await dotnetProjects(dir)).map(({ file: file3 }) => file3);
   const xcodeProjects = await filesEndingWith(dir, ".xcodeproj");
   const flutter = await flutterFolder(dir);
@@ -26220,16 +26300,16 @@ async function detect(dir) {
     pick2("tauri", "high", tauriFile);
     const fields = tauriFields(
       tauriFile,
-      await readText2(path4.join(dir, tauriFile)) ?? ""
+      await readText2(path5.join(dir, tauriFile)) ?? ""
     );
     if (fields.productName) result.productName = fields.productName;
-    const lib = path4.join("src-tauri", "src", "lib.rs");
-    result.entry = existsSync4(path4.join(dir, lib)) ? lib : path4.join("src-tauri", "src", "main.rs");
+    const lib = path5.join("src-tauri", "src", "lib.rs");
+    result.entry = existsSync4(path5.join(dir, lib)) ? lib : path5.join("src-tauri", "src", "main.rs");
     const tauriCargo = await readText2(
-      path4.join(dir, "src-tauri", "Cargo.toml")
+      path5.join(dir, "src-tauri", "Cargo.toml")
     );
-    for (const lock of [path4.join("src-tauri", "Cargo.lock"), "Cargo.lock"]) {
-      const locked = (await readText2(path4.join(dir, lock)))?.match(
+    for (const lock of [path5.join("src-tauri", "Cargo.lock"), "Cargo.lock"]) {
+      const locked = (await readText2(path5.join(dir, lock)))?.match(
         /\[\[package\]\]\s*\nname = "tauri-build"\s*\nversion = "([^"]+)"/
       )?.[1];
       if (locked) {
@@ -26243,7 +26323,7 @@ async function detect(dir) {
         where: ["src-tauri/Cargo.toml"]
       });
     }
-    const tauriSource = await readText2(path4.join(dir, tauriFile)) ?? "";
+    const tauriSource = await readText2(path5.join(dir, tauriFile)) ?? "";
     if (/"?createUpdaterArtifacts"?\s*[:=]/.test(tauriSource)) {
       remove.push({
         what: "bundle.createUpdaterArtifacts (it signs updater bundles with your Tauri key)",
@@ -26295,7 +26375,7 @@ async function detect(dir) {
     pick2("xcode", "high", xcodeProjects[0]);
   } else if (csprojs.length) {
     result.project = csprojs[0];
-    const project = await readText2(path4.join(dir, csprojs[0])) ?? "";
+    const project = await readText2(path5.join(dir, csprojs[0])) ?? "";
     if (/<UseWinUI>\s*true\s*<\/UseWinUI>|Microsoft\.WindowsAppSDK/.test(project)) {
       pick2("winui", "high", `${csprojs[0]}: WinUI (Windows App SDK)`);
     } else {
@@ -26303,7 +26383,7 @@ async function detect(dir) {
     }
   } else if (flutter) {
     evidence.push(
-      `${path4.posix.join(flutter, "pubspec.yaml")}: a Flutter app, which "Something else" fits`
+      `${path5.posix.join(flutter, "pubspec.yaml")}: a Flutter app, which "Something else" fits`
     );
   } else if (cargo && cargoDepends(cargo, "cxx-qt")) {
     pick2("qt", "high", "Cargo.toml: cxx-qt");
@@ -26315,9 +26395,9 @@ async function detect(dir) {
     );
   } else if (cargo) {
     evidence.push('Cargo.toml: a Rust app, which "Something else" fits');
-  } else if (existsSync4(path4.join(dir, "go.mod"))) {
+  } else if (existsSync4(path5.join(dir, "go.mod"))) {
     evidence.push('go.mod: a Go app, which "Something else" fits');
-  } else if (existsSync4(path4.join(dir, "CMakeLists.txt"))) {
+  } else if (existsSync4(path5.join(dir, "CMakeLists.txt"))) {
     evidence.push('CMakeLists.txt: a C++ app, which "Something else" fits');
   } else {
     evidence.push('No build tool recognized: "Something else" fits any app');
@@ -26350,17 +26430,17 @@ async function detect(dir) {
     }
   }
   const root = gitRoot(dir);
-  const appDir = root ? path4.relative(root, path4.resolve(dir)) : "";
-  if (appDir) result.appDir = appDir.split(path4.sep).join("/");
+  const appDir = root ? path5.relative(root, path5.resolve(dir)) : "";
+  if (appDir) result.appDir = appDir.split(path5.sep).join("/");
   const lockfile = [dir, ...root && appDir ? [root] : []].flatMap(
-    (folder) => lockfileManagers.filter(([name]) => existsSync4(path4.join(folder, name))).map(([name, manager]) => ({
+    (folder) => lockfileManagers.filter(([name]) => existsSync4(path5.join(folder, name))).map(([name, manager]) => ({
       manager,
-      name: folder === dir ? name : path4.relative(dir, path4.join(folder, name))
+      name: folder === dir ? name : path5.relative(dir, path5.join(folder, name))
     }))
   )[0];
   if (pkg) {
     result.lockfile = lockfile?.name ?? null;
-    const rootPkg = root && appDir ? await readJson(path4.join(root, "package.json")) : void 0;
+    const rootPkg = root && appDir ? await readJson(path5.join(root, "package.json")) : void 0;
     const declared = text2(pkg.packageManager)?.match(
       /^(npm|pnpm|yarn|bun)@/
     )?.[1];
@@ -26377,12 +26457,12 @@ async function detect(dir) {
     );
     Object.assign(result, electronBuilderPaths(pkg, config4));
     const ships = electronBuilderShips(pkg, config4);
-    if (ships.entitlements && !existsSync4(path4.join(dir, ships.entitlements.file))) {
+    if (ships.entitlements && !existsSync4(path5.join(dir, ships.entitlements.file))) {
       delete ships.entitlements;
     }
     if (Object.keys(ships).length) result.electronBuilder = ships;
   }
-  const tauriManifest = tauriFile ? await readText2(path4.join(dir, "src-tauri", "Cargo.toml")) : void 0;
+  const tauriManifest = tauriFile ? await readText2(path5.join(dir, "src-tauri", "Cargo.toml")) : void 0;
   const updater = (dep("@todesktop/updater") ? "package.json: @todesktop/updater" : "") || (dep("@todesktop/tauri") ? "package.json: @todesktop/tauri" : "") || (tauriManifest && cargoDepends(tauriManifest, "tauri-plugin-todesktop") ? "src-tauri/Cargo.toml: tauri-plugin-todesktop" : "") || (cargo && cargoDepends(cargo, "todesktop-updater") ? "Cargo.toml: todesktop-updater" : "") || await dotnetClient(dir, csprojs) || (xcodeProjects.length ? await swiftClient(dir, xcodeProjects) : "") || goClient(dir) || dartClient(dir, flutter) || qtClient(dir);
   if (updater) {
     result.updater = updater;
@@ -26400,8 +26480,8 @@ async function detect(dir) {
   }
   let config3;
   for (const name of configNames2) {
-    if (!existsSync4(path4.join(dir, name))) continue;
-    const source = await readText2(path4.join(dir, name)) ?? "";
+    if (!existsSync4(path5.join(dir, name))) continue;
+    const source = await readText2(path5.join(dir, name)) ?? "";
     const v1 = !/\bappId\b/.test(source) && /["']?\bid["']?\s*:/.test(source);
     if (v1) result.v1Config ??= name;
     else {
@@ -26410,7 +26490,7 @@ async function detect(dir) {
     }
   }
   const repoRoot = root ?? dir;
-  const workflowsDir = path4.join(repoRoot, ".github", "workflows");
+  const workflowsDir = path5.join(repoRoot, ".github", "workflows");
   const workflows = (await readdir3(workflowsDir).catch(() => [])).filter((name) => /\.ya?ml$/.test(name)).map((name) => `.github/workflows/${name}`).sort();
   const publishing = await publishingWorkflows(repoRoot, workflows);
   if (publishing.length) result.publishing = publishing;
@@ -26464,45 +26544,6 @@ import { readFileSync } from "node:fs";
 import os2 from "node:os";
 import process6 from "node:process";
 import { setTimeout as sleep } from "node:timers/promises";
-
-// src/agent/appRef.ts
-import { readFile as readFile5 } from "node:fs/promises";
-import path5 from "node:path";
-import process4 from "node:process";
-var appIdPattern2 = /^[a-z0-9][a-z0-9-]{1,62}$/;
-async function folderApp(dir) {
-  const found = findConfigFile(dir);
-  const file3 = found && path5.relative(".", found);
-  const text3 = file3 ? await readFile5(file3, "utf8").catch(() => "") : "";
-  const appId = text3.match(
-    /["']?appId["']?\s*:\s*["']([a-z0-9][a-z0-9-]{1,62})["']/
-  )?.[1];
-  return { ...appId ? { appId } : {}, ...file3 ? { file: file3 } : {} };
-}
-async function isFolderOf(appId, dir = ".") {
-  return (await folderApp(dir)).appId === appId;
-}
-async function appIdOf(flag, dir = ".") {
-  const given = flag ?? process4.env.TODESKTOP_APP;
-  if (given) {
-    if (!appIdPattern2.test(given)) {
-      throw new CliError("invalid-app", `"${given}" isn't an app ID.`, {
-        exit: exitCodes.usage
-      });
-    }
-    return given;
-  }
-  const { appId, file: file3 } = await folderApp(dir);
-  if (appId) return appId;
-  throw new CliError(
-    "no-app",
-    file3 ? `${file3} doesn't name its appId as a plain string: pass --app.` : "No todesktop.config.ts here: pass --app, or run this in your app's folder.",
-    {
-      exit: exitCodes.usage,
-      fix: [{ command: `${cli()} apps list`, why: "your apps and their IDs" }]
-    }
-  );
-}
 
 // src/agent/credentials.ts
 import { existsSync as existsSync5 } from "node:fs";
@@ -26583,9 +26624,9 @@ async function readFile7(url2) {
 }
 function journeyLines(log, id) {
   const lines = log.split("\n");
-  const start = lines.findIndex((line) => line.includes(`] == ${id}: `));
+  const start = lines.findIndex((line2) => line2.includes(`] == ${id}: `));
   if (start === -1) return "";
-  const after = lines.slice(start + 1).findIndex((line) => /\] (?:== \w+: |done$)/.test(line));
+  const after = lines.slice(start + 1).findIndex((line2) => /\] (?:== \w+: |done$)/.test(line2));
   return lines.slice(start, after === -1 ? void 0 : start + 1 + after).join("\n");
 }
 var releasedSteps = /* @__PURE__ */ new Set([
@@ -26621,7 +26662,7 @@ async function journeyReports(run4, filesUrl, { full = false } = {}) {
           const journey = result.journeys[journeyId];
           if (!journey) return void 0;
           const ran = journey.failure ? ranOf(journeyId, journey.failure, run4) : void 0;
-          const report = {
+          const report2 = {
             ...journey.failure ? { failure: { ...journey.failure, ...ran ? { ran } : {} } } : {},
             journey: journeyId,
             machine: id,
@@ -26637,39 +26678,39 @@ async function journeyReports(run4, filesUrl, { full = false } = {}) {
           };
           const unread = [];
           if (filesUrl && journey.output) {
-            report.outputUrl = fileUrl(id, journey.output);
-            const read = await readFile7(report.outputUrl);
+            report2.outputUrl = fileUrl(id, journey.output);
+            const read = await readFile7(report2.outputUrl);
             if ("text" in read) {
-              report.output = read.text;
-              report.outputEnd = outputEnd(read.text);
+              report2.output = read.text;
+              report2.outputEnd = outputEnd(read.text);
             } else unread.push(`${journey.output}: ${read.error}`);
           }
           if (filesUrl && journey.status === "failed") {
             if (journey.log) {
-              report.runnerLogUrl = fileUrl(id, journey.log);
-              const read = await readFile7(report.runnerLogUrl);
+              report2.runnerLogUrl = fileUrl(id, journey.log);
+              const read = await readFile7(report2.runnerLogUrl);
               if ("text" in read) {
-                report.runnerLog = full ? read.text : runnerLogEnd(read.text);
+                report2.runnerLog = full ? read.text : runnerLogEnd(read.text);
               } else unread.push(`${journey.log}: ${read.error}`);
             } else if (result.log) {
               const read = await wholeLog();
               if ("text" in read) {
                 const lines = journeyLines(read.text, journeyId);
-                if (lines) report.runnerLog = lines;
+                if (lines) report2.runnerLog = lines;
               } else {
                 unread.push(`${result.log}: ${read.error}`);
               }
             }
           }
-          if (unread.length > 0) report.unread = unread;
-          return report;
+          if (unread.length > 0) report2.unread = unread;
+          return report2;
         })
       );
     })
   );
-  return reports.flat().filter((report) => report !== void 0);
+  return reports.flat().filter((report2) => report2 !== void 0);
 }
-var indent = (text3, by) => text3.trimEnd().split("\n").map((line) => `${by}${line}`).join("\n");
+var indent = (text3, by) => text3.trimEnd().split("\n").map((line2) => `${by}${line2}`).join("\n");
 function ranText(ran) {
   const which = `${ran.version} (build ${ran.buildNumber})`;
   return ran.released ? `Ran ${which}, the release users have now, not the build under test: the fault is in released code. A fix shows only once a version with it is released and a later build updates from it.` : `Ran ${which}, the build under test.`;
@@ -26678,31 +26719,31 @@ var secs = (ms) => `${(ms / 1e3).toFixed(1)} s`;
 var timeline = (steps) => steps.map(
   ({ at, detail, id }) => `${id} ${secs(at)}${detail && id === "quit" ? ` (${detail})` : ""}`
 ).join(" \xB7 ");
-function journeyLine(journey, report) {
-  const label = report.journey.padEnd(7);
+function journeyLine(journey, report2) {
+  const label = report2.journey.padEnd(7);
   const pad = "           ";
-  if (report.status === "failed" && report.failure) {
-    const { ran } = report.failure;
+  if (report2.status === "failed" && report2.failure) {
+    const { ran } = report2.failure;
     const lines = [
-      `  ${label}  failed at ${report.failure.step}: ${report.failure.message}`
+      `  ${label}  failed at ${report2.failure.step}: ${report2.failure.message}`
     ];
     if (ran) lines.push(`${pad}${ranText(ran)}`);
-    else if (report.failure.step === "relaunch") {
+    else if (report2.failure.step === "relaunch") {
       lines.push(
         `${pad}Whose code was running isn't known: it failed as the new version started, before it said so.`
       );
     }
-    if (report.steps.length) {
-      lines.push(`${pad}Steps: ${timeline(report.steps)}`);
+    if (report2.steps.length) {
+      lines.push(`${pad}Steps: ${timeline(report2.steps)}`);
     }
-    if (report.failure.detail && !report.outputEnd) {
-      lines.push(indent(report.failure.detail, pad));
+    if (report2.failure.detail && !report2.outputEnd) {
+      lines.push(indent(report2.failure.detail, pad));
     }
     return lines.join("\n");
   }
-  if (report.skipped) return `  ${label}  ${report.status}: ${report.skipped}`;
+  if (report2.skipped) return `  ${label}  ${report2.status}: ${report2.skipped}`;
   const healthy = journey?.after?.healthyMs;
-  return `  ${label}  ${report.status}${healthy === void 0 ? "" : ` (healthy in ${secs(healthy)})`}`;
+  return `  ${label}  ${report2.status}${healthy === void 0 ? "" : ` (healthy in ${secs(healthy)})`}`;
 }
 function withFileUrls(run4, filesUrl) {
   if (!filesUrl) return run4;
@@ -26748,61 +26789,65 @@ function briefRun(run4) {
   };
 }
 function forJson(reports, full) {
-  return full ? reports : reports.map(({ output: _whole, ...report }) => report);
+  return full ? reports : reports.map(({ output: _whole, ...report2 }) => report2);
+}
+var warningText = (warning) => `${warning.metric} +${warning.percent}% (${warning.before} \u2192 ${warning.after}, over ${warning.limitPercent}%)`;
+var healthHint = "Each framework's call to start the updater and report healthReady: todesktop integrate --step updates.";
+function machineLines(result, reports) {
+  const { arch, method, name } = result.machine;
+  const out = [
+    `${name} ${arch}${method ? `, ${method}` : ""}: ${result.status}`
+  ];
+  if (result.error) out.push(`  ${result.error}`);
+  for (const report2 of reports) {
+    out.push(journeyLine(result.journeys[report2.journey], report2));
+  }
+  for (const warning of result.warnings ?? []) {
+    out.push(`  warning: ${warningText(warning)}`);
+  }
+  return out;
 }
 function smokeText(buildId, run4, reports, { again = "", full = false } = {}) {
   const out = [`${buildId} smoke test: ${run4.status}`];
   for (const result of run4.machines) {
-    const { arch, id, method, name } = result.machine;
-    out.push("", `${name} ${arch}, ${method}: ${result.status}`);
-    if (result.error) out.push(`  ${result.error}`);
-    for (const report of reports.filter((each) => each.machine === id)) {
-      out.push(journeyLine(result.journeys[report.journey], report));
-    }
-    for (const warning of result.warnings ?? []) {
-      out.push(
-        `  warning: ${warning.metric} +${warning.percent}% (${warning.before} \u2192 ${warning.after}, over ${warning.limitPercent}%)`
-      );
-    }
+    const mine = reports.filter((each) => each.machine === result.machine.id);
+    out.push("", ...machineLines(result, mine));
   }
   const quiet = [];
-  for (const report of reports) {
-    const where = `${report.machineName}, ${report.journey} journey`;
-    if (report.status === "failed") {
-      const end = report.outputEnd;
+  for (const report2 of reports) {
+    const where = `${report2.machineName}, ${report2.journey} journey`;
+    if (report2.status === "failed") {
+      const end = report2.outputEnd;
       if (full || !end) {
         out.push(
           "",
           `\u2500\u2500 The app's output: ${where} \u2500\u2500`,
-          report.output?.trimEnd() || "(none)"
+          report2.output?.trimEnd() || "(none)"
         );
       } else {
         out.push(
           "",
           `\u2500\u2500 The app's output: ${where}: its end, as written (${end.total} ${end.total === 1 ? "line" : "lines"} in all) \u2500\u2500`,
           ...end.lines,
-          `(All of it: ${again ? `${again} --full, or ` : ""}${report.outputUrl ?? "the JSON"})`
+          `(All of it: ${again ? `${again} --full, or ` : ""}${report2.outputUrl ?? "the JSON"})`
         );
       }
-      if (report.runnerLog) {
+      if (report2.runnerLog) {
         out.push(
           "",
           `\u2500\u2500 The smoke machine's log: ${where} \u2500\u2500`,
-          report.runnerLog.trimEnd()
+          report2.runnerLog.trimEnd()
         );
       }
-    } else if (report.output ?? report.outputEnd) {
-      quiet.push(`${report.machineName} ${report.journey}`);
+    } else if (report2.output ?? report2.outputEnd) {
+      quiet.push(`${report2.machineName} ${report2.journey}`);
     }
-    for (const unread of report.unread ?? []) {
+    for (const unread of report2.unread ?? []) {
       out.push(`(couldn't read ${unread})`);
     }
   }
-  if (reports.some((report) => report.failure?.health)) {
-    out.push(
-      "",
-      "Each framework's call to start the updater and report healthReady: todesktop integrate --step updates."
-    );
+  if (reports.some((report2) => report2.failure?.health)) {
+    out.push("", healthHint);
   }
   if (quiet.length > 0) {
     out.push(
@@ -26812,7 +26857,7 @@ function smokeText(buildId, run4, reports, { again = "", full = false } = {}) {
   }
   return out.join("\n");
 }
-var unstamped = (line) => line.replace(/^\[\s*[\d.]+ s\] /, "");
+var unstamped = (line2) => line2.replace(/^\[\s*[\d.]+ s\] /, "");
 function outputEnd(output, keep = 40) {
   const all = output.trimEnd().split("\n");
   const collapsed = [];
@@ -26826,14 +26871,14 @@ function outputEnd(output, keep = 40) {
     }
     repeats = 0;
   };
-  for (const line of all) {
-    const text3 = unstamped(line);
+  for (const line2 of all) {
+    const text3 = unstamped(line2);
     if (previous !== void 0 && text3 === previous) {
       repeats += 1;
       continue;
     }
     flush();
-    collapsed.push(line);
+    collapsed.push(line2);
     previous = text3;
   }
   flush();
@@ -27684,9 +27729,9 @@ var buildsWait = {
       const steps = Object.entries(build2.progress ?? {}).map(([platform, step]) => `${platform} ${step}`).join(", ");
       const smoke = smokeOf(build2);
       const awaited = awaitedUploads(build2);
-      const line = `${buildId} ${build2.status}${steps ? ` \xB7 ${steps}` : ""}${awaited ? ` \xB7 waiting for ${awaited.missing.join(", ")} to upload` : ""}${smoke ? ` \xB7 smoke ${smoke}` : ""}`;
-      if (line !== said) progress(line);
-      said = line;
+      const line2 = `${buildId} ${build2.status}${steps ? ` \xB7 ${steps}` : ""}${awaited ? ` \xB7 waiting for ${awaited.missing.join(", ")} to upload` : ""}${smoke ? ` \xB7 smoke ${smoke}` : ""}`;
+      if (line2 !== said) progress(line2);
+      said = line2;
       if (awaited?.overdue && !overdue) progress(overdueUploads(awaited));
       overdue = awaited?.overdue ? overdueUploads(awaited) : "";
       if (build2.status === "failed") {
@@ -28668,6 +28713,8 @@ function printSources(loaded) {
     );
   }
 }
+var CiRefusedError = class extends Error {
+};
 async function uploadToken(url2, appId, dashboard) {
   const response = await fetch(`${url2}/v2/ci/${appId}/token`, {
     headers: { authorization: `Bearer ${await githubOidcToken("todesktop")}` },
@@ -28675,9 +28722,8 @@ async function uploadToken(url2, appId, dashboard) {
   });
   const body = await response.json();
   if (!response.ok) {
-    throw new Error(
-      `ToDesktop refused this CI job: ${body.error}${notTrustedFix(appId, body, dashboard)}`
-    );
+    const message = `ToDesktop refused this CI job: ${body.error}${notTrustedFix(appId, body, dashboard)}`;
+    throw response.status < 500 ? new CiRefusedError(message) : new Error(message);
   }
   return body;
 }
@@ -28826,7 +28872,7 @@ async function uploadPiece(base, headers, tar, size) {
     JSON.stringify({ parts })
   );
 }
-function describe(status2) {
+function uploadsLine(status2) {
   const { build: build2 } = status2;
   if (build2 && status2.missing.length === 0) {
     return `all ${status2.received.length} apps are in: build ${build2.buildNumber} (${build2.buildId}) is being made`;
@@ -28968,10 +29014,11 @@ async function upload(options) {
         `  ${app.platform}/${app.arch}: uploaded ${Math.round(tar.size / 1024)} KiB in ${Math.ceil(tar.size / partBytes)} part(s), ${Date.now() - started} ms`
       );
     }
-    if (status2) console.info(describe(status2));
+    if (status2) console.info(uploadsLine(status2));
     if (status2?.build && status2.missing.length === 0) {
       console.info(`BUILD_ID=${status2.build.buildId}`);
     }
+    return { appId: config3.appId };
   } finally {
     await rm3(work, { force: true, recursive: true });
   }
@@ -29695,7 +29742,7 @@ function stepMarkdown(step, full) {
 ${step.needs.url}`);
   for (const note of step.notes) lines.push("", note);
   if (step.check) lines.push("", `Check: \`${step.check}\``);
-  return lines.filter((line, index) => line || lines[index - 1]).join("\n");
+  return lines.filter((line2, index) => line2 || lines[index - 1]).join("\n");
 }
 function briefOf(plan, steps, full) {
   const done = plan.steps.filter((step) => step.done).length;
@@ -29812,7 +29859,7 @@ var integrate = {
       ...written ? { written } : {}
     };
     if (!written) return { data, human: brief, next };
-    const report = written.map(
+    const report2 = written.map(
       ({ action, beside, path: file3 }) => beside ? `created  ${beside}   (${file3} is yours: merge its job into it, or keep both)` : `${action.padEnd(7)}  ${file3}${action === "exists" ? "   (left as it is)" : ""}`
     );
     const forYou = left.filter((each) => each.who === "you");
@@ -29820,7 +29867,7 @@ var integrate = {
     return {
       data,
       human: [
-        ...report.length ? report : ["Nothing to add: those files are here."],
+        ...report2.length ? report2 : ["Nothing to add: those files are here."],
         ...forYou.length ? [
           "",
           "Left for you:",
@@ -30137,12 +30184,438 @@ var integrateCommands = [
   configCheck
 ];
 
+// src/report.ts
+import { readFileSync as readFileSync2 } from "node:fs";
+import { appendFile } from "node:fs/promises";
+import process10 from "node:process";
+
+// src/workflowCommands.ts
+import { randomBytes } from "node:crypto";
+function plain(text3) {
+  return text3.replaceAll(/\r\n?|[\u0085\u2028\u2029]/g, "\n").replaceAll(/[\u0000-\u0008\u000B-\u001F\u007F]/g, "");
+}
+function line(text3) {
+  return plain(text3).replaceAll(/[\n\t]+/g, " ").replaceAll("##[", "# #[").replace(/^\s*::/, ": :").trim();
+}
+var blockToken = () => randomBytes(16).toString("hex");
+function block(text3, token = blockToken()) {
+  return `::stop-commands::${token}
+${plain(text3)}
+::${token}::`;
+}
+var escapeData = (text3) => plain(text3).replaceAll("%", "%25").replaceAll("\r", "%0D").replaceAll("\n", "%0A");
+var escapeProperty = (text3) => escapeData(text3).replaceAll(":", "%3A").replaceAll(",", "%2C");
+function annotation(kind, title, message) {
+  return `::${kind} title=${escapeProperty(title)}::${escapeData(message)}`;
+}
+function fenced(text3) {
+  const body = plain(text3);
+  const longest = Math.max(
+    0,
+    ...(body.match(/`+/g) ?? []).map((run4) => run4.length)
+  );
+  const fence2 = "`".repeat(Math.max(3, longest + 1));
+  return `${fence2}text
+${body}
+${fence2}`;
+}
+
+// src/report.ts
+var detailsValues = ["auto", "false", "true"];
+var defaultWaitMinutes = 90;
+var RENEW_MS = 2 * 6e4;
+var STILL_MS = 5 * 6e4;
+var pollMsAfter = (waited) => waited < 10 * 6e4 ? 15e3 : 3e4;
+var sleep2 = (ms) => new Promise((resolve) => {
+  setTimeout(resolve, ms);
+});
+var platformWords = {
+  built: "built",
+  claimed: "building",
+  failed: "failed",
+  queued: "waiting for a builder",
+  uploading: "waiting for its uploads"
+};
+var capitalized = (text3) => text3.charAt(0).toUpperCase() + text3.slice(1);
+var buildName = (result) => {
+  const { build: build2 } = result.status;
+  if (!build2) return "the build";
+  return `${result.test ? "test build" : "build"} ${Number(build2.buildNumber)} (${build2.buildId})`;
+};
+function progressLine(result) {
+  const { smoke, state, status: status2 } = result;
+  const named = capitalized(buildName(result));
+  if (state === "uploading") return result.reason ?? uploadsLine(status2);
+  if (state === "building") {
+    const platforms3 = Object.entries(status2.build?.platforms ?? {}).map(([platform, step]) => `${platform} ${platformWords[step] ?? step}`).join(", ");
+    return `${named} is being signed and packaged: ${platforms3}`;
+  }
+  if (state === "testing") {
+    return smoke ? `${named} is built. Smoke test: ${smoke.machines.map((machine) => `${machine.name} ${machine.status}`).join(", ")}` : `${named} is built. Its smoke test is starting.`;
+  }
+  return `${named}: ${state}`;
+}
+async function ask(url2, appId, token) {
+  let response;
+  try {
+    response = await fetch(`${url2}/v2/ci/${appId}/result`, {
+      headers: { authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(3e4)
+    });
+  } catch (error46) {
+    return { kind: "trouble", why: error46.message };
+  }
+  if (response.status === 401) return { kind: "unauthorized" };
+  if (response.status === 404) return { kind: "unsupported" };
+  if (response.status === 429 || response.status >= 500) {
+    return { kind: "trouble", why: `HTTP ${response.status}` };
+  }
+  const body = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(
+      `ToDesktop refused to say how this run's build went: ${typeof body?.error === "string" ? line(body.error) : `HTTP ${response.status}`}`
+    );
+  }
+  return typeof body?.state === "string" && body.status ? { kind: "result", result: body } : { kind: "trouble", why: "an answer that is not a result" };
+}
+async function waitForResult({
+  appId,
+  exchange,
+  pollMs,
+  say,
+  timeoutMs,
+  url: url2
+}) {
+  const started = Date.now();
+  const deadline = started + timeoutMs;
+  let auth = await exchange();
+  let authAt = started;
+  const renew = async () => {
+    try {
+      auth = await exchange();
+      authAt = Date.now();
+      return void 0;
+    } catch (error46) {
+      if (error46 instanceof CiRefusedError) throw error46;
+      return error46.message;
+    }
+  };
+  let last;
+  let said = "";
+  let saidAt = started;
+  let trouble = "";
+  let renewed = false;
+  for (; ; ) {
+    if (auth.expiresAt !== void 0 && auth.expiresAt * 1e3 - Date.now() < RENEW_MS && Date.now() - authAt > RENEW_MS) {
+      await renew();
+    }
+    let answer = await ask(url2, appId, auth.token);
+    if (answer.kind === "unsupported") return answer;
+    if (answer.kind === "unauthorized") {
+      if (renewed) {
+        throw new Error(
+          "ToDesktop refused the upload token it had just given this job (401)."
+        );
+      }
+      const why = await renew();
+      if (why === void 0) {
+        renewed = true;
+        continue;
+      }
+      answer = { kind: "trouble", why };
+    } else {
+      renewed = false;
+    }
+    if (answer.kind === "trouble") {
+      if (!trouble) {
+        say(`  ToDesktop didn't answer (${line(answer.why)}). Asking again.`);
+      }
+      trouble = answer.why;
+    } else {
+      trouble = "";
+      last = answer.result;
+      const now = line(progressLine(last));
+      if (last.done) return { kind: "result", result: last };
+      if (now !== said) {
+        say(`  ${now}`);
+        saidAt = Date.now();
+      } else if (Date.now() - saidAt >= STILL_MS) {
+        say(
+          `  Still waiting, ${Math.round((Date.now() - started) / 6e4)} minutes in: ${now}`
+        );
+        saidAt = Date.now();
+      }
+      said = now;
+    }
+    const left = deadline - Date.now();
+    if (left <= 0) {
+      return {
+        kind: "timed-out",
+        ...last ? { last } : {},
+        ...trouble ? { trouble } : {}
+      };
+    }
+    await sleep2(Math.min(pollMs ?? pollMsAfter(Date.now() - started), left));
+  }
+}
+function repositoryIsPrivate(eventPath = process10.env.GITHUB_EVENT_PATH) {
+  if (!eventPath) return void 0;
+  try {
+    const event = JSON.parse(readFileSync2(eventPath, "utf8"));
+    return typeof event.repository?.private === "boolean" ? event.repository.private : void 0;
+  } catch {
+    return void 0;
+  }
+}
+var hiddenNotes = {
+  false: "The end of the app's output isn't printed here: `details` is false.",
+  public: "The end of the app's output isn't printed here, because this repository is public and so are its logs. To print it anyway, set `details: true` on the ToDesktop/upload-action step (`--details true` for the CLI).",
+  unknown: "The end of the app's output isn't printed here: this run doesn't say its repository is private, and a public repository's logs are public. To print it, set `details: true` on the ToDesktop/upload-action step (`--details true` for the CLI)."
+};
+var withoutDetail = ({
+  detail: _detail,
+  ...failure
+}) => failure;
+function machinesText(smoke, withDetails) {
+  return smoke.machines.map((machine, index) => {
+    const reports = smokeJourneys.map((journey) => {
+      const { failure, skipped, status: status2 } = machine.journeys[journey];
+      return {
+        ...failure ? { failure: withDetails ? failure : withoutDetail(failure) } : {},
+        journey,
+        machine: String(index),
+        machineName: machine.name,
+        ...skipped ? { skipped } : {},
+        status: status2,
+        steps: []
+      };
+    });
+    return machineLines(
+      {
+        ...machine.error ? { error: machine.error } : {},
+        journeys: {},
+        machine: { arch: machine.arch, name: machine.name },
+        status: machine.status,
+        warnings: machine.warnings
+      },
+      reports
+    ).join("\n");
+  }).join("\n\n");
+}
+var failedJourneys = (smoke) => (smoke?.machines ?? []).flatMap(
+  (machine) => smokeJourneys.flatMap((journey) => {
+    const { failure } = machine.journeys[journey];
+    return failure ? [{ failure, journey, machine }] : [];
+  })
+);
+function reportOf(waited, {
+  appId,
+  dashboard,
+  details,
+  isPrivate,
+  timeoutMinutes
+}) {
+  const builds2 = dashboard ? `${dashboard}/apps/${appId}/builds` : void 0;
+  if (waited.kind === "unsupported") {
+    const message = "this ToDesktop server doesn't report a run's result yet, so this job can't say how the build went.";
+    return {
+      annotations: [
+        annotation("warning", "ToDesktop: no result", capitalized(message))
+      ],
+      body: "",
+      exit: 0,
+      headline: `ToDesktop: ${message}`,
+      notes: builds2 ? [`The app's builds in ToDesktop: ${builds2}`] : [],
+      title: "ToDesktop: this server doesn't report results yet"
+    };
+  }
+  if (waited.kind === "timed-out") {
+    const heard = waited.last ? ` Last heard: ${line(progressLine(waited.last)).replace(/\.$/, "")}.` : "";
+    const unanswered = waited.trouble ? ` ToDesktop's last answer wasn't one (${line(waited.trouble)}).` : "";
+    const message = `no result after ${timeoutMinutes} minutes.${heard}${unanswered} This is not a verdict on the build: ToDesktop hasn't finished. Run this job again to wait again.`;
+    return {
+      annotations: [
+        annotation("error", "ToDesktop: no result yet", capitalized(message))
+      ],
+      body: "",
+      exit: 1,
+      headline: `ToDesktop: ${message}`,
+      notes: [],
+      title: `ToDesktop: no result after ${timeoutMinutes} minutes`
+    };
+  }
+  const { result } = waited;
+  const { reason, smoke, state, status: status2 } = result;
+  const { build: build2 } = status2;
+  const failures = failedJourneys(smoke);
+  const withDetails = details === "true" || details === "auto" && isPrivate === true;
+  const kind = result.test ? "test build" : "build";
+  const number4 = build2 ? ` ${Number(build2.buildNumber)}` : "";
+  let outcome = "was built, but not smoke tested";
+  if (state === "passed") outcome = "passed its smoke test";
+  if (state === "failed") {
+    outcome = build2?.failed ? "failed to build" : "failed its smoke test";
+  }
+  const annotations = [];
+  if (state === "failed" && failures.length > 0) {
+    for (const { failure, journey, machine } of failures) {
+      annotations.push(
+        annotation(
+          "error",
+          `ToDesktop smoke test failed: ${machine.name}, ${journey} journey`,
+          `Failed at ${failure.step}: ${failure.message}`
+        )
+      );
+    }
+  } else if (state === "failed") {
+    annotations.push(
+      annotation(
+        "error",
+        `ToDesktop: the ${kind} ${outcome}`,
+        reason ?? "It failed."
+      )
+    );
+  } else if (state === "untested") {
+    annotations.push(
+      annotation(
+        "warning",
+        `ToDesktop: the ${kind} was not smoke tested`,
+        reason ?? "No smoke test ran."
+      )
+    );
+  } else {
+    for (const machine of smoke?.machines ?? []) {
+      for (const warning of machine.warnings) {
+        annotations.push(
+          annotation(
+            "warning",
+            `ToDesktop smoke test: ${machine.name}`,
+            warningText(warning)
+          )
+        );
+      }
+    }
+    if (reason) {
+      annotations.push(
+        annotation(
+          "warning",
+          "ToDesktop smoke test: not every machine",
+          reason
+        )
+      );
+    }
+  }
+  const body = [
+    ...reason ? [reason] : [],
+    ...build2?.failed ? [
+      `Platforms: ${Object.entries(build2.platforms).map(
+        ([platform, step]) => `${platform} ${platformWords[step] ?? step}`
+      ).join(", ")}`
+    ] : [],
+    ...smoke ? [machinesText(smoke, withDetails)] : []
+  ].join("\n\n");
+  const notes = [];
+  if (!withDetails && failures.some(({ failure }) => failure.detail)) {
+    const why = isPrivate === false ? "public" : "unknown";
+    notes.push(hiddenNotes[details === "false" ? "false" : why]);
+    if (failures.some(({ failure }) => failure.health)) notes.push(healthHint);
+  }
+  if (builds2 && build2) {
+    notes.push(
+      `The build in ToDesktop: ${builds2}/${encodeURIComponent(build2.buildId)}${smoke ? "?tab=smoke" : ""}`
+    );
+  }
+  return {
+    annotations,
+    body,
+    exit: state === "failed" ? 1 : 0,
+    headline: `ToDesktop: ${line(buildName(result))} ${outcome}.`,
+    notes,
+    title: `ToDesktop: ${kind}${number4} ${outcome}`
+  };
+}
+function logText(told) {
+  return [
+    told.headline,
+    ...told.body ? [block(told.body)] : [],
+    ...told.notes,
+    ...told.annotations
+  ].join("\n");
+}
+function summaryText(told) {
+  return [
+    `### ${told.title}`,
+    ...told.body ? [fenced(told.body)] : [],
+    ...told.notes
+  ].join("\n\n");
+}
+async function report(options) {
+  const { appId, dashboard, timeoutMinutes, url: url2 } = options;
+  const say = (text3) => {
+    process10.stdout.write(`${text3}
+`);
+  };
+  let first = true;
+  const exchange = async () => {
+    const auth = await uploadToken(url2, appId, dashboard);
+    if (first) {
+      say(
+        `ToDesktop: waiting for the result of this run's build, for up to ${timeoutMinutes} minutes (${line(auth.group)}).`
+      );
+    }
+    first = false;
+    return auth;
+  };
+  const poll = Number(process10.env.TODESKTOP_POLL_MS);
+  let waited;
+  try {
+    waited = await waitForResult({
+      appId,
+      exchange,
+      ...poll > 0 ? { pollMs: poll } : {},
+      say,
+      timeoutMs: timeoutMinutes * 6e4,
+      url: url2
+    });
+  } catch (error46) {
+    if (process10.env.GITHUB_ACTIONS === "true") {
+      say(
+        annotation(
+          "error",
+          "ToDesktop: couldn't get the build's result",
+          error46.message
+        )
+      );
+    }
+    throw error46;
+  }
+  const told = reportOf(waited, {
+    ...options,
+    isPrivate: repositoryIsPrivate()
+  });
+  say(`
+${logText(told)}`);
+  const summary = process10.env.GITHUB_STEP_SUMMARY;
+  if (summary) {
+    await appendFile(summary, `${summaryText(told)}
+
+`).catch(
+      (error46) => {
+        say(
+          `  (The job's summary couldn't be written: ${line(error46.message)})`
+        );
+      }
+    );
+  }
+  return told.exit;
+}
+
 // src/tauriBridge.ts
 import { execFile as execFile4 } from "node:child_process";
 import { existsSync as existsSync10 } from "node:fs";
 import { mkdir as mkdir5, readdir as readdir5, readFile as readFile12, writeFile as writeFile4 } from "node:fs/promises";
 import path11 from "node:path";
-import process10 from "node:process";
+import process11 from "node:process";
 import { promisify as promisify3 } from "node:util";
 var run3 = promisify3(execFile4);
 var tauriPlatform = {
@@ -30151,11 +30624,11 @@ var tauriPlatform = {
   x64: ["darwin-x86_64"]
 };
 async function tauriSign(file3, keyFile) {
-  const cli2 = (process10.env.TAURI_CLI ?? "npx --yes @tauri-apps/cli@2.12.1").split(" ");
+  const cli2 = (process11.env.TAURI_CLI ?? "npx --yes @tauri-apps/cli@2.12.1").split(" ");
   const [command, ...prefix] = cli2;
   if (!command) throw new Error("TAURI_CLI is empty");
-  const key = keyFile ? ["--private-key-path", keyFile] : ["--private-key", process10.env.TAURI_SIGNING_PRIVATE_KEY ?? ""];
-  if (!keyFile && !process10.env.TAURI_SIGNING_PRIVATE_KEY) {
+  const key = keyFile ? ["--private-key-path", keyFile] : ["--private-key", process11.env.TAURI_SIGNING_PRIVATE_KEY ?? ""];
+  if (!keyFile && !process11.env.TAURI_SIGNING_PRIVATE_KEY) {
     throw new Error("Pass --key-file, or set TAURI_SIGNING_PRIVATE_KEY");
   }
   await run3(command, [
@@ -30164,7 +30637,7 @@ async function tauriSign(file3, keyFile) {
     "sign",
     ...key,
     "--password",
-    process10.env.TAURI_SIGNING_PRIVATE_KEY_PASSWORD ?? "",
+    process11.env.TAURI_SIGNING_PRIVATE_KEY_PASSWORD ?? "",
     file3
   ]);
   return (await readFile12(`${file3}.sig`, "utf8")).trim();
@@ -30203,7 +30676,7 @@ async function tauriBridge(options) {
     "tar",
     ["--no-mac-metadata", "-czf", tarball, "-C", unpacked, appName],
     {
-      env: { ...process10.env, COPYFILE_DISABLE: "1" }
+      env: { ...process11.env, COPYFILE_DISABLE: "1" }
     }
   );
   const signature = await tauriSign(tarball, options.keyFile);
@@ -30222,7 +30695,7 @@ async function tauriBridge(options) {
   const latest = path11.join(options.out, "latest.json");
   await writeFile4(latest, `${JSON.stringify(manifest, null, 2)}
 `);
-  process10.stdout.write(
+  process11.stdout.write(
     `Bridge to ${version3} (${arch}):
   ${tarball}
   ${tarball}.sig
@@ -30237,6 +30710,7 @@ var usage = `todesktop: ToDesktop v2 CLI
 
   upload [--config todesktop.config.ts] [--version X.Y.Z] [--test]
          [--input PLATFORM/ARCH=PATH]... [--dry-run]
+         [--wait [--wait-timeout MINUTES] [--details auto|true|false]]
       Checks the built apps the config lists that are on this machine,
       runs the config's prepareApp hook on a copy of each, and uploads
       them. In GitHub Actions (permissions: id-token: write), every job of
@@ -30244,7 +30718,22 @@ var usage = `todesktop: ToDesktop v2 CLI
       config's apps are in. --test makes a test build: built, signed and
       smoke-tested like any other, and never released (every job of the
       run passes it). --input replaces an app's path for this run;
-      --dry-run checks and prepares without uploading.
+      --dry-run checks and prepares without uploading. --wait then waits
+      for the build's result, as report does.
+
+  report [--app ID | --config FILE] [--wait-timeout MINUTES]
+         [--details auto|true|false]
+      In GitHub Actions (permissions: id-token: write), with no ToDesktop
+      sign-in: waits for the result of this workflow run's build and says
+      it in the job's log and summary. Uploads nothing, so a last job
+      with no checkout can run it (--app; otherwise the appId comes from
+      the config here). Exits 0 when the build passed its smoke test; 0
+      with a warning when no smoke test tested it; 1 with the reason when
+      the build or its smoke test failed; 1 after --wait-timeout minutes
+      (default ${defaultWaitMinutes}), which is not a verdict: run the job again to wait
+      again. --details prints the end of the app's output from a failed
+      launch: auto (the default) only when the repository is private, as
+      a public repository's logs are public.
 
   tauri-bridge --from DOWNLOAD_URL --base-url URL [--key-file KEY]
                [--notes TEXT] [--out DIR]
@@ -30262,7 +30751,12 @@ var builtIns = [
   {
     name: "upload",
     summary: "Check, prepare and upload the built apps on this machine (CI's)",
-    usage: "todesktop upload [--config FILE] [--version X.Y.Z] [--test] [--input PLATFORM/ARCH=PATH]... [--dry-run]"
+    usage: "todesktop upload [--config FILE] [--version X.Y.Z] [--test] [--input PLATFORM/ARCH=PATH]... [--dry-run] [--wait]"
+  },
+  {
+    name: "report",
+    summary: "In a CI job, with no sign-in: wait for the result of this workflow run's build and its smoke test, and say it in the job's log",
+    usage: "todesktop report [--app ID | --config FILE] [--wait-timeout MINUTES] [--details auto|true|false]"
   },
   {
     name: "tauri-bridge",
@@ -30323,20 +30817,20 @@ async function runAgentCommand(argv) {
     json2 = wantsJson(values.json);
     jsonProgress(json2);
     if (values.help) {
-      process11.stdout.write(
+      process12.stdout.write(
         `${usageOf(command.usage)}
     ${command.summary}
 `
       );
       return true;
     }
-    process11.exitCode = print(
+    process12.exitCode = print(
       await command.run({ args: positionals, json: json2, values }),
       json2
     );
   } catch (error46) {
     const usageError = error46.code?.startsWith("ERR_PARSE_ARGS") === true;
-    process11.exitCode = printError(
+    process12.exitCode = printError(
       usageError ? new CliError(
         "usage",
         `${error46.message}
@@ -30350,13 +30844,35 @@ ${usageOf(command.usage)}`,
   }
   return true;
 }
+function waitOptions(values) {
+  const details = values.details ?? "auto";
+  if (!detailsValues.includes(details)) {
+    throw new Error(`--details is auto, true or false, not "${details}"`);
+  }
+  const timeoutMinutes = Number(values["wait-timeout"] ?? defaultWaitMinutes);
+  if (!(timeoutMinutes > 0) || !Number.isFinite(timeoutMinutes)) {
+    throw new Error(
+      `--wait-timeout is a number of minutes, not "${values["wait-timeout"]}"`
+    );
+  }
+  const { edge } = hosts();
+  const dashboard = dashboardOf(edge);
+  return {
+    ...dashboard ? { dashboard } : {},
+    details,
+    timeoutMinutes,
+    url: edge
+  };
+}
 async function main() {
-  if (await runAgentCommand(process11.argv.slice(2))) return;
+  if (await runAgentCommand(process12.argv.slice(2))) return;
   const { positionals, values } = parseArgs({
     allowPositionals: true,
     options: {
+      "app": { type: "string" },
       "base-url": { type: "string" },
       "config": { type: "string" },
+      "details": { type: "string" },
       "dry-run": { type: "boolean" },
       "from": { type: "string" },
       "help": { type: "boolean" },
@@ -30365,10 +30881,20 @@ async function main() {
       "notes": { type: "string" },
       "out": { type: "string" },
       "test": { type: "boolean" },
-      "version": { type: "string" }
+      "version": { type: "string" },
+      "wait": { type: "boolean" },
+      "wait-timeout": { type: "string" }
     }
   });
   const [command] = positionals;
+  if (command === "report" && !values.help) {
+    const waiting2 = waitOptions(values);
+    process12.exitCode = await report({
+      appId: await appIdOf(values.app, ".", values.config),
+      ...waiting2
+    });
+    return;
+  }
   if (command === "tauri-bridge" && !values.help) {
     if (!values.from || !values["base-url"]) {
       throw new Error(`tauri-bridge needs --from and --base-url
@@ -30385,18 +30911,19 @@ ${usage}`);
     return;
   }
   if (values.help || command !== "upload") {
-    process11.stdout.write(`${usage}
+    process12.stdout.write(`${usage}
 
 ${agentUsage}
 `);
-    if (!values.help) process11.exitCode = 1;
+    if (!values.help) process12.exitCode = 1;
     return;
   }
   const configFile = values.config ?? findConfigFile(".");
   if (!configFile) {
     throw new Error(`No ${configFileNames.join(", ")} here; pass --config`);
   }
-  await upload({
+  const waiting = values.wait ? waitOptions(values) : void 0;
+  const { appId } = await upload({
     configFile,
     dashboard: hosts().dashboard,
     dryRun: values["dry-run"] ?? false,
@@ -30405,19 +30932,22 @@ ${agentUsage}
     url: hosts().edge,
     ...values.version ? { version: values.version } : {}
   });
+  if (waiting && !values["dry-run"]) {
+    process12.exitCode = await report({ appId, ...waiting });
+  }
 }
 main().catch((error46) => {
   const { code, message } = error46;
   const usageError = code?.startsWith("ERR_PARSE_ARGS_") ?? false;
-  process11.stderr.write(
+  process12.stderr.write(
     `${message}${usageError ? `
 
-upload and tauri-bridge print plain text; they take no --json.
+upload, report and tauri-bridge print plain text; they take no --json.
 
 ${usage}` : ""}
 `
   );
-  process11.exitCode = usageError ? exitCodes.usage : 1;
+  process12.exitCode = usageError ? exitCodes.usage : 1;
 });
 /*! Bundled license information:
 

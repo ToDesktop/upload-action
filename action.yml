@@ -4,7 +4,8 @@ description: >-
   todesktop.config.ts lists that are on this runner, runs its prepareApp hook on
   copies, and uploads them, authenticated by the job's GitHub OIDC token (needs
   permissions: id-token: write). Every job of a workflow run adds to one build,
-  which ToDesktop signs, notarizes, packages and smoke tests.
+  which ToDesktop signs, notarizes, packages and smoke tests. With wait, the job
+  then reports how that build went.
 inputs:
   version:
     description:
@@ -21,6 +22,32 @@ inputs:
     description:
       Path to todesktop.config.ts (found in the working directory by default).
     required: false
+  wait:
+    description:
+      "'true' uploads, then waits for ToDesktop's result of the run's build and
+      its smoke test, prints it, and fails the job with the reason when either
+      failed. 'only' uploads nothing and waits for the result of this workflow
+      run's build: for a last job that needs the jobs that upload."
+    required: false
+    default: 'false'
+  wait-timeout:
+    description:
+      Minutes to wait for the result. Running out fails the job, but it is not a
+      verdict on the build; re-running the job waits again.
+    required: false
+    default: '90'
+  app:
+    description:
+      "The app's ID, for wait: only in a job with no checkout. With a checkout
+      it is read from todesktop.config.ts."
+    required: false
+  details:
+    description:
+      "Whether a failed smoke test prints the end of the app's output: auto
+      (only in a private repository, as a public repository's logs are public),
+      true or false."
+    required: false
+    default: auto
   url:
     description:
       The ToDesktop edge to upload to. Production's by default; only ToDesktop's
@@ -34,7 +61,8 @@ runs:
       with:
         node-version: 24
     # esbuild loads todesktop.config.ts; it ships a native binary per platform,
-    # so it's installed here rather than bundled.
+    # so it's installed here rather than bundled. The CLI imports it whatever
+    # it's asked to do, so a job that only waits installs it too.
     - shell: bash
       run:
         npm install --silent --no-save --no-package-lock --prefix
@@ -45,9 +73,28 @@ runs:
         INPUT_VERSION: ${{ inputs.version }}
         INPUT_CONFIG: ${{ inputs.config }}
         INPUT_TEST: ${{ inputs.test }}
+        INPUT_WAIT: ${{ inputs.wait }}
+        INPUT_WAIT_TIMEOUT: ${{ inputs.wait-timeout }}
+        INPUT_APP: ${{ inputs.app }}
+        INPUT_DETAILS: ${{ inputs.details }}
       run: |
-        args=(upload)
-        if [ -n "$INPUT_VERSION" ]; then args+=(--version "${INPUT_VERSION#v}"); fi
+        case "$INPUT_WAIT" in
+          ''|false|true|only) ;;
+          *) echo "wait is 'false', 'true' or 'only', not '$INPUT_WAIT'" >&2; exit 2 ;;
+        esac
+        if [ "$INPUT_WAIT" = "only" ]; then
+          # No upload: this job waits for the result of the run's build.
+          args=(report)
+          if [ -n "$INPUT_APP" ]; then args+=(--app "$INPUT_APP"); fi
+        else
+          args=(upload)
+          if [ -n "$INPUT_VERSION" ]; then args+=(--version "${INPUT_VERSION#v}"); fi
+          if [ "$INPUT_TEST" = "true" ]; then args+=(--test); fi
+          if [ "$INPUT_WAIT" = "true" ]; then args+=(--wait); fi
+        fi
         if [ -n "$INPUT_CONFIG" ]; then args+=(--config "$INPUT_CONFIG"); fi
-        if [ "$INPUT_TEST" = "true" ]; then args+=(--test); fi
+        if [ "$INPUT_WAIT" = "true" ] || [ "$INPUT_WAIT" = "only" ]; then
+          if [ -n "$INPUT_WAIT_TIMEOUT" ]; then args+=(--wait-timeout "$INPUT_WAIT_TIMEOUT"); fi
+          if [ -n "$INPUT_DETAILS" ]; then args+=(--details "$INPUT_DETAILS"); fi
+        fi
         node "$GITHUB_ACTION_PATH/dist/todesktop.mjs" "${args[@]}"
