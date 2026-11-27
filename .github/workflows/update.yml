@@ -1,0 +1,225 @@
+# Updates the action from npm and drafts its release.
+#
+# What the action runs, dist/todesktop.mjs, is the todesktop command as npm
+# has it in @todesktop/v2: the same file. That package also carries this
+# repository's action.yml, README.md and LICENSE, in its action folder. So
+# nothing is built here and no credentials are held: this takes a version of
+# the package, commits what changed to main and drafts the next release.
+#
+# - Every day, and by hand (Actions › Update from npm › Run workflow, from
+#   main): the package's latest version, unless main has had it already.
+# - By hand with a version: that version, a pre-release (0.4.0-next.1) or an
+#   earlier one included.
+#
+# Nothing is released by this: workflows use @v1, a tag. Publishing the draft
+# is the release. GitHub makes its tag, and the Release workflow moves the
+# major tag (v1) to it.
+#
+# The draft is the next minor version (v1.7.0 → v1.8.0), for the newest
+# build, with the package's changelog as its notes: edit them for the people
+# who use the action. To release it as something else, a patch or a new
+# major, change the draft's tag before publishing it. There's one draft at a
+# time, on main's head, and a run leaves the newest build's draft as it is.
+#
+# GitHub turns a schedule off in a repository with no activity for 60 days;
+# the run by hand still works.
+name: Update from npm
+
+on:
+  schedule:
+    - cron: '23 5 * * *'
+  workflow_dispatch:
+    inputs:
+      version:
+        description:
+          The @todesktop/v2 version to take, like 0.4.0 (empty for the latest)
+        type: string
+
+permissions:
+  contents: write # commits to main, and makes and deletes draft releases
+
+# One at a time, in order.
+concurrency:
+  group: update
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  PACKAGE: '@todesktop/v2'
+  # What the package's action folder and bundle are here.
+  ACTION_FILES: action.yml README.md LICENSE dist/todesktop.mjs
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      # Read from the environment, never pasted into a script.
+      ASKED: ${{ inputs.version }}
+    steps:
+      - name: Running from main
+        run: |
+          if [ "$GITHUB_REF" != refs/heads/main ]; then
+            echo "::error::The action is main; run this workflow from main, not $GITHUB_REF_NAME."
+            exit 1
+          fi
+          if [ -n "$ASKED" ] && ! printf '%s' "$ASKED" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::The version is a version of $PACKAGE, like 0.4.0 or 0.4.0-next.1."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # the builds main has had, and the tags
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - name: Take the package
+        id: package
+        run: |
+          version="$(npm view "$PACKAGE@${ASKED:-latest}" version)"
+          if [ -z "$version" ]; then
+            echo "::error::npm has no $PACKAGE@${ASKED:-latest}."
+            exit 1
+          fi
+          # The latest version is taken once: a build made by hand since, of
+          # a pre-release say, isn't replaced by it.
+          built="$(git log --format=%s -- dist)"
+          if [ -z "$ASKED" ] && grep -Fxq "Build from $PACKAGE $version" <<< "$built"; then
+            echo "main has had $PACKAGE $version." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          mkdir "$RUNNER_TEMP/npm"
+          npm pack "$PACKAGE@$version" --silent --pack-destination "$RUNNER_TEMP/npm" > /dev/null
+          tar -xzf "$RUNNER_TEMP"/npm/*.tgz -C "$RUNNER_TEMP/npm"
+          package="$RUNNER_TEMP/npm/package"
+          for file in action/action.yml action/README.md action/LICENSE dist/todesktop.mjs; do
+            if [ ! -s "$package/$file" ]; then
+              if [ -n "$ASKED" ]; then
+                echo "::error::$PACKAGE $version has no $file: it's from before the package carried the action."
+                exit 1
+              fi
+              echo "::notice::$PACKAGE $version has no $file: it's from before the package carried the action. Nothing to take."
+              exit 0
+            fi
+          done
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Commit what changed
+        if: steps.package.outputs.version
+        env:
+          VERSION: ${{ steps.package.outputs.version }}
+        run: |
+          package="$RUNNER_TEMP/npm/package"
+          cp "$package/action/action.yml" "$package/action/README.md" "$package/action/LICENSE" .
+          mkdir -p dist
+          cp "$package/dist/todesktop.mjs" dist/todesktop.mjs
+          # shellcheck disable=SC2086 # a list of files
+          git add -- $ACTION_FILES
+          if git diff --cached --quiet; then
+            echo "main is $PACKAGE $VERSION already." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -q -m "Build from $PACKAGE $VERSION"
+          git push origin HEAD:main
+          echo "main is now $PACKAGE $VERSION (\`$(git rev-parse --short HEAD)\`)." >> "$GITHUB_STEP_SUMMARY"
+
+      # Whatever this run did: a build on main that no version has gets a
+      # draft, so a run that failed after its push is put right by the next.
+      - name: Draft the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # The release is main's head, not the commit that last changed the
+          # build: a release's workflows are those of the commit it tags, so
+          # the tag has to be on a commit with the Release workflow as it is
+          # now, or publishing wouldn't move the major tag.
+          head="$(git rev-parse HEAD)"
+          # The newest version, pre-releases (v1.8.0-rc.1) left out.
+          tags="$(git tag --list 'v[0-9]*' --sort=-v:refname)"
+          latest="$(grep -Em1 '^v[0-9]+\.[0-9]+\.[0-9]+$' <<< "$tags" || true)"
+          if [ -z "$latest" ]; then
+            echo "::error::No version tag to count on from. Release this build with the Release workflow instead."
+            exit 1
+          fi
+          # shellcheck disable=SC2086 # a list of files
+          if git diff --quiet "$latest" "$head" -- $ACTION_FILES; then
+            echo "Nothing to release: $latest is main's build." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          version="${latest#v}"
+          major="${version%%.*}"
+          rest="${version#*.}"
+          next="v$major.$((${rest%%.*} + 1)).0"
+          short="$(git rev-parse --short "$head")"
+
+          # One draft at a time. This build's stays, edits and all, and moves
+          # to main's head if main has moved without the build changing; an
+          # earlier build's goes.
+          drafts="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+            --jq '.[] | select(.draft) | [.id, .target_commitish, .tag_name] | @tsv')"
+          drafted=
+          while IFS=$'\t' read -r id target tag; do
+            if [ -z "$id" ]; then
+              continue
+            elif [ "$target" = "$head" ]; then
+              drafted="$tag"
+            elif git cat-file -e "$target^{commit}" 2> /dev/null &&
+              git diff --quiet "$target" "$head" -- $ACTION_FILES; then
+              gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$id" \
+                -f target_commitish="$head" > /dev/null
+              drafted="$tag"
+            else
+              gh api -X DELETE "repos/$GITHUB_REPOSITORY/releases/$id"
+            fi
+          done <<< "$drafts"
+          if [ -n "$drafted" ]; then
+            echo "\`$short\` is drafted as $drafted: publish it at https://github.com/$GITHUB_REPOSITORY/releases to release it." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          # Notes: the package's changelog from this build's version back to
+          # the one the last release was built from.
+          # shellcheck disable=SC2086
+          subject="$(git log -1 --format=%s -- $ACTION_FILES)"
+          from="$(printf '%s' "$subject" | sed -n "s|^Build from $PACKAGE \(.*\)$|\1|p")"
+          prev="$(git log -1 --format=%s "$latest" -- dist | sed -n "s|^Build from $PACKAGE \(.*\)$|\1|p")"
+          changelog="$RUNNER_TEMP/npm/package/CHANGELOG.md"
+          {
+            if [ -n "$from" ]; then
+              echo "Built from \`$PACKAGE\` $from."
+            else
+              echo "$subject"
+            fi
+            if [ -n "$from" ] && [ -f "$changelog" ]; then
+              echo
+              awk -v from="$from" -v prev="$prev" '
+                /^## / {
+                  if (seen && (prev == "" || $2 == prev)) exit
+                  if ($2 == from) seen = 1
+                  next
+                }
+                seen && !/^#/ && NF {
+                  if (++lines > 40) exit
+                  sub(/^- [0-9a-f]+: /, "- ")
+                  print
+                }
+              ' "$changelog"
+            fi
+            echo
+            echo "Changes: https://github.com/$GITHUB_REPOSITORY/compare/$latest...$head"
+          } > "$RUNNER_TEMP/notes.md"
+          gh release create "$next" --draft --target "$head" \
+            --title "$next" --notes-file "$RUNNER_TEMP/notes.md"
+          {
+            echo "### Drafted $next"
+            echo
+            echo "- \`$short\`: $subject"
+            echo "- Nothing is released yet. Edit its notes for the people who use the action, then publish it at https://github.com/$GITHUB_REPOSITORY/releases: that tags \`$short\` as \`$next\` and moves \`v$major\` to it (it was at $latest), so workflows using \`$GITHUB_REPOSITORY@v$major\` run this build from then on."
+          } >> "$GITHUB_STEP_SUMMARY"
