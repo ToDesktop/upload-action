@@ -1,0 +1,88 @@
+# Drafts the next release when a build lands on main: one draft, for the
+# newest build, replacing any earlier one. Publishing it is the release:
+# GitHub makes the tag, and the Release workflow moves the major tag (v1) to
+# it, which is when workflows using ToDesktop/upload-action@v1 get the build.
+#
+# main holds only build output. The todesktop repository's "v2 action
+# release" workflow builds it and pushes it here with a deploy key (a push
+# with a workflow's own token wouldn't start this one); a build pushed by
+# hand drafts a release the same way.
+#
+# The draft is the next minor version (v1.7.0 → v1.8.0). To release it as
+# something else, a patch or a new major, change the draft's tag before
+# publishing it.
+name: Draft release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - action.yml
+      - 'dist/**'
+
+permissions:
+  contents: write # makes and deletes draft releases
+
+# One at a time, in order: the newest build's draft is the one left.
+concurrency:
+  group: draft-release
+  cancel-in-progress: false
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # the tags, for the next version
+
+      - name: Draft the next version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for file in action.yml dist/todesktop.mjs; do
+            if [ ! -s "$file" ]; then
+              echo "::error::$file is missing: main isn't a built action."
+              exit 1
+            fi
+          done
+          latest="$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -1)"
+          if ! printf '%s' "$latest" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::No version tag to count on from (the newest is \"$latest\"). Release this build with the Release workflow instead."
+            exit 1
+          fi
+          version="${latest#v}"
+          major="${version%%.*}"
+          rest="${version#*.}"
+          next="v$major.$((${rest%%.*} + 1)).0"
+          if [ "$(git rev-parse "$latest^{commit}")" = "$GITHUB_SHA" ]; then
+            echo "This commit is $latest already: nothing to draft." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          # One draft at a time: an earlier build's goes.
+          gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+            --jq '.[] | select(.draft) | .id' |
+            while read -r id; do
+              gh api -X DELETE "repos/$GITHUB_REPOSITORY/releases/$id"
+            done
+
+          short="$(git rev-parse --short HEAD)"
+          subject="$(git log -1 --format=%s -- action.yml dist)"
+          {
+            echo "$subject"
+            echo
+            echo "Publishing this release tags \`$short\` as \`$next\` and moves \`v$major\` to it, so workflows using \`$GITHUB_REPOSITORY@v$major\` run this build from then on. To release it as another version, change the tag before publishing."
+            echo
+            echo "Changes: https://github.com/$GITHUB_REPOSITORY/compare/$latest...$GITHUB_SHA"
+          } > "$RUNNER_TEMP/notes.md"
+          gh release create "$next" --draft --target "$GITHUB_SHA" \
+            --title "$next" --notes-file "$RUNNER_TEMP/notes.md"
+          {
+            echo "### Drafted $next"
+            echo
+            echo "- \`$short\`: $subject"
+            echo "- Publish it at https://github.com/$GITHUB_REPOSITORY/releases to release it (it was at $latest)."
+          } >> "$GITHUB_STEP_SUMMARY"

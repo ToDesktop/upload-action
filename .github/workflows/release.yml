@@ -1,10 +1,16 @@
-# Releases the action as it is on main: tags the commit v<version>, moves the
-# major tag (v1) to it, and makes a GitHub release. By hand only (Actions ›
-# Release › Run workflow, from main).
+# Releases the action as it is on main, one of two ways:
 #
-# main holds only build output. It's built in the todesktop repository
-# (`pnpm --filter @todesktop/v2 build:action <a checkout of this repository>`)
-# and pushed here first; then this releases it.
+# - Publishing the draft release that the Draft release workflow makes for
+#   each build (the usual way). GitHub makes the release's tag (v1.8.0) as
+#   you publish; this then moves the major tag (v1) to it.
+# - By hand (Actions › Release › Run workflow, from main, with a version):
+#   tags main's commit v<version>, moves the major tag to it and makes a
+#   GitHub release.
+#
+# main holds only build output. It's built in the todesktop repository (its
+# "v2 action release" workflow, or `pnpm --filter @todesktop/v2 build:action
+# <a checkout of this repository>`) and pushed here first; then this releases
+# it.
 #
 # Workflows that use ToDesktop/upload-action@v1 get the new version as soon as
 # v1 moves. To undo a release, move v1 back to the version before:
@@ -12,6 +18,8 @@
 name: Release
 
 on:
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
       version:
@@ -29,6 +37,7 @@ concurrency:
 
 jobs:
   release:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
@@ -86,3 +95,59 @@ jobs:
           # The build this releases: the last commit that changed the action.
           gh release create "v$VERSION" --title "v$VERSION" \
             --notes "$(git log -1 --format=%s -- action.yml dist)" --verify-tag
+
+  # A release was published (the draft of a build, usually): its tag is the
+  # version, and the major tag follows it. The release this workflow makes
+  # by hand, above, doesn't start this: a workflow's own token starts none.
+  published:
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      # Read from the environment, never pasted into a script.
+      TAG: ${{ github.event.release.tag_name }}
+      PRERELEASE: ${{ github.event.release.prerelease }}
+    steps:
+      - name: A version, and not a pre-release
+        run: |
+          if ! printf '%s' "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::The release's tag is \"$TAG\", not a version like v1.5.0: the major tag wasn't moved."
+            exit 1
+          fi
+          if [ "$PRERELEASE" = true ]; then
+            echo "::error::$TAG is a pre-release: the major tag wasn't moved. Workflows get it only by naming $TAG."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # main and the tags, to see where the major tag may go
+
+      - name: Move the major tag
+        run: |
+          major="${TAG%%.*}"
+          commit="$(git rev-parse "refs/tags/$TAG^{commit}")"
+          if ! git merge-base --is-ancestor "$commit" origin/main; then
+            echo "::error::$TAG is $(git rev-parse --short "$commit"), which isn't on main: $major wasn't moved."
+            exit 1
+          fi
+          for file in action.yml dist/todesktop.mjs; do
+            if ! git cat-file -e "$commit:$file" 2> /dev/null; then
+              echo "::error::$TAG has no $file: it isn't a built action, and $major wasn't moved."
+              exit 1
+            fi
+          done
+          before="$(git rev-parse -q --verify --short "$major^{commit}" || echo none)"
+          # Only forwards: an older build published late doesn't take v1 back.
+          if [ "$before" != none ] && ! git merge-base --is-ancestor "$major^{commit}" "$commit"; then
+            echo "::error::$major is at $before, which $TAG ($(git rev-parse --short "$commit")) doesn't come after: $major wasn't moved. To move it back on purpose: git tag -f $major $TAG && git push -f origin $major"
+            exit 1
+          fi
+          git tag -f "$major" "$commit"
+          git push -f origin "refs/tags/$major"
+          {
+            echo "### Released $TAG"
+            echo
+            echo "- \`$TAG\` is \`$(git rev-parse --short "$commit")\`: $(git log -1 --format=%s "$commit" -- action.yml dist)"
+            echo "- \`$major\` moved to it (it was at \`$before\`)."
+          } >> "$GITHUB_STEP_SUMMARY"
