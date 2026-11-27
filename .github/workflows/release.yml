@@ -1,16 +1,14 @@
 # Releases the action as it is on main, one of two ways:
 #
-# - Publishing the draft release that the Draft release workflow makes for
+# - Publishing the draft release that the Update from npm workflow makes for
 #   each build (the usual way). GitHub makes the release's tag (v1.8.0) as
 #   you publish; this then moves the major tag (v1) to it.
 # - By hand (Actions › Release › Run workflow, from main, with a version):
 #   tags main's commit v<version>, moves the major tag to it and makes a
 #   GitHub release.
 #
-# main holds only build output. It's built in the todesktop repository (its
-# "v2 action release" workflow, or `pnpm --filter @todesktop/v2 build:action
-# <a checkout of this repository>`) and pushed here first; then this releases
-# it.
+# main holds only build output: what the npm package @todesktop/v2 carries,
+# which the Update from npm workflow commits here. Then this releases it.
 #
 # Workflows that use ToDesktop/upload-action@v1 get the new version as soon as
 # v1 moves. To undo a release, move v1 back to the version before:
