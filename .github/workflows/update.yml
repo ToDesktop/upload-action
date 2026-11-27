@@ -19,7 +19,7 @@
 # build, with the package's changelog as its notes: edit them for the people
 # who use the action. To release it as something else, a patch or a new
 # major, change the draft's tag before publishing it. There's one draft at a
-# time, and a run leaves the newest build's draft as it is.
+# time, on main's head, and a run leaves the newest build's draft as it is.
 #
 # GitHub turns a schedule off in a repository with no activity for 60 days;
 # the run by hand still works.
@@ -136,16 +136,20 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # shellcheck disable=SC2086 # a list of files
-          build="$(git log -1 --format=%H -- $ACTION_FILES)"
-          latest="$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname)"
-          latest="${latest%%$'\n'*}"
-          if ! printf '%s' "$latest" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
-            echo "::error::No version tag to count on from (the newest is \"$latest\"). Release this build with the Release workflow instead."
+          # The release is main's head, not the commit that last changed the
+          # build: a release's workflows are those of the commit it tags, so
+          # the tag has to be on a commit with the Release workflow as it is
+          # now, or publishing wouldn't move the major tag.
+          head="$(git rev-parse HEAD)"
+          # The newest version, pre-releases (v1.8.0-rc.1) left out.
+          tags="$(git tag --list 'v[0-9]*' --sort=-v:refname)"
+          latest="$(grep -Em1 '^v[0-9]+\.[0-9]+\.[0-9]+$' <<< "$tags" || true)"
+          if [ -z "$latest" ]; then
+            echo "::error::No version tag to count on from. Release this build with the Release workflow instead."
             exit 1
           fi
-          # shellcheck disable=SC2086
-          if git diff --quiet "$latest" "$build" -- $ACTION_FILES; then
+          # shellcheck disable=SC2086 # a list of files
+          if git diff --quiet "$latest" "$head" -- $ACTION_FILES; then
             echo "Nothing to release: $latest is main's build." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
@@ -153,17 +157,23 @@ jobs:
           major="${version%%.*}"
           rest="${version#*.}"
           next="v$major.$((${rest%%.*} + 1)).0"
-          short="$(git rev-parse --short "$build")"
+          short="$(git rev-parse --short "$head")"
 
-          # One draft at a time. This build's stays as it is, edits and all;
-          # an earlier build's goes.
+          # One draft at a time. This build's stays, edits and all, and moves
+          # to main's head if main has moved without the build changing; an
+          # earlier build's goes.
           drafts="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
             --jq '.[] | select(.draft) | [.id, .target_commitish, .tag_name] | @tsv')"
           drafted=
           while IFS=$'\t' read -r id target tag; do
             if [ -z "$id" ]; then
               continue
-            elif [ "$target" = "$build" ]; then
+            elif [ "$target" = "$head" ]; then
+              drafted="$tag"
+            elif git cat-file -e "$target^{commit}" 2> /dev/null &&
+              git diff --quiet "$target" "$head" -- $ACTION_FILES; then
+              gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$id" \
+                -f target_commitish="$head" > /dev/null
               drafted="$tag"
             else
               gh api -X DELETE "repos/$GITHUB_REPOSITORY/releases/$id"
@@ -176,7 +186,8 @@ jobs:
 
           # Notes: the package's changelog from this build's version back to
           # the one the last release was built from.
-          subject="$(git log -1 --format=%s "$build")"
+          # shellcheck disable=SC2086
+          subject="$(git log -1 --format=%s -- $ACTION_FILES)"
           from="$(printf '%s' "$subject" | sed -n "s|^Build from $PACKAGE \(.*\)$|\1|p")"
           prev="$(git log -1 --format=%s "$latest" -- dist | sed -n "s|^Build from $PACKAGE \(.*\)$|\1|p")"
           changelog="$RUNNER_TEMP/npm/package/CHANGELOG.md"
@@ -202,9 +213,9 @@ jobs:
               ' "$changelog"
             fi
             echo
-            echo "Changes: https://github.com/$GITHUB_REPOSITORY/compare/$latest...$build"
+            echo "Changes: https://github.com/$GITHUB_REPOSITORY/compare/$latest...$head"
           } > "$RUNNER_TEMP/notes.md"
-          gh release create "$next" --draft --target "$build" \
+          gh release create "$next" --draft --target "$head" \
             --title "$next" --notes-file "$RUNNER_TEMP/notes.md"
           {
             echo "### Drafted $next"
