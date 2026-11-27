@@ -1144,11 +1144,11 @@ var require_lib = __commonJS({
   "../../node_modules/.pnpm/json5@2.2.3/node_modules/json5/lib/index.js"(exports, module) {
     var parse4 = require_parse();
     var stringify2 = require_stringify();
-    var JSON53 = {
+    var JSON54 = {
       parse: parse4,
       stringify: stringify2
     };
-    module.exports = JSON53;
+    module.exports = JSON54;
   }
 });
 
@@ -1229,17 +1229,17 @@ var require_visit = __commonJS({
     visit.BREAK = BREAK;
     visit.SKIP = SKIP;
     visit.REMOVE = REMOVE;
-    function visit_(key, node, visitor, path12) {
-      const ctrl = callVisitor(key, node, visitor, path12);
+    function visit_(key, node, visitor, path13) {
+      const ctrl = callVisitor(key, node, visitor, path13);
       if (identity.isNode(ctrl) || identity.isPair(ctrl)) {
-        replaceNode(key, path12, ctrl);
-        return visit_(key, ctrl, visitor, path12);
+        replaceNode(key, path13, ctrl);
+        return visit_(key, ctrl, visitor, path13);
       }
       if (typeof ctrl !== "symbol") {
         if (identity.isCollection(node)) {
-          path12 = Object.freeze(path12.concat(node));
+          path13 = Object.freeze(path13.concat(node));
           for (let i = 0; i < node.items.length; ++i) {
-            const ci = visit_(i, node.items[i], visitor, path12);
+            const ci = visit_(i, node.items[i], visitor, path13);
             if (typeof ci === "number")
               i = ci - 1;
             else if (ci === BREAK)
@@ -1250,13 +1250,13 @@ var require_visit = __commonJS({
             }
           }
         } else if (identity.isPair(node)) {
-          path12 = Object.freeze(path12.concat(node));
-          const ck = visit_("key", node.key, visitor, path12);
+          path13 = Object.freeze(path13.concat(node));
+          const ck = visit_("key", node.key, visitor, path13);
           if (ck === BREAK)
             return BREAK;
           else if (ck === REMOVE)
             node.key = null;
-          const cv = visit_("value", node.value, visitor, path12);
+          const cv = visit_("value", node.value, visitor, path13);
           if (cv === BREAK)
             return BREAK;
           else if (cv === REMOVE)
@@ -1277,17 +1277,17 @@ var require_visit = __commonJS({
     visitAsync.BREAK = BREAK;
     visitAsync.SKIP = SKIP;
     visitAsync.REMOVE = REMOVE;
-    async function visitAsync_(key, node, visitor, path12) {
-      const ctrl = await callVisitor(key, node, visitor, path12);
+    async function visitAsync_(key, node, visitor, path13) {
+      const ctrl = await callVisitor(key, node, visitor, path13);
       if (identity.isNode(ctrl) || identity.isPair(ctrl)) {
-        replaceNode(key, path12, ctrl);
-        return visitAsync_(key, ctrl, visitor, path12);
+        replaceNode(key, path13, ctrl);
+        return visitAsync_(key, ctrl, visitor, path13);
       }
       if (typeof ctrl !== "symbol") {
         if (identity.isCollection(node)) {
-          path12 = Object.freeze(path12.concat(node));
+          path13 = Object.freeze(path13.concat(node));
           for (let i = 0; i < node.items.length; ++i) {
-            const ci = await visitAsync_(i, node.items[i], visitor, path12);
+            const ci = await visitAsync_(i, node.items[i], visitor, path13);
             if (typeof ci === "number")
               i = ci - 1;
             else if (ci === BREAK)
@@ -1298,13 +1298,13 @@ var require_visit = __commonJS({
             }
           }
         } else if (identity.isPair(node)) {
-          path12 = Object.freeze(path12.concat(node));
-          const ck = await visitAsync_("key", node.key, visitor, path12);
+          path13 = Object.freeze(path13.concat(node));
+          const ck = await visitAsync_("key", node.key, visitor, path13);
           if (ck === BREAK)
             return BREAK;
           else if (ck === REMOVE)
             node.key = null;
-          const cv = await visitAsync_("value", node.value, visitor, path12);
+          const cv = await visitAsync_("value", node.value, visitor, path13);
           if (cv === BREAK)
             return BREAK;
           else if (cv === REMOVE)
@@ -1331,23 +1331,23 @@ var require_visit = __commonJS({
       }
       return visitor;
     }
-    function callVisitor(key, node, visitor, path12) {
+    function callVisitor(key, node, visitor, path13) {
       if (typeof visitor === "function")
-        return visitor(key, node, path12);
+        return visitor(key, node, path13);
       if (identity.isMap(node))
-        return visitor.Map?.(key, node, path12);
+        return visitor.Map?.(key, node, path13);
       if (identity.isSeq(node))
-        return visitor.Seq?.(key, node, path12);
+        return visitor.Seq?.(key, node, path13);
       if (identity.isPair(node))
-        return visitor.Pair?.(key, node, path12);
+        return visitor.Pair?.(key, node, path13);
       if (identity.isScalar(node))
-        return visitor.Scalar?.(key, node, path12);
+        return visitor.Scalar?.(key, node, path13);
       if (identity.isAlias(node))
-        return visitor.Alias?.(key, node, path12);
+        return visitor.Alias?.(key, node, path13);
       return void 0;
     }
-    function replaceNode(key, path12, node) {
-      const parent = path12[path12.length - 1];
+    function replaceNode(key, path13, node) {
+      const parent = path13[path13.length - 1];
       if (identity.isCollection(parent)) {
         parent.items[key] = node;
       } else if (identity.isPair(parent)) {
@@ -1959,10 +1959,10 @@ var require_Collection = __commonJS({
     var createNode = require_createNode();
     var identity = require_identity();
     var Node = require_Node();
-    function collectionFromPath(schema, path12, value) {
+    function collectionFromPath(schema, path13, value) {
       let v = value;
-      for (let i = path12.length - 1; i >= 0; --i) {
-        const k = path12[i];
+      for (let i = path13.length - 1; i >= 0; --i) {
+        const k = path13[i];
         if (typeof k === "number" && Number.isInteger(k) && k >= 0) {
           const a = [];
           a[k] = v;
@@ -1981,7 +1981,7 @@ var require_Collection = __commonJS({
         sourceObjects: /* @__PURE__ */ new Map()
       });
     }
-    var isEmptyPath = (path12) => path12 == null || typeof path12 === "object" && !!path12[Symbol.iterator]().next().done;
+    var isEmptyPath = (path13) => path13 == null || typeof path13 === "object" && !!path13[Symbol.iterator]().next().done;
     var Collection = class extends Node.NodeBase {
       constructor(type, schema) {
         super(type);
@@ -2011,11 +2011,11 @@ var require_Collection = __commonJS({
        * be a Pair instance or a `{ key, value }` object, which may not have a key
        * that already exists in the map.
        */
-      addIn(path12, value) {
-        if (isEmptyPath(path12))
+      addIn(path13, value) {
+        if (isEmptyPath(path13))
           this.add(value);
         else {
-          const [key, ...rest] = path12;
+          const [key, ...rest] = path13;
           const node = this.get(key, true);
           if (identity.isCollection(node))
             node.addIn(rest, value);
@@ -2029,8 +2029,8 @@ var require_Collection = __commonJS({
        * Removes a value from the collection.
        * @returns `true` if the item was found and removed.
        */
-      deleteIn(path12) {
-        const [key, ...rest] = path12;
+      deleteIn(path13) {
+        const [key, ...rest] = path13;
         if (rest.length === 0)
           return this.delete(key);
         const node = this.get(key, true);
@@ -2044,8 +2044,8 @@ var require_Collection = __commonJS({
        * scalar values from their surrounding node; to disable set `keepScalar` to
        * `true` (collections are always returned intact).
        */
-      getIn(path12, keepScalar) {
-        const [key, ...rest] = path12;
+      getIn(path13, keepScalar) {
+        const [key, ...rest] = path13;
         const node = this.get(key, true);
         if (rest.length === 0)
           return !keepScalar && identity.isScalar(node) ? node.value : node;
@@ -2063,8 +2063,8 @@ var require_Collection = __commonJS({
       /**
        * Checks if the collection includes a value with the key `key`.
        */
-      hasIn(path12) {
-        const [key, ...rest] = path12;
+      hasIn(path13) {
+        const [key, ...rest] = path13;
         if (rest.length === 0)
           return this.has(key);
         const node = this.get(key, true);
@@ -2074,8 +2074,8 @@ var require_Collection = __commonJS({
        * Sets a value in this collection. For `!!set`, `value` needs to be a
        * boolean to add/remove the item from the set.
        */
-      setIn(path12, value) {
-        const [key, ...rest] = path12;
+      setIn(path13, value) {
+        const [key, ...rest] = path13;
         if (rest.length === 0) {
           this.set(key, value);
         } else {
@@ -4590,9 +4590,9 @@ var require_Document = __commonJS({
           this.contents.add(value);
       }
       /** Adds a value to the document. */
-      addIn(path12, value) {
+      addIn(path13, value) {
         if (assertCollection(this.contents))
-          this.contents.addIn(path12, value);
+          this.contents.addIn(path13, value);
       }
       /**
        * Create a new `Alias` node, ensuring that the target `node` has the required anchor.
@@ -4667,14 +4667,14 @@ var require_Document = __commonJS({
        * Removes a value from the document.
        * @returns `true` if the item was found and removed.
        */
-      deleteIn(path12) {
-        if (Collection.isEmptyPath(path12)) {
+      deleteIn(path13) {
+        if (Collection.isEmptyPath(path13)) {
           if (this.contents == null)
             return false;
           this.contents = null;
           return true;
         }
-        return assertCollection(this.contents) ? this.contents.deleteIn(path12) : false;
+        return assertCollection(this.contents) ? this.contents.deleteIn(path13) : false;
       }
       /**
        * Returns item at `key`, or `undefined` if not found. By default unwraps
@@ -4689,10 +4689,10 @@ var require_Document = __commonJS({
        * scalar values from their surrounding node; to disable set `keepScalar` to
        * `true` (collections are always returned intact).
        */
-      getIn(path12, keepScalar) {
-        if (Collection.isEmptyPath(path12))
+      getIn(path13, keepScalar) {
+        if (Collection.isEmptyPath(path13))
           return !keepScalar && identity.isScalar(this.contents) ? this.contents.value : this.contents;
-        return identity.isCollection(this.contents) ? this.contents.getIn(path12, keepScalar) : void 0;
+        return identity.isCollection(this.contents) ? this.contents.getIn(path13, keepScalar) : void 0;
       }
       /**
        * Checks if the document includes a value with the key `key`.
@@ -4703,10 +4703,10 @@ var require_Document = __commonJS({
       /**
        * Checks if the document includes a value at `path`.
        */
-      hasIn(path12) {
-        if (Collection.isEmptyPath(path12))
+      hasIn(path13) {
+        if (Collection.isEmptyPath(path13))
           return this.contents !== void 0;
-        return identity.isCollection(this.contents) ? this.contents.hasIn(path12) : false;
+        return identity.isCollection(this.contents) ? this.contents.hasIn(path13) : false;
       }
       /**
        * Sets a value in this document. For `!!set`, `value` needs to be a
@@ -4723,13 +4723,13 @@ var require_Document = __commonJS({
        * Sets a value in this document. For `!!set`, `value` needs to be a
        * boolean to add/remove the item from the set.
        */
-      setIn(path12, value) {
-        if (Collection.isEmptyPath(path12)) {
+      setIn(path13, value) {
+        if (Collection.isEmptyPath(path13)) {
           this.contents = value;
         } else if (this.contents == null) {
-          this.contents = Collection.collectionFromPath(this.schema, Array.from(path12), value);
+          this.contents = Collection.collectionFromPath(this.schema, Array.from(path13), value);
         } else if (assertCollection(this.contents)) {
-          this.contents.setIn(path12, value);
+          this.contents.setIn(path13, value);
         }
       }
       /**
@@ -6690,9 +6690,9 @@ var require_cst_visit = __commonJS({
     visit.BREAK = BREAK;
     visit.SKIP = SKIP;
     visit.REMOVE = REMOVE;
-    visit.itemAtPath = (cst, path12) => {
+    visit.itemAtPath = (cst, path13) => {
       let item = cst;
-      for (const [field, index] of path12) {
+      for (const [field, index] of path13) {
         const tok = item?.[field];
         if (tok && "items" in tok) {
           item = tok.items[index];
@@ -6701,23 +6701,23 @@ var require_cst_visit = __commonJS({
       }
       return item;
     };
-    visit.parentCollection = (cst, path12) => {
-      const parent = visit.itemAtPath(cst, path12.slice(0, -1));
-      const field = path12[path12.length - 1][0];
+    visit.parentCollection = (cst, path13) => {
+      const parent = visit.itemAtPath(cst, path13.slice(0, -1));
+      const field = path13[path13.length - 1][0];
       const coll = parent?.[field];
       if (coll && "items" in coll)
         return coll;
       throw new Error("Parent collection not found");
     };
-    function _visit(path12, item, visitor) {
-      let ctrl = visitor(item, path12);
+    function _visit(path13, item, visitor) {
+      let ctrl = visitor(item, path13);
       if (typeof ctrl === "symbol")
         return ctrl;
       for (const field of ["key", "value"]) {
         const token = item[field];
         if (token && "items" in token) {
           for (let i = 0; i < token.items.length; ++i) {
-            const ci = _visit(Object.freeze(path12.concat([[field, i]])), token.items[i], visitor);
+            const ci = _visit(Object.freeze(path13.concat([[field, i]])), token.items[i], visitor);
             if (typeof ci === "number")
               i = ci - 1;
             else if (ci === BREAK)
@@ -6728,10 +6728,10 @@ var require_cst_visit = __commonJS({
             }
           }
           if (typeof ctrl === "function" && field === "key")
-            ctrl = ctrl(item, path12);
+            ctrl = ctrl(item, path13);
         }
       }
-      return typeof ctrl === "function" ? ctrl(item, path12) : ctrl;
+      return typeof ctrl === "function" ? ctrl(item, path13) : ctrl;
     }
     exports.visit = visit;
   }
@@ -8344,13 +8344,13 @@ var require_public_api = __commonJS({
     var identity = require_identity();
     var lineCounter = require_line_counter();
     var parser = require_parser();
-    function parseOptions(options) {
+    function parseOptions2(options) {
       const prettyErrors = options.prettyErrors !== false;
       const lineCounter$1 = options.lineCounter || prettyErrors && new lineCounter.LineCounter() || null;
       return { lineCounter: lineCounter$1, prettyErrors };
     }
     function parseAllDocuments(source, options = {}) {
-      const { lineCounter: lineCounter2, prettyErrors } = parseOptions(options);
+      const { lineCounter: lineCounter2, prettyErrors } = parseOptions2(options);
       const parser$1 = new parser.Parser(lineCounter2?.addNewLine);
       const composer$1 = new composer.Composer(options);
       const docs = Array.from(composer$1.compose(parser$1.parse(source)));
@@ -8364,7 +8364,7 @@ var require_public_api = __commonJS({
       return Object.assign([], { empty: true }, composer$1.streamInfo());
     }
     function parseDocument(source, options = {}) {
-      const { lineCounter: lineCounter2, prettyErrors } = parseOptions(options);
+      const { lineCounter: lineCounter2, prettyErrors } = parseOptions2(options);
       const parser$1 = new parser.Parser(lineCounter2?.addNewLine);
       const composer$1 = new composer.Composer(options);
       let doc = null;
@@ -8484,11 +8484,11 @@ var require_dist = __commonJS({
 
 // ../config/src/load.ts
 import { build, transform as transform2 } from "esbuild";
-import { existsSync as existsSync2 } from "node:fs";
-import { mkdir as mkdir2, mkdtemp, readFile as readFile2, rm, writeFile } from "node:fs/promises";
+import { existsSync as existsSync3 } from "node:fs";
+import { mkdir as mkdir2, mkdtemp, readFile as readFile3, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import path2 from "node:path";
-import { pathToFileURL } from "node:url";
+import path3 from "node:path";
+import { pathToFileURL as pathToFileURL2 } from "node:url";
 
 // ../../node_modules/.pnpm/zod@4.1.12/node_modules/zod/v4/classic/external.js
 var external_exports = {};
@@ -9221,10 +9221,10 @@ function mergeDefs(...defs) {
 function cloneDef(schema) {
   return mergeDefs(schema._zod.def);
 }
-function getElementAtPath(obj, path12) {
-  if (!path12)
+function getElementAtPath(obj, path13) {
+  if (!path13)
     return obj;
-  return path12.reduce((acc, key) => acc?.[key], obj);
+  return path13.reduce((acc, key) => acc?.[key], obj);
 }
 function promiseAllObject(promisesObj) {
   const keys = Object.keys(promisesObj);
@@ -9585,11 +9585,11 @@ function aborted(x, startIndex = 0) {
   }
   return false;
 }
-function prefixIssues(path12, issues) {
+function prefixIssues(path13, issues) {
   return issues.map((iss) => {
     var _a;
     (_a = iss).path ?? (_a.path = []);
-    iss.path.unshift(path12);
+    iss.path.unshift(path13);
     return iss;
   });
 }
@@ -9751,7 +9751,7 @@ function formatError(error46, mapper = (issue2) => issue2.message) {
 }
 function treeifyError(error46, mapper = (issue2) => issue2.message) {
   const result = { errors: [] };
-  const processError = (error47, path12 = []) => {
+  const processError = (error47, path13 = []) => {
     var _a, _b;
     for (const issue2 of error47.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
@@ -9761,7 +9761,7 @@ function treeifyError(error46, mapper = (issue2) => issue2.message) {
       } else if (issue2.code === "invalid_element") {
         processError({ issues: issue2.issues }, issue2.path);
       } else {
-        const fullpath = [...path12, ...issue2.path];
+        const fullpath = [...path13, ...issue2.path];
         if (fullpath.length === 0) {
           result.errors.push(mapper(issue2));
           continue;
@@ -9793,8 +9793,8 @@ function treeifyError(error46, mapper = (issue2) => issue2.message) {
 }
 function toDotPath(_path) {
   const segs = [];
-  const path12 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
-  for (const seg of path12) {
+  const path13 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
+  for (const seg of path13) {
     if (typeof seg === "number")
       segs.push(`[${seg}]`);
     else if (typeof seg === "symbol")
@@ -11382,13 +11382,13 @@ var $ZodObject = /* @__PURE__ */ $constructor("$ZodObject", (inst, def) => {
     }
     return propValues;
   });
-  const isObject4 = isObject;
+  const isObject5 = isObject;
   const catchall = def.catchall;
   let value;
   inst._zod.parse = (payload, ctx) => {
     value ?? (value = _normalized.value);
     const input = payload.value;
-    if (!isObject4(input)) {
+    if (!isObject5(input)) {
       payload.issues.push({
         expected: "object",
         code: "invalid_type",
@@ -11462,7 +11462,7 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
     return (payload, ctx) => fn(shape, payload, ctx);
   };
   let fastpass;
-  const isObject4 = isObject;
+  const isObject5 = isObject;
   const jit = !globalConfig.jitless;
   const allowsEval2 = allowsEval;
   const fastEnabled = jit && allowsEval2.value;
@@ -11471,7 +11471,7 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
   inst._zod.parse = (payload, ctx) => {
     value ?? (value = _normalized.value);
     const input = payload.value;
-    if (!isObject4(input)) {
+    if (!isObject5(input)) {
       payload.issues.push({
         expected: "object",
         code: "invalid_type",
@@ -21114,11 +21114,11 @@ async function resolveExtends(config3, name, context) {
   const values = [];
   const prepareApps = [];
   for (const layer of layers) {
-    const { extends: _extends, hooks: hooks2 = {}, ...rest } = layer.config;
-    if (!isPlainObject2(hooks2)) {
+    const { extends: _extends, hooks: hooks3 = {}, ...rest } = layer.config;
+    if (!isPlainObject2(hooks3)) {
       throw new Error(`${layer.name}: hooks must be an object`);
     }
-    for (const [hookName, hook] of Object.entries(hooks2)) {
+    for (const [hookName, hook] of Object.entries(hooks3)) {
       if (hookName !== "prepareApp") {
         throw new Error(
           `${layer.name}: unknown hook "${hookName}"; the hook is prepareApp`
@@ -21134,39 +21134,39 @@ async function resolveExtends(config3, name, context) {
   const { data, sources } = mergeLayers(values);
   const assemble = {};
   const assembledBy = {};
-  for (const { name: presetName, preset } of layers) {
+  for (const { name: presetName2, preset } of layers) {
     for (const [platform, assembler] of Object.entries(
       preset?.assemble ?? {}
     )) {
       if (!assembler) continue;
       if (assembledBy[platform]) {
         throw new Error(
-          `${assembledBy[platform]} and ${presetName} both make the ${platform} app: extend one of them`
+          `${assembledBy[platform]} and ${presetName2} both make the ${platform} app: extend one of them`
         );
       }
-      assembledBy[platform] = presetName;
+      assembledBy[platform] = presetName2;
       assemble[platform] = assembler;
     }
   }
-  const hooks = {};
-  if (prepareApps.length === 1) [hooks.prepareApp] = prepareApps;
+  const hooks2 = {};
+  if (prepareApps.length === 1) [hooks2.prepareApp] = prepareApps;
   else if (prepareApps.length > 1) {
-    hooks.prepareApp = async (hookContext) => {
+    hooks2.prepareApp = async (hookContext) => {
       for (const hook of prepareApps) {
         await hook(hookContext);
       }
     };
   }
-  return { assemble, data, hooks, sources };
+  return { assemble, data, hooks: hooks2, sources };
 }
 function sourcesOf(resolved, sources) {
   const out = {};
   const lookup = (at) => {
-    for (let path12 = at; path12; ) {
-      const source = sources[path12];
+    for (let path13 = at; path13; ) {
+      const source = sources[path13];
       if (source) return source;
-      const dot = path12.lastIndexOf(".");
-      path12 = dot < 0 ? "" : path12.slice(0, dot);
+      const dot = path13.lastIndexOf(".");
+      path13 = dot < 0 ? "" : path13.slice(0, dot);
     }
     return "default";
   };
@@ -21186,22 +21186,13 @@ function configJson(config3) {
 }
 var presetsKey = /* @__PURE__ */ Symbol.for("@todesktop/config/presets");
 
-// ../config/src/presets/tauri.ts
+// ../config/src/presets/electronBuilder.ts
 var import_json5 = __toESM(require_lib(), 1);
-import { execFile } from "node:child_process";
-import { existsSync } from "node:fs";
-import {
-  chmod,
-  copyFile,
-  mkdir,
-  open,
-  readdir,
-  readFile,
-  realpath,
-  stat
-} from "node:fs/promises";
+import { existsSync, readFileSync } from "node:fs";
+import { readdir, readFile, stat } from "node:fs/promises";
+import { createRequire } from "node:module";
 import path from "node:path";
-import { promisify } from "node:util";
+import { pathToFileURL } from "node:url";
 
 // ../../node_modules/.pnpm/smol-toml@1.9.1/node_modules/smol-toml/dist/error.js
 function getLineColFromPtr(string4, ptr) {
@@ -21961,7 +21952,917 @@ function parse3(toml, options = {}) {
 // ../../node_modules/.pnpm/smol-toml@1.9.1/node_modules/smol-toml/dist/stringify.js
 var HAS_WELLFORMED = !!"".isWellFormed;
 
+// ../config/src/presets/electronBuilder.ts
+var import_yaml = __toESM(require_dist(), 1);
+var isObject2 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+var asString = (value) => typeof value === "string" && value.trim() !== "" ? value : void 0;
+var asList = (value) => {
+  if (value === void 0 || value === null) return [];
+  return Array.isArray(value) ? value : [value];
+};
+var relativeTo = (configDir, file3) => path.relative(configDir, file3).split(path.sep).join("/") || ".";
+var builderKeys = {
+  linux: "linux",
+  mac: "mac",
+  windows: "win"
+};
+var nodePlatforms = {
+  linux: "linux",
+  mac: "darwin",
+  windows: "win32"
+};
+var prefixed = (name) => `electronBuilderConfig(): ${name}`;
+var defaultArches = {
+  linux: ["x64"],
+  mac: ["arm64"],
+  windows: ["x64"]
+};
+var optionKeys = /* @__PURE__ */ new Set(["config", "linux", "mac", "projectDir", "windows"]);
+function archesOption(value, name, allowed, fallback) {
+  if (value === void 0) return [...fallback];
+  if (value === false) return false;
+  if (!Array.isArray(value) || value.length === 0 || !value.every((arch) => allowed.includes(arch)) || new Set(value).size !== value.length) {
+    throw new Error(
+      prefixed(
+        `${name} takes the arches electron-builder builds (${allowed.map((arch) => `'${arch}'`).join(", ")}), as a list, or false to leave ${name} out`
+      )
+    );
+  }
+  return [...value];
+}
+function parseOptions(input) {
+  const given = input ?? {};
+  if (!isObject2(given)) {
+    throw new Error(prefixed("takes an object of options, or nothing"));
+  }
+  for (const key of Object.keys(given)) {
+    if (!optionKeys.has(key)) {
+      throw new Error(
+        prefixed(
+          `unknown option "${key}"; it takes ${[...optionKeys].join(", ")}`
+        )
+      );
+    }
+  }
+  for (const key of ["config", "projectDir"]) {
+    if (given[key] !== void 0 && !asString(given[key])) {
+      throw new Error(prefixed(`${key} must be a path`));
+    }
+  }
+  const mac = archesOption(
+    given.mac,
+    "mac",
+    ["arm64", "x64", "universal"],
+    defaultArches.mac
+  );
+  if (mac && mac.includes("universal") && mac.length > 1) {
+    throw new Error(
+      prefixed(
+        "mac: a universal app (--universal) or per-arch apps, not both: ['universal'] or ['arm64', 'x64']"
+      )
+    );
+  }
+  const options = {
+    linux: archesOption(
+      given.linux,
+      "linux",
+      ["x64", "arm64"],
+      defaultArches.linux
+    ),
+    mac,
+    windows: archesOption(
+      given.windows,
+      "windows",
+      ["x64", "arm64"],
+      defaultArches.windows
+    )
+  };
+  if (!options.linux && !options.mac && !options.windows) {
+    throw new Error(prefixed("leaves out every platform: keep at least one"));
+  }
+  if (given.config !== void 0) options.config = given.config;
+  if (given.projectDir !== void 0) {
+    options.projectDir = given.projectDir;
+  }
+  return options;
+}
+function packageDir(from, name) {
+  let entry;
+  try {
+    entry = createRequire(from).resolve(name);
+  } catch {
+    return void 0;
+  }
+  for (let dir = path.dirname(entry); ; dir = path.dirname(dir)) {
+    const file3 = path.join(dir, "package.json");
+    if (existsSync(file3)) {
+      try {
+        if (JSON.parse(readFileSync(file3, "utf8")).name === name) {
+          return dir;
+        }
+      } catch {
+      }
+    }
+    if (path.dirname(dir) === dir) return void 0;
+  }
+}
+function findElectronBuilder(projectDir) {
+  const from = path.join(projectDir, "package.json");
+  const cli2 = packageDir(from, "electron-builder");
+  const dir = (cli2 && packageDir(path.join(cli2, "package.json"), "app-builder-lib")) ?? packageDir(from, "app-builder-lib");
+  if (!dir) return void 0;
+  const { version: version3 } = JSON.parse(
+    readFileSync(path.join(dir, "package.json"), "utf8")
+  );
+  return { dir, version: typeof version3 === "string" ? version3 : "0.0.0" };
+}
+function versionAtLeast(version3, wanted) {
+  const parts = (value) => value.split(/[-+]/)[0].split(".").map((part) => Number.parseInt(part, 10) || 0);
+  const have = parts(version3);
+  const want = parts(wanted);
+  for (let index = 0; index < 3; index++) {
+    const a = have[index] ?? 0;
+    const b = want[index] ?? 0;
+    if (a !== b) return a > b;
+  }
+  return true;
+}
+var loaderFiles = [
+  "out/util/config/config.js",
+  // 25 and later
+  "out/util/config.js",
+  // 24 and earlier
+  "dist/util/config/config.js"
+  // 27 (ES modules)
+];
+async function getConfigOf(lib) {
+  const file3 = loaderFiles.map((name) => path.join(lib.dir, name)).find(existsSync);
+  if (!file3) return void 0;
+  const module = await import(pathToFileURL(file3).href);
+  const getConfig = module.getConfig ?? module.default?.getConfig;
+  return typeof getConfig === "function" ? getConfig : void 0;
+}
+async function sanitizerOf(lib) {
+  const util = packageDir(path.join(lib.dir, "package.json"), "builder-util");
+  const file3 = [
+    path.join(lib.dir, "out", "util", "filename.js"),
+    ...util ? ["out/filename.js", "dist/filename.js"].map(
+      (name) => path.join(util, name)
+    ) : []
+  ].find(existsSync);
+  if (!file3) return void 0;
+  try {
+    const module = await import(pathToFileURL(file3).href);
+    const sanitize = module.sanitizeFileName ?? module.default?.sanitizeFileName;
+    return typeof sanitize === "function" ? sanitize : void 0;
+  } catch {
+    return void 0;
+  }
+}
+var utf8 = new TextEncoder();
+function sanitizeFileName(name, normalizeNfd = false) {
+  const cleaned = name.replace(/[/?<>\\:*|"]/g, "").replace(/[\u0000-\u001f\u0080-\u009f]/g, "").replace(/^\.+$/, "").replace(/^(con|prn|aux|nul|com\d|lpt\d)(\..*)?$/i, "").replace(/[. ]+$/, "");
+  let kept = "";
+  for (const char of cleaned) {
+    if (utf8.encode(kept + char).length > 255) break;
+    kept += char;
+  }
+  return normalizeNfd ? kept.normalize("NFD") : kept;
+}
+function deepAssign(...layers) {
+  const out = {};
+  for (const layer of layers) {
+    if (!isObject2(layer)) continue;
+    for (const [key, value] of Object.entries(layer)) {
+      if (value === void 0 || ["__proto__", "constructor", "prototype"].includes(key)) {
+        continue;
+      }
+      const previous = out[key];
+      let next = value;
+      if (isObject2(value)) {
+        next = isObject2(previous) ? deepAssign(previous, value) : deepAssign(value);
+      } else if (Array.isArray(previous) && Array.isArray(value)) {
+        next = [.../* @__PURE__ */ new Set([...previous, ...value])];
+      }
+      out[key] = next;
+    }
+  }
+  return out;
+}
+var electronBuilderFiles = [
+  "electron-builder.yml",
+  "electron-builder.yaml",
+  "electron-builder.json",
+  "electron-builder.json5",
+  "electron-builder.toml",
+  "electron-builder.js",
+  "electron-builder.cjs",
+  "electron-builder.ts"
+];
+var isCode = (file3) => /\.[cm]?[jt]s$/.test(file3);
+async function readJson(file3) {
+  let text3;
+  try {
+    text3 = await readFile(file3, "utf8");
+  } catch (error46) {
+    if (error46.code === "ENOENT") return void 0;
+    throw error46;
+  }
+  const value = JSON.parse(text3);
+  if (!isObject2(value)) throw new Error(`${file3} isn't a JSON object`);
+  return value;
+}
+async function readDataFile(file3) {
+  if (isCode(file3)) {
+    throw new Error(
+      prefixed(
+        `${path.basename(file3)} is code, which only electron-builder can load, and it isn't installed here: install your dependencies (npm ci) before todesktop upload`
+      )
+    );
+  }
+  const text3 = await readFile(file3, "utf8");
+  let value;
+  try {
+    if (/\.json5?$/.test(file3)) value = import_json5.default.parse(text3);
+    else if (file3.endsWith(".toml")) value = parse3(text3);
+    else value = (0, import_yaml.parse)(text3);
+  } catch (error46) {
+    throw new Error(prefixed(`${file3}: ${error46.message}`));
+  }
+  return isObject2(value) ? value : {};
+}
+async function readElectronBuilderFiles(projectDir, configPath, devMetadata) {
+  let config3;
+  if (configPath) {
+    config3 = await readDataFile(path.resolve(projectDir, configPath));
+  } else if (devMetadata?.build !== void 0 && devMetadata.build !== null) {
+    config3 = isObject2(devMetadata.build) ? devMetadata.build : {};
+  } else {
+    const file3 = electronBuilderFiles.map((name) => path.join(projectDir, name)).find(existsSync);
+    config3 = file3 ? await readDataFile(file3) : {};
+  }
+  const depends = (name) => [devMetadata?.dependencies, devMetadata?.devDependencies].some(
+    (deps) => isObject2(deps) && name in deps
+  );
+  if (config3.extends === void 0 && (depends("react-scripts") || depends("electron-webpack"))) {
+    throw new Error(
+      prefixed(
+        "electron-builder extends its react-cra or electron-webpack preset for this project, which only electron-builder can read, and it isn't installed here: install your dependencies (npm ci) before todesktop upload"
+      )
+    );
+  }
+  const parents = [];
+  const load = async (extended, depth) => {
+    if (depth > 8) throw new Error(prefixed("extends goes too deep"));
+    for (const spec of asList(extended)) {
+      if (typeof spec !== "string") continue;
+      const file3 = path.resolve(projectDir, spec.replace(/^file:/, ""));
+      if (spec === "react-cra" || !existsSync(file3)) {
+        throw new Error(
+          prefixed(
+            `extends ${spec}, which only electron-builder can resolve, and it isn't installed here: install your dependencies (npm ci) before todesktop upload`
+          )
+        );
+      }
+      const parent = await readDataFile(file3);
+      await load(parent.extends, depth + 1);
+      parents.push(parent);
+    }
+  };
+  await load(config3.extends, 0);
+  return deepAssign(...parents, config3);
+}
+async function appDirOf(projectDir, configured) {
+  const given = asString(configured);
+  if (given) {
+    const dir2 = path.resolve(projectDir, given);
+    if (!(await stat(dir2).catch(() => void 0))?.isDirectory()) {
+      throw new Error(
+        prefixed(
+          `directories.app is ${given}, which isn't a directory in ${projectDir}`
+        )
+      );
+    }
+    return dir2;
+  }
+  const dir = ["app", "www"].map((name) => path.join(projectDir, name)).find((each) => existsSync(path.join(each, "package.json")));
+  return dir ?? projectDir;
+}
+var redirected = 0;
+var stdoutWrite;
+async function onStderr(load) {
+  redirected += 1;
+  if (redirected === 1) {
+    stdoutWrite = process.stdout.write;
+    process.stdout.write = ((...args) => process.stderr.write(...args));
+  }
+  try {
+    return await load();
+  } finally {
+    redirected -= 1;
+    if (redirected === 0 && stdoutWrite) {
+      process.stdout.write = stdoutWrite;
+      stdoutWrite = void 0;
+    }
+  }
+}
+var warned = /* @__PURE__ */ new Set();
+function warnOnce(projectDir, message) {
+  const key = `${projectDir}\0${message}`;
+  if (warned.has(key)) return;
+  warned.add(key);
+  console.warn(prefixed(message));
+}
+async function readElectronBuilderProject(projectDir, configPath) {
+  const devMetadata = await readJson(path.join(projectDir, "package.json"));
+  if (!devMetadata) {
+    throw new Error(
+      prefixed(
+        `no package.json in ${projectDir}: put todesktop.config.ts beside it, or pass projectDir`
+      )
+    );
+  }
+  const lib = findElectronBuilder(projectDir);
+  const getConfig = lib ? await getConfigOf(lib) : void 0;
+  let config3;
+  let loadedBy;
+  if (lib && getConfig) {
+    let loaded;
+    try {
+      loaded = await onStderr(
+        () => getConfig(projectDir, configPath ?? null, null)
+      );
+    } catch (error46) {
+      throw new Error(
+        prefixed(
+          `electron-builder ${lib.version} couldn't read its config: ${error46.message}`
+        ),
+        { cause: error46 }
+      );
+    }
+    config3 = isObject2(loaded) ? loaded : {};
+    loadedBy = "electron-builder";
+  } else {
+    if (lib) {
+      warnOnce(
+        projectDir,
+        `electron-builder ${lib.version}'s config loader isn't where it's looked for, so its files are read directly`
+      );
+    }
+    config3 = await readElectronBuilderFiles(
+      projectDir,
+      configPath,
+      devMetadata
+    );
+    loadedBy = "files";
+  }
+  const directories = isObject2(config3.directories) ? config3.directories : {};
+  const appDir = await appDirOf(projectDir, directories.app);
+  const appMetadata = appDir === projectDir ? devMetadata : await readJson(path.join(appDir, "package.json"));
+  if (!appMetadata) {
+    throw new Error(prefixed(`no package.json in ${appDir}`));
+  }
+  const metadata = deepAssign(appMetadata, config3.extraMetadata);
+  return {
+    appDir,
+    buildResources: path.resolve(
+      projectDir,
+      asString(directories.buildResources) ?? "build"
+    ),
+    config: config3,
+    devMetadata,
+    loadedBy,
+    metadata,
+    projectDir,
+    sanitize: (lib && await sanitizerOf(lib)) ?? sanitizeFileName,
+    ...lib ? { version: lib.version } : {}
+  };
+}
+var topExecutableName = (project) => !project.version || versionAtLeast(project.version, "24.8.0");
+var macNfd = (project) => !project.version || versionAtLeast(project.version, "24.10.0");
+var platformSettings = (project, platform) => {
+  const own = project.config[builderKeys[platform]];
+  return isObject2(own) ? own : {};
+};
+function personOf(author) {
+  if (isObject2(author)) {
+    const name2 = asString(author.name)?.trim();
+    const email4 = asString(author.email)?.trim();
+    return name2 ? { name: name2, ...email4 ? { email: email4 } : {} } : void 0;
+  }
+  const text3 = asString(author);
+  if (!text3) return void 0;
+  const match = /^([^(<]*)(?:<([^>]*)>)?/.exec(text3);
+  const name = match?.[1]?.trim();
+  const email3 = match?.[2]?.trim();
+  return name ? { name, ...email3 ? { email: email3 } : {} } : void 0;
+}
+function electronBuilderNames(project) {
+  const { config: config3, metadata, sanitize } = project;
+  const name = asString(metadata.name) ?? "";
+  const productName = asString(config3.productName) ?? asString(metadata.productName) ?? name;
+  const top = topExecutableName(project) ? asString(config3.executableName) : void 0;
+  const productFilename = {};
+  const sanitizedProductName = {};
+  for (const platform of ["linux", "mac", "windows"]) {
+    const nfd = platform === "mac" && macNfd(project);
+    const own = asString(platformSettings(project, platform).executableName);
+    sanitizedProductName[platform] = sanitize(productName, nfd);
+    const executableName = own ?? top;
+    productFilename[platform] = executableName === void 0 ? sanitizedProductName[platform] : sanitize(executableName, nfd);
+  }
+  const linuxOwn = asString(platformSettings(project, "linux").executableName) ?? top;
+  return {
+    linuxExecutable: linuxOwn === void 0 ? sanitize(name).toLowerCase() : sanitize(linuxOwn),
+    name,
+    productFilename,
+    productName,
+    sanitizedProductName
+  };
+}
+var channelOf = (version3) => /^[^-+]*-([^.+]+)/.exec(version3)?.[1] ?? "latest";
+function expandOutput(pattern, project, names, platform, arch) {
+  const version3 = asString(project.metadata.version) ?? "";
+  let unknown2;
+  const value = pattern.replace(
+    /\$\{([_a-zA-Z./*+]+)\}/g,
+    (match, macro) => {
+      switch (macro) {
+        case "arch":
+          return arch;
+        case "author": {
+          const author = personOf(project.metadata.author) ?? personOf(project.devMetadata.author);
+          if (author) return author.name;
+          break;
+        }
+        case "channel":
+          return channelOf(version3);
+        case "name":
+          return names.name;
+        case "os":
+          return builderKeys[platform];
+        case "platform":
+          return nodePlatforms[platform];
+        case "productFilename":
+          return names.productFilename[platform];
+        case "productName":
+          return names.sanitizedProductName[platform];
+        case "version":
+          return version3;
+        default:
+          if (macro.startsWith("env.")) {
+            const env = process.env[macro.slice(4)];
+            if (env !== void 0) return env;
+          }
+      }
+      unknown2 ??= match;
+      return match;
+    }
+  );
+  return unknown2 ? { macro: unknown2 } : { value };
+}
+var archSuffix = (arch, defaultArch) => arch === (asString(defaultArch) ?? "x64") ? "" : `-${arch}`;
+function appPathOf(project, names, platform, arch) {
+  const directories = isObject2(project.config.directories) ? project.config.directories : {};
+  const output = expandOutput(
+    asString(directories.output) ?? "dist",
+    project,
+    names,
+    platform,
+    arch
+  );
+  if ("macro" in output) return output;
+  const key = builderKeys[platform];
+  const folder = `${key}${archSuffix(arch, platformSettings(project, platform).defaultArch)}${platform === "mac" ? "" : "-unpacked"}`;
+  const dir = path.resolve(project.projectDir, output.value, folder);
+  return {
+    path: platform === "mac" ? path.join(dir, `${path.basename(names.productFilename.mac)}.app`) : dir
+  };
+}
+var imageExtension = (name, format) => [".png", ".ico", ".svg", ".icns", `.${format}`].some(
+  (ext) => name.endsWith(ext)
+);
+function iconCandidates(sources, format) {
+  const out = [];
+  for (const source of sources) {
+    if (imageExtension(source, format)) out.push(source);
+    else {
+      if (format !== "set") out.push(`${source}.${format}`);
+      out.push(source, `${source}.png`, `${source}.svg`, `${source}.icns`);
+      if (format !== "ico") out.push(`${source}.ico`);
+    }
+  }
+  if (format !== "set") out.push(`icon.${format}`);
+  out.push("icons", "icon", "icon.png", "icon.svg", "icon.icns");
+  if (format !== "ico") out.push("icon.ico");
+  return [...new Set(out)];
+}
+async function resolveIconSource(project, candidates) {
+  for (const candidate of candidates) {
+    const places = path.isAbsolute(candidate) ? [path.normalize(candidate)] : [project.buildResources, project.projectDir].map(
+      (root) => path.join(root, candidate)
+    );
+    for (const file3 of places) {
+      const found = await stat(file3).catch(() => void 0);
+      if (found) return { dir: found.isDirectory(), file: file3 };
+    }
+  }
+  return void 0;
+}
+async function largestPng(dir) {
+  let best;
+  let fallback;
+  for (const name of await readdir(dir)) {
+    if (name === "icon.png" || name === "icon.PNG") {
+      fallback = path.join(dir, name);
+      continue;
+    }
+    const match = /^(\d+)(?:x\d+)?\.png$/i.exec(name);
+    if (!match) continue;
+    const size = Number.parseInt(match[1], 10);
+    if (!best || size > best.size || size === best.size && name.length < path.basename(best.file).length) {
+      best = { file: path.join(dir, name), size };
+    }
+  }
+  return best?.file ?? fallback;
+}
+async function iconOf(project, platform) {
+  const { config: config3 } = project;
+  const own = asString(platformSettings(project, platform).icon);
+  const mac = isObject2(config3.mac) ? asString(config3.mac.icon) : void 0;
+  const sources = platform === "windows" ? asList(own ?? config3.icon) : [own, mac ?? config3.icon];
+  const found = await resolveIconSource(
+    project,
+    iconCandidates(
+      sources.filter((source) => !!asString(source)),
+      platform === "windows" ? "ico" : "set"
+    )
+  );
+  if (!found) return void 0;
+  if (platform === "windows") {
+    return !found.dir && found.file.endsWith(".ico") ? { file: found.file } : { converted: found.file };
+  }
+  if (found.dir) {
+    const png = await largestPng(found.file);
+    return png ? { file: png } : { converted: found.file };
+  }
+  return found.file.endsWith(".png") ? { file: found.file } : { converted: found.file };
+}
+function entitlementsOf(project) {
+  const given = asString(platformSettings(project, "mac").entitlements);
+  if (given) return path.resolve(project.projectDir, given);
+  const file3 = path.join(project.buildResources, "entitlements.mac.plist");
+  return existsSync(file3) ? file3 : void 0;
+}
+function inheritedEntitlementsOf(project) {
+  const given = asString(platformSettings(project, "mac").entitlementsInherit);
+  if (given) return path.resolve(project.projectDir, given);
+  const file3 = path.join(
+    project.buildResources,
+    "entitlements.mac.inherit.plist"
+  );
+  return existsSync(file3) ? file3 : void 0;
+}
+var isSet = (value) => value !== void 0 && value !== null && value !== false && !(Array.isArray(value) && value.length === 0) && !(isObject2(value) && Object.keys(value).length === 0);
+function targetArches(target) {
+  return [
+    ...new Set(
+      asList(target).flatMap(
+        (each) => isObject2(each) ? asList(each.arch).filter(
+          (arch) => typeof arch === "string"
+        ) : []
+      )
+    )
+  ];
+}
+var hooks = [
+  "afterSign",
+  "afterAllArtifactBuild",
+  "artifactBuildStarted",
+  "artifactBuildCompleted",
+  "appxManifestCreated",
+  "msiProjectCreated"
+];
+var macSigning = [
+  "identity",
+  "notarize",
+  "sign",
+  "binaries",
+  "signIgnore",
+  "requirements",
+  "timestamp",
+  "additionalArguments",
+  "type",
+  "strictVerify",
+  "preAutoEntitlements",
+  "gatekeeperAssess",
+  "cscLink",
+  "cscInstallerLink"
+];
+var windowsSigning = [
+  "signtoolOptions",
+  "azureSignOptions",
+  // Before 26, at win's top level.
+  "certificateFile",
+  "certificatePassword",
+  "certificateSubjectName",
+  "certificateSha1",
+  "publisherName",
+  "sign",
+  "signingHashAlgorithms",
+  "rfc3161TimeStampServer",
+  "timeStampServer",
+  "signDlls",
+  "signExts",
+  "verifyUpdateCodeSignature",
+  "cscLink"
+];
+function ignoredElectronBuilderSettings(config3, platform, arches = []) {
+  const ignored = [];
+  const check2 = (name, value, why) => {
+    if (isSet(value)) ignored.push(`${name}: ${why}`);
+  };
+  const some = (where, settings, keys) => keys.filter((key2) => isSet(settings[key2])).map((key2) => `${where}${key2}`);
+  if (!platform) {
+    check2(
+      "publish",
+      config3.publish,
+      "ToDesktop releases and serves updates, so electron-builder\u2019s update feed isn\u2019t used: remove electron-updater and set publish: null"
+    );
+    const set2 = some("", config3, hooks);
+    if (set2.length > 0) {
+      ignored.push(
+        `${set2.join(", ")}: ${set2.length > 1 ? "they run" : "it runs"} only when electron-builder signs or makes installers, which ToDesktop does instead`
+      );
+    }
+    return ignored;
+  }
+  const key = builderKeys[platform];
+  const own = isObject2(config3[key]) ? config3[key] : {};
+  check2(
+    `${key}.publish`,
+    own.publish,
+    "ToDesktop releases and serves updates, so electron-builder\u2019s update feed isn\u2019t used"
+  );
+  const built = targetArches(own.target).filter(
+    (arch) => !arches.includes(arch)
+  );
+  if (built.length > 0) {
+    ignored.push(
+      `${key}.target: builds ${built.join(" and ")}, which electronBuilderConfig() doesn\u2019t list (it lists ${arches.join(" and ")}). electron-builder --dir builds the arches on its command line: pass electronBuilderConfig({ ${platform}: [...] }) with each one the workflow builds`
+    );
+  }
+  if (platform !== "mac") {
+    const associations = [
+      ...asList(config3.fileAssociations),
+      ...asList(own.fileAssociations)
+    ];
+    check2(
+      "fileAssociations",
+      associations,
+      "its file types aren\u2019t registered when the app is installed, so they don\u2019t open it"
+    );
+    const protocols = [...asList(config3.protocols), ...asList(own.protocols)];
+    check2(
+      "protocols",
+      protocols,
+      platform === "windows" ? "its URL schemes aren\u2019t registered when the app is installed; register them when the app starts, with app.setAsDefaultProtocolClient()" : "its URL schemes aren\u2019t in the menu entry, so they don\u2019t open the app"
+    );
+  }
+  if (platform === "mac") {
+    const signing = some("mac.", own, macSigning);
+    if (signing.length > 0) {
+      ignored.push(
+        `${signing.join(", ")}: ToDesktop signs and notarizes the app with your Developer ID, so electron-builder\u2019s signing settings don\u2019t apply`
+      );
+    }
+    if (own.hardenedRuntime === false) {
+      ignored.push(
+        "mac.hardenedRuntime: ToDesktop always signs with the hardened runtime, which notarization needs"
+      );
+    }
+    check2(
+      "mac.provisioningProfile",
+      own.provisioningProfile,
+      "electron-builder embeds it when it signs; set mac.provisioningProfile in todesktop.config.ts instead"
+    );
+    check2(
+      "mac.entitlementsLoginHelper",
+      own.entitlementsLoginHelper,
+      "ToDesktop signs nested apps with mac.entitlements; give the login helper its own in mac.nested"
+    );
+    check2(
+      "dmg",
+      config3.dmg,
+      "ToDesktop makes the DMG (mac.formats), so its layout, background, window and contents don\u2019t apply"
+    );
+    check2(
+      "pkg",
+      config3.pkg,
+      "ToDesktop makes the pkg (mac.formats), so these settings don\u2019t apply"
+    );
+  }
+  if (platform === "windows") {
+    for (const installer of [
+      "nsis",
+      "nsisWeb",
+      "portable",
+      "squirrelWindows",
+      "msi",
+      "msiWrapped",
+      "appx"
+    ]) {
+      check2(
+        installer,
+        config3[installer],
+        installer === "msi" || installer === "appx" ? `ToDesktop makes its own (windows.formats '${installer === "msi" ? "msi" : "msix"}'), so these settings don\u2019t apply` : "ToDesktop\u2019s own installer replaces it, so these settings don\u2019t apply"
+      );
+    }
+    const signing = some("win.", own, windowsSigning);
+    if (signing.length > 0) {
+      ignored.push(
+        `${signing.join(", ")}: ToDesktop signs the app with your Windows identity, so electron-builder\u2019s signing settings don\u2019t apply`
+      );
+    }
+  }
+  if (platform === "linux") {
+    for (const target of [
+      "deb",
+      "rpm",
+      "pacman",
+      "appImage",
+      "apk",
+      "freebsd",
+      "p5p"
+    ]) {
+      check2(
+        target,
+        config3[target],
+        "ToDesktop makes the packages (linux.formats), so its dependencies, scripts and other settings don\u2019t apply; set linux.depends for dependencies"
+      );
+    }
+    for (const target of ["snap", "snapcraft", "flatpak"]) {
+      check2(target, config3[target], "ToDesktop doesn\u2019t make this format");
+    }
+    const entry = some("linux.", own, [
+      "desktop",
+      "category",
+      "mimeTypes",
+      "executableArgs",
+      "synopsis",
+      "description",
+      "vendor",
+      "packageCategory"
+    ]);
+    if (entry.length > 0) {
+      ignored.push(
+        `${entry.join(", ")}: ToDesktop writes the packages\u2019 menu entry and metadata from todesktop.config.ts, so these don\u2019t apply`
+      );
+    }
+  }
+  return ignored;
+}
+var withoutUndefined = (value) => Object.fromEntries(
+  Object.entries(value).filter(([, child]) => child !== void 0)
+);
+var linuxExecutableName = /^[\w.-]+$/;
+var windowsExecutableName = /^[\w .-]+\.exe$/i;
+async function electronBuilderPresetConfig(project, options, configDir) {
+  const relative = (file3) => relativeTo(configDir, file3);
+  const warn = (message) => warnOnce(project.projectDir, message);
+  const names = electronBuilderNames(project);
+  const { config: config3, metadata } = project;
+  const appsOf = (platform, arches) => {
+    const apps = {};
+    for (const arch of arches) {
+      const found = appPathOf(project, names, platform, arch);
+      if ("macro" in found) {
+        warn(
+          `directories.output uses ${found.macro}, which electronBuilderConfig() can't expand, so it leaves ${platform}.apps to todesktop.config.ts`
+        );
+        return void 0;
+      }
+      apps[arch] = relative(found.path);
+    }
+    return apps;
+  };
+  for (const ignored of ignoredElectronBuilderSettings(config3)) warn(ignored);
+  for (const platform of ["mac", "windows", "linux"]) {
+    const arches = options[platform];
+    if (!arches) continue;
+    for (const ignored of ignoredElectronBuilderSettings(
+      config3,
+      platform,
+      arches
+    )) {
+      warn(ignored);
+    }
+  }
+  let mac;
+  if (options.mac) {
+    const entitlements2 = entitlementsOf(project);
+    if (!entitlements2) {
+      warn(
+        "mac.entitlements: electron-builder signs with its own default entitlements (allow-jit, allow-unsigned-executable-memory, disable-library-validation), which ToDesktop doesn't have: add them as build/entitlements.mac.plist (electron-builder then uses it too), or set mac.entitlements in todesktop.config.ts"
+      );
+    }
+    const inherited = inheritedEntitlementsOf(project);
+    if (inherited && inherited !== entitlements2) {
+      warn(
+        `mac.entitlementsInherit: ToDesktop signs Electron's helper apps with mac.entitlements (${entitlements2 ? relative(entitlements2) : "none"}), not ${relative(inherited)}; give them their own in mac.nested`
+      );
+    }
+    mac = withoutUndefined({
+      apps: appsOf("mac", options.mac),
+      entitlements: entitlements2 ? relative(entitlements2) : void 0
+    });
+  }
+  let windows;
+  if (options.windows) {
+    const executable = `${names.productFilename.windows}.exe`;
+    if (!windowsExecutableName.test(executable)) {
+      warn(
+        `electron-builder names the Windows executable "${executable}" (win.executableName, executableName, else productName), which isn't a name todesktop.config.ts takes (letters, digits, spaces, dots, dashes and underscores): set win.executableName`
+      );
+    }
+    const icon = await iconOf(project, "windows");
+    if (icon && "converted" in icon) {
+      warn(
+        `electron-builder makes the Windows icon from ${relative(icon.converted)}; windows.icon takes an .ico: add one (build/icon.ico) or set windows.icon in todesktop.config.ts`
+      );
+    }
+    windows = withoutUndefined({
+      apps: appsOf("windows", options.windows),
+      executable,
+      icon: icon && "file" in icon ? relative(icon.file) : void 0
+    });
+  }
+  let linux;
+  if (options.linux) {
+    if (!linuxExecutableName.test(names.linuxExecutable)) {
+      warn(
+        `electron-builder names the Linux executable "${names.linuxExecutable}" (linux.executableName, executableName, else package.json's name, lowercased), which isn't a file name todesktop.config.ts takes: set linux.executableName`
+      );
+    }
+    const icon = await iconOf(project, "linux");
+    if (icon && "converted" in icon) {
+      warn(
+        `electron-builder makes the Linux icons from ${relative(icon.converted)}; linux.icon takes a PNG: add one (build/icons/512x512.png) or set linux.icon in todesktop.config.ts`
+      );
+    }
+    linux = withoutUndefined({
+      apps: appsOf("linux", options.linux),
+      executable: names.linuxExecutable,
+      icon: icon && "file" in icon ? relative(icon.file) : void 0
+    });
+  }
+  const author = personOf(metadata.author) ?? personOf(project.devMetadata.author);
+  const maintainer = asString(platformSettings(project, "linux").maintainer) ?? (author?.email ? `${author.name} <${author.email}>` : author?.name);
+  return withoutUndefined({
+    // Required: without one, the product name.
+    description: asString(metadata.description) ?? names.productName,
+    linux,
+    mac,
+    maintainer,
+    productName: names.productName || void 0,
+    version: asString(metadata.version),
+    windows
+  });
+}
+function presetName(given) {
+  return isObject2(given) && Object.keys(given).length > 0 ? `electronBuilderConfig(${JSON.stringify(given)})` : "electronBuilderConfig()";
+}
+function electronBuilderConfig(given) {
+  const options = parseOptions(given);
+  return {
+    config: async ({ configDir }) => {
+      const projectDir = path.resolve(configDir, options.projectDir ?? ".");
+      const project = await readElectronBuilderProject(
+        projectDir,
+        options.config && path.resolve(configDir, options.config)
+      );
+      return electronBuilderPresetConfig(project, options, configDir);
+    },
+    name: presetName(given)
+  };
+}
+
 // ../config/src/presets/tauri.ts
+var import_json52 = __toESM(require_lib(), 1);
+import { execFile } from "node:child_process";
+import { existsSync as existsSync2 } from "node:fs";
+import {
+  chmod,
+  copyFile,
+  mkdir,
+  open,
+  readdir as readdir2,
+  readFile as readFile2,
+  realpath,
+  stat as stat2
+} from "node:fs/promises";
+import path2 from "node:path";
+import { promisify } from "node:util";
 var run = promisify(execFile);
 var configNames = ["tauri.conf.json", "tauri.conf.json5", "Tauri.toml"];
 var tauriPlatforms = {
@@ -21970,29 +22871,29 @@ var tauriPlatforms = {
   windows: "windows"
 };
 var platformsInOrder = ["linux", "mac", "windows"];
-function isObject2(value) {
+function isObject3(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
-var asString = (value) => typeof value === "string" && value !== "" ? value : void 0;
+var asString2 = (value) => typeof value === "string" && value !== "" ? value : void 0;
 var asStrings = (value) => Array.isArray(value) ? value.filter((item) => typeof item === "string") : [];
-var relativeTo = (configDir, file3) => path.relative(configDir, file3).split(path.sep).join("/") || ".";
+var relativeTo2 = (configDir, file3) => path2.relative(configDir, file3).split(path2.sep).join("/") || ".";
 async function parseFile(file3) {
-  const text3 = await readFile(file3, "utf8");
+  const text3 = await readFile2(file3, "utf8");
   let value;
   try {
     if (file3.endsWith(".toml")) value = parse3(text3);
-    else if (file3.endsWith(".json5")) value = import_json5.default.parse(text3);
+    else if (file3.endsWith(".json5")) value = import_json52.default.parse(text3);
     else {
       try {
         value = JSON.parse(text3);
       } catch {
-        value = import_json5.default.parse(text3);
+        value = import_json52.default.parse(text3);
       }
     }
   } catch (error46) {
     throw new Error(`tauriConfig(): ${file3}: ${error46.message}`);
   }
-  if (!isObject2(value)) throw new Error(`tauriConfig(): ${file3} isn't a table`);
+  if (!isObject3(value)) throw new Error(`tauriConfig(): ${file3} isn't a table`);
   return value;
 }
 var keyShape = {
@@ -22011,13 +22912,13 @@ function camelKeys(value, shape = keyShape) {
     );
     if (name === "macos") name = "macOS";
     const childShape = shape[name];
-    out[name] = isObject2(childShape) && isObject2(child) ? camelKeys(child, childShape) : child;
+    out[name] = isObject3(childShape) && isObject3(child) ? camelKeys(child, childShape) : child;
   }
   return out;
 }
 function mergePatch(target, patch) {
-  if (!isObject2(patch)) return patch;
-  const out = isObject2(target) ? { ...target } : {};
+  if (!isObject3(patch)) return patch;
+  const out = isObject3(target) ? { ...target } : {};
   for (const [key, value] of Object.entries(patch)) {
     if (value === null) delete out[key];
     else out[key] = mergePatch(out[key], value);
@@ -22025,13 +22926,13 @@ function mergePatch(target, patch) {
   return out;
 }
 async function findConfig(configDir, given) {
-  const inDir = (dir) => configNames.map((name) => path.join(dir, name)).find(existsSync);
+  const inDir = (dir) => configNames.map((name) => path2.join(dir, name)).find(existsSync2);
   if (given) {
-    const resolved = path.resolve(configDir, given);
-    if (!existsSync(resolved)) {
+    const resolved = path2.resolve(configDir, given);
+    if (!existsSync2(resolved)) {
       throw new Error(`tauriConfig(${JSON.stringify(given)}): no such file`);
     }
-    if (!(await stat(resolved)).isDirectory()) return resolved;
+    if (!(await stat2(resolved)).isDirectory()) return resolved;
     const found2 = inDir(resolved);
     if (!found2) {
       throw new Error(
@@ -22040,7 +22941,7 @@ async function findConfig(configDir, given) {
     }
     return found2;
   }
-  const found = inDir(path.join(configDir, "src-tauri")) ?? inDir(configDir);
+  const found = inDir(path2.join(configDir, "src-tauri")) ?? inDir(configDir);
   if (!found) {
     throw new Error(
       `tauriConfig(): no ${configNames.join(", ")} in src-tauri or beside todesktop.config.ts; pass its path`
@@ -22054,34 +22955,34 @@ async function platformOverride(dir, platform) {
     `tauri.${os3}.conf.json`,
     `tauri.${os3}.conf.json5`,
     `Tauri.${os3}.toml`
-  ].map((name) => path.join(dir, name)).find(existsSync);
+  ].map((name) => path2.join(dir, name)).find(existsSync2);
   return file3 ? camelKeys(await parseFile(file3)) : void 0;
 }
 async function workspaceOf(dir) {
-  for (let at = dir; ; at = path.dirname(at)) {
-    const file3 = path.join(at, "Cargo.toml");
-    if (existsSync(file3)) {
+  for (let at = dir; ; at = path2.dirname(at)) {
+    const file3 = path2.join(at, "Cargo.toml");
+    if (existsSync2(file3)) {
       const manifest = await parseFile(file3);
-      if (isObject2(manifest.workspace)) return { dir: at, manifest };
+      if (isObject3(manifest.workspace)) return { dir: at, manifest };
     }
-    if (path.dirname(at) === at) return void 0;
+    if (path2.dirname(at) === at) return void 0;
   }
 }
 async function cargoBuildConfig(dir) {
   let target;
   let targetDir;
-  for (let at = dir; ; at = path.dirname(at)) {
+  for (let at = dir; ; at = path2.dirname(at)) {
     for (const name of ["config.toml", "config"]) {
-      const file3 = path.join(at, ".cargo", name);
-      if (!existsSync(file3)) continue;
+      const file3 = path2.join(at, ".cargo", name);
+      if (!existsSync2(file3)) continue;
       const { build: build2 } = await parseFile(file3);
-      if (!isObject2(build2)) continue;
-      const configuredDir = asString(build2["target-dir"]);
-      targetDir ??= configuredDir ? path.resolve(at, configuredDir) : void 0;
+      if (!isObject3(build2)) continue;
+      const configuredDir = asString2(build2["target-dir"]);
+      targetDir ??= configuredDir ? path2.resolve(at, configuredDir) : void 0;
       const targets = Array.isArray(build2.target) ? asStrings(build2.target) : asStrings([build2.target]);
       if (targets.length === 1) target ??= targets[0];
     }
-    if (path.dirname(at) === at) {
+    if (path2.dirname(at) === at) {
       return {
         ...target ? { target } : {},
         ...targetDir ? { targetDir } : {}
@@ -22097,7 +22998,7 @@ async function cargoMetadata(dir) {
       { cwd: dir, maxBuffer: 64 * 1024 * 1024 }
     );
     const metadata = JSON.parse(stdout);
-    return isObject2(metadata) ? metadata : void 0;
+    return isObject3(metadata) ? metadata : void 0;
   } catch (error46) {
     if (error46.code !== "ENOENT") {
       console.warn(
@@ -22118,25 +23019,25 @@ function endsWithPath(file3, suffix) {
 async function mainBinaryOf(manifest, name, defaultRun, dir) {
   const binaries = [];
   for (const bin of (Array.isArray(manifest.bin) ? manifest.bin : []).filter(
-    isObject2
+    isObject3
   )) {
-    const binName = asString(bin.name);
+    const binName = asString2(bin.name);
     if (!binName) continue;
-    const binPath = asString(bin.path);
+    const binPath = asString2(bin.path);
     binaries.push({
       main: binName === name || binName === defaultRun,
       name: binName,
       ...binPath ? { path: binPath } : {}
     });
   }
-  const found = (await entriesOf(path.join(dir, "src", "bin"))).map(
+  const found = (await entriesOf(path2.join(dir, "src", "bin"))).map(
     (entry) => [
-      path.parse(entry.name).name,
-      path.join(dir, "src", "bin", entry.name)
+      path2.parse(entry.name).name,
+      path2.join(dir, "src", "bin", entry.name)
     ]
   );
-  if (existsSync(path.join(dir, "src", "main.rs"))) {
-    found.push([name, path.join(dir, "src", "main.rs")]);
+  if (existsSync2(path2.join(dir, "src", "main.rs"))) {
+    found.push([name, path2.join(dir, "src", "main.rs")]);
   }
   for (const [binName, file3] of found) {
     const covered = binaries.some(
@@ -22155,39 +23056,39 @@ async function mainBinaryOf(manifest, name, defaultRun, dir) {
   const main2 = binaries.find((bin) => bin.main);
   if (!main2) {
     throw new Error(
-      `tauriConfig(): ${path.join(dir, "Cargo.toml")} builds ${binaries.map((bin) => bin.name).join(", ")}; set package.default-run to the app's, as tauri build asks`
+      `tauriConfig(): ${path2.join(dir, "Cargo.toml")} builds ${binaries.map((bin) => bin.name).join(", ")}; set package.default-run to the app's, as tauri build asks`
     );
   }
   return main2.name;
 }
 async function readCargo(dir) {
-  const file3 = path.join(dir, "Cargo.toml");
-  if (!existsSync(file3)) {
+  const file3 = path2.join(dir, "Cargo.toml");
+  if (!existsSync2(file3)) {
     throw new Error(`tauriConfig(): no Cargo.toml in ${dir}`);
   }
   const manifest = await parseFile(file3);
-  const pkg = isObject2(manifest.package) ? manifest.package : {};
-  const name = asString(pkg.name);
+  const pkg = isObject3(manifest.package) ? manifest.package : {};
+  const name = asString2(pkg.name);
   if (!name) throw new Error(`tauriConfig(): ${file3} has no package.name`);
   const build2 = await cargoBuildConfig(dir);
   const buildTarget = process.env.CARGO_BUILD_TARGET ?? build2.target;
   const metadata = await cargoMetadata(dir);
   const real = await realpath(file3).catch(() => file3);
-  const packages = Array.isArray(metadata?.packages) ? metadata.packages.filter(isObject2) : [];
+  const packages = Array.isArray(metadata?.packages) ? metadata.packages.filter(isObject3) : [];
   let resolved;
   for (const candidate of packages) {
-    const manifestPath = asString(candidate.manifest_path);
+    const manifestPath = asString2(candidate.manifest_path);
     if (manifestPath && // oxlint-disable-next-line no-await-in-loop
     await realpath(manifestPath).catch(() => manifestPath) === real) {
       resolved = candidate;
     }
   }
-  const metadataTargetDir = asString(metadata?.target_directory);
+  const metadataTargetDir = asString2(metadata?.target_directory);
   if (resolved && metadataTargetDir) {
-    const tauri2 = (Array.isArray(resolved.dependencies) ? resolved.dependencies.filter(isObject2) : []).find((dependency) => dependency.name === "tauri");
-    const description2 = asString(resolved.description);
-    const homepage2 = asString(resolved.homepage);
-    const version4 = asString(resolved.version);
+    const tauri2 = (Array.isArray(resolved.dependencies) ? resolved.dependencies.filter(isObject3) : []).find((dependency) => dependency.name === "tauri");
+    const description2 = asString2(resolved.description);
+    const homepage2 = asString2(resolved.homepage);
+    const version4 = asString2(resolved.version);
     return {
       authors: asStrings(resolved.authors),
       ...buildTarget ? { buildTarget } : {},
@@ -22196,7 +23097,7 @@ async function readCargo(dir) {
       mainBinary: await mainBinaryOf(
         manifest,
         name,
-        asString(resolved.default_run),
+        asString2(resolved.default_run),
         dir
       ),
       name,
@@ -22207,22 +23108,22 @@ async function readCargo(dir) {
   }
   const workspace = await workspaceOf(dir);
   const workspaceTable = workspace?.manifest.workspace;
-  const shared = isObject2(workspaceTable) && isObject2(workspaceTable.package) ? workspaceTable.package : {};
-  const field = (key) => isObject2(pkg[key]) && pkg[key].workspace === true ? shared[key] : pkg[key];
+  const shared = isObject3(workspaceTable) && isObject3(workspaceTable.package) ? workspaceTable.package : {};
+  const field = (key) => isObject3(pkg[key]) && pkg[key].workspace === true ? shared[key] : pkg[key];
   const tauriOf = (table) => {
-    const tauri2 = isObject2(table) ? table.tauri : void 0;
-    return isObject2(tauri2) ? tauri2 : {};
+    const tauri2 = isObject3(table) ? table.tauri : void 0;
+    return isObject3(tauri2) ? tauri2 : {};
   };
   const tauri = tauriOf(manifest.dependencies);
   const features = [
     ...asStrings(tauri.features),
-    ...tauri.workspace === true && isObject2(workspaceTable) ? asStrings(tauriOf(workspaceTable.dependencies).features) : []
+    ...tauri.workspace === true && isObject3(workspaceTable) ? asStrings(tauriOf(workspaceTable.dependencies).features) : []
   ];
   const fromEnv = process.env.CARGO_TARGET_DIR ?? process.env.CARGO_BUILD_TARGET_DIR;
-  const targetDir = fromEnv ? path.resolve(dir, fromEnv) : build2.targetDir ?? path.join(workspace?.dir ?? dir, "target");
-  const description = asString(field("description"));
-  const homepage = asString(field("homepage"));
-  const version3 = asString(field("version"));
+  const targetDir = fromEnv ? path2.resolve(dir, fromEnv) : build2.targetDir ?? path2.join(workspace?.dir ?? dir, "target");
+  const description = asString2(field("description"));
+  const homepage = asString2(field("homepage"));
+  const version3 = asString2(field("version"));
   return {
     authors: asStrings(field("authors")),
     ...buildTarget ? { buildTarget } : {},
@@ -22231,7 +23132,7 @@ async function readCargo(dir) {
     mainBinary: await mainBinaryOf(
       manifest,
       name,
-      asString(pkg["default-run"]),
+      asString2(pkg["default-run"]),
       dir
     ),
     name,
@@ -22242,7 +23143,7 @@ async function readCargo(dir) {
 }
 async function readTauriProject(configDir, given) {
   const file3 = await findConfig(configDir, given);
-  const dir = path.dirname(file3);
+  const dir = path2.dirname(file3);
   const shared = camelKeys(await parseFile(file3));
   const platforms3 = {};
   for (const platform of platformsInOrder) {
@@ -22251,15 +23152,15 @@ async function readTauriProject(configDir, given) {
   }
   return { cargo: await readCargo(dir), dir, file: file3, platforms: platforms3, shared };
 }
-var bundleOf = (config3) => isObject2(config3.bundle) ? config3.bundle : {};
-var productNameOf = (project, config3) => asString(config3.productName) ?? project.cargo.name;
-var binaryOf = (project, platform) => asString(project.platforms[platform].mainBinaryName) ?? project.cargo.mainBinary;
+var bundleOf = (config3) => isObject3(config3.bundle) ? config3.bundle : {};
+var productNameOf = (project, config3) => asString2(config3.productName) ?? project.cargo.name;
+var binaryOf = (project, platform) => asString2(project.platforms[platform].mainBinaryName) ?? project.cargo.mainBinary;
 async function versionOf(project) {
-  const version3 = asString(project.shared.version);
+  const version3 = asString2(project.shared.version);
   if (version3?.endsWith(".json")) {
-    const file3 = path.resolve(project.dir, version3);
-    const json2 = JSON.parse(await readFile(file3, "utf8"));
-    return asString(json2.version);
+    const file3 = path2.resolve(project.dir, version3);
+    const json2 = JSON.parse(await readFile2(file3, "utf8"));
+    return asString2(json2.version);
   }
   return version3 ?? project.cargo.version;
 }
@@ -22278,10 +23179,10 @@ async function pngWidth(file3) {
 }
 async function iconsOf(project, platform) {
   const icons = asStrings(bundleOf(project.platforms[platform]).icon).map(
-    (icon) => path.resolve(project.dir, icon)
+    (icon) => path2.resolve(project.dir, icon)
   );
   const ico = icons.find(
-    (icon) => icon.toLowerCase().endsWith(".ico") && existsSync(icon)
+    (icon) => icon.toLowerCase().endsWith(".ico") && existsSync2(icon)
   );
   let png;
   let widest = 0;
@@ -22293,37 +23194,37 @@ async function iconsOf(project, platform) {
   }
   return { ...ico ? { ico } : {}, ...png ? { png } : {} };
 }
-var hasResources = (resources) => Array.isArray(resources) ? resources.length > 0 : isObject2(resources) && Object.keys(resources).length > 0;
-var withoutUndefined = (value) => Object.fromEntries(
+var hasResources = (resources) => Array.isArray(resources) ? resources.length > 0 : isObject3(resources) && Object.keys(resources).length > 0;
+var withoutUndefined2 = (value) => Object.fromEntries(
   Object.entries(value).filter(([, child]) => child !== void 0)
 );
 async function tauriPresetConfig(project, configDir) {
-  const relative = (file3) => relativeTo(configDir, file3);
+  const relative = (file3) => relativeTo2(configDir, file3);
   const { cargo } = project;
   const sharedBundle = bundleOf(project.shared);
-  const release = path.join(
+  const release = path2.join(
     cargo.targetDir,
     ...cargo.buildTarget ? [cargo.buildTarget] : [],
     "release"
   );
-  const homepage = asString(sharedBundle.homepage) ?? cargo.homepage;
+  const homepage = asString2(sharedBundle.homepage) ?? cargo.homepage;
   const authors = cargo.authors.join(", ");
   const { mac } = project.platforms;
-  const macOS = isObject2(bundleOf(mac).macOS) ? bundleOf(mac).macOS : {};
-  const entitlements2 = asString(macOS.entitlements);
+  const macOS = isObject3(bundleOf(mac).macOS) ? bundleOf(mac).macOS : {};
+  const entitlements2 = asString2(macOS.entitlements);
   const windowsIcons = await iconsOf(project, "windows");
-  const windowsPublisher = asString(
+  const windowsPublisher = asString2(
     bundleOf(project.platforms.windows).publisher
   );
   const linuxBundle = bundleOf(project.platforms.linux);
-  const linuxSection = isObject2(linuxBundle.linux) ? linuxBundle.linux : {};
-  const deb = isObject2(linuxSection.deb) ? linuxSection.deb : {};
+  const linuxSection = isObject3(linuxBundle.linux) ? linuxBundle.linux : {};
+  const deb = isObject3(linuxSection.deb) ? linuxSection.deb : {};
   const linuxIcons = await iconsOf(project, "linux");
-  return withoutUndefined({
+  return withoutUndefined2({
     // Required: without one in Tauri's config or Cargo.toml, the name.
-    description: asString(sharedBundle.shortDescription) ?? cargo.description ?? productNameOf(project, project.shared),
+    description: asString2(sharedBundle.shortDescription) ?? cargo.description ?? productNameOf(project, project.shared),
     homepage: homepage && URL.canParse(homepage) ? homepage : void 0,
-    linux: withoutUndefined({
+    linux: withoutUndefined2({
       apps: { x64: relative(release) },
       // Tauri's own deb: the webview and GTK, an app indicator for a tray.
       depends: [
@@ -22339,11 +23240,11 @@ async function tauriPresetConfig(project, configDir) {
       // Where assembling puts bundle.resources, for packages to link.
       usrLib: hasResources(linuxBundle.resources) ? [productNameOf(project, project.platforms.linux)] : void 0
     }),
-    mac: withoutUndefined({
+    mac: withoutUndefined2({
       // tauri build --bundles app --target aarch64-apple-darwin
       apps: {
         arm64: relative(
-          path.join(
+          path2.join(
             cargo.targetDir,
             "aarch64-apple-darwin",
             "release",
@@ -22353,13 +23254,13 @@ async function tauriPresetConfig(project, configDir) {
           )
         )
       },
-      entitlements: entitlements2 ? relative(path.resolve(project.dir, entitlements2)) : void 0,
+      entitlements: entitlements2 ? relative(path2.resolve(project.dir, entitlements2)) : void 0,
       formats: ["dmg"]
     }),
-    maintainer: authors || asString(sharedBundle.publisher),
+    maintainer: authors || asString2(sharedBundle.publisher),
     productName: productNameOf(project, project.shared),
     version: await versionOf(project),
-    windows: withoutUndefined({
+    windows: withoutUndefined2({
       apps: { x64: relative(release) },
       executable: `${binaryOf(project, "windows")}.exe`,
       icon: windowsIcons.ico ? relative(windowsIcons.ico) : void 0,
@@ -22368,7 +23269,7 @@ async function tauriPresetConfig(project, configDir) {
   });
 }
 function splitWritten(written) {
-  const root = path.isAbsolute(written) ? path.parse(written).root.replaceAll("\\", "/") : "";
+  const root = path2.isAbsolute(written) ? path2.parse(written).root.replaceAll("\\", "/") : "";
   const parts = written.slice(root.length).split(/[\\/]+/).filter((part) => part !== "" && part !== ".");
   return { parts, root };
 }
@@ -22408,7 +23309,7 @@ function componentRegExp(part) {
 var byName = (a, b) => a.name < b.name ? -1 : Number(a.name > b.name);
 async function entriesOf(dir) {
   try {
-    return (await readdir(dir, { withFileTypes: true })).sort(byName);
+    return (await readdir2(dir, { withFileTypes: true })).sort(byName);
   } catch {
     return [];
   }
@@ -22427,7 +23328,7 @@ async function globWritten(pattern, cwd) {
       await walk(dir, shown2, after);
       for (const entry of await entriesOf(dir)) {
         if (entry.isDirectory()) {
-          await walk(path.join(dir, entry.name), join(shown2, entry.name), rest);
+          await walk(path2.join(dir, entry.name), join(shown2, entry.name), rest);
         }
       }
     } else if (hasMagic(part)) {
@@ -22435,21 +23336,21 @@ async function globWritten(pattern, cwd) {
       for (const entry of await entriesOf(dir)) {
         if (matcher.test(entry.name)) {
           await walk(
-            path.join(dir, entry.name),
+            path2.join(dir, entry.name),
             join(shown2, entry.name),
             after
           );
         }
       }
-    } else if (existsSync(path.join(dir, part))) {
-      await walk(path.join(dir, part), join(shown2, part), after);
+    } else if (existsSync2(path2.join(dir, part))) {
+      await walk(path2.join(dir, part), join(shown2, part), after);
     }
   };
-  await walk(root ? path.resolve(root) : cwd, root, parts);
+  await walk(root ? path2.resolve(root) : cwd, root, parts);
   if (/[\\/]$/.test(pattern)) {
     const dirs = [];
     for (const match of found) {
-      if (await isDirectory(path.resolve(cwd, match))) dirs.push(match);
+      if (await isDirectory(path2.resolve(cwd, match))) dirs.push(match);
     }
     return dirs;
   }
@@ -22459,11 +23360,11 @@ async function filesUnder(dir, shown2) {
   const files = [];
   for (const entry of await entriesOf(dir)) {
     const child = `${shown2}/${entry.name}`;
-    const full = path.join(dir, entry.name);
+    const full = path2.join(dir, entry.name);
     if (entry.isDirectory()) {
       files.push(...await filesUnder(full, child));
     } else if (entry.isSymbolicLink()) {
-      const target = await stat(full).catch(() => void 0);
+      const target = await stat2(full).catch(() => void 0);
       if (!target) {
         throw new Error(`bundle.resources: ${child} is a broken link`);
       }
@@ -22472,13 +23373,13 @@ async function filesUnder(dir, shown2) {
   }
   return files;
 }
-var isDirectory = async (file3) => (await stat(file3).catch(() => void 0))?.isDirectory() ?? false;
+var isDirectory = async (file3) => (await stat2(file3).catch(() => void 0))?.isDirectory() ?? false;
 async function tauriResources(resources, dir) {
   const out = [];
   let entries = [];
   if (Array.isArray(resources)) {
     entries = asStrings(resources).map((pattern) => [pattern, void 0]);
-  } else if (isObject2(resources)) {
+  } else if (isObject3(resources)) {
     entries = Object.entries(resources).map(([pattern, target]) => [
       pattern,
       typeof target === "string" ? target : ""
@@ -22490,7 +23391,7 @@ async function tauriResources(resources, dir) {
     if (hasMagic(pattern)) {
       const files = [];
       for (const written2 of await globWritten(pattern, dir)) {
-        if (!await isDirectory(path.resolve(dir, written2))) {
+        if (!await isDirectory(path2.resolve(dir, written2))) {
           files.push(written2);
         }
       }
@@ -22499,28 +23400,28 @@ async function tauriResources(resources, dir) {
       }
       for (const written2 of files) {
         out.push({
-          source: path.resolve(dir, written2),
-          target: target === void 0 ? resourceRelpath(written2) : under(target, path.posix.basename(written2))
+          source: path2.resolve(dir, written2),
+          target: target === void 0 ? resourceRelpath(written2) : under(target, path2.posix.basename(written2))
         });
       }
       continue;
     }
     const written = normalizeWritten(pattern);
-    const source = path.resolve(dir, written);
-    if (!existsSync(source)) {
+    const source = path2.resolve(dir, written);
+    if (!existsSync2(source)) {
       throw new Error(`bundle.resources: ${pattern} doesn't exist`);
     }
     if (await isDirectory(source)) {
       for (const file3 of await filesUnder(source, written)) {
         out.push({
-          source: path.resolve(dir, file3),
+          source: path2.resolve(dir, file3),
           target: target === void 0 ? resourceRelpath(file3) : under(target, file3.slice(written.length + 1))
         });
       }
     } else {
       out.push({
         source,
-        target: target === void 0 ? resourceRelpath(written) : target || path.posix.basename(written)
+        target: target === void 0 ? resourceRelpath(written) : target || path2.posix.basename(written)
       });
     }
   }
@@ -22536,19 +23437,19 @@ var defaultTriples = {
 async function sidecarFile(dir, bin, platform, arch, buildTarget) {
   const ext = platform === "windows" ? ".exe" : "";
   const cpu = arch === "arm64" ? "aarch64" : "x86_64";
-  const base = path.resolve(dir, bin);
+  const base = path2.resolve(dir, bin);
   const preferred = `${base}-${buildTarget ?? defaultTriples[platform][arch === "arm64" ? "arm64" : "x64"]}${ext}`;
-  if (existsSync(preferred)) return preferred;
-  const prefix = `${path.basename(base)}-${cpu}-`;
-  const other = (await entriesOf(path.dirname(base))).find(
+  if (existsSync2(preferred)) return preferred;
+  const prefix = `${path2.basename(base)}-${cpu}-`;
+  const other = (await entriesOf(path2.dirname(base))).find(
     ({ name }) => name.startsWith(prefix) && name.includes(platform) && (ext ? name.endsWith(ext) : !name.endsWith(".exe"))
   );
   if (!other) {
     throw new Error(
-      `bundle.externalBin: no ${path.relative(dir, preferred)} (${bin} for ${platform} ${arch})`
+      `bundle.externalBin: no ${path2.relative(dir, preferred)} (${bin} for ${platform} ${arch})`
     );
   }
-  return path.join(path.dirname(base), other.name);
+  return path2.join(path2.dirname(base), other.name);
 }
 async function isBinaryFor(file3, platform) {
   try {
@@ -22565,20 +23466,20 @@ async function isBinaryFor(file3, platform) {
   }
 }
 async function copyInto(source, target) {
-  await mkdir(path.dirname(target), { recursive: true });
+  await mkdir(path2.dirname(target), { recursive: true });
   await copyFile(source, target);
 }
-function isSet(value) {
+function isSet2(value) {
   if (Array.isArray(value)) return value.length > 0;
-  if (isObject2(value)) return Object.keys(value).length > 0;
+  if (isObject3(value)) return Object.keys(value).length > 0;
   return Boolean(value);
 }
 function ignoredTauriSettings(config3, platform) {
   const bundle = bundleOf(config3);
-  const at = (value, key) => isObject2(value) ? value[key] : void 0;
+  const at = (value, key) => isObject3(value) ? value[key] : void 0;
   const ignored = [];
   const check2 = (name, value, why) => {
-    if (isSet(value)) ignored.push(`${name}: ${why}`);
+    if (isSet2(value)) ignored.push(`${name}: ${why}`);
   };
   check2(
     "bundle.fileAssociations",
@@ -22660,7 +23561,7 @@ var libraryDirsOf = (arch) => [
   ...arch === process.arch ? ["/usr/lib64", "/usr/lib"] : []
 ];
 async function bundleTrayLibraries(appDir, executable, dirs) {
-  const find = (name) => dirs.map((dir) => path.join(dir, name)).find((file3) => existsSync(file3));
+  const find = (name) => dirs.map((dir) => path2.join(dir, name)).find((file3) => existsSync2(file3));
   const tray = trayLibraries.map(find).find(Boolean);
   if (!tray) {
     return "libayatana-appindicator3 isn\u2019t on this machine (apt-get install libayatana-appindicator3-1)";
@@ -22670,7 +23571,7 @@ async function bundleTrayLibraries(appDir, executable, dirs) {
     return stdout.split("\n").filter((name) => trayFamily.test(name));
   };
   try {
-    const files = /* @__PURE__ */ new Map([[path.basename(tray), tray]]);
+    const files = /* @__PURE__ */ new Map([[path2.basename(tray), tray]]);
     const queue = [tray];
     for (let file3 = queue.shift(); file3; file3 = queue.shift()) {
       for (const name of await needed(file3)) {
@@ -22681,7 +23582,7 @@ async function bundleTrayLibraries(appDir, executable, dirs) {
         }
       }
     }
-    const binary = path.join(appDir, executable);
+    const binary = path2.join(appDir, executable);
     const { stdout } = await run("patchelf", ["--print-rpath", binary]);
     const rpath = ["$ORIGIN/lib", ...stdout.trim().split(":")].filter(
       (entry, index, all) => entry && all.indexOf(entry) === index
@@ -22694,7 +23595,7 @@ async function bundleTrayLibraries(appDir, executable, dirs) {
     ]);
     await Promise.all(
       [...files].map(
-        ([name, file3]) => copyInto(file3, path.join(appDir, "lib", name))
+        ([name, file3]) => copyInto(file3, path2.join(appDir, "lib", name))
       )
     );
     return void 0;
@@ -22709,14 +23610,14 @@ async function assembleTauri(given, context) {
   const project = await readTauriProject(configDir, given);
   const config3 = project.platforms[platform];
   const ext = platform === "windows" ? ".exe" : "";
-  const binary = path.join(source, `${binaryOf(project, platform)}${ext}`);
+  const binary = path2.join(source, `${binaryOf(project, platform)}${ext}`);
   if (!await isBinaryFor(binary, platform)) return false;
   for (const ignored of ignoredTauriSettings(config3, platform)) {
     console.warn(`tauriConfig(): ${platform}: ${ignored}`);
   }
   const executable = context.config[platform]?.executable ?? `${binaryOf(project, platform)}${ext}`;
-  await copyInto(binary, path.join(appDir, executable));
-  if (platform === "linux") await chmod(path.join(appDir, executable), 493);
+  await copyInto(binary, path2.join(appDir, executable));
+  if (platform === "linux") await chmod(path2.join(appDir, executable), 493);
   const bundle = bundleOf(config3);
   for (const bin of asStrings(bundle.externalBin)) {
     const file3 = await sidecarFile(
@@ -22726,7 +23627,7 @@ async function assembleTauri(given, context) {
       arch,
       project.cargo.buildTarget
     );
-    const target = path.join(appDir, `${path.basename(bin)}${ext}`);
+    const target = path2.join(appDir, `${path2.basename(bin)}${ext}`);
     await copyInto(file3, target);
     if (platform === "linux") await chmod(target, 493);
   }
@@ -22746,20 +23647,20 @@ async function assembleTauri(given, context) {
     }
   }
   let { resources } = bundle;
-  const windowsBundle = isObject2(bundle.windows) ? bundle.windows : {};
-  const webview = isObject2(windowsBundle.webviewInstallMode) ? windowsBundle.webviewInstallMode : {};
-  const fixedRuntime = platform === "windows" && webview.type === "fixedRuntime" ? asString(webview.path) : void 0;
-  if (fixedRuntime && isObject2(resources)) {
+  const windowsBundle = isObject3(bundle.windows) ? bundle.windows : {};
+  const webview = isObject3(windowsBundle.webviewInstallMode) ? windowsBundle.webviewInstallMode : {};
+  const fixedRuntime = platform === "windows" && webview.type === "fixedRuntime" ? asString2(webview.path) : void 0;
+  if (fixedRuntime && isObject3(resources)) {
     resources = { ...resources, [fixedRuntime]: fixedRuntime };
   } else if (fixedRuntime) {
     resources = [...asStrings(resources), fixedRuntime];
   }
   const files = await tauriResources(resources, project.dir);
-  const resourceDir = platform === "windows" ? appDir : path.join(appDir, "usr", "lib", productNameOf(project, config3));
+  const resourceDir = platform === "windows" ? appDir : path2.join(appDir, "usr", "lib", productNameOf(project, config3));
   for (const file3 of files) {
     await copyInto(
       file3.source,
-      path.join(resourceDir, ...file3.target.split("/"))
+      path2.join(resourceDir, ...file3.target.split("/"))
     );
   }
   if (platform === "linux" && files.length > 0 && context.config.linux?.formats.includes("tar.gz")) {
@@ -22780,6 +23681,7 @@ function tauriConfig(given) {
 
 // ../config/src/presets/index.ts
 var presets = {
+  electronBuilderConfig,
   tauriConfig
 };
 
@@ -22978,16 +23880,18 @@ var windowsPlatform = external_exports.strictObject({
    * For an Electron app moving from ToDesktop v1 (or any electron-builder
    * NSIS install): the app it replaces. The installer takes over that
    * app's per-user install wherever it finds one, removing it with its
-   * own uninstaller while keeping the user's data and shortcuts, and the
-   * Start menu shortcut keeps its AppUserModelID, so taskbar pins and
-   * notifications carry over. Set it before the first release: like the
-   * app ID, it can't change once released.
+   * own uninstaller while keeping the user's data and shortcuts, and
+   * removes the user's install of its MSI; the `msi` format removes one
+   * installed for all users. The Start menu shortcut keeps its
+   * AppUserModelID, so taskbar pins and notifications carry over. Set it
+   * before the first release: like the app ID, it can't change once
+   * released.
    */
   migrateFrom: external_exports.strictObject({
     /**
      * electron-builder's `appId` (in ToDesktop v1, todesktop.json's
      * `appId`, like `com.acme.desktop`): its shortcuts' AppUserModelID,
-     * and what its NSIS registry keys are named after.
+     * and what its NSIS registry keys and MSI upgrade code are made from.
      */
     appId: external_exports.string().regex(
       /^[A-Za-z0-9][\w.-]{0,127}$/,
@@ -23117,24 +24021,24 @@ var legacyConfigFileNames = [
 ];
 function findConfigFile(dir) {
   const found = configFileNames.filter(
-    (name2) => existsSync2(path2.join(dir, name2))
+    (name2) => existsSync3(path3.join(dir, name2))
   );
   if (found.length > 1) {
     throw new Error(`${found.join(" and ")} are both in ${dir}: keep one`);
   }
-  const name = found[0] ?? legacyConfigFileNames.find((legacy) => existsSync2(path2.join(dir, legacy)));
-  return name ? path2.join(dir, name) : void 0;
+  const name = found[0] ?? legacyConfigFileNames.find((legacy) => existsSync3(path3.join(dir, legacy)));
+  return name ? path3.join(dir, name) : void 0;
 }
 var renameAsked = /* @__PURE__ */ new Set();
 function askToRename(file3) {
-  const base = path2.basename(file3);
-  const key = path2.resolve(file3);
+  const base = path3.basename(file3);
+  const key = path3.resolve(file3);
   if (!legacyConfigFileNames.includes(base) || renameAsked.has(key)) {
     return;
   }
   renameAsked.add(key);
   console.warn(
-    `${base}: rename it to todesktop.config${path2.extname(file3)}. ToDesktop reads ${base} for now, but will stop.`
+    `${base}: rename it to todesktop.config${path3.extname(file3)}. ToDesktop reads ${base} for now, but will stop.`
   );
 }
 var moduleExtensions = /* @__PURE__ */ new Set([
@@ -23165,9 +24069,9 @@ var loaders = {
 async function pinImportMeta(source, file3, loader = "ts") {
   const { code } = await transform2(source, {
     define: {
-      "import.meta.dirname": JSON.stringify(path2.dirname(file3)),
+      "import.meta.dirname": JSON.stringify(path3.dirname(file3)),
       "import.meta.filename": JSON.stringify(file3),
-      "import.meta.url": JSON.stringify(pathToFileURL(file3).href)
+      "import.meta.url": JSON.stringify(pathToFileURL2(file3).href)
     },
     loader,
     sourcefile: file3
@@ -23200,9 +24104,9 @@ async function bundleModule(file3) {
           context.onLoad(
             { filter: /\.(?:[cm]?[jt]s|[jt]sx)$/, namespace: "file" },
             async (args) => {
-              const source = await readFile2(args.path, "utf8");
+              const source = await readFile3(args.path, "utf8");
               if (!source.includes("import.meta")) return void 0;
-              const loader = loaders[path2.extname(args.path)];
+              const loader = loaders[path3.extname(args.path)];
               return {
                 contents: await pinImportMeta(source, args.path, loader),
                 // Plain JavaScript now: the transform took out types and JSX.
@@ -23221,11 +24125,11 @@ async function bundleModule(file3) {
   return output.text;
 }
 async function importBundle(bundle) {
-  const dir = await mkdtemp(path2.join(tmpdir(), "todesktop-config-"));
+  const dir = await mkdtemp(path3.join(tmpdir(), "todesktop-config-"));
   try {
-    const file3 = path2.join(dir, "todesktop.config.mjs");
+    const file3 = path3.join(dir, "todesktop.config.mjs");
     await writeFile(file3, bundle);
-    const module = await import(pathToFileURL(file3).href);
+    const module = await import(pathToFileURL2(file3).href);
     return module.default;
   } finally {
     await rm(dir, { force: true, recursive: true });
@@ -23243,11 +24147,11 @@ function isPlainObject3(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 async function loadConfig(file3, context) {
-  const extension = path2.extname(file3);
+  const extension = path3.extname(file3);
   let exported;
   let bundle;
   if (extension === ".json") {
-    exported = JSON.parse(await readFile2(file3, "utf8"));
+    exported = JSON.parse(await readFile3(file3, "utf8"));
   } else if (moduleExtensions.has(extension)) {
     try {
       bundle = await bundleModule(file3);
@@ -23284,10 +24188,10 @@ async function loadConfig(file3, context) {
       `${file3}: extends takes presets, which are code: use todesktop.config.ts`
     );
   }
-  const configDir = path2.dirname(file3);
-  const { assemble, data, hooks, sources } = await resolveExtends(
+  const configDir = path3.dirname(file3);
+  const { assemble, data, hooks: hooks2, sources } = await resolveExtends(
     value,
-    path2.basename(file3),
+    path3.basename(file3),
     { ...context, configDir }
   );
   const windowsFormats2 = isPlainObject3(data.windows) ? data.windows.formats : void 0;
@@ -23305,7 +24209,7 @@ async function loadConfig(file3, context) {
           const source = Object.entries(sources).find(
             ([leaf]) => leaf === key || leaf.startsWith(`${key}.`)
           )?.[1];
-          return source && source !== path2.basename(file3) ? [`${key} is ${source}'s`] : [];
+          return source && source !== path3.basename(file3) ? [`${key} is ${source}'s`] : [];
         })
       )
     ];
@@ -23322,7 +24226,7 @@ ${external_exports.prettifyError(parsed.error)}${fromPresets.map((line2) => `
     config: parsed.data,
     configDir,
     file: file3,
-    hooks,
+    hooks: hooks2,
     sources: sourcesOf(parsed.data, sources)
   };
 }
@@ -23334,7 +24238,7 @@ function appsFor(loaded, platform, overrides = []) {
   const apps = {};
   for (const [arch, relative] of Object.entries(configured)) {
     if (relative) {
-      apps[arch] = path2.resolve(loaded.configDir, relative);
+      apps[arch] = path3.resolve(loaded.configDir, relative);
     }
   }
   for (const override of overrides) {
@@ -23348,7 +24252,7 @@ function appsFor(loaded, platform, overrides = []) {
         `--input ${arch}: ${loaded.file} has no ${platform}.apps.${arch} (it lists ${Object.keys(apps).join(", ")})`
       );
     }
-    apps[arch] = path2.resolve(file3);
+    apps[arch] = path3.resolve(file3);
   }
   return apps;
 }
@@ -23413,6 +24317,16 @@ var smokeJourneysToRead = [
   "v1",
   "next"
 ];
+var updateJourneySkipped = {
+  noRelease: "No release yet: nothing to update from."
+};
+function smokeJourneysToShow(machines) {
+  const sent = machines.flatMap(
+    (machine) => machine.journeys?.update ? [machine.journeys.update] : []
+  );
+  const noRelease = sent.length > 0 && sent.every(({ skipped }) => skipped === updateJourneySkipped.noRelease);
+  return smokeJourneysToRead.filter((id) => !(id === "update" && noRelease));
+}
 
 // ../contracts/src/ci.ts
 var NOTHING_SHOWS = "so nothing shows this build launches";
@@ -23722,14 +24636,14 @@ async function callFunction(name, body) {
 }
 
 // src/agent/appRef.ts
-import { readFile as readFile3 } from "node:fs/promises";
-import path3 from "node:path";
+import { readFile as readFile4 } from "node:fs/promises";
+import path4 from "node:path";
 import process4 from "node:process";
 var appIdPattern2 = /^[a-z0-9][a-z0-9-]{1,62}$/;
 async function folderApp(dir, config3) {
   const found = config3 ?? findConfigFile(dir);
-  const file3 = found && path3.relative(".", found);
-  const text3 = file3 ? await readFile3(file3, "utf8").catch(() => "") : "";
+  const file3 = found && path4.relative(".", found);
+  const text3 = file3 ? await readFile4(file3, "utf8").catch(() => "") : "";
   const appId = text3.match(
     /["']?appId["']?\s*:\s*["']([a-z0-9][a-z0-9-]{1,62})["']/
   )?.[1];
@@ -23772,7 +24686,7 @@ var frameworkIds = [
   "winui",
   "qt"
 ];
-var str = (value) => `'${value.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}'`;
+var str = (value) => `'${value.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\r/g, "\\r").replace(/\n/g, "\\n")}'`;
 var fieldOf = (value, placeholder, why) => value ? `${str(value)},` : `${str(placeholder)}, // A placeholder: ${why}`;
 var configPlaceholders = {
   description: "What your app does",
@@ -23790,18 +24704,18 @@ var maintainerOf = (app) => fieldOf(
 );
 var slugOf = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "your-app";
 var shellWord = (value) => `'${value.replace(/'/g, "'\\''")}'`;
-var utf8 = new TextEncoder();
-function sanitizeFileName(name) {
+var utf82 = new TextEncoder();
+function sanitizeFileName2(name) {
   const cleaned = name.replace(/[/?<>\\:*|"]/g, "").replace(/[\u0000-\u001f\u0080-\u009f]/g, "").replace(/^\.+$/, "").replace(/^(con|prn|aux|nul|com\d|lpt\d)(\..*)?$/i, "").replace(/[. ]+$/, "");
   let kept = "";
   for (const char of cleaned) {
-    if (utf8.encode(kept + char).length > 255) break;
+    if (utf82.encode(kept + char).length > 255) break;
     kept += char;
   }
   return kept;
 }
 var productExe = (name) => {
-  const file3 = sanitizeFileName(name);
+  const file3 = sanitizeFileName2(name);
   return /^[\w .-]+$/.test(file3) ? `${file3}.exe` : `${slugOf(name)}.exe`;
 };
 var config2 = (app, platforms3, packageJson) => `${packageJson ? "" : "// Types for your editor (optional): npm install --save-dev @todesktop/config\n"}import { defineConfig } from '@todesktop/config';
@@ -24136,13 +25050,30 @@ ${[
     ] : []
   ].join("\n")}
   workflow_dispatch:
-`;
+${branches.includes(test) ? `# A newer push to the test branch cancels an older one's run: only the
+# newest commit's test build is worth waiting for. Releases never cancel.
+concurrency:
+  group: \${{ github.workflow }}-\${{ github.ref }}
+  cancel-in-progress: \${{ github.ref == 'refs/heads/${test}' }}
+` : ""}`;
 };
 var nodeVersionOf = (app) => {
   const version3 = app.nodeVersion;
   if (!version3) return "24";
   return `${/^\d+$/.test(version3) ? version3 : `'${version3}'`}   # todesktop.json's nodeVersion`;
 };
+var versionCheckStep = `      # A release's version is its tag's, and the app reports package.json's: they must agree.
+      - name: Check the tag matches package.json
+        if: github.ref_type == 'tag'
+        shell: bash
+        run: |
+          tag="\${GITHUB_REF_NAME#v}"
+          own="$(node -p 'require("./package.json").version')"
+          if [ "$tag" != "$own" ]; then
+            echo "::error::The tag is $tag but package.json says $own. Nothing was built or released. Set package.json's version to $tag, commit it, and move the tag to that commit (git tag -f $GITHUB_REF_NAME && git push -f origin $GITHUB_REF_NAME), or push a tag for $own."
+            exit 1
+          fi
+`;
 var matrixWorkflow = (app, matrix, steps, edgeUrl, { packageJson = true } = {}) => `${workflowHead(app)}jobs:
   release:
     strategy:
@@ -24158,7 +25089,7 @@ ${matrix}
       - uses: actions/setup-node@v5
         with:
           node-version: ${nodeVersionOf(app)}
-${steps}
+${packageJson ? versionCheckStep : ""}${steps}
 ${uploadStep(app, edgeUrl, { packageJson })}${reportJob(app, edgeUrl)}`;
 var electronWorkflow = {
   description: `In .github/workflows/release.yml. A job per platform builds the app, unpacked and unsigned, and uploads it.`,
@@ -24331,7 +25262,11 @@ function fitWorkflow(app, workflow) {
         shell: bash
         run: echo "version=\${GITHUB_REF_NAME#${prefix}}" >> "$GITHUB_OUTPUT"
 `;
-    text3 = text3.replace(/^( {6}- uses: ToDesktop\/upload-action@v1)/m, `${step}$1`).replaceAll(
+    text3 = text3.replace(/^( {6}- uses: ToDesktop\/upload-action@v1)/m, `${step}$1`).replace(
+      // oxlint-disable-next-line no-template-curly-in-string -- the shell's
+      'tag="${GITHUB_REF_NAME#v}"',
+      `tag="\${GITHUB_REF_NAME#${prefix}}"; tag="\${tag#v}"`
+    ).replaceAll(
       "github.ref_type == 'tag' && github.ref_name",
       "github.ref_type == 'tag' && steps.tag.outputs.version"
     );
@@ -24358,10 +25293,44 @@ var linuxExecutableArg = (app) => app.setLinuxExecutable && app.linuxExecutable 
 var macArchesOf = (app) => ["arm64", "x64"].filter(
   (arch) => app.macArches?.length ? app.macArches.includes(arch) : arch === "arm64"
 );
+function windowsFormatsOf(app) {
+  const store = app.windowsStore;
+  if (!app.windowsMsi && !store) return "";
+  const formats = [
+    "exe",
+    ...app.windowsMsi ? ["msi"] : [],
+    ...store ? ["msix-store"] : []
+  ];
+  return [
+    ...app.windowsMsi ? [
+      `    // v1 built an MSI for IT teams to deploy, and its copies kept updating`,
+      `    // themselves. per-user does the same: the MSI installs a copy for each`,
+      `    // user that updates itself. 'per-machine' is for IT teams that deploy`,
+      `    // every version themselves. Either removes v1's MSI if it was`,
+      `    // installed for all users.`
+    ] : [],
+    ...store ? [
+      `    // v1 built an AppX for the Microsoft Store: msix-store is the package`,
+      `    // to upload to Partner Center, with the app's identity there.`
+    ] : [],
+    `    formats: [${formats.map(str).join(", ")}],`,
+    ...app.windowsMsi ? [`    msi: { mode: 'per-user' },`] : [],
+    ...store ? [
+      `    msix: {`,
+      `      store: {`,
+      `        identityName: ${str(store.identityName)},`,
+      `        publisher: ${str(store.publisher)},`,
+      `        publisherDisplayName: ${str(store.publisherDisplayName)},`,
+      `      },`,
+      `    },`
+    ] : []
+  ].map((line2) => `
+${line2}`).join("");
+}
 function electronBuilderPlatforms(app) {
   const out = app.outputDir ?? "dist";
   const macApps = macArchesOf(app).map(
-    (arch) => `${arch}: ${str(`${out}/${arch === "x64" ? "mac" : `mac-${arch}`}/${app.macAppName ?? sanitizeFileName(app.name)}.app`)}`
+    (arch) => `${arch}: ${str(`${out}/${arch === "x64" ? "mac" : `mac-${arch}`}/${app.macAppName ?? sanitizeFileName2(app.name)}.app`)}`
   ).join(", ");
   return [
     `  // What electron-builder --dir makes, unsigned: ToDesktop signs it.`,
@@ -24380,10 +25349,7 @@ function electronBuilderPlatforms(app) {
     apps: { x64: ${str(`${out}/win-unpacked`)} },
     executable: ${str(app.windowsExecutable ?? productExe(app.name))},${app.migrateFromAppId ? `
     // The v1 app (electron-builder's appId) whose installs this takes over.
-    migrateFrom: { appId: ${str(app.migrateFromAppId)} },` : ""}${app.windowsMsi ? `
-    // v1 built an MSI for IT teams to deploy. It installs for every user
-    // and doesn't update itself, as v1's didn't: see windows.msi.mode.
-    formats: ['exe', 'msi'],` : ""}
+    migrateFrom: { appId: ${str(app.migrateFromAppId)} },` : ""}${windowsFormatsOf(app)}
   },`
     ] : [],
     ...builds(app, "linux") ? [
@@ -24474,7 +25440,7 @@ function otherPlatforms(app) {
       arch,
       ...otherAppPath(app, platform, arch)
     }));
-    return `apps: { ${paths.map(({ arch, path: path12 }) => `${arch}: ${str(path12)}`).join(", ")} },${paths.some(({ guess }) => guess) ? " // Fill in: where your build puts it (config check says what is there)" : ""}`;
+    return `apps: { ${paths.map(({ arch, path: path13 }) => `${arch}: ${str(path13)}`).join(", ")} },${paths.some(({ guess }) => guess) ? " // Fill in: where your build puts it (config check says what is there)" : ""}`;
   };
   const blocks = {
     linux: (arches) => `  linux: {
@@ -25665,32 +26631,32 @@ var recipes = allRecipes.map((recipe) => ({
 }));
 
 // ../recipes/src/detect.ts
-var import_yaml3 = __toESM(require_dist(), 1);
-import { existsSync as existsSync4 } from "node:fs";
-import { readdir as readdir3, readFile as readFile5 } from "node:fs/promises";
-import path5 from "node:path";
+var import_yaml4 = __toESM(require_dist(), 1);
+import { existsSync as existsSync5 } from "node:fs";
+import { readdir as readdir4, readFile as readFile6 } from "node:fs/promises";
+import path6 from "node:path";
 
 // ../recipes/src/electronBuilder.ts
-var import_json52 = __toESM(require_lib(), 1);
-var import_yaml = __toESM(require_dist(), 1);
-var isObject3 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+var import_json53 = __toESM(require_lib(), 1);
+var import_yaml2 = __toESM(require_dist(), 1);
+var isObject4 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
 var text = (value) => typeof value === "string" && value.trim() ? value.trim() : void 0;
-var electronBuilderFiles = [
+var electronBuilderFiles2 = [
   "electron-builder.json",
   "electron-builder.json5",
   "electron-builder.yml",
   "electron-builder.yaml"
 ];
-function electronBuilderConfig(pkg, files) {
-  if (isObject3(pkg?.build)) {
+function electronBuilderConfig2(pkg, files) {
+  if (isObject4(pkg?.build)) {
     return { settings: pkg.build, source: "package.json build" };
   }
-  for (const name of electronBuilderFiles) {
+  for (const name of electronBuilderFiles2) {
     const source = files[name];
     if (source == null) continue;
     try {
-      const value = name.includes(".json") ? import_json52.default.parse(source) : (0, import_yaml.parse)(source);
-      if (isObject3(value)) return { settings: value, source: name };
+      const value = name.includes(".json") ? import_json53.default.parse(source) : (0, import_yaml2.parse)(source);
+      if (isObject4(value)) return { settings: value, source: name };
     } catch {
     }
     return { source: name };
@@ -25714,13 +26680,13 @@ function electronBuilderPaths(pkg, { settings, source }) {
     named = linux ?? top;
     found.linuxExecutable = {
       from: `${source}: ${linux ? "linux.executableName" : "executableName"}`,
-      name: sanitizeFileName(named)
+      name: sanitizeFileName2(named)
     };
   } else if (text(pkg?.name)) {
     named = text(pkg?.name);
     found.linuxExecutable = {
       from: "package.json name, lowercased",
-      name: sanitizeFileName(named).toLowerCase()
+      name: sanitizeFileName2(named).toLowerCase()
     };
   }
   const own = found.linuxExecutable;
@@ -25734,9 +26700,9 @@ function electronBuilderPaths(pkg, { settings, source }) {
   return found;
 }
 var settingKey = { linux: "linux", mac: "mac", windows: "win" };
-function targetArches(target) {
+function targetArches2(target) {
   const arches = (Array.isArray(target) ? target : [target]).flatMap(
-    (each) => isObject3(each) ? (Array.isArray(each.arch) ? each.arch : [each.arch]).filter(
+    (each) => isObject4(each) ? (Array.isArray(each.arch) ? each.arch : [each.arch]).filter(
       (arch) => typeof arch === "string"
     ) : []
   );
@@ -25752,7 +26718,7 @@ function beforeElectronBuilder(script) {
 }
 function electronBuilderShips(pkg, { settings, source }) {
   const found = {};
-  const scripts = Object.entries(isObject3(pkg?.scripts) ? pkg.scripts : {}).map(([name, script]) => ({
+  const scripts = Object.entries(isObject4(pkg?.scripts) ? pkg.scripts : {}).map(([name, script]) => ({
     before: typeof script === "string" ? beforeElectronBuilder(script) : void 0,
     name
   })).filter(
@@ -25777,7 +26743,7 @@ function electronBuilderShips(pkg, { settings, source }) {
   const others = [];
   for (const platform of ["mac", "windows", "linux"]) {
     const key = settingKey[platform];
-    const arches = targetArches(settings?.[key]?.target);
+    const arches = targetArches2(settings?.[key]?.target);
     const from = `${source}: ${key}.target`;
     if (platform === "mac") {
       const drafted = arches.filter(
@@ -25796,14 +26762,14 @@ function electronBuilderShips(pkg, { settings, source }) {
 }
 
 // ../recipes/src/native.ts
-var import_yaml2 = __toESM(require_dist(), 1);
-import { existsSync as existsSync3 } from "node:fs";
-import { readdir as readdir2, readFile as readFile4 } from "node:fs/promises";
-import path4 from "node:path";
-var readText = (file3) => readFile4(file3, "utf8").catch(() => void 0);
+var import_yaml3 = __toESM(require_dist(), 1);
+import { existsSync as existsSync4 } from "node:fs";
+import { readdir as readdir3, readFile as readFile5 } from "node:fs/promises";
+import path5 from "node:path";
+var readText = (file3) => readFile5(file3, "utf8").catch(() => void 0);
 function parseYamlSafe(source) {
   try {
-    const value = (0, import_yaml2.parse)(source);
+    const value = (0, import_yaml3.parse)(source);
     return value && typeof value === "object" ? value : void 0;
   } catch {
     return void 0;
@@ -25813,11 +26779,11 @@ var notTheApp = (file3, project) => /(?:^|[/._-])(?:tests?|benchmarks?|samples?|
   file3
 ) || /Microsoft\.NET\.Test\.Sdk|<IsTestProject>\s*true/i.test(project);
 async function dotnetProjects(dir) {
-  const entries = await readdir2(dir, { withFileTypes: true }).catch(() => []);
+  const entries = await readdir3(dir, { withFileTypes: true }).catch(() => []);
   let files = entries.filter((entry) => entry.isFile() && entry.name.endsWith(".csproj")).map((entry) => entry.name);
   if (!files.length) {
     for (const solution of entries.filter((entry) => /\.slnx?$/.test(entry.name)).map((entry) => entry.name).sort()) {
-      const text3 = await readText(path4.join(dir, solution)) ?? "";
+      const text3 = await readText(path5.join(dir, solution)) ?? "";
       for (const match of text3.matchAll(/(?:Path=|,\s*)"([^"]+\.csproj)"/g)) {
         files.push(match[1].replaceAll("\\", "/"));
       }
@@ -25827,7 +26793,7 @@ async function dotnetProjects(dir) {
     for (const folder of entries.filter(
       (entry) => entry.isDirectory() && !entry.name.startsWith(".")
     )) {
-      const inside = await readdir2(path4.join(dir, folder.name)).catch(
+      const inside = await readdir3(path5.join(dir, folder.name)).catch(
         () => []
       );
       for (const name of inside.filter((each) => each.endsWith(".csproj"))) {
@@ -25836,12 +26802,12 @@ async function dotnetProjects(dir) {
     }
   }
   files = [...new Set(files)].filter(
-    (file3) => existsSync3(path4.join(dir, file3))
+    (file3) => existsSync4(path5.join(dir, file3))
   );
   const projects = await Promise.all(
     files.map(async (file3) => ({
       file: file3,
-      project: await readText(path4.join(dir, file3)) ?? ""
+      project: await readText(path5.join(dir, file3)) ?? ""
     }))
   );
   const rank = ({ file: file3, project }) => {
@@ -25868,7 +26834,7 @@ function dotnetUi(project) {
 var usesFlutter = (pubspec) => pubspec?.dependencies?.flutter?.sdk === "flutter";
 async function flutterFolder(dir) {
   const pubspec = parseYamlSafe(
-    await readText(path4.join(dir, "pubspec.yaml")) ?? ""
+    await readText(path5.join(dir, "pubspec.yaml")) ?? ""
   );
   if (!pubspec) return void 0;
   if (usesFlutter(pubspec)) return ".";
@@ -25878,10 +26844,10 @@ async function flutterFolder(dir) {
   for (const member of members) {
     const own = parseYamlSafe(
       // oxlint-disable-next-line no-await-in-loop -- a few members
-      await readText(path4.join(dir, member, "pubspec.yaml")) ?? ""
+      await readText(path5.join(dir, member, "pubspec.yaml")) ?? ""
     );
     const desktop = ["linux", "macos", "windows"].some(
-      (folder) => existsSync3(path4.join(dir, member, folder))
+      (folder) => existsSync4(path5.join(dir, member, folder))
     );
     if (usesFlutter(own) && desktop) return member.replace(/\/+$/, "");
   }
@@ -25893,29 +26859,29 @@ async function nativeApp(dir) {
     return {
       kind: "flutter",
       label: "Flutter",
-      project: path4.posix.join(flutter, "pubspec.yaml")
+      project: path5.posix.join(flutter, "pubspec.yaml")
     };
   }
-  if (existsSync3(path4.join(dir, "go.mod"))) {
-    const named = (await readText(path4.join(dir, "go.mod")))?.match(
+  if (existsSync4(path5.join(dir, "go.mod"))) {
+    const named = (await readText(path5.join(dir, "go.mod")))?.match(
       /^module\s+(\S+)/m
     )?.[1];
     const module = named ? { module: named.replace(/^"|"$/g, "") } : {};
-    if (existsSync3(path4.join(dir, "wails.json"))) {
+    if (existsSync4(path5.join(dir, "wails.json"))) {
       return { kind: "wails", label: "Go (Wails)", ...module };
     }
-    if (existsSync3(path4.join(dir, "FyneApp.toml"))) {
+    if (existsSync4(path5.join(dir, "FyneApp.toml"))) {
       return { kind: "fyne", label: "Go (Fyne)", ...module };
     }
     return { kind: "go", label: "Go", ...module };
   }
-  if (existsSync3(path4.join(dir, "Cargo.toml"))) {
+  if (existsSync4(path5.join(dir, "Cargo.toml"))) {
     return { kind: "rust", label: "Rust" };
   }
-  if (existsSync3(path4.join(dir, "CMakeLists.txt"))) {
+  if (existsSync4(path5.join(dir, "CMakeLists.txt"))) {
     const sources = await Promise.all(
       ["CMakeLists.txt", "src/CMakeLists.txt", "app/CMakeLists.txt"].map(
-        (file3) => readText(path4.join(dir, file3))
+        (file3) => readText(path5.join(dir, file3))
       )
     );
     const qt = sources.some(
@@ -25970,30 +26936,30 @@ var skipDirs = /* @__PURE__ */ new Set([
   "release",
   "target"
 ]);
-async function readJson(file3) {
+async function readJson2(file3) {
   try {
-    const value = JSON.parse(await readFile5(file3, "utf8"));
+    const value = JSON.parse(await readFile6(file3, "utf8"));
     return value && typeof value === "object" && !Array.isArray(value) ? value : void 0;
   } catch {
     return void 0;
   }
 }
-var readText2 = (file3) => readFile5(file3, "utf8").catch(() => void 0);
+var readText2 = (file3) => readFile6(file3, "utf8").catch(() => void 0);
 var text2 = (value) => typeof value === "string" && value.trim() ? value.trim() : void 0;
 var cargoDepends = (toml, crate) => new RegExp(`^${crate}\\s*=`, "m").test(toml);
 async function gitDir(dir) {
-  const dotGit = path5.join(dir, ".git");
+  const dotGit = path6.join(dir, ".git");
   const pointer = (await readText2(dotGit))?.match(/^gitdir:\s*(.+)$/m)?.[1];
   if (!pointer) return dotGit;
-  const worktree = path5.resolve(dir, pointer.trim());
-  const common = (await readText2(path5.join(worktree, "commondir")))?.trim();
-  return common ? path5.resolve(worktree, common) : worktree;
+  const worktree = path6.resolve(dir, pointer.trim());
+  const common = (await readText2(path6.join(worktree, "commondir")))?.trim();
+  return common ? path6.resolve(worktree, common) : worktree;
 }
 function gitRoot(dir) {
-  let current = path5.resolve(dir);
+  let current = path6.resolve(dir);
   for (; ; ) {
-    if (existsSync4(path5.join(current, ".git"))) return current;
-    const parent = path5.dirname(current);
+    if (existsSync5(path6.join(current, ".git"))) return current;
+    const parent = path6.dirname(current);
     if (parent === current) return void 0;
     current = parent;
   }
@@ -26001,31 +26967,31 @@ function gitRoot(dir) {
 async function gitTags(root) {
   const git = await gitDir(root);
   const tags = /* @__PURE__ */ new Set();
-  const packed = await readText2(path5.join(git, "packed-refs")) ?? "";
+  const packed = await readText2(path6.join(git, "packed-refs")) ?? "";
   for (const match of packed.matchAll(/^[0-9a-f]+ refs\/tags\/(\S+)$/gm)) {
     tags.add(match[1]);
   }
   const walk = async (folder, prefix) => {
-    const entries = await readdir3(folder, { withFileTypes: true }).catch(
+    const entries = await readdir4(folder, { withFileTypes: true }).catch(
       () => []
     );
     for (const entry of entries) {
       const name = `${prefix}${entry.name}`;
       if (entry.isDirectory()) {
-        await walk(path5.join(folder, entry.name), `${name}/`);
+        await walk(path6.join(folder, entry.name), `${name}/`);
       } else {
         tags.add(name);
       }
     }
   };
-  await walk(path5.join(git, "refs", "tags"), "");
+  await walk(path6.join(git, "refs", "tags"), "");
   return [...tags].sort();
 }
 async function publishingWorkflows(root, workflows) {
   const publishes = /softprops\/action-gh-release|tauri-apps\/tauri-action|actions\/create-release|goreleaser|gh release (?:create|upload)|electron-builder[^\n]*--publish[ =](?:always|onTag)|electron-forge publish|run publish\b|APPLE_CERTIFICATE|CSC_LINK|TAURI_SIGNING_PRIVATE_KEY|APPLE_ID\b/;
   const found = [];
   for (const workflow of workflows) {
-    const source = await readText2(path5.join(root, workflow)) ?? "";
+    const source = await readText2(path6.join(root, workflow)) ?? "";
     if (/ToDesktop\/upload-action@/.test(source)) continue;
     const onTags = /^\s+tags:|^\s+release:|^on:\s*\[?[^\n]*\brelease\b/m.test(
       source
@@ -26042,7 +27008,7 @@ var globsOf = (value) => {
 function workflowRefs(source) {
   let workflow;
   try {
-    workflow = (0, import_yaml3.parse)(source);
+    workflow = (0, import_yaml4.parse)(source);
   } catch {
     return void 0;
   }
@@ -26064,7 +27030,7 @@ function workflowRefs(source) {
 }
 async function releaseRefsOf(root, workflows, appDir) {
   for (const workflow of workflows) {
-    const source = await readText2(path5.join(root, workflow)) ?? "";
+    const source = await readText2(path6.join(root, workflow)) ?? "";
     if (!/ToDesktop\/upload-action@|todesktop upload\b/.test(source)) continue;
     const thisApp = appDir ? source.includes(`${appDir}/todesktop.config`) : !/\bconfig:\s*\S+\/todesktop\.config/.test(source);
     if (!thisApp) continue;
@@ -26084,9 +27050,9 @@ function electronFramework(deps) {
 async function workspaceApps(dir, pkg) {
   const workspaces = pkg?.workspaces;
   const patterns = Array.isArray(workspaces) ? workspaces.filter((item) => typeof item === "string") : workspaces?.packages ?? [];
-  const pnpm = await readText2(path5.join(dir, "pnpm-workspace.yaml"));
+  const pnpm = await readText2(path6.join(dir, "pnpm-workspace.yaml"));
   if (pnpm) {
-    const listed = (0, import_yaml3.parse)(pnpm)?.packages;
+    const listed = (0, import_yaml4.parse)(pnpm)?.packages;
     if (Array.isArray(listed)) {
       patterns.push(...listed.filter((item) => typeof item === "string"));
     }
@@ -26096,7 +27062,7 @@ async function workspaceApps(dir, pkg) {
     const clean = pattern.replace(/^\.\//, "").replace(/\/+$/, "");
     if (clean.endsWith("/*") || clean.endsWith("/**")) {
       const parent = clean.replace(/\/\*\*?$/, "");
-      const entries = await readdir3(path5.join(dir, parent), {
+      const entries = await readdir4(path6.join(dir, parent), {
         withFileTypes: true
       }).catch(() => []);
       for (const entry of entries) {
@@ -26108,9 +27074,9 @@ async function workspaceApps(dir, pkg) {
   }
   const apps = [];
   for (const folder of [...new Set(folders)].sort()) {
-    const full = path5.join(dir, folder);
+    const full = path6.join(dir, folder);
     if (tauriConfigNames.some(
-      (name) => existsSync4(path5.join(full, "src-tauri", name))
+      (name) => existsSync5(path6.join(full, "src-tauri", name))
     )) {
       apps.push({
         dir: folder,
@@ -26119,7 +27085,7 @@ async function workspaceApps(dir, pkg) {
       });
       continue;
     }
-    const json2 = await readJson(path5.join(full, "package.json"));
+    const json2 = await readJson2(path6.join(full, "package.json"));
     const all = {
       ...json2?.dependencies,
       ...json2?.devDependencies
@@ -26136,7 +27102,7 @@ async function workspaceApps(dir, pkg) {
   return apps;
 }
 async function githubRepository(dir) {
-  const gitConfig = await readText2(path5.join(await gitDir(dir), "config"));
+  const gitConfig = await readText2(path6.join(await gitDir(dir), "config"));
   const origin = gitConfig?.match(
     /\[remote "origin"\][^[]*?url\s*=\s*(\S+)/
   )?.[1];
@@ -26145,18 +27111,18 @@ async function githubRepository(dir) {
 async function filesMentioning(dir, needle, depth = 4, extensions = sourceExtensions) {
   const found = [];
   const walk = async (current, level) => {
-    const entries = await readdir3(current, { withFileTypes: true }).catch(
+    const entries = await readdir4(current, { withFileTypes: true }).catch(
       () => []
     );
     for (const entry of entries) {
-      const full = path5.join(current, entry.name);
+      const full = path6.join(current, entry.name);
       if (entry.isDirectory()) {
         if (level < depth && !skipDirs.has(entry.name)) {
           await walk(full, level + 1);
         }
-      } else if (extensions.has(path5.extname(entry.name)) && // oxlint-disable-next-line no-await-in-loop -- one file at a time
+      } else if (extensions.has(path6.extname(entry.name)) && // oxlint-disable-next-line no-await-in-loop -- one file at a time
       (await readText2(full))?.includes(needle)) {
-        found.push(path5.relative(dir, full));
+        found.push(path6.relative(dir, full));
       }
     }
   };
@@ -26184,29 +27150,29 @@ function tauriFields(file3, source) {
   };
 }
 async function filesEndingWith(dir, suffix) {
-  const entries = await readdir3(dir).catch(() => []);
+  const entries = await readdir4(dir).catch(() => []);
   return entries.filter((name) => name.endsWith(suffix)).sort();
 }
 async function dotnetClient(dir, csprojs) {
   for (const folder of /* @__PURE__ */ new Set([
     ".",
-    ...csprojs.map((file3) => path5.dirname(file3))
+    ...csprojs.map((file3) => path6.dirname(file3))
   ])) {
-    const file3 = path5.posix.join(folder, "ToDesktopUpdater.cs");
-    if (existsSync4(path5.join(dir, file3))) return file3;
+    const file3 = path6.posix.join(folder, "ToDesktopUpdater.cs");
+    if (existsSync5(path6.join(dir, file3))) return file3;
   }
   for (const csproj of csprojs) {
-    const project = await readText2(path5.join(dir, csproj)) ?? "";
+    const project = await readText2(path6.join(dir, csproj)) ?? "";
     if (/Include="[^"]*ToDesktopUpdater\.cs"/.test(project)) {
       return `${csproj}: ToDesktopUpdater.cs`;
     }
   }
   return "";
 }
-var isClientSource = (file3) => path5.basename(file3) === "ToDesktopUpdater.cs" || /(?:^|[/\\])ToDesktopUpdater[/\\]Sources[/\\]/.test(file3) || file3.startsWith(`${qtClientDir}/`);
+var isClientSource = (file3) => path6.basename(file3) === "ToDesktopUpdater.cs" || /(?:^|[/\\])ToDesktopUpdater[/\\]Sources[/\\]/.test(file3) || file3.startsWith(`${qtClientDir}/`);
 async function swiftClient(dir, xcodeProjects) {
   for (const project of xcodeProjects) {
-    const pbxproj = await readText2(path5.join(dir, project, "project.pbxproj"));
+    const pbxproj = await readText2(path6.join(dir, project, "project.pbxproj"));
     if (pbxproj?.includes("ToDesktopUpdater")) {
       return `${project}: ToDesktopUpdater (Swift)`;
     }
@@ -26214,17 +27180,17 @@ async function swiftClient(dir, xcodeProjects) {
   return "";
 }
 var goClient = (dir) => {
-  const file3 = path5.posix.join(goClientDir, "todesktop_updater.go");
-  return existsSync4(path5.join(dir, file3)) ? file3 : "";
+  const file3 = path6.posix.join(goClientDir, "todesktop_updater.go");
+  return existsSync5(path6.join(dir, file3)) ? file3 : "";
 };
 var dartClient = (dir, flutter) => {
   if (flutter === void 0) return "";
-  const file3 = path5.posix.join(flutter, dartClientPath);
-  return existsSync4(path5.join(dir, file3)) ? file3 : "";
+  const file3 = path6.posix.join(flutter, dartClientPath);
+  return existsSync5(path6.join(dir, file3)) ? file3 : "";
 };
 var qtClient = (dir) => {
-  const file3 = path5.posix.join(qtClientDir, "todesktopupdater.h");
-  return existsSync4(path5.join(dir, file3)) ? file3 : "";
+  const file3 = path6.posix.join(qtClientDir, "todesktopupdater.h");
+  return existsSync5(path6.join(dir, file3)) ? file3 : "";
 };
 var nativeExtensions = /* @__PURE__ */ new Set([
   ".c",
@@ -26274,8 +27240,8 @@ function updaterUse(updater) {
 async function electronBuilderFilesIn(dir) {
   return Object.fromEntries(
     await Promise.all(
-      electronBuilderFiles.map(
-        async (name) => [name, await readText2(path5.join(dir, name))]
+      electronBuilderFiles2.map(
+        async (name) => [name, await readText2(path6.join(dir, name))]
       )
     )
   );
@@ -26284,7 +27250,7 @@ async function detect(dir) {
   const evidence = [];
   const remove = [];
   const result = {};
-  const pkg = await readJson(path5.join(dir, "package.json"));
+  const pkg = await readJson2(path6.join(dir, "package.json"));
   const deps = {
     ...pkg?.dependencies,
     ...pkg?.devDependencies
@@ -26300,10 +27266,10 @@ async function detect(dir) {
     const [productName] = named.find(([value]) => text2(value)) ?? [];
     if (productName) result.productName = text2(productName);
     const main2 = text2(pkg.main);
-    if (main2) result.entry = path5.normalize(main2);
+    if (main2) result.entry = path6.normalize(main2);
   }
-  const tauriFile = tauriConfigNames.map((name) => path5.join("src-tauri", name)).find((file3) => existsSync4(path5.join(dir, file3)));
-  const cargo = await readText2(path5.join(dir, "Cargo.toml"));
+  const tauriFile = tauriConfigNames.map((name) => path6.join("src-tauri", name)).find((file3) => existsSync5(path6.join(dir, file3)));
+  const cargo = await readText2(path6.join(dir, "Cargo.toml"));
   const csprojs = (await dotnetProjects(dir)).map(({ file: file3 }) => file3);
   const xcodeProjects = await filesEndingWith(dir, ".xcodeproj");
   const flutter = await flutterFolder(dir);
@@ -26318,16 +27284,16 @@ async function detect(dir) {
     pick2("tauri", "high", tauriFile);
     const fields = tauriFields(
       tauriFile,
-      await readText2(path5.join(dir, tauriFile)) ?? ""
+      await readText2(path6.join(dir, tauriFile)) ?? ""
     );
     if (fields.productName) result.productName = fields.productName;
-    const lib = path5.join("src-tauri", "src", "lib.rs");
-    result.entry = existsSync4(path5.join(dir, lib)) ? lib : path5.join("src-tauri", "src", "main.rs");
+    const lib = path6.join("src-tauri", "src", "lib.rs");
+    result.entry = existsSync5(path6.join(dir, lib)) ? lib : path6.join("src-tauri", "src", "main.rs");
     const tauriCargo = await readText2(
-      path5.join(dir, "src-tauri", "Cargo.toml")
+      path6.join(dir, "src-tauri", "Cargo.toml")
     );
-    for (const lock of [path5.join("src-tauri", "Cargo.lock"), "Cargo.lock"]) {
-      const locked = (await readText2(path5.join(dir, lock)))?.match(
+    for (const lock of [path6.join("src-tauri", "Cargo.lock"), "Cargo.lock"]) {
+      const locked = (await readText2(path6.join(dir, lock)))?.match(
         /\[\[package\]\]\s*\nname = "tauri-build"\s*\nversion = "([^"]+)"/
       )?.[1];
       if (locked) {
@@ -26341,7 +27307,7 @@ async function detect(dir) {
         where: ["src-tauri/Cargo.toml"]
       });
     }
-    const tauriSource = await readText2(path5.join(dir, tauriFile)) ?? "";
+    const tauriSource = await readText2(path6.join(dir, tauriFile)) ?? "";
     if (/"?createUpdaterArtifacts"?\s*[:=]/.test(tauriSource)) {
       remove.push({
         what: "bundle.createUpdaterArtifacts (it signs updater bundles with your Tauri key)",
@@ -26393,7 +27359,7 @@ async function detect(dir) {
     pick2("xcode", "high", xcodeProjects[0]);
   } else if (csprojs.length) {
     result.project = csprojs[0];
-    const project = await readText2(path5.join(dir, csprojs[0])) ?? "";
+    const project = await readText2(path6.join(dir, csprojs[0])) ?? "";
     if (/<UseWinUI>\s*true\s*<\/UseWinUI>|Microsoft\.WindowsAppSDK/.test(project)) {
       pick2("winui", "high", `${csprojs[0]}: WinUI (Windows App SDK)`);
     } else {
@@ -26401,7 +27367,7 @@ async function detect(dir) {
     }
   } else if (flutter) {
     evidence.push(
-      `${path5.posix.join(flutter, "pubspec.yaml")}: a Flutter app, which "Something else" fits`
+      `${path6.posix.join(flutter, "pubspec.yaml")}: a Flutter app, which "Something else" fits`
     );
   } else if (cargo && cargoDepends(cargo, "cxx-qt")) {
     pick2("qt", "high", "Cargo.toml: cxx-qt");
@@ -26413,9 +27379,9 @@ async function detect(dir) {
     );
   } else if (cargo) {
     evidence.push('Cargo.toml: a Rust app, which "Something else" fits');
-  } else if (existsSync4(path5.join(dir, "go.mod"))) {
+  } else if (existsSync5(path6.join(dir, "go.mod"))) {
     evidence.push('go.mod: a Go app, which "Something else" fits');
-  } else if (existsSync4(path5.join(dir, "CMakeLists.txt"))) {
+  } else if (existsSync5(path6.join(dir, "CMakeLists.txt"))) {
     evidence.push('CMakeLists.txt: a C++ app, which "Something else" fits');
   } else {
     evidence.push('No build tool recognized: "Something else" fits any app');
@@ -26448,17 +27414,17 @@ async function detect(dir) {
     }
   }
   const root = gitRoot(dir);
-  const appDir = root ? path5.relative(root, path5.resolve(dir)) : "";
-  if (appDir) result.appDir = appDir.split(path5.sep).join("/");
+  const appDir = root ? path6.relative(root, path6.resolve(dir)) : "";
+  if (appDir) result.appDir = appDir.split(path6.sep).join("/");
   const lockfile = [dir, ...root && appDir ? [root] : []].flatMap(
-    (folder) => lockfileManagers.filter(([name]) => existsSync4(path5.join(folder, name))).map(([name, manager]) => ({
+    (folder) => lockfileManagers.filter(([name]) => existsSync5(path6.join(folder, name))).map(([name, manager]) => ({
       manager,
-      name: folder === dir ? name : path5.relative(dir, path5.join(folder, name))
+      name: folder === dir ? name : path6.relative(dir, path6.join(folder, name))
     }))
   )[0];
   if (pkg) {
     result.lockfile = lockfile?.name ?? null;
-    const rootPkg = root && appDir ? await readJson(path5.join(root, "package.json")) : void 0;
+    const rootPkg = root && appDir ? await readJson2(path6.join(root, "package.json")) : void 0;
     const declared = text2(pkg.packageManager)?.match(
       /^(npm|pnpm|yarn|bun)@/
     )?.[1];
@@ -26469,18 +27435,18 @@ async function detect(dir) {
     result.packageManager = lockfile?.manager ?? declared ?? "npm";
   }
   if (pkg) {
-    const config4 = electronBuilderConfig(
+    const config4 = electronBuilderConfig2(
       pkg,
       await electronBuilderFilesIn(dir)
     );
     Object.assign(result, electronBuilderPaths(pkg, config4));
     const ships = electronBuilderShips(pkg, config4);
-    if (ships.entitlements && !existsSync4(path5.join(dir, ships.entitlements.file))) {
+    if (ships.entitlements && !existsSync5(path6.join(dir, ships.entitlements.file))) {
       delete ships.entitlements;
     }
     if (Object.keys(ships).length) result.electronBuilder = ships;
   }
-  const tauriManifest = tauriFile ? await readText2(path5.join(dir, "src-tauri", "Cargo.toml")) : void 0;
+  const tauriManifest = tauriFile ? await readText2(path6.join(dir, "src-tauri", "Cargo.toml")) : void 0;
   const updater = (dep("@todesktop/updater") ? "package.json: @todesktop/updater" : "") || (dep("@todesktop/tauri") ? "package.json: @todesktop/tauri" : "") || (tauriManifest && cargoDepends(tauriManifest, "tauri-plugin-todesktop") ? "src-tauri/Cargo.toml: tauri-plugin-todesktop" : "") || (cargo && cargoDepends(cargo, "todesktop-updater") ? "Cargo.toml: todesktop-updater" : "") || await dotnetClient(dir, csprojs) || (xcodeProjects.length ? await swiftClient(dir, xcodeProjects) : "") || goClient(dir) || dartClient(dir, flutter) || qtClient(dir);
   if (updater) {
     result.updater = updater;
@@ -26498,8 +27464,8 @@ async function detect(dir) {
   }
   let config3;
   for (const name of configNames2) {
-    if (!existsSync4(path5.join(dir, name))) continue;
-    const source = await readText2(path5.join(dir, name)) ?? "";
+    if (!existsSync5(path6.join(dir, name))) continue;
+    const source = await readText2(path6.join(dir, name)) ?? "";
     const v1 = !/\bappId\b/.test(source) && /["']?\bid["']?\s*:/.test(source);
     if (v1) result.v1Config ??= name;
     else {
@@ -26508,8 +27474,8 @@ async function detect(dir) {
     }
   }
   const repoRoot = root ?? dir;
-  const workflowsDir = path5.join(repoRoot, ".github", "workflows");
-  const workflows = (await readdir3(workflowsDir).catch(() => [])).filter((name) => /\.ya?ml$/.test(name)).map((name) => `.github/workflows/${name}`).sort();
+  const workflowsDir = path6.join(repoRoot, ".github", "workflows");
+  const workflows = (await readdir4(workflowsDir).catch(() => [])).filter((name) => /\.ya?ml$/.test(name)).map((name) => `.github/workflows/${name}`).sort();
   const publishing = await publishingWorkflows(repoRoot, workflows);
   if (publishing.length) result.publishing = publishing;
   result.releaseRefs = await releaseRefsOf(repoRoot, workflows, result.appDir);
@@ -26558,28 +27524,28 @@ async function detect(dir) {
 
 // src/agent/commands.ts
 import { execFile as execFile2 } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { readFileSync as readFileSync2 } from "node:fs";
 import os2 from "node:os";
 import process6 from "node:process";
 import { setTimeout as sleep } from "node:timers/promises";
 
 // src/agent/credentials.ts
-import { existsSync as existsSync5 } from "node:fs";
-import { chmod as chmod2, mkdir as mkdir3, readFile as readFile6, rm as rm2, writeFile as writeFile2 } from "node:fs/promises";
+import { existsSync as existsSync6 } from "node:fs";
+import { chmod as chmod2, mkdir as mkdir3, readFile as readFile7, rm as rm2, writeFile as writeFile2 } from "node:fs/promises";
 import os from "node:os";
-import path6 from "node:path";
+import path7 from "node:path";
 import process5 from "node:process";
-var file2 = () => path6.join(
-  process5.env.TODESKTOP_CONFIG_DIR ?? path6.join(
-    process5.env.XDG_CONFIG_HOME ?? path6.join(os.homedir(), ".config"),
+var file2 = () => path7.join(
+  process5.env.TODESKTOP_CONFIG_DIR ?? path7.join(
+    process5.env.XDG_CONFIG_HOME ?? path7.join(os.homedir(), ".config"),
     "todesktop"
   ),
   "v2.json"
 );
 async function readAll() {
-  if (!existsSync5(file2())) return {};
+  if (!existsSync6(file2())) return {};
   try {
-    return JSON.parse(await readFile6(file2(), "utf8"));
+    return JSON.parse(await readFile7(file2(), "utf8"));
   } catch {
     return {};
   }
@@ -26595,8 +27561,8 @@ async function writeSignIn(signIn) {
     await rm2(file2(), { force: true });
     return;
   }
-  await mkdir3(path6.dirname(file2()), { mode: 448, recursive: true });
-  await chmod2(path6.dirname(file2()), 448);
+  await mkdir3(path7.dirname(file2()), { mode: 448, recursive: true });
+  await chmod2(path7.dirname(file2()), 448);
   await writeFile2(file2(), `${JSON.stringify(all, null, 2)}
 `, {
     mode: 384
@@ -26631,7 +27597,7 @@ function runnerLogEnd(log, keep = 60) {
     ...all.slice(-keep)
   ].join("\n");
 }
-async function readFile7(url2) {
+async function readFile8(url2) {
   try {
     const response = await fetch(url2, { signal: AbortSignal.timeout(3e4) });
     if (!response.ok) return { error: `HTTP ${response.status}` };
@@ -26673,7 +27639,7 @@ async function journeyReports(run4, filesUrl, { full = false } = {}) {
       const { id, name } = result.machine;
       let machineLog;
       const wholeLog = () => {
-        machineLog ??= readFile7(fileUrl(id, result.log));
+        machineLog ??= readFile8(fileUrl(id, result.log));
         return machineLog;
       };
       return Promise.all(
@@ -26698,7 +27664,7 @@ async function journeyReports(run4, filesUrl, { full = false } = {}) {
           const unread = [];
           if (filesUrl && journey.output) {
             report2.outputUrl = fileUrl(id, journey.output);
-            const read = await readFile7(report2.outputUrl);
+            const read = await readFile8(report2.outputUrl);
             if ("text" in read) {
               report2.output = read.text;
               report2.outputEnd = outputEnd(read.text);
@@ -26707,7 +27673,7 @@ async function journeyReports(run4, filesUrl, { full = false } = {}) {
           if (filesUrl && journey.status === "failed") {
             if (journey.log) {
               report2.runnerLogUrl = fileUrl(id, journey.log);
-              const read = await readFile7(report2.runnerLogUrl);
+              const read = await readFile8(report2.runnerLogUrl);
               if ("text" in read) {
                 report2.runnerLog = full ? read.text : runnerLogEnd(read.text);
               } else unread.push(`${journey.log}: ${read.error}`);
@@ -26924,7 +27890,7 @@ var version2 = () => {
   for (const relative of ["../../package.json", "../package.json"]) {
     try {
       const pkg = JSON.parse(
-        readFileSync(new URL(relative, import.meta.url), "utf8")
+        readFileSync2(new URL(relative, import.meta.url), "utf8")
       );
       if (pkg.name === "@todesktop/v2" && pkg.version) return pkg.version;
     } catch {
@@ -27904,8 +28870,8 @@ var agentCommands = [
 ];
 
 // ../config/src/mac.ts
-import { copyFile as copyFile2, readdir as readdir4, readFile as readFile8, stat as stat2 } from "node:fs/promises";
-import path7 from "node:path";
+import { copyFile as copyFile2, readdir as readdir5, readFile as readFile9, stat as stat3 } from "node:fs/promises";
+import path8 from "node:path";
 var isDict = (value) => typeof value === "object" && value !== null && !Array.isArray(value) && !(value instanceof Date) && !(value instanceof Uint8Array);
 function parsePlist(bytes) {
   const buffer = Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength);
@@ -28221,10 +29187,10 @@ function fillTeam(text3, teamId) {
 }
 var bundleExtension = /\.(app|appex|xpc|bundle|plugin|framework)$/;
 async function readIfFile(file3) {
-  return (await stat2(file3).catch(() => null))?.isFile() ? readFile8(file3) : void 0;
+  return (await stat3(file3).catch(() => null))?.isFile() ? readFile9(file3) : void 0;
 }
 async function bundleIdOf(bundle) {
-  const plist = await readIfFile(path7.join(bundle, "Contents", "Info.plist"));
+  const plist = await readIfFile(path8.join(bundle, "Contents", "Info.plist"));
   return plist ? plistStringsOf(plist).CFBundleIdentifier : void 0;
 }
 async function embedProvisioningProfiles(loaded, app) {
@@ -28243,21 +29209,21 @@ async function embedProvisioningProfiles(loaded, app) {
     }
   }
   for (const [at, profile] of profiles) {
-    const source = path7.resolve(loaded.configDir, profile);
+    const source = path8.resolve(loaded.configDir, profile);
     if (!await readIfFile(source)) {
       throw new Error(
         `The provisioning profile ${profile} isn't a file (${source})`
       );
     }
-    const bundle = path7.join(app, at);
-    if (!(await stat2(path7.join(bundle, "Contents")).catch(() => null))?.isDirectory()) {
+    const bundle = path8.join(app, at);
+    if (!(await stat3(path8.join(bundle, "Contents")).catch(() => null))?.isDirectory()) {
       throw new Error(
-        `${at ? `mac.nested["${at}"]` : "mac"}.provisioningProfile: ${path7.basename(app)} has no bundle at ${at || "."}`
+        `${at ? `mac.nested["${at}"]` : "mac"}.provisioningProfile: ${path8.basename(app)} has no bundle at ${at || "."}`
       );
     }
     await copyFile2(
       source,
-      path7.join(bundle, "Contents", "embedded.provisionprofile")
+      path8.join(bundle, "Contents", "embedded.provisionprofile")
     );
   }
 }
@@ -28266,7 +29232,7 @@ async function macEntitlements(loaded, app, now = /* @__PURE__ */ new Date()) {
   const entitlements2 = { nested: {} };
   if (!mac) return { entitlements: entitlements2, warnings: [] };
   const read = async (file3, bundleId) => {
-    const source = path7.resolve(loaded.configDir, file3);
+    const source = path8.resolve(loaded.configDir, file3);
     const bytes = await readIfFile(source);
     if (!bytes) {
       throw new Error(`The entitlements file ${file3} isn't a file (${source})`);
@@ -28288,11 +29254,11 @@ async function macEntitlements(loaded, app, now = /* @__PURE__ */ new Date()) {
     entitlements2.app = await read(mac.entitlements, appBundleId);
   }
   for (const [at, nested] of Object.entries(mac.nested ?? {})) {
-    const target = path7.join(app, at);
-    const found = await stat2(target).catch(() => null);
+    const target = path8.join(app, at);
+    const found = await stat3(target).catch(() => null);
     if (!found) {
       throw new Error(
-        `mac.nested lists ${at}, but ${path7.basename(app)} has nothing there`
+        `mac.nested lists ${at}, but ${path8.basename(app)} has nothing there`
       );
     }
     if (nested.entitlements) {
@@ -28308,7 +29274,7 @@ async function macEntitlements(loaded, app, now = /* @__PURE__ */ new Date()) {
 async function sandboxProblem(loaded) {
   const file3 = loaded.config.mac?.entitlements;
   if (!file3) return void 0;
-  const bytes = await readIfFile(path7.resolve(loaded.configDir, file3));
+  const bytes = await readIfFile(path8.resolve(loaded.configDir, file3));
   if (!bytes) return void 0;
   let parsed;
   try {
@@ -28338,7 +29304,7 @@ function granted(want, have) {
 }
 async function checkSigning(app, entitlements2, now = /* @__PURE__ */ new Date()) {
   const warnings = [];
-  const name = path7.basename(app);
+  const name = path8.basename(app);
   const targets = /* @__PURE__ */ new Set(["."]);
   for (const bundle of await nestedBundles(app)) {
     if (bundle.endsWith(".app") || bundle in entitlements2.nested) {
@@ -28348,15 +29314,15 @@ async function checkSigning(app, entitlements2, now = /* @__PURE__ */ new Date()
   for (const at of await bundlesWithProfiles(app)) targets.add(at);
   for (const at of Object.keys(entitlements2.nested)) targets.add(at);
   for (const at of [...targets].sort()) {
-    const target = at === "." ? app : path7.join(app, at);
-    const found = await stat2(target).catch(() => null);
+    const target = at === "." ? app : path8.join(app, at);
+    const found = await stat3(target).catch(() => null);
     if (!found) {
       throw new Error(`mac.nested lists ${at}, but ${name} has nothing there`);
     }
     const where = at === "." ? name : `${at} in ${name}`;
     const text3 = entitlements2.nested[at] ?? (at === "." || at.endsWith(".app") ? entitlements2.app : void 0);
     const profileBytes = found.isDirectory() ? await readIfFile(
-      path7.join(target, "Contents", "embedded.provisionprofile")
+      path8.join(target, "Contents", "embedded.provisionprofile")
     ) : void 0;
     if (!profileBytes) {
       const requested2 = text3 ? parsePlist(Buffer.from(fillTeam(text3, "TEAMID"))) : {};
@@ -28427,13 +29393,13 @@ async function checkSigning(app, entitlements2, now = /* @__PURE__ */ new Date()
 var isBundleDir = (name) => bundleExtension.test(name);
 async function nestedBundles(app) {
   const found = [];
-  for (const entry of await readdir4(app, {
+  for (const entry of await readdir5(app, {
     recursive: true,
     withFileTypes: true
   })) {
     if (entry.isDirectory() && isBundleDir(entry.name)) {
-      const bundle = path7.join(entry.parentPath, entry.name);
-      found.push(path7.relative(app, bundle).split(path7.sep).join("/"));
+      const bundle = path8.join(entry.parentPath, entry.name);
+      found.push(path8.relative(app, bundle).split(path8.sep).join("/"));
     }
   }
   return found.sort();
@@ -28442,7 +29408,7 @@ async function bundlesWithProfiles(app) {
   const found = [];
   for (const at of [".", ...await nestedBundles(app)]) {
     if (await readIfFile(
-      path7.join(app, at, "Contents", "embedded.provisionprofile")
+      path8.join(app, at, "Contents", "embedded.provisionprofile")
     )) {
       found.push(at);
     }
@@ -28451,31 +29417,31 @@ async function bundlesWithProfiles(app) {
 }
 
 // src/agent/integrate.ts
-import { existsSync as existsSync9 } from "node:fs";
-import { mkdir as mkdir4, mkdtemp as mkdtemp3, readFile as readFile11, rm as rm4, writeFile as writeFile3 } from "node:fs/promises";
+import { existsSync as existsSync10 } from "node:fs";
+import { mkdir as mkdir4, mkdtemp as mkdtemp3, readFile as readFile12, rm as rm4, writeFile as writeFile3 } from "node:fs/promises";
 import { tmpdir as tmpdir3 } from "node:os";
-import path10 from "node:path";
+import path11 from "node:path";
 import process9 from "node:process";
 
 // src/upload.ts
 import { execFile as execFile3 } from "node:child_process";
 import { createHash } from "node:crypto";
-import { createReadStream, existsSync as existsSync7, openAsBlob, statSync as statSync2 } from "node:fs";
-import { copyFile as copyFile3, cp, lstat, mkdtemp as mkdtemp2, rm as rm3, stat as stat3 } from "node:fs/promises";
+import { createReadStream, existsSync as existsSync8, openAsBlob, statSync as statSync2 } from "node:fs";
+import { copyFile as copyFile3, cp, lstat, mkdtemp as mkdtemp2, rm as rm3, stat as stat4 } from "node:fs/promises";
 import { tmpdir as tmpdir2 } from "node:os";
-import path9 from "node:path";
+import path10 from "node:path";
 import process8 from "node:process";
 import { promisify as promisify2 } from "node:util";
 
 // src/agent/found.ts
-import { existsSync as existsSync6, readdirSync, statSync } from "node:fs";
-import path8 from "node:path";
+import { existsSync as existsSync7, readdirSync, statSync } from "node:fs";
+import path9 from "node:path";
 import process7 from "node:process";
-var shown = (file3) => path8.relative(process7.cwd(), file3) || ".";
+var shown = (file3) => path9.relative(process7.cwd(), file3) || ".";
 var isExecutable = (file3) => {
   try {
-    const stat4 = statSync(file3);
-    return stat4.isFile() && (stat4.mode & 73) !== 0;
+    const stat5 = statSync(file3);
+    return stat5.isFile() && (stat5.mode & 73) !== 0;
   } catch {
     return false;
   }
@@ -28491,12 +29457,12 @@ function executablesIn(dir, depth = 3, max = 20) {
     }
     for (const name of names) {
       if (found.length >= max) return;
-      const file3 = path8.join(at, name);
-      if (isExecutable(file3)) found.push(path8.relative(dir, file3));
+      const file3 = path9.join(at, name);
+      if (isExecutable(file3)) found.push(path9.relative(dir, file3));
     }
     if (level >= depth) return;
     for (const name of names) {
-      const file3 = path8.join(at, name);
+      const file3 = path9.join(at, name);
       try {
         if (statSync(file3).isDirectory()) walk(file3, level + 1);
       } catch {
@@ -28517,11 +29483,11 @@ function filesIn(dir, max = 200) {
     }
     for (const name of names) {
       if (found.length >= max) return;
-      const file3 = path8.join(at, name);
+      const file3 = path9.join(at, name);
       try {
         if (statSync(file3).isDirectory()) {
           if (level < 2) walk(file3, level + 1);
-        } else found.push(path8.relative(dir, file3));
+        } else found.push(path9.relative(dir, file3));
       } catch {
       }
     }
@@ -28530,9 +29496,9 @@ function filesIn(dir, max = 200) {
   return found;
 }
 function missingPath(file3) {
-  let dir = path8.dirname(path8.resolve(file3));
-  while (!existsSync6(dir) && path8.dirname(dir) !== dir) {
-    dir = path8.dirname(dir);
+  let dir = path9.dirname(path9.resolve(file3));
+  while (!existsSync7(dir) && path9.dirname(dir) !== dir) {
+    dir = path9.dirname(dir);
   }
   return `${shown(file3)} doesn't exist; ${shown(dir)} is the nearest folder that does, and it holds: ${holds(dir)}`;
 }
@@ -28545,13 +29511,13 @@ function holds(dir) {
   return entries.length ? `${entries.slice(0, 15).join(", ")}${entries.length > 15 ? `, \u2026 (${entries.length})` : ""}` : "nothing";
 }
 function executableProblem(appDir, executable, key, { platform = "linux" } = {}) {
-  if (existsSync6(path8.join(appDir, executable))) return void 0;
+  if (existsSync7(path9.join(appDir, executable))) return void 0;
   const found = platform === "linux" ? executablesIn(appDir) : filesIn(appDir).filter((name) => /\.exe$/i.test(name));
   return `${key} is ${executable}, and ${shown(appDir)} has no such file. ${platform === "linux" ? "Executable files" : ".exe files"} in it: ${found.length ? found.join(", ") : "none"}`;
 }
 
 // src/inspect.ts
-import { open as open2, readFile as readFile9 } from "node:fs/promises";
+import { open as open2, readFile as readFile10 } from "node:fs/promises";
 async function head(file3, length) {
   const handle = await open2(file3, "r");
   try {
@@ -28574,7 +29540,7 @@ var xmlEntities2 = {
   quot: '"'
 };
 async function plistStrings(file3) {
-  const bytes = await readFile9(file3);
+  const bytes = await readFile10(file3);
   if (bytes.toString("latin1", 0, 6) === "bplist") {
     return plistStringsOf(bytes);
   }
@@ -28670,12 +29636,12 @@ function platformMismatch(file3, loadedByPlatform) {
 async function inspect(config3, platform, arch, appPath2) {
   if (platform === "mac") {
     const plist = await plistStrings(
-      path9.join(appPath2, "Contents", "Info.plist")
+      path10.join(appPath2, "Contents", "Info.plist")
     );
     const executable2 = plist.CFBundleExecutable;
     if (!executable2) throw new Error(`${appPath2} has no CFBundleExecutable`);
     const actual2 = await machOArch(
-      path9.join(appPath2, "Contents", "MacOS", executable2)
+      path10.join(appPath2, "Contents", "MacOS", executable2)
     );
     if (actual2 !== arch) {
       throw new Error(`mac.apps.${arch} is ${appPath2}, but it's ${actual2}`);
@@ -28697,7 +29663,7 @@ async function inspect(config3, platform, arch, appPath2) {
   );
   if (missing) throw new Error(missing);
   const actual = await (platform === "windows" ? peArch : elfArch)(
-    path9.join(appPath2, executable)
+    path10.join(appPath2, executable)
   );
   if (actual !== arch) {
     throw new Error(
@@ -28790,13 +29756,13 @@ var iconNames = {
   windows: "icon.ico"
 };
 async function macIconFile(app) {
-  const named = (await plistStrings(path9.join(app, "Contents", "Info.plist"))).CFBundleIconFile;
+  const named = (await plistStrings(path10.join(app, "Contents", "Info.plist"))).CFBundleIconFile;
   if (!named || named.includes("/") || named.startsWith(".")) return void 0;
-  const file3 = path9.join(
+  const file3 = path10.join(
     app,
     "Contents",
     "Resources",
-    path9.extname(named) ? named : `${named}.icns`
+    path10.extname(named) ? named : `${named}.icns`
   );
   const info = await lstat(file3).catch(() => null);
   return info?.isFile() && info.size <= MAX_ICON_SOURCE_BYTES ? file3 : void 0;
@@ -28804,7 +29770,7 @@ async function macIconFile(app) {
 function iconFor(loaded, platform) {
   const icon = platform === "mac" ? void 0 : loaded.config[platform]?.icon;
   if (!icon) return void 0;
-  const file3 = path9.resolve(loaded.configDir, icon);
+  const file3 = path10.resolve(loaded.configDir, icon);
   if (!statSync2(file3, { throwIfNoEntry: false })?.isFile()) {
     throw new Error(
       `${platform}.icon is ${icon}, but there's no such file (${file3}): ToDesktop's builders need it to brand the app`
@@ -28813,12 +29779,12 @@ function iconFor(loaded, platform) {
   return file3;
 }
 async function preparedTar(loaded, app, version3, work, icon) {
-  const name = app.platform === "mac" ? path9.basename(app.path) : "app";
-  const staging = path9.join(work, `${app.platform}-${app.arch}`);
-  const copy = path9.join(staging, name);
+  const name = app.platform === "mac" ? path10.basename(app.path) : "app";
+  const staging = path10.join(work, `${app.platform}-${app.arch}`);
+  const copy = path10.join(staging, name);
   await cp(app.path, copy, { recursive: true, verbatimSymlinks: true });
   let iconName = icon && app.platform !== "mac" ? iconNames[app.platform] : void 0;
-  if (icon && iconName) await copyFile3(icon, path9.join(staging, iconName));
+  if (icon && iconName) await copyFile3(icon, path10.join(staging, iconName));
   if (app.platform === "mac") await embedProvisioningProfiles(loaded, copy);
   const hook = loaded.hooks.prepareApp;
   if (hook) {
@@ -28841,12 +29807,12 @@ async function preparedTar(loaded, app, version3, work, icon) {
     const macIcon = await macIconFile(copy);
     if (macIcon) {
       iconName = iconNames.mac;
-      await copyFile3(macIcon, path9.join(staging, iconNames.mac));
+      await copyFile3(macIcon, path10.join(staging, iconNames.mac));
     }
   }
   const tar = `${staging}.tar`;
   const macTar = process8.platform === "darwin" ? ["--no-mac-metadata"] : [];
-  const stagingName = path9.basename(staging);
+  const stagingName = path10.basename(staging);
   await run2(
     "tar",
     [
@@ -28866,7 +29832,7 @@ async function preparedTar(loaded, app, version3, work, icon) {
     ...entitlements2 ? { entitlements: entitlements2 } : {},
     ...iconName ? { iconName } : {},
     sha256: hash2.digest("hex"),
-    size: (await stat3(tar)).size,
+    size: (await stat4(tar)).size,
     tar
   };
 }
@@ -28912,7 +29878,7 @@ function uploadsLine(status2) {
   return build2 && started.length > 0 ? `${waiting}. Build ${build2.buildNumber} (${build2.buildId}) has started ${started.join(" and ")}` : waiting;
 }
 async function upload(options) {
-  const file3 = path9.resolve(options.configFile);
+  const file3 = path10.resolve(options.configFile);
   const loadedByPlatform = Object.fromEntries(
     await Promise.all(
       platforms.map(
@@ -28933,7 +29899,7 @@ async function upload(options) {
   const json2 = configJson(config3);
   const unbuildable = ciConfigProblem(config3);
   if (unbuildable) throw new Error(unbuildable);
-  const work = await mkdtemp2(path9.join(tmpdir2(), "todesktop-upload-"));
+  const work = await mkdtemp2(path10.join(tmpdir2(), "todesktop-upload-"));
   try {
     const expected = [];
     const found = [];
@@ -28947,9 +29913,9 @@ async function upload(options) {
       );
       for (const [arch, appPath2] of Object.entries(apps)) {
         expected.push(pieceKey(platform, arch));
-        if (!existsSync7(appPath2)) continue;
+        if (!existsSync8(appPath2)) continue;
         if (loadedHere.assemble[platform]) {
-          const appDir = path9.join(work, "assembled", `${platform}-${arch}`);
+          const appDir = path10.join(work, "assembled", `${platform}-${arch}`);
           if (await assembleApp(loadedHere, platform, arch, appPath2, appDir)) {
             console.info(`  ${platform}/${arch}: made from ${appPath2}`);
             found.push(await inspect(config3, platform, arch, appDir));
@@ -29055,8 +30021,8 @@ async function upload(options) {
 }
 
 // src/agent/clients.ts
-import { existsSync as existsSync8 } from "node:fs";
-import { readFile as readFile10 } from "node:fs/promises";
+import { existsSync as existsSync9 } from "node:fs";
+import { readFile as readFile11 } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 var clientSources = {
   dart: [
@@ -29117,7 +30083,7 @@ function clientsDir() {
   return [
     new URL("clients/", import.meta.url),
     new URL("../../../updater/clients/", import.meta.url)
-  ].map((url2) => fileURLToPath(url2)).find((dir) => existsSync8(dir));
+  ].map((url2) => fileURLToPath(url2)).find((dir) => existsSync9(dir));
 }
 function withoutTests(manifest) {
   return manifest.replace(/,\s*\.testTarget\([\s\S]*?\n\s*\)(?=,?\s*\n\s*\])/, "").replace(
@@ -29129,15 +30095,15 @@ async function clientFiles(kind) {
   const dir = clientsDir();
   if (!dir) return [];
   const files = await Promise.all(
-    clientSources[kind].map(async ({ from, language, path: path12 }) => {
-      const content = await readFile10(`${dir}${from}`, "utf8").catch(
+    clientSources[kind].map(async ({ from, language, path: path13 }) => {
+      const content = await readFile11(`${dir}${from}`, "utf8").catch(
         () => void 0
       );
       if (content === void 0) return void 0;
       return {
         content: from.endsWith("Package.swift") ? withoutTests(content) : content,
         language,
-        path: path12
+        path: path13
       };
     })
   );
@@ -29253,8 +30219,8 @@ function sortSnippets(snippets) {
 }
 var trustDescription = "Only runs from this repository can upload builds, signed in with GitHub\u2019s own token. No secrets to store.";
 async function planOf(values, { withoutApp = false } = {}) {
-  const dir = path10.resolve(values.dir ?? ".");
-  if (!existsSync9(dir)) {
+  const dir = path11.resolve(values.dir ?? ".");
+  if (!existsSync10(dir)) {
     throw new CliError("no-dir", `${dir} doesn't exist.`, {
       exit: exitCodes.usage
     });
@@ -29294,8 +30260,8 @@ async function planOf(values, { withoutApp = false } = {}) {
   const recipe = recipeOf(framework.id);
   const id = appId ?? "your-app-id";
   const name = app.name ?? appId ?? "Your App";
-  const root = detection.appDir ? path10.resolve(dir, ...detection.appDir.split("/").map(() => "..")) : dir;
-  const configApps = framework.id === "other" && detection.config ? await configAppsOf(path10.join(dir, detection.config)) : void 0;
+  const root = detection.appDir ? path11.resolve(dir, ...detection.appDir.split("/").map(() => "..")) : dir;
+  const configApps = framework.id === "other" && detection.config ? await configAppsOf(path11.join(dir, detection.config)) : void 0;
   const ships = framework.id === "electron-builder" ? detection.electronBuilder : void 0;
   const recipeApp = {
     ...configApps ? { configApps } : {},
@@ -29353,7 +30319,7 @@ async function planOf(values, { withoutApp = false } = {}) {
   const configNotes = [];
   if (detection.config) {
     configNotes.push(
-      legacyConfigFileNames.includes(detection.config) ? `${detection.config} is here already, under the old name: rename it to todesktop.config${path10.extname(detection.config)}.` : `${detection.config} is here already: compare it with this one. integrate --write leaves it as it is.`
+      legacyConfigFileNames.includes(detection.config) ? `${detection.config} is here already, under the old name: rename it to todesktop.config${path11.extname(detection.config)}.` : `${detection.config} is here already: compare it with this one. integrate --write leaves it as it is.`
     );
   }
   if (detection.v1Config && !detection.config) {
@@ -29398,13 +30364,13 @@ async function planOf(values, { withoutApp = false } = {}) {
   if (client && !detection.updater) {
     const files = await clientFiles(client);
     const project = client === "dotnet" ? detection.native?.project ?? detection.project : detection.native?.project;
-    const folder = (client === "dotnet" || client === "dart") && project ? path10.posix.dirname(project) : ".";
+    const folder = (client === "dotnet" || client === "dart") && project ? path11.posix.dirname(project) : ".";
     updates.files.push(
       ...files.map(({ content, language, path: file3 }) => ({
         client: true,
         content,
         language,
-        path: path10.posix.join(folder, file3)
+        path: path11.posix.join(folder, file3)
       }))
     );
     updateNotes.push(clientNote(client, files.length > 0));
@@ -29612,7 +30578,7 @@ async function planOf(values, { withoutApp = false } = {}) {
 }
 async function uploadingWorkflow(root, workflows, appDir) {
   for (const workflow of workflows) {
-    const text3 = await readFile11(path10.join(root, workflow), "utf8").catch(
+    const text3 = await readFile12(path11.join(root, workflow), "utf8").catch(
       () => ""
     );
     const uploads = /ToDesktop\/upload-action@|todesktop upload\b/.test(text3);
@@ -29683,7 +30649,7 @@ async function configAppsOf(file3) {
   try {
     const platforms3 = ["mac", "windows", "linux"];
     const loaded = await Promise.all(
-      platforms3.map((platform) => loadConfig(path10.resolve(file3), { platform }))
+      platforms3.map((platform) => loadConfig(path11.resolve(file3), { platform }))
     );
     const apps = Object.fromEntries(
       platforms3.map((platform, index) => [
@@ -29704,22 +30670,22 @@ async function writeFiles(appDir, files, {
   const written = [];
   for (const file3 of files) {
     const dir = file3.path.startsWith(".github/") ? root : appDir;
-    const target = path10.join(dir, file3.path);
+    const target = path11.join(dir, file3.path);
     if (file3.path === workflowPath && uploading) {
       written.push({ action: "exists", path: uploading });
       continue;
     }
-    const taken = existsSync9(target) || file3.path === "todesktop.config.ts" && configExists;
+    const taken = existsSync10(target) || file3.path === "todesktop.config.ts" && configExists;
     if (taken && file3.path === workflowPath) {
-      const beside = path10.join(
-        path10.dirname(file3.path),
+      const beside = path11.join(
+        path11.dirname(file3.path),
         "release.todesktop.yml"
       );
-      if (existsSync9(path10.join(dir, beside))) {
+      if (existsSync10(path11.join(dir, beside))) {
         written.push({ action: "exists", path: beside });
         continue;
       }
-      await writeFile3(path10.join(dir, beside), file3.content, { flag: "wx" });
+      await writeFile3(path11.join(dir, beside), file3.content, { flag: "wx" });
       written.push({ action: "created", beside, path: file3.path });
       continue;
     }
@@ -29727,7 +30693,7 @@ async function writeFiles(appDir, files, {
       written.push({ action: "exists", path: file3.path });
       continue;
     }
-    await mkdir4(path10.dirname(target), { recursive: true });
+    await mkdir4(path11.dirname(target), { recursive: true });
     await writeFile3(target, file3.content, { flag: "wx" });
     written.push({ action: "created", path: file3.path });
   }
@@ -29819,12 +30785,12 @@ var integrate = {
     const left = steps.filter((each) => !each.done);
     let written;
     if (values.write) {
-      const config3 = plan.detection.config ? await readFile11(
-        path10.join(plan.dir, plan.detection.config),
+      const config3 = plan.detection.config ? await readFile12(
+        path11.join(plan.dir, plan.detection.config),
         "utf8"
       ).catch(() => "") : "";
       const named = steps.filter((each) => each.done && each.key === "config").flatMap((each) => each.files).filter(
-        (file3) => file3.path !== "todesktop.config.ts" && config3.includes(`'${file3.path}'`) && !existsSync9(path10.join(plan.dir, file3.path))
+        (file3) => file3.path !== "todesktop.config.ts" && config3.includes(`'${file3.path}'`) && !existsSync10(path11.join(plan.dir, file3.path))
       );
       written = await writeFiles(
         plan.dir,
@@ -29999,8 +30965,8 @@ async function appChecks(loaded, unchecked) {
     }
     for (const [arch, appPath2] of Object.entries(apps2)) {
       const name = `${platform}/${arch}`;
-      const shown2 = path10.relative(process9.cwd(), appPath2) || ".";
-      if (!existsSync9(appPath2)) {
+      const shown2 = path11.relative(process9.cwd(), appPath2) || ".";
+      if (!existsSync10(appPath2)) {
         const why = whyUnbuilt(platform, arch, shown2);
         unchecked.push({ arch, path: shown2, platform, why });
         checks.push({
@@ -30045,10 +31011,10 @@ async function appChecks(loaded, unchecked) {
   return checks;
 }
 async function assembledCheck(loaded, platform, arch, source, name) {
-  const shown2 = path10.relative(process9.cwd(), source) || ".";
-  const scratch = await mkdtemp3(path10.join(tmpdir3(), "todesktop-check-"));
+  const shown2 = path11.relative(process9.cwd(), source) || ".";
+  const scratch = await mkdtemp3(path11.join(tmpdir3(), "todesktop-check-"));
   try {
-    const appDir = path10.join(scratch, "app");
+    const appDir = path11.join(scratch, "app");
     if (!await assembleApp(loaded, platform, arch, source, appDir)) {
       return {
         detail: `${shown2}: no ${platform} build in it on this machine (skipped)`,
@@ -30115,10 +31081,10 @@ var configCheck = {
   async run({ values }) {
     const dir = values.dir ?? ".";
     const file3 = values.config ?? findConfigFile(dir);
-    if (!file3 || !existsSync9(file3)) {
+    if (!file3 || !existsSync10(file3)) {
       throw new CliError(
         "no-config",
-        `No todesktop.config.ts ${file3 ? `at ${file3}` : `in ${path10.resolve(dir)}`}.`,
+        `No todesktop.config.ts ${file3 ? `at ${file3}` : `in ${path11.resolve(dir)}`}.`,
         {
           exit: exitCodes.usage,
           fix: [
@@ -30139,7 +31105,7 @@ var configCheck = {
           platforms2.map(
             async (platform) => [
               platform,
-              await loadConfig(path10.resolve(file3), { platform })
+              await loadConfig(path11.resolve(file3), { platform })
             ]
           )
         )
@@ -30215,7 +31181,7 @@ var integrateCommands = [
 ];
 
 // src/report.ts
-import { readFileSync as readFileSync2 } from "node:fs";
+import { readFileSync as readFileSync3 } from "node:fs";
 import { appendFile } from "node:fs/promises";
 import process11 from "node:process";
 
@@ -30311,7 +31277,8 @@ function machinesTable(result) {
   const machines = result.smoke?.machines ?? [];
   if (machines.length === 0) return void 0;
   const row = (cells) => `| ${cells.join(" | ")} |`;
-  const journeys = smokeJourneysToRead.map((id) => smokeJourneyNames[id]);
+  const shown2 = smokeJourneysToShow(machines);
+  const journeys = shown2.map((id) => smokeJourneyNames[id]);
   return [
     row(["Machine", "Result", ...journeys]),
     row(["---", "---", ...journeys.map(() => "---")]),
@@ -30319,9 +31286,7 @@ function machinesTable(result) {
       (machine) => row([
         codeSpan(`${machine.name} ${machine.arch}`.slice(0, 80)),
         statusWord(machine.status),
-        ...smokeJourneysToRead.map(
-          (id) => statusWord(machine.journeys?.[id]?.status)
-        )
+        ...shown2.map((id) => statusWord(machine.journeys?.[id]?.status))
       ])
     )
   ].join("\n");
@@ -30353,10 +31318,10 @@ async function refusalOf2(response) {
   const said = await response.json().catch(() => null);
   return typeof said?.message === "string" ? `: ${line(said.message).slice(0, 200)}` : "";
 }
-async function github(place, token, doing, method, path12, body) {
+async function github(place, token, doing, method, path13, body) {
   let response;
   try {
-    response = await fetch(`${place.api}${path12}`, {
+    response = await fetch(`${place.api}${path13}`, {
       ...body === void 0 ? {} : { body: JSON.stringify(body) },
       headers: {
         "accept": "application/vnd.github+json",
@@ -30636,7 +31601,7 @@ async function waitForResult({
 function repositoryIsPrivate(eventPath = process11.env.GITHUB_EVENT_PATH) {
   if (!eventPath) return void 0;
   try {
-    const event = JSON.parse(readFileSync2(eventPath, "utf8"));
+    const event = JSON.parse(readFileSync3(eventPath, "utf8"));
     return typeof event.repository?.private === "boolean" ? event.repository.private : void 0;
   } catch {
     return void 0;
@@ -30652,8 +31617,11 @@ var withoutDetail = ({
   ...failure
 }) => failure;
 function machinesText(smoke, withDetails) {
+  const shown2 = smokeJourneysToShow(smoke.machines);
   return smoke.machines.map((machine, index) => {
-    const sent = smokeJourneys.filter((journey) => machine.journeys[journey]);
+    const sent = smokeJourneys.filter(
+      (journey) => shown2.includes(journey) && machine.journeys[journey]
+    );
     const reports = sent.map((journey) => {
       const { failure, skipped, status: status2 } = machine.journeys[journey];
       return {
@@ -30909,9 +31877,9 @@ ${logText(told)}`);
 
 // src/tauriBridge.ts
 import { execFile as execFile4 } from "node:child_process";
-import { existsSync as existsSync10 } from "node:fs";
-import { mkdir as mkdir5, readdir as readdir5, readFile as readFile12, writeFile as writeFile4 } from "node:fs/promises";
-import path11 from "node:path";
+import { existsSync as existsSync11 } from "node:fs";
+import { mkdir as mkdir5, readdir as readdir6, readFile as readFile13, writeFile as writeFile4 } from "node:fs/promises";
+import path12 from "node:path";
 import process12 from "node:process";
 import { promisify as promisify3 } from "node:util";
 var run3 = promisify3(execFile4);
@@ -30937,7 +31905,7 @@ async function tauriSign(file3, keyFile) {
     process12.env.TAURI_SIGNING_PRIVATE_KEY_PASSWORD ?? "",
     file3
   ]);
-  return (await readFile12(`${file3}.sig`, "utf8")).trim();
+  return (await readFile13(`${file3}.sig`, "utf8")).trim();
 }
 async function tauriBridge(options) {
   await mkdir5(options.out, { recursive: true });
@@ -30945,30 +31913,30 @@ async function tauriBridge(options) {
   if (!response.ok) {
     throw new Error(`${options.from}: ${response.status}`);
   }
-  const zip = path11.join(options.out, "build.zip");
+  const zip = path12.join(options.out, "build.zip");
   await writeFile4(zip, new Uint8Array(await response.arrayBuffer()));
-  const unpacked = path11.join(options.out, "unpacked");
+  const unpacked = path12.join(options.out, "unpacked");
   await run3("ditto", ["-x", "-k", zip, unpacked]);
-  const appName = (await readdir5(unpacked)).find(
+  const appName = (await readdir6(unpacked)).find(
     (name2) => name2.endsWith(".app")
   );
   if (!appName) throw new Error(`${options.from} holds no .app`);
-  const app = path11.join(unpacked, appName);
-  const plist = await plistStrings(path11.join(app, "Contents", "Info.plist"));
+  const app = path12.join(unpacked, appName);
+  const plist = await plistStrings(path12.join(app, "Contents", "Info.plist"));
   const version3 = plist.CFBundleShortVersionString;
   const executable = plist.CFBundleExecutable;
   if (!version3 || !executable) {
     throw new Error(`${appName}'s Info.plist lacks a version or executable`);
   }
-  if (!existsSync10(path11.join(app, "Contents", "Resources", "todesktop-build.json"))) {
+  if (!existsSync11(path12.join(app, "Contents", "Resources", "todesktop-build.json"))) {
     throw new Error(
       `${appName} isn't a ToDesktop build (no todesktop-build.json)`
     );
   }
-  const arch = await machOArch(path11.join(app, "Contents", "MacOS", executable));
+  const arch = await machOArch(path12.join(app, "Contents", "MacOS", executable));
   const base = appName.replace(/\.app$/, "").replaceAll(/[^\w.-]+/g, "-");
   const name = `${base}-${version3}-mac-${arch}.app.tar.gz`;
-  const tarball = path11.join(options.out, name);
+  const tarball = path12.join(options.out, name);
   await run3(
     "tar",
     ["--no-mac-metadata", "-czf", tarball, "-C", unpacked, appName],
@@ -30989,7 +31957,7 @@ async function tauriBridge(options) {
     pub_date: (/* @__PURE__ */ new Date()).toISOString(),
     version: version3
   };
-  const latest = path11.join(options.out, "latest.json");
+  const latest = path12.join(options.out, "latest.json");
   await writeFile4(latest, `${JSON.stringify(manifest, null, 2)}
 `);
   process12.stdout.write(
