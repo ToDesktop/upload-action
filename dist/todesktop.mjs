@@ -21048,20 +21048,36 @@ function asPresets(value, where) {
   }
   return presets2;
 }
-async function layersOf(config3, name, context, preset, depth = 0) {
+async function layersOf(config3, name, context, warnings, preset, depth = 0) {
   if (depth > 8) throw new Error(`${name}: presets extend too deeply`);
   const layers = [];
   if (config3.extends !== void 0) {
     for (const extended of asPresets(config3.extends, name)) {
       const value = typeof extended.config === "function" ? (
         // oxlint-disable-next-line no-await-in-loop
-        await extended.config(context)
+        await extended.config({
+          ...context,
+          warn: (message, key) => {
+            warnings.push({
+              ...key ? { key } : {},
+              message,
+              preset: extended.name
+            });
+          }
+        })
       ) : extended.config ?? {};
       if (!isPlainObject2(value)) {
         throw new Error(`${extended.name}: its config isn't an object`);
       }
       layers.push(
-        ...await layersOf(value, extended.name, context, extended, depth + 1)
+        ...await layersOf(
+          value,
+          extended.name,
+          context,
+          warnings,
+          extended,
+          depth + 1
+        )
       );
     }
   }
@@ -21109,8 +21125,18 @@ function mergeLayers(layers) {
   for (const layer of layers) data = merge2(data, layer.config, layer.name, "");
   return { data, sources };
 }
+function sets(config3, key) {
+  let at = config3;
+  for (const part of key.split(".")) {
+    if (!isPlainObject2(at) || !Object.hasOwn(at, part)) return false;
+    at = at[part];
+    if (!isPlainObject2(at)) return true;
+  }
+  return true;
+}
 async function resolveExtends(config3, name, context) {
-  const layers = await layersOf(config3, name, context);
+  const warned2 = [];
+  const layers = await layersOf(config3, name, context, warned2);
   const values = [];
   const prepareApps = [];
   for (const layer of layers) {
@@ -21157,7 +21183,12 @@ async function resolveExtends(config3, name, context) {
       }
     };
   }
-  return { assemble, data, hooks: hooks2, sources };
+  const warnings = warned2.filter(({ key, preset }) => {
+    if (!key) return true;
+    const at = layers.findIndex((layer) => layer.name === preset);
+    return !values.slice(at + 1).some(({ config: later }) => sets(later, key));
+  });
+  return { assemble, data, hooks: hooks2, sources, warnings };
 }
 function sourcesOf(resolved, sources) {
   const out = {};
@@ -22267,11 +22298,14 @@ async function onStderr(load) {
   }
 }
 var warned = /* @__PURE__ */ new Set();
-function warnOnce(projectDir, message) {
-  const key = `${projectDir}\0${message}`;
+function printOnce(projectDir, line2) {
+  const key = `${projectDir}\0${line2}`;
   if (warned.has(key)) return;
   warned.add(key);
-  console.warn(prefixed(message));
+  console.warn(line2);
+}
+function warnOnce(projectDir, message) {
+  printOnce(projectDir, prefixed(message));
 }
 async function readElectronBuilderProject(projectDir, configPath) {
   const devMetadata = await readJson(path.join(projectDir, "package.json"));
@@ -22442,7 +22476,7 @@ function appPathOf(project, names, platform, arch) {
 var imageExtension = (name, format) => [".png", ".ico", ".svg", ".icns", `.${format}`].some(
   (ext) => name.endsWith(ext)
 );
-function iconCandidates(sources, format) {
+function namedIconCandidates(sources, format) {
   const out = [];
   for (const source of sources) {
     if (imageExtension(source, format)) out.push(source);
@@ -22452,6 +22486,10 @@ function iconCandidates(sources, format) {
       if (format !== "ico") out.push(`${source}.ico`);
     }
   }
+  return out;
+}
+function iconCandidates(sources, format) {
+  const out = namedIconCandidates(sources, format);
   if (format !== "set") out.push(`icon.${format}`);
   out.push("icons", "icon", "icon.png", "icon.svg", "icon.icns");
   if (format !== "ico") out.push("icon.ico");
@@ -22464,7 +22502,7 @@ async function resolveIconSource(project, candidates) {
     );
     for (const file3 of places) {
       const found = await stat(file3).catch(() => void 0);
-      if (found) return { dir: found.isDirectory(), file: file3 };
+      if (found) return { candidate, dir: found.isDirectory(), file: file3 };
     }
   }
   return void 0;
@@ -22491,22 +22529,24 @@ async function iconOf(project, platform) {
   const own = asString(platformSettings(project, platform).icon);
   const mac = isObject2(config3.mac) ? asString(config3.mac.icon) : void 0;
   const sources = platform === "windows" ? asList(own ?? config3.icon) : [own, mac ?? config3.icon];
-  const found = await resolveIconSource(
-    project,
-    iconCandidates(
-      sources.filter((source) => !!asString(source)),
-      platform === "windows" ? "ico" : "set"
-    )
+  const format = platform === "windows" ? "ico" : "set";
+  const given = sources.filter(
+    (source) => !!asString(source)
   );
+  const found = await resolveIconSource(project, iconCandidates(given, format));
   if (!found) return void 0;
+  const converted = {
+    converted: found.file,
+    named: namedIconCandidates(given, format).includes(found.candidate)
+  };
   if (platform === "windows") {
-    return !found.dir && found.file.endsWith(".ico") ? { file: found.file } : { converted: found.file };
+    return !found.dir && found.file.endsWith(".ico") ? { file: found.file } : converted;
   }
   if (found.dir) {
     const png = await largestPng(found.file);
-    return png ? { file: png } : { converted: found.file };
+    return png ? { file: png } : converted;
   }
-  return found.file.endsWith(".png") ? { file: found.file } : { converted: found.file };
+  return found.file.endsWith(".png") ? { file: found.file } : converted;
 }
 function entitlementsOf(project) {
   const given = asString(platformSettings(project, "mac").entitlements);
@@ -22727,9 +22767,9 @@ var withoutUndefined = (value) => Object.fromEntries(
 );
 var linuxExecutableName = /^[\w.-]+$/;
 var windowsExecutableName = /^[\w .-]+\.exe$/i;
-async function electronBuilderPresetConfig(project, options, configDir) {
+async function electronBuilderPresetConfig(project, options, configDir, say = (message) => printOnce(project.projectDir, message)) {
   const relative = (file3) => relativeTo(configDir, file3);
-  const warn = (message) => warnOnce(project.projectDir, message);
+  const warn = (message, key) => say(prefixed(message), key);
   const names = electronBuilderNames(project);
   const { config: config3, metadata } = project;
   const appsOf = (platform, arches) => {
@@ -22738,7 +22778,8 @@ async function electronBuilderPresetConfig(project, options, configDir) {
       const found = appPathOf(project, names, platform, arch);
       if ("macro" in found) {
         warn(
-          `directories.output uses ${found.macro}, which electronBuilderConfig() can't expand, so it leaves ${platform}.apps to todesktop.config.ts`
+          `directories.output uses ${found.macro}, which electronBuilderConfig() can't expand, so it leaves ${platform}.apps to todesktop.config.ts`,
+          `${platform}.apps`
         );
         return void 0;
       }
@@ -22763,13 +22804,15 @@ async function electronBuilderPresetConfig(project, options, configDir) {
     const entitlements2 = entitlementsOf(project);
     if (!entitlements2) {
       warn(
-        "mac.entitlements: electron-builder signs with its own default entitlements (allow-jit, allow-unsigned-executable-memory, disable-library-validation), which ToDesktop doesn't have: add them as build/entitlements.mac.plist (electron-builder then uses it too), or set mac.entitlements in todesktop.config.ts"
+        "mac.entitlements: electron-builder signs with its own default entitlements (allow-jit, allow-unsigned-executable-memory, disable-library-validation), which ToDesktop doesn't have: add them as build/entitlements.mac.plist (electron-builder then uses it too), or set mac.entitlements in todesktop.config.ts",
+        "mac.entitlements"
       );
     }
     const inherited = inheritedEntitlementsOf(project);
     if (inherited && inherited !== entitlements2) {
       warn(
-        `mac.entitlementsInherit: ToDesktop signs Electron's helper apps with mac.entitlements (${entitlements2 ? relative(entitlements2) : "none"}), not ${relative(inherited)}; give them their own in mac.nested`
+        `mac.entitlementsInherit: ToDesktop signs Electron's helper apps with mac.entitlements (${entitlements2 ? relative(entitlements2) : "none"}), not ${relative(inherited)}; give them their own in mac.nested`,
+        "mac.nested"
       );
     }
     mac = withoutUndefined({
@@ -22782,13 +22825,15 @@ async function electronBuilderPresetConfig(project, options, configDir) {
     const executable = `${names.productFilename.windows}.exe`;
     if (!windowsExecutableName.test(executable)) {
       warn(
-        `electron-builder names the Windows executable "${executable}" (win.executableName, executableName, else productName), which isn't a name todesktop.config.ts takes (letters, digits, spaces, dots, dashes and underscores): set win.executableName`
+        `electron-builder names the Windows executable "${executable}" (win.executableName, executableName, else productName), which isn't a name todesktop.config.ts takes (letters, digits, spaces, dots, dashes and underscores): set win.executableName`,
+        "windows.executable"
       );
     }
     const icon = await iconOf(project, "windows");
     if (icon && "converted" in icon) {
       warn(
-        `electron-builder makes the Windows icon from ${relative(icon.converted)}; windows.icon takes an .ico: add one (build/icon.ico) or set windows.icon in todesktop.config.ts`
+        `electron-builder makes the Windows icon from ${relative(icon.converted)}; windows.icon takes an .ico: ${icon.named ? "set win.icon to one in electron-builder\u2019s config" : "add one (build/icon.ico)"} or set windows.icon in todesktop.config.ts`,
+        "windows.icon"
       );
     }
     windows = withoutUndefined({
@@ -22801,13 +22846,15 @@ async function electronBuilderPresetConfig(project, options, configDir) {
   if (options.linux) {
     if (!linuxExecutableName.test(names.linuxExecutable)) {
       warn(
-        `electron-builder names the Linux executable "${names.linuxExecutable}" (linux.executableName, executableName, else package.json's name, lowercased), which isn't a file name todesktop.config.ts takes: set linux.executableName`
+        `electron-builder names the Linux executable "${names.linuxExecutable}" (linux.executableName, executableName, else package.json's name, lowercased), which isn't a file name todesktop.config.ts takes: set linux.executableName`,
+        "linux.executable"
       );
     }
     const icon = await iconOf(project, "linux");
     if (icon && "converted" in icon) {
       warn(
-        `electron-builder makes the Linux icons from ${relative(icon.converted)}; linux.icon takes a PNG: add one (build/icons/512x512.png) or set linux.icon in todesktop.config.ts`
+        `electron-builder makes the Linux icons from ${relative(icon.converted)}; linux.icon takes a PNG: ${icon.named ? "set linux.icon to one in electron-builder\u2019s config" : "add one (build/icons/512x512.png)"} or set linux.icon in todesktop.config.ts`,
+        "linux.icon"
       );
     }
     linux = withoutUndefined({
@@ -22818,6 +22865,12 @@ async function electronBuilderPresetConfig(project, options, configDir) {
   }
   const author = personOf(metadata.author) ?? personOf(project.devMetadata.author);
   const maintainer = asString(platformSettings(project, "linux").maintainer) ?? (author?.email ? `${author.name} <${author.email}>` : author?.name);
+  if (!maintainer) {
+    warn(
+      `maintainer: package.json has no author, and electron-builder's config no linux.maintainer: add an author to package.json ("author": "Name <email>"), or set maintainer in todesktop.config.ts`,
+      "maintainer"
+    );
+  }
   return withoutUndefined({
     // Required: without one, the product name.
     description: asString(metadata.description) ?? names.productName,
@@ -22835,13 +22888,13 @@ function presetName(given) {
 function electronBuilderConfig(given) {
   const options = parseOptions(given);
   return {
-    config: async ({ configDir }) => {
+    config: async ({ configDir, warn }) => {
       const projectDir = path.resolve(configDir, options.projectDir ?? ".");
       const project = await readElectronBuilderProject(
         projectDir,
         options.config && path.resolve(configDir, options.config)
       );
-      return electronBuilderPresetConfig(project, options, configDir);
+      return electronBuilderPresetConfig(project, options, configDir, warn);
     },
     name: presetName(given)
   };
@@ -24030,6 +24083,7 @@ function findConfigFile(dir) {
   return name ? path3.join(dir, name) : void 0;
 }
 var renameAsked = /* @__PURE__ */ new Set();
+var printedWarnings = /* @__PURE__ */ new Set();
 function askToRename(file3) {
   const base = path3.basename(file3);
   const key = path3.resolve(file3);
@@ -24189,18 +24243,28 @@ async function loadConfig(file3, context) {
     );
   }
   const configDir = path3.dirname(file3);
-  const { assemble, data, hooks: hooks2, sources } = await resolveExtends(
+  const { assemble, data, hooks: hooks2, sources, warnings } = await resolveExtends(
     value,
     path3.basename(file3),
     { ...context, configDir }
   );
+  const parsed = configSchema.safeParse(data);
+  const failedOn = (key) => !parsed.success && key !== void 0 && parsed.error.issues.some(({ path: at }) => {
+    const issue2 = at.join(".");
+    return issue2 === key || issue2.startsWith(`${key}.`);
+  });
+  for (const { key, message } of warnings) {
+    const once = `${file3}\0${message}`;
+    if (failedOn(key) || printedWarnings.has(once)) continue;
+    printedWarnings.add(once);
+    console.warn(message);
+  }
   const windowsFormats2 = isPlainObject3(data.windows) ? data.windows.formats : void 0;
   if (Array.isArray(windowsFormats2) && windowsFormats2.includes("nsis")) {
     console.warn(
       `${file3}: windows.formats "nsis" is deprecated; it's now "exe" (ToDesktop's own installer), which it builds`
     );
   }
-  const parsed = configSchema.safeParse(data);
   if (!parsed.success) {
     const fromPresets = [
       ...new Set(
@@ -24213,9 +24277,10 @@ async function loadConfig(file3, context) {
         })
       )
     ];
+    const why = warnings.filter(({ key }) => failedOn(key)).map(({ message }) => message);
     throw new Error(
       `${file3} is invalid:
-${external_exports.prettifyError(parsed.error)}${fromPresets.map((line2) => `
+${external_exports.prettifyError(parsed.error)}${[...fromPresets, ...why].map((line2) => `
   (${line2})`).join("")}`
     );
   }
@@ -24729,7 +24794,7 @@ ${packageJson ? "  // The version is the workflow's: a tag (v1.2.3), else packag
 ${platforms3}
 });`;
 var typesSnippet = {
-  code: "npm install --save-dev @todesktop/config",
+  code: "npm install --save-dev @todesktop/config@latest",
   label: "Copy install command",
   language: "bash",
   title: "Add its types: your editor and tsc read todesktop.config.ts too."
@@ -25333,6 +25398,10 @@ function electronBuilderPlatforms(app) {
     (arch) => `${arch}: ${str(`${out}/${arch === "x64" ? "mac" : `mac-${arch}`}/${app.macAppName ?? sanitizeFileName2(app.name)}.app`)}`
   ).join(", ");
   return [
+    ...app.spelledOut ? commentLines(
+      `Spelled out rather than extends: electronBuilderConfig(), as ${app.spelledOut}.`,
+      "  "
+    ) : [],
     `  // What electron-builder --dir makes, unsigned: ToDesktop signs it.`,
     ...builds(app, "mac") ? [
       `  mac: {
@@ -25347,7 +25416,8 @@ function electronBuilderPlatforms(app) {
     ...builds(app, "windows") ? [
       `  windows: {
     apps: { x64: ${str(`${out}/win-unpacked`)} },
-    executable: ${str(app.windowsExecutable ?? productExe(app.name))},${app.migrateFromAppId ? `
+    executable: ${str(app.windowsExecutable ?? productExe(app.name))},${app.icons?.windows ? `
+    icon: ${str(app.icons.windows)},` : ""}${app.migrateFromAppId ? `
     // The v1 app (electron-builder's appId) whose installs this takes over.
     migrateFrom: { appId: ${str(app.migrateFromAppId)} },` : ""}${windowsFormatsOf(app)}
   },`
@@ -25355,13 +25425,88 @@ function electronBuilderPlatforms(app) {
     ...builds(app, "linux") ? [
       `  linux: {
     apps: { x64: ${str(`${out}/linux-unpacked`)} },
-    executable: ${str(app.linuxExecutable ?? slugOf(app.name))}, // ${linuxExecutableArg(app) ? "the workflow's -c.linux.executableName" : "your package.json name"}${app.appImage ? `
+    executable: ${str(app.linuxExecutable ?? slugOf(app.name))}, // ${linuxExecutableArg(app) ? "the workflow's -c.linux.executableName" : "your package.json name"}${app.icons?.linux ? `
+    icon: ${str(app.icons.linux)},` : ""}${app.appImage ? `
     // v1's Linux copies are AppImages: they move to v2's AppImage.` : ""}
     formats: ['appimage', 'deb', 'rpm', 'tar.gz'],
   },`
     ] : []
   ].join("\n");
 }
+function commentLines(text3, indent2) {
+  const lines = [];
+  let line2 = "";
+  for (const word of text3.split(" ")) {
+    if (line2 && `${indent2}// ${line2} ${word}`.length > 80) {
+      lines.push(`${indent2}// ${line2}`);
+      line2 = word;
+    } else {
+      line2 = line2 ? `${line2} ${word}` : word;
+    }
+  }
+  if (line2) lines.push(`${indent2}// ${line2}`);
+  return lines;
+}
+function presetOptions(app) {
+  const macArches = macArchesOf(app);
+  const options = [
+    ...builds(app, "mac") && macArches.join() !== "arm64" ? [`mac: [${macArches.map(str).join(", ")}]`] : [],
+    ...["mac", "windows", "linux"].filter((platform) => !builds(app, platform)).map((platform) => `${platform}: false`)
+  ];
+  return options.length ? `{ ${options.join(", ")} }` : "";
+}
+function presetConfig(app) {
+  const lacks = app.packageJsonLacks ?? [];
+  const mac = builds(app, "mac") ? [
+    ...app.entitlementsFile && app.entitlementsOfElectronBuilder ? [] : [
+      `    entitlements: ${str(app.entitlementsFile ?? "entitlements.plist")},`
+    ],
+    ...app.macPkg ? [
+      `    // v1 built a pkg for IT teams: signed with your Developer ID Installer`,
+      `    // certificate (Account \u203A Signing).`,
+      `    formats: ['dmg', 'pkg'],`
+    ] : [`    formats: ['dmg'],`]
+  ] : [];
+  const windows = builds(app, "windows") ? [
+    ...app.migrateFromAppId ? [
+      `    // The v1 app (electron-builder's appId) whose installs this takes over.`,
+      `    migrateFrom: { appId: ${str(app.migrateFromAppId)} },`
+    ] : [],
+    ...windowsFormatsOf(app).split("\n").filter(Boolean)
+  ] : [];
+  const linux = builds(app, "linux") ? [
+    ...linuxExecutableArg(app) ? [
+      `    executable: ${str(app.linuxExecutable)}, // the workflow's -c.linux.executableName`
+    ] : [],
+    ...app.appImage ? [
+      `    // v1's Linux copies are AppImages: they move to v2's AppImage.`
+    ] : [],
+    `    formats: ['appimage', 'deb', 'rpm', 'tar.gz'],`
+  ] : [];
+  const section = (name, lines) => lines.length ? [`  ${name}: {`, ...lines, "  },"] : [];
+  return [
+    "import { defineConfig, electronBuilderConfig } from '@todesktop/config';",
+    "",
+    "export default defineConfig({",
+    "  // The name, version, description, maintainer (package.json's author),",
+    "  // icons and what electron-builder --dir makes, unsigned, from your",
+    "  // electron-builder config and package.json. Anything below wins.",
+    `  extends: electronBuilderConfig(${presetOptions(app)}),`,
+    `  appId: ${str(app.id)},`,
+    ...lacks.includes("description") ? [`  description: ${descriptionOf(app)}`] : [],
+    ...lacks.includes("author") ? [`  maintainer: ${maintainerOf(app)}`] : [],
+    ...section("mac", mac),
+    ...section("windows", windows),
+    ...section("linux", linux),
+    "});"
+  ].join("\n");
+}
+var electronBuilderConfigSnippet = (app) => app.spelledOut ? configSnippet(app, electronBuilderPlatforms(app)) : {
+  code: presetConfig(app),
+  label: "Copy todesktop.config.ts",
+  language: "typescript",
+  path: "todesktop.config.ts"
+};
 var electronBuilderMatrix = (app) => [
   ...builds(app, "mac") ? [
     `          - os: macos-15
@@ -25827,10 +25972,10 @@ ${uploadStep(app, edgeUrl)}${reportJob(app, edgeUrl)}`,
   {
     caption: "electron-builder",
     config: {
-      description: "At the root of the repository, beside package.json. The paths are where electron-builder --dir puts your app. Commit both files.",
+      description: "At the root of the repository, beside package.json. electronBuilderConfig() reads the rest from your electron-builder config and package.json when the workflow in step 4 uploads. Commit both files.",
       files: (app) => [
         typesSnippet,
-        configSnippet(app, electronBuilderPlatforms(app)),
+        electronBuilderConfigSnippet(app),
         // The app's own file stays as it is.
         ...builds(app, "mac") && !app.entitlementsFile ? [app.v1Entitlements ? v1Entitlements : entitlements] : []
       ]
@@ -25841,7 +25986,7 @@ ${uploadStep(app, edgeUrl)}${reportJob(app, edgeUrl)}`,
     label: "Electron Builder",
     updates: {
       ...electronUpdates,
-      note: "Remove electron-updater and the publish settings from your electron-builder config: ToDesktop serves updates now. electron-builder already keeps the updater\u2019s native files outside app.asar.",
+      note: "Remove electron-updater and the publish settings from your electron-builder config: ToDesktop serves updates now. electron-builder already keeps the updater\u2019s native files outside app.asar, and ToDesktop\u2019s build places its helper beside the app\u2019s executable: it needs no extraFiles.",
       snippets: () => electronUpdateSnippets
     },
     workflow: {
@@ -26647,7 +26792,7 @@ var electronBuilderFiles2 = [
   "electron-builder.yml",
   "electron-builder.yaml"
 ];
-function electronBuilderConfig2(pkg, files) {
+function readElectronBuilderSettings(pkg, files) {
   if (isObject4(pkg?.build)) {
     return { settings: pkg.build, source: "package.json build" };
   }
@@ -26759,6 +26904,42 @@ function electronBuilderShips(pkg, { settings, source }) {
   }
   if (others.length) found.otherArches = others;
   return found;
+}
+var electronBuilderCodeFiles = [
+  "electron-builder.js",
+  "electron-builder.cjs",
+  "electron-builder.ts"
+];
+var presetMacros = /* @__PURE__ */ new Set([
+  "arch",
+  "author",
+  "channel",
+  "name",
+  "os",
+  "platform",
+  "productFilename",
+  "productName",
+  "version"
+]);
+function presetProblem(pkg, { settings, source }, { windows = true } = {}) {
+  if (!settings && source !== "package.json build") {
+    return `${source} isn\u2019t valid, so electronBuilderConfig() can\u2019t read it`;
+  }
+  const output = text(settings?.directories?.output);
+  const macro = [...(output ?? "").matchAll(/\$\{([^}]*)\}/g)].find(
+    ([, name]) => !presetMacros.has(name)
+  )?.[0];
+  if (macro) {
+    return `directories.output uses ${macro}, which electronBuilderConfig() can\u2019t expand`;
+  }
+  if (windows) {
+    const name = text(settings?.win?.executableName) ?? text(settings?.executableName) ?? text(settings?.productName) ?? text(pkg?.productName) ?? text(pkg?.name);
+    const file3 = name && sanitizeFileName2(name);
+    if (file3 && !/^[\w .-]+$/.test(file3)) {
+      return `electron-builder names the Windows executable ${file3}.exe, which todesktop.config.ts doesn\u2019t take`;
+    }
+  }
+  return void 0;
 }
 
 // ../recipes/src/native.ts
@@ -27435,7 +27616,7 @@ async function detect(dir) {
     result.packageManager = lockfile?.manager ?? declared ?? "npm";
   }
   if (pkg) {
-    const config4 = electronBuilderConfig2(
+    const config4 = readElectronBuilderSettings(
       pkg,
       await electronBuilderFilesIn(dir)
     );
@@ -27445,6 +27626,16 @@ async function detect(dir) {
       delete ships.entitlements;
     }
     if (Object.keys(ships).length) result.electronBuilder = ships;
+    const lacks = ["author", "description"].filter(
+      (field) => !text2(pkg[field]) && !(field === "author" && // An author of { name }, or electron-builder's own maintainer.
+      (text2(pkg.author?.name) ?? text2(config4.settings?.linux?.maintainer)))
+    );
+    if (lacks.length) result.packageJsonLacks = lacks;
+    const code = config4.settings ? void 0 : electronBuilderCodeFiles.find(
+      (name) => existsSync5(path6.join(dir, name))
+    );
+    const problem = presetProblem(pkg, config4) ?? (code && !dep("electron-builder") ? `${code} is code, which only electron-builder can load, and package.json doesn\u2019t have it` : void 0);
+    if (problem) result.presetProblem = problem;
   }
   const tauriManifest = tauriFile ? await readText2(path6.join(dir, "src-tauri", "Cargo.toml")) : void 0;
   const updater = (dep("@todesktop/updater") ? "package.json: @todesktop/updater" : "") || (dep("@todesktop/tauri") ? "package.json: @todesktop/tauri" : "") || (tauriManifest && cargoDepends(tauriManifest, "tauri-plugin-todesktop") ? "src-tauri/Cargo.toml: tauri-plugin-todesktop" : "") || (cargo && cargoDepends(cargo, "todesktop-updater") ? "Cargo.toml: todesktop-updater" : "") || await dotnetClient(dir, csprojs) || (xcodeProjects.length ? await swiftClient(dir, xcodeProjects) : "") || goClient(dir) || dartClient(dir, flutter) || qtClient(dir);
@@ -30280,7 +30471,14 @@ async function planOf(values, { withoutApp = false } = {}) {
     // its Mac arches, its own entitlements file, and the steps every
     // one of its scripts runs before electron-builder.
     ...ships?.macArches ? { macArches: ships.macArches.arches } : {},
-    ...ships?.entitlements ? { entitlementsFile: ships.entitlements.file } : {},
+    ...ships?.entitlements ? {
+      entitlementsFile: ships.entitlements.file,
+      entitlementsOfElectronBuilder: true
+    } : {},
+    // What electronBuilderConfig() can't read here, and what package.json
+    // lacks of what it reads.
+    ...framework.id === "electron-builder" && detection.presetProblem ? { spelledOut: detection.presetProblem } : {},
+    ...framework.id === "electron-builder" && detection.packageJsonLacks ? { packageJsonLacks: detection.packageJsonLacks } : {},
     ...ships?.buildSteps?.common.length ? { buildSteps: ships.buildSteps.common } : {},
     ...detection.linuxExecutable ? { linuxExecutable: detection.linuxExecutable.name } : {},
     ...detection.linuxExecutable?.replaces ? { setLinuxExecutable: true } : {},
@@ -30327,19 +30525,25 @@ async function planOf(values, { withoutApp = false } = {}) {
       `${detection.v1Config} is ToDesktop v1's config: keep it for v1's builds. v2 reads todesktop.config.ts, beside it.`
     );
   }
+  const preset = framework.id === "electron-builder" && !recipeApp.spelledOut;
+  if (framework.id === "electron-builder" && recipeApp.spelledOut) {
+    configNotes.push(
+      `todesktop.config.ts spells out the names and paths rather than extending electronBuilderConfig(), as ${recipeApp.spelledOut}. Once that's fixed, \`extends: electronBuilderConfig()\` can read them from your electron-builder config instead.`
+    );
+  }
   if (ships?.macArches) {
     configNotes.push(
-      `mac.apps lists ${ships.macArches.arches.join(" and ")}, the Mac arches your electron-builder config builds (${ships.macArches.from}).`
+      preset ? `electronBuilderConfig() builds ${ships.macArches.arches.join(" and ")} Mac apps, the arches your electron-builder config builds (${ships.macArches.from}).` : `mac.apps lists ${ships.macArches.arches.join(" and ")}, the Mac arches your electron-builder config builds (${ships.macArches.from}).`
     );
   }
   if (ships?.otherArches?.length) {
     configNotes.push(
-      `Your electron-builder config also builds ${ships.otherArches.map(({ arch, platform }) => `${platform} ${arch}`).join(", ")} (${[...new Set(ships.otherArches.map(({ from }) => from))].join(", ")}), which this draft leaves out: it lists x64 for Windows and Linux, and one app per Mac arch. Add each you still ship to its platform's apps (electron-builder puts it in ${ships.otherArches.map(({ arch, platform }) => platform === "mac" ? "mac-universal" : `${platform === "windows" ? "win" : "linux"}-${arch}-unpacked`).join(", ")}) and to the workflow's matrix, or tell the person it's dropped.`
+      `Your electron-builder config also builds ${ships.otherArches.map(({ arch, platform }) => `${platform} ${arch}`).join(", ")} (${[...new Set(ships.otherArches.map(({ from }) => from))].join(", ")}), which this draft leaves out: it lists x64 for Windows and Linux, and one app per Mac arch. ${preset ? "Add each you still ship to electronBuilderConfig()'s options (`windows: ['x64', 'arm64']`, `mac: ['universal']`)" : `Add each you still ship to its platform's apps (electron-builder puts it in ${ships.otherArches.map(({ arch, platform }) => platform === "mac" ? "mac-universal" : `${platform === "windows" ? "win" : "linux"}-${arch}-unpacked`).join(", ")})`} and to the workflow's matrix, or tell the person it's dropped.`
     );
   }
   if (ships?.entitlements) {
     configNotes.push(
-      `mac.entitlements is your own ${ships.entitlements.file} (${ships.entitlements.from}); no second file is added. ToDesktop signs with exactly what it grants: Electron needs com.apple.security.cs.allow-jit, allow-unsigned-executable-memory and disable-library-validation, so add any it lacks.`
+      `mac.entitlements is your own ${ships.entitlements.file} (${ships.entitlements.from})${preset ? ", which electronBuilderConfig() reads" : ""}; no second file is added. ToDesktop signs with exactly what it grants: Electron needs com.apple.security.cs.allow-jit, allow-unsigned-executable-memory and disable-library-validation, so add any it lacks.`
     );
   }
   if (recipe.warning) {
@@ -30561,7 +30765,14 @@ async function planOf(values, { withoutApp = false } = {}) {
       who: "you"
     }
   ];
-  const fillIn = fillInOf(framework.id, steps, test?.command);
+  const fillIn = fillInOf(
+    framework.id,
+    steps,
+    test?.command,
+    // A draft with no placeholder: electronBuilderConfig() reads both
+    // from package.json.
+    config3.files.some(({ content }) => content.includes("// A placeholder:"))
+  );
   return {
     app: { id, name },
     appArg,
@@ -30587,15 +30798,17 @@ async function uploadingWorkflow(root, workflows, appDir) {
   }
   return void 0;
 }
-function fillInOf(framework, steps, testPushCommand) {
+function fillInOf(framework, steps, testPushCommand, placeholders = true) {
   const done = (key) => steps.find((step) => step.key === key)?.done;
   const items = [];
   if (!done("config")) {
-    items.push({
-      check: `${cli()} config check: it fails while either is still the draft's placeholder`,
-      what: "description and maintainer",
-      where: "todesktop.config.ts"
-    });
+    if (placeholders) {
+      items.push({
+        check: `${cli()} config check: it fails while either is still the draft's placeholder`,
+        what: "description and maintainer",
+        where: "todesktop.config.ts"
+      });
+    }
     if (framework === "other") {
       items.push(
         {
